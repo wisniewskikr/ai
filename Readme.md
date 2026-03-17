@@ -34,3 +34,7 @@ Artificial Intelligence (AI) is a broad field of computer science focused on cre
 * OpenRouter 
 * Amazon Bedrock 
 * Microsoft Azure
+
+## JSON Output
+* **Structured Outputs**: are AI responses returned in a strict JSON format, so the result follows a predefined schema and can be reliably parsed and used directly in code. 
+* **Function Calling**: is when an AI model outputs structured JSON instead of plain text, describing which function to call and with what arguments so your code can safely execute actions based on the model’s response.
