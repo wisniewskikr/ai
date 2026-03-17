@@ -29,6 +29,7 @@ Artificial Intelligence (AI) is a broad field of computer science focused on cre
 * OpenAI 
 * Anthropic 
 * Gemini 
+* xAI
 
 ## Example AI Platforms
 * OpenRouter 
