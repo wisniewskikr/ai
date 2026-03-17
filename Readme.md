@@ -38,3 +38,10 @@ Artificial Intelligence (AI) is a broad field of computer science focused on cre
 ## JSON Output
 * **Structured Outputs**: are AI responses returned in a strict JSON format, so the result follows a predefined schema and can be reliably parsed and used directly in code. 
 * **Function Calling**: is when an AI model outputs structured JSON instead of plain text, describing which function to call and with what arguments so your code can safely execute actions based on the model’s response.
+
+
+## Model Strategies
+* **Main model**: The simplest configuration, where the entire system uses a single model for all tasks.
+* **Main and alternative**: The most common setup is to choose a pair of models: one as strong as possible (but usually slower and more expensive), and a second one optimized for speed and cost. The “larger” model handles the most difficult tasks, while the “smaller” one takes care of the rest.
+* **Main and specialized**: Similar to the previous configuration, but instead of speed or cost optimization, the priority is high performance on specific tasks. For example, z.ai models may work well for generating UI components, Anthropic or Kimi models for generating long-form text, and x.ai models for fast exploration of the file system.
+* **Team of small models**: Thanks to low cost and high speed, it is possible to use many small models together with techniques such as task decomposition and voting to achieve high overall quality without relying on the most expensive models. However, this is demanding and rarely used, especially at the scale of entire systems rather than isolated tasks.
