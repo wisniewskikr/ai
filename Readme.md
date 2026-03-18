@@ -70,3 +70,10 @@ Artificial Intelligence (AI) is a broad field of computer science focused on cre
 | Output Validation | Check outputs against expected formats, policies, and safety constraints before using them. |
 | Isolation | Run risky tools/actions in sandboxes or isolated environments to limit blast radius. |
 | Monitoring and Auditing | Log actions and decisions, detect anomalies, and review behavior for security incidents. |
+
+## Security - 4 Questions
+
+* What minimal permissions does the agent need?
+* What happens if someone injects instructions into the data?
+* What data does the agent see, and should it see everything?
+* How will we know the agent is doing something it shouldn’t?
