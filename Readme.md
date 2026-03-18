@@ -48,3 +48,15 @@ Artificial Intelligence (AI) is a broad field of computer science focused on cre
 
 ## Security
 "Every AI agent is only as strong as its weakest tool and can cause as much harm as its broadest permission."
+
+| Threat | Description |
+| --- | --- |
+| Prompt Injection | Two forms: `direct` (malicious instructions in the prompt) and `indirect` (malicious instructions hidden in retrieved content). |
+| Tool/Function Abuse | The agent is tricked into calling powerful tools in unsafe or unintended ways. |
+| Excessive agency | The agent is given too much autonomy, so it acts beyond the intended scope and increases risk. |
+| Data Exfiltration | Sensitive data is extracted or leaked through the agent’s responses and/or tool calls. |
+| System Prompt Leakage | Definition: attackers try to reveal hidden system instructions. Two scenarios: `hypothetical scenarios` (tricking the agent to disclose hidden instructions) and `role framing` (persuading the agent to adopt a role that reveals system content). |
+| Attack on MCP (Model Context Protocol) | Abuse or tamper with MCP context/transport to inject or manipulate tool/context data; tool poisoning (malicious tool/context injection), rug pull (sudden context rollback), token hijacking (steal/abuse tokens via tampered context). |
+| Vector and embedding weaknesses | In RAG, retrieval uses vectors/embeddings; weaknesses include knowledge-base poisoning (injecting harmful content), embedding manipulation (steering similarity), and retrieval attacks (adversarial queries/ranking), leading to irrelevant or unsafe context and lower accuracy/safety. |
+| Privilege Escalation via Permissions | Overly broad permissions let the agent perform actions beyond what it should be allowed to do. |
+| Jailbreaks & Policy Evasion | Attempts to bypass safety rules so the agent produces disallowed or harmful outputs. |
