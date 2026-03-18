@@ -60,3 +60,13 @@ Artificial Intelligence (AI) is a broad field of computer science focused on cre
 | Vector and embedding weaknesses | In RAG, retrieval uses vectors/embeddings; weaknesses include knowledge-base poisoning (injecting harmful content), embedding manipulation (steering similarity), and retrieval attacks (adversarial queries/ranking), leading to irrelevant or unsafe context and lower accuracy/safety. |
 | Privilege Escalation via Permissions | Overly broad permissions let the agent perform actions beyond what it should be allowed to do. |
 | Jailbreaks & Policy Evasion | Attempts to bypass safety rules so the agent produces disallowed or harmful outputs. |
+
+## Security - 5 Layers of Defense
+
+| Name | Description |
+| --- | --- |
+| Input Validation | Validate and sanitize all inputs (user text, retrieved docs, tool parameters) before they reach the agent. |
+| Least Privilege | Restrict tool access and permissions to only what is required for the task. |
+| Output Validation | Check outputs against expected formats, policies, and safety constraints before using them. |
+| Isolation | Run risky tools/actions in sandboxes or isolated environments to limit blast radius. |
+| Monitoring and Auditing | Log actions and decisions, detect anomalies, and review behavior for security incidents. |
