@@ -1,0 +1,5 @@
+{
+    "model": "gpt-4o",
+    "messageFirst": "My name is Chris",
+    "messageSecond": "What is my name?"
+}
