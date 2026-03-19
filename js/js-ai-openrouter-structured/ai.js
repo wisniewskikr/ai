@@ -1,6 +1,36 @@
 const fs = require('fs');
 const path = require('path');
 
+const personSchema = {
+    type: "json_schema",
+    name: "person",
+    strict: true,
+    schema: {
+        type: "object",
+        properties: {
+            name: {
+                type: ["string", "null"],
+                description: "Full name of the person. Use null if not mentioned."
+            },
+            age: {
+                type: ["number", "null"],
+                description: "Age in years. Use null if not mentioned or unclear."
+            },
+            occupation: {
+                type: ["string", "null"],
+                description: "Job title or profession. Use null if not mentioned."
+            },
+            skills: {
+                type: "array",
+                items: { type: "string" },
+                description: "List of skills, technologies, or competencies. Empty array if none mentioned."
+            }
+        },
+        required: ["name", "age", "occupation", "skills"],
+        additionalProperties: false
+    }
+};
+
 async function callAI(model, message) {
     const apiKey = fs.readFileSync(path.join(__dirname, '.key'), 'utf8').trim();
 
@@ -12,7 +42,8 @@ async function callAI(model, message) {
         },
         body: JSON.stringify({
             model,
-            messages: [{ role: 'user', content: message }]
+            messages: [{ role: 'user', content: message }],
+            response_format: personSchema
         })
     });
 
@@ -22,7 +53,7 @@ async function callAI(model, message) {
     }
 
     const data = await response.json();
-    return data.choices[0].message.content;
+    return JSON.parse(data.choices[0].message.content);
 }
 
 module.exports = { callAI };
