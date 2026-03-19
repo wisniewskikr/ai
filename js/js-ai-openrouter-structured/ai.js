@@ -3,6 +3,7 @@ const path = require('path');
 
 const personSchema = {
     type: "json_schema",
+    json_schema: {
     name: "person",
     strict: true,
     schema: {
@@ -28,6 +29,7 @@ const personSchema = {
         },
         required: ["name", "age", "occupation", "skills"],
         additionalProperties: false
+    }
     }
 };
 
