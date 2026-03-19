@@ -1,4 +1,4 @@
-## Description
+﻿## Description
 
 Artificial Intelligence (AI) is a broad field of computer science focused on creating systems that can perform tasks that typically require human intelligence, such as understanding language, recognizing patterns, and making decisions. It encompasses a range of techniques, from rule-based systems to modern machine learning and deep learning models that learn from data. AI systems can be narrow, solving specific problems like image classification or translation, or more general, supporting a wide variety of cognitive tasks. These technologies are increasingly embedded in everyday products and services, from recommendation engines and virtual assistants to medical diagnostics and industrial automation. As AI continues to advance, it raises important questions about ethics, safety, fairness, and the impact on work and society.
 
@@ -77,3 +77,45 @@ Artificial Intelligence (AI) is a broad field of computer science focused on cre
 * What happens if someone injects instructions into the data?
 * What data does the agent see, and should it see everything?
 * How will we know the agent is doing something it shouldn’t?
+
+## Security - 4 Design Questions
+
+| Question | Description |
+| --- | --- |
+| **What can go wrong?** | What is the worst thing the AI Agent could do that you did not plan for? For example: send an email, delete files, delete records in the database, etc. This is the so-called "blast radius". |
+| **How do I revert it?** | Do you have backups? Can you undo the agent's actions? |
+| **Who will see it?** | Can you answer what the AI Agent was doing at any given minute? Do you have an audit trail and observability? |
+| **What does the law say?** | Is what the AI Agent does with the data legal? Do users know they are talking to AI? |
+
+## Security - Access Levels
+
+| Level | Description |
+| --- | --- |
+| **Level 1 – Read Only at start** | If you allow writes, make them surgical: to a specific table, row, or field. Or use the "staging" design pattern: write first to a "staging" table, and only after validation to the target table. Or use the "Proposal and approval" pattern: a new record is created with status "draft", and a human or separate process decides whether to publish. |
+| **Level 2 – Dry Run** | Before the AI Agent performs any harmful operation (e.g. deleting a record), it must notify the user and wait for confirmation. This is HITL (Human in the Loop). |
+| **Level 3 – Automatic backup** | Before every destructive operation, an automatic backup should be performed so that the action can be reverted. |
+
+## Security - Tokens
+
+| Principle | Description |
+| --- | --- |
+| **Principle 1** | Create separate tokens for each tool, with limited permissions. |
+| **Principle 2** | Rotate tokens. A token that lives for months or years is an invitation to disaster. Short-lived tokens (e.g. 5-minute) reduce attack risk by about 90%. |
+
+## Security - Law
+
+| Topic | Description |
+| --- | --- |
+| **Legal basis** | The AI Agent must have a legal basis for processing personal data (e.g. consent, legitimate interest, etc.). |
+| **Data minimization** | The AI Agent must have access only to data that is strictly necessary for its task. |
+| **Breach notification** | Every breach must be reported within 72 hours. |
+| **Transparency** | The user must be informed that they are interacting with an AI Agent. |
+
+## Security - Design Steps
+
+| Step | Description |
+| --- | --- |
+| **Step 1 – Map access** | Before the agent starts operating, list all systems, databases, APIs, and services it will have access to. For each one, specify whether the agent needs read, write, or both. Does it need access to all data or only a subset? What is the blast radius if that access is compromised? |
+| **Step 2 – Configure controls** | For each access point, set minimum required permissions. Create dedicated tokens with limited scope. Enable logging from day one. Set up alerts for anomalies, unusual query volume, access to unusual resources, or privilege escalation attempts. |
+| **Step 3 – Build a safety net** | Backup before destructive operations. Human in the loop for critical actions. A kill switch: the ability to immediately cut off the agent from all systems. When something goes wrong, you want one button, not a 20-step procedure. |
+| **Step 4 – Check compliance** | Do you have a legal basis for the agent to process data? Do users know they are interacting with AI? Does your logging meet audit requirements? Do you have a procedure for reporting incidents within 72 hours? |
