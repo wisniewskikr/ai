@@ -1,4 +1,5 @@
 {
     "model": "gpt-4o",
-    "message": "Hello! What can you do?"
+    "message": "Hello! What can you do?",
+    "maxIterations": 10
 }

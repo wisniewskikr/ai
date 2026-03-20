@@ -1,9 +1,11 @@
 const fs = require('fs');
 const path = require('path');
-const { callAI } = require('./ai');
+const { runAgent } = require('./agent');
 
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
 
-callAI(config.model, config.message)
+const tools = [];
+
+runAgent(config.model, config.message, tools, config.maxIterations)
     .then(response => console.log(response))
     .catch(err => console.error('Error:', err.message));
