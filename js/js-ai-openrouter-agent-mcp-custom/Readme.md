@@ -12,7 +12,8 @@ Tools are provided via a local [Model Context Protocol (MCP)](https://modelconte
 |------|---------|
 | `ai.js` | Handles all communication with the OpenRouter API |
 | `agent.js` | Agent loop — manages messages, tool calls, and iteration control |
-| `app.js` | Entry point — reads config, connects to MCP server, and starts the agent |
+| `app.js` | Entry point — reads config and starts the agent |
+| `tools.js` | Spawns the MCP server, connects the client, and returns wrapped tools |
 | `mcp-server.js` | MCP server — registers and exposes tools over stdio |
 | `tools/uppercase.js` | Tool that converts a string to uppercase |
 | `config.json` | Stores the model name, input message, and max iterations |
