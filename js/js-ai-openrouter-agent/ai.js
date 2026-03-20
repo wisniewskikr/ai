@@ -1,8 +1,25 @@
 const fs = require('fs');
 const path = require('path');
 
-async function callAI(model, message) {
+async function callAI(model, messages, tools = []) {
     const apiKey = fs.readFileSync(path.join(__dirname, '.key'), 'utf8').trim();
+
+    if (typeof messages === 'string') {
+        messages = [{ role: 'user', content: messages }];
+    }
+
+    const body = { model, messages };
+
+    if (tools.length > 0) {
+        body.tools = tools.map(t => ({
+                type: 'function',
+                function: {
+                    name: t.definition.name,
+                    description: t.definition.description,
+                    parameters: t.definition.parameters,
+                }
+            }));
+    }
 
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
@@ -10,10 +27,7 @@ async function callAI(model, message) {
             'Authorization': `Bearer ${apiKey}`,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-            model,
-            messages: [{ role: 'user', content: message }]
-        })
+        body: JSON.stringify(body)
     });
 
     if (!response.ok) {
@@ -22,7 +36,7 @@ async function callAI(model, message) {
     }
 
     const data = await response.json();
-    return data.choices[0].message.content;
+    return data.choices[0].message;
 }
 
 module.exports = { callAI };
