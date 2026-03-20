@@ -1,16 +1,24 @@
 const fs = require('fs');
 const path = require('path');
 
-async function callAI(model, message, tools = []) {
+async function callAI(model, messages, tools = []) {
     const apiKey = fs.readFileSync(path.join(__dirname, '.key'), 'utf8').trim();
 
-    const body = {
-        model,
-        messages: [{ role: 'user', content: message }]
-    };
+    if (typeof messages === 'string') {
+        messages = [{ role: 'user', content: messages }];
+    }
+
+    const body = { model, messages };
 
     if (tools.length > 0) {
-        body.tools = tools.map(t => t.definition);
+        body.tools = tools.map(t => ({
+                type: 'function',
+                function: {
+                    name: t.definition.name,
+                    description: t.definition.description,
+                    parameters: t.definition.parameters,
+                }
+            }));
     }
 
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
