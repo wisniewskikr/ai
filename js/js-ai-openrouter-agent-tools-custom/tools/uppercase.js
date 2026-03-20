@@ -1,4 +1,4 @@
-export const definition = {
+const definition = {
     type: "function",
     name: "uppercase",
     description: "Converts a string to uppercase letters",
@@ -13,4 +13,6 @@ export const definition = {
     },
   };
 
-  export const execute = ({ text }) => text.toUpperCase();
+const execute = ({ text }) => text.toUpperCase();
+
+module.exports = { definition, execute };

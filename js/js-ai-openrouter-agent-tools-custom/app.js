@@ -1,20 +1,16 @@
 const fs = require('fs');
 const path = require('path');
 const { runAgent } = require('./agent');
-const { uppercase } = require('./tools/uppercase');
+const uppercase = require('./tools/uppercase');
 
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
 
-const tools = [];
+(async () => {
+    // Run the agent without tools — model uppercases by itself
+    const response1 = await runAgent(config.model, config.message, [], config.maxIterations);
+    console.log(response1);
 
-// Run the agent without tools
-runAgent(config.model, config.message, tools, config.maxIterations)
-    .then(response => console.log(response))
-    .catch(err => console.error('Error:', err.message));
-
-tools.push(uppercase);
-
-// Run the agent with tools
-runAgent(config.model, config.message, tools, config.maxIterations)
-    .then(response => console.log(response))
-    .catch(err => console.error('Error:', err.message));
+    // Run the agent with the uppercase tool
+    const response2 = await runAgent(config.model, config.message, [uppercase], config.maxIterations);
+    console.log(response2);
+})().catch(err => console.error('Error:', err.message));
