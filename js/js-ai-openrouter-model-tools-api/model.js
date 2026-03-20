@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { callAI } = require('./ai');
-const uppercase = require('./tools/userapi.js');
+const userapi = require('./tools/userapi.js');
 
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
 

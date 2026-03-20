@@ -1,8 +1,8 @@
-# js-ai-openrouter-model-tools-custom
+# js-ai-openrouter-model-tools-api
 
 ## Description
 
-A minimal Node.js application demonstrating how to call an AI model via the [OpenRouter](https://openrouter.ai) API with **custom tool support**. The model can invoke locally-defined tools during a conversation, and the results are fed back for a final response.
+A minimal Node.js application demonstrating how to call an AI model via the [OpenRouter](https://openrouter.ai) API with **custom tool api support**. The model can invoke locally-defined tools during a conversation, and the results are fed back for a final response.
 
 **File structure:**
 
@@ -12,8 +12,7 @@ A minimal Node.js application demonstrating how to call an AI model via the [Ope
 | `model.js` | Entry point — reads config, runs the conversation loop |
 | `config.json` | Stores the model name and input message |
 | `.key` | Stores your OpenRouter API key (never commit this file) |
-| `tools/sum.js` | Tool: returns the sum of two numbers |
-| `tools/uppercase.js` | Tool: converts a string to uppercase |
+| `tools/userapi.js` | Tool: fetches a random user (name, username) from FakerAPI |
 
 ## How tools work
 
@@ -24,18 +23,18 @@ Each tool file exports two things:
 
 The conversation flow:
 
-1. **First call** — the user message is sent **without** tools. The model performs the task on its own (e.g. uppercasing by itself). Expected response:
+1. **First call** — the user message is sent **without** tools. The model attempts the task on its own. Expected response:
 
 ```json
 {
   "role": "assistant",
-  "content": "HELLO, WORLD!",
+  "content": "I'm unable to fetch real-time data on my own.",
   "refusal": null,
   "reasoning": null
 }
 ```
 
-2. **Second call** — the same message is sent **with** tool definitions. The model now delegates the work to the `uppercase` tool instead of doing it itself. Expected response:
+2. **Second call** — the same message is sent **with** tool definitions. The model delegates the work to the `get_random_user` tool. Expected response:
 
 ```json
 {
@@ -47,14 +46,14 @@ The conversation flow:
     {
       "type": "function",
       "index": 0,
-      "id": "call_LfkctD3VZfREScI6wI5IgxDW",
-      "function": { "name": "uppercase", "arguments": "{\"text\":\"hello, world!\"}" }
+      "id": "call_abc123",
+      "function": { "name": "get_random_user", "arguments": "{}" }
     }
   ]
 }
 ```
 
-3. The tool is executed locally and the result is sent back for a final answer.
+3. The tool calls `https://fakerapi.it/api/v1/users?_quantity=1&_locale=pl_PL`, extracts `firstname`, `lastname`, and `username` from the response, and sends the result back for a final answer.
 
 ## Adding a custom tool
 
@@ -75,7 +74,7 @@ export const definition = {
     }
 };
 
-export const execute = ({ input }) => /* your logic here */;
+export const execute = async ({ input }) => /* your logic here */;
 ```
 
 Then import and add it to the `tools` array in `model.js`.
@@ -101,7 +100,7 @@ Edit `config.json` to set your desired model and message:
 ```json
 {
     "model": "gpt-4o",
-    "message": "Convert the text 'hello world' to uppercase."
+    "message": "Get a random user from the FakerAPI"
 }
 ```
 
