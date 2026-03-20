@@ -1,16 +1,17 @@
-# js-ai-openrouter-model
+# js-ai-openrouter-agent
 
 ## Description
 
-A minimal Node.js application demonstrating how to call an AI model via the [OpenRouter](https://openrouter.ai) API. The input message and model are read from a configuration file, and the AI response is printed to the console.
+A Node.js AI agent that communicates with AI models via the [OpenRouter](https://openrouter.ai) API. The agent supports multi-turn conversations and function calling — it automatically executes tools requested by the model and feeds results back until a final response is produced.
 
 **File structure:**
 
 | File | Purpose |
 |------|---------|
 | `ai.js` | Handles all communication with the OpenRouter API |
-| `main.js` | Entry point — reads config and displays the AI response |
-| `config.json` | Stores the model name and input message |
+| `agent.js` | Agent loop — manages messages, tool calls, and iteration control |
+| `app.js` | Entry point — reads config, defines tools, and starts the agent |
+| `config.json` | Stores the model name, input message, and max iterations |
 | `.key` | Stores your OpenRouter API key (never commit this file) |
 
 ## Usage
@@ -27,21 +28,50 @@ Replace the placeholder in `.key` with your actual OpenRouter API key:
 sk-or-xxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-**3. Configure the message and model**
+**3. Configure the agent**
 
-Edit `config.json` to set your desired model and message:
+Edit `config.json` to set your desired model, message, and maximum agent iterations:
 
 ```json
 {
     "model": "gpt-4o",
-    "message": "Hello! What can you do?"
+    "message": "Hello! What can you do?",
+    "maxIterations": 10
 }
 ```
 
-**4. Run the application**
+`maxIterations` caps the number of model calls the agent will make before throwing an error. This prevents infinite loops in case of unexpected model behaviour.
 
-```bash
-node main.js
+**4. Add tools (optional)**
+
+Register tools in the `tools` array in `app.js`. Each tool requires a `definition` (sent to the model) and an `execute` function (called when the model uses the tool):
+
+```js
+const tools = [
+    {
+        definition: {
+            name: 'get_weather',
+            description: 'Get the current weather for a city',
+            parameters: {
+                type: 'object',
+                properties: {
+                    city: { type: 'string', description: 'City name' }
+                },
+                required: ['city']
+            }
+        },
+        execute: async ({ city }) => {
+            // fetch and return weather data
+            return { temperature: 22, condition: 'sunny' };
+        }
+    }
+];
 ```
 
-The AI response will be printed to the console.
+**5. Run the application**
+
+```bash
+node app.js
+```
+
+The agent will loop, executing any tool calls made by the model, until a final text response is produced. Tool calls and their results are logged to the console as they happen.
