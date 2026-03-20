@@ -1,11 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 const { callAI } = require('./ai');
-const uppercase = require('./tools/uppercase.js');
+const uppercase = require('./tools/userapi.js');
 
 const config = JSON.parse(fs.readFileSync(path.join(__dirname, 'config.json'), 'utf8'));
 
-const tools = [uppercase];
+const tools = [userapi];
 
 // Response without tools
 callAI(config.model, config.message)
