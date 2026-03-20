@@ -1,30 +1,40 @@
-# js-ai-openrouter-model-tools-custom
+# js-ai-openrouter-model-mcp-custom
 
 ## Description
 
-A minimal Node.js application demonstrating how to call an AI model via the [OpenRouter](https://openrouter.ai) API with **custom tool support**. The model can invoke locally-defined tools during a conversation, and the results are fed back for a final response.
+A minimal Node.js application demonstrating how to call an AI model via the [OpenRouter](https://openrouter.ai) API where tools are exposed through an **MCP (Model Context Protocol) server** rather than imported directly into the model code.
 
 **File structure:**
 
 | File | Purpose |
 |------|---------|
 | `ai.js` | Handles all communication with the OpenRouter API |
-| `model.js` | Entry point — reads config, runs the conversation loop |
+| `model.js` | Entry point — connects to MCP server, discovers tools, runs the conversation loop |
+| `mcp-server.js` | MCP server exposing tools over stdio |
 | `config.json` | Stores the model name and input message |
 | `.key` | Stores your OpenRouter API key (never commit this file) |
-| `tools/sum.js` | Tool: returns the sum of two numbers |
-| `tools/uppercase.js` | Tool: converts a string to uppercase |
+| `tools/uppercase.js` | Tool reference (logic lives in `mcp-server.js`) |
 
-## How tools work
+## How it works
 
-Each tool file exports two things:
+Instead of importing tools directly, `model.js` starts `mcp-server.js` as a subprocess and communicates with it over stdio using the MCP protocol:
 
-- `definition` — describes the tool to the AI (name, description, parameters)
-- `execute` — the local function that runs when the AI calls the tool
+1. `model.js` connects to `mcp-server.js` via `StdioClientTransport`
+2. It calls `client.listTools()` to discover available tools — no direct imports
+3. Tool definitions are forwarded to the AI via the OpenRouter API
+4. When the AI responds with `tool_calls`, `model.js` calls `client.callTool()` to execute them through the MCP server
+5. The tool result is appended to the conversation and sent back for a final response
 
-The conversation flow:
+```
+model.js  <--stdio-->  mcp-server.js  (exposes: uppercase)
+    |
+    v
+OpenRouter API  (tool definitions from MCP)
+```
 
-1. **First call** — the user message is sent **without** tools. The model performs the task on its own (e.g. uppercasing by itself). Expected response:
+## Conversation flow
+
+**First call** — message sent **without** tools. The model answers on its own:
 
 ```json
 {
@@ -35,50 +45,40 @@ The conversation flow:
 }
 ```
 
-2. **Second call** — the same message is sent **with** tool definitions. The model now delegates the work to the `uppercase` tool instead of doing it itself. Expected response:
+**Second call** — message sent **with** tools discovered via MCP. If the model decides to delegate:
 
 ```json
 {
   "role": "assistant",
   "content": null,
-  "refusal": null,
-  "reasoning": null,
   "tool_calls": [
     {
       "type": "function",
-      "index": 0,
-      "id": "call_LfkctD3VZfREScI6wI5IgxDW",
+      "id": "call_...",
       "function": { "name": "uppercase", "arguments": "{\"text\":\"hello, world!\"}" }
     }
   ]
 }
 ```
 
-3. The tool is executed locally and the result is sent back for a final answer.
+The tool is executed via `client.callTool()` on the MCP server, and the result is sent back for a final answer.
 
 ## Adding a custom tool
 
-Create a new file in `tools/`, following this pattern:
+Add a new tool in `mcp-server.js` using `server.registerTool()`:
 
 ```js
-export const definition = {
-    type: "function",
-    name: "my_tool",
-    description: "What this tool does",
-    parameters: {
-        type: "object",
-        properties: {
-            input: { type: "string" }
-        },
-        required: ["input"],
-        additionalProperties: false
-    }
-};
-
-export const execute = ({ input }) => /* your logic here */;
+server.registerTool(
+    'my_tool',
+    {
+        description: 'What this tool does',
+        inputSchema: { input: z.string() },
+    },
+    async ({ input }) => ({
+        content: [{ type: 'text', text: /* your logic */ input }],
+    })
+);
 ```
-
-Then import and add it to the `tools` array in `model.js`.
 
 ## Usage
 
@@ -86,7 +86,13 @@ Then import and add it to the `tools` array in `model.js`.
 
 Requires Node.js v18 or higher (built-in `fetch` support).
 
-**2. Add your API key**
+**2. Install dependencies**
+
+```bash
+npm install
+```
+
+**3. Add your API key**
 
 Replace the placeholder in `.key` with your actual OpenRouter API key:
 
@@ -94,9 +100,9 @@ Replace the placeholder in `.key` with your actual OpenRouter API key:
 sk-or-xxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-**3. Configure the message and model**
+**4. Configure the message and model**
 
-Edit `config.json` to set your desired model and message:
+Edit `config.json`:
 
 ```json
 {
@@ -105,10 +111,8 @@ Edit `config.json` to set your desired model and message:
 }
 ```
 
-**4. Run the application**
+**5. Run the application**
 
 ```bash
 node model.js
 ```
-
-The AI response will be printed to the console.
