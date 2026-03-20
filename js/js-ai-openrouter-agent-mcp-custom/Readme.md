@@ -1,8 +1,10 @@
-# js-ai-openrouter-agent-tools-custom
+# js-ai-openrouter-agent-mcp-custom
 
 ## Description
 
 A Node.js AI agent that communicates with AI models via the [OpenRouter](https://openrouter.ai) API. The agent supports multi-turn conversations and function calling — it automatically executes tools requested by the model and feeds results back until a final response is produced.
+
+Tools are provided via a local [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server. The app spawns `mcp-server.js` as a subprocess, connects to it over stdio, and discovers available tools at runtime.
 
 **File structure:**
 
@@ -10,7 +12,8 @@ A Node.js AI agent that communicates with AI models via the [OpenRouter](https:/
 |------|---------|
 | `ai.js` | Handles all communication with the OpenRouter API |
 | `agent.js` | Agent loop — manages messages, tool calls, and iteration control |
-| `app.js` | Entry point — reads config, defines tools, and starts the agent |
+| `app.js` | Entry point — reads config, connects to MCP server, and starts the agent |
+| `mcp-server.js` | MCP server — registers and exposes tools over stdio |
 | `tools/uppercase.js` | Tool that converts a string to uppercase |
 | `config.json` | Stores the model name, input message, and max iterations |
 | `.key` | Stores your OpenRouter API key (never commit this file) |
@@ -21,7 +24,13 @@ A Node.js AI agent that communicates with AI models via the [OpenRouter](https:/
 
 Requires Node.js v18 or higher (built-in `fetch` support).
 
-**2. Add your API key**
+**2. Install dependencies**
+
+```bash
+npm install
+```
+
+**3. Add your API key**
 
 Replace the placeholder in `.key` with your actual OpenRouter API key:
 
@@ -29,7 +38,7 @@ Replace the placeholder in `.key` with your actual OpenRouter API key:
 sk-or-xxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-**3. Configure the agent**
+**4. Configure the agent**
 
 Edit `config.json` to set your desired model, message, and maximum agent iterations:
 
@@ -43,12 +52,12 @@ Edit `config.json` to set your desired model, message, and maximum agent iterati
 
 `maxIterations` caps the number of model calls the agent will make before throwing an error. This prevents infinite loops in case of unexpected model behaviour.
 
-**4. Add tools (optional)**
+**5. Add tools (optional)**
 
-Place tools in the `tools/` directory. Each tool must export a `definition` (sent to the model) and an `execute` function (called when the model uses the tool):
+Place tools in the `tools/` directory. Each tool must export a `definition` and an `execute` function:
 
 ```js
-const definition = {
+export const definition = {
     type: 'function',
     name: 'my_tool',
     description: 'What the tool does',
@@ -61,23 +70,31 @@ const definition = {
     }
 };
 
-const execute = ({ input }) => {
+export const execute = ({ input }) => {
     // process and return result
     return input;
 };
-
-module.exports = { definition, execute };
 ```
 
-Then import and pass the tool to `runAgent` in `app.js`:
+Then register the tool in `mcp-server.js`:
 
 ```js
-const myTool = require('./tools/my_tool');
+import { definition, execute } from './tools/my_tool.js';
+import { z } from 'zod';
 
-const response = await runAgent(model, message, [myTool], maxIterations);
+server.registerTool(
+    definition.name,
+    {
+        description: definition.description,
+        inputSchema: { input: z.string() },
+    },
+    async (args) => ({
+        content: [{ type: 'text', text: execute(args) }],
+    })
+);
 ```
 
-**5. Run the application**
+**6. Run the application**
 
 ```bash
 node app.js
@@ -86,7 +103,7 @@ node app.js
 The app runs the agent twice with the same message:
 
 1. **Without tools** — the model uppercases the text on its own
-2. **With the `uppercase` tool** — the model calls the tool to uppercase the text
+2. **With MCP tools** — the model calls the tool via the MCP server to uppercase the text
 
 Example output:
 
