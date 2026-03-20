@@ -1,4 +1,4 @@
-# js-ai-openrouter-agent-tools-custom
+# js-ai-openrouter-agent-tools-api
 
 ## Description
 
@@ -11,7 +11,7 @@ A Node.js AI agent that communicates with AI models via the [OpenRouter](https:/
 | `ai.js` | Handles all communication with the OpenRouter API |
 | `agent.js` | Agent loop — manages messages, tool calls, and iteration control |
 | `app.js` | Entry point — reads config, defines tools, and starts the agent |
-| `tools/uppercase.js` | Tool that converts a string to uppercase |
+| `tools/userapi.js` | Tool that fetches a random user from the FakerAPI |
 | `config.json` | Stores the model name, input message, and max iterations |
 | `.key` | Stores your OpenRouter API key (never commit this file) |
 
@@ -36,7 +36,7 @@ Edit `config.json` to set your desired model, message, and maximum agent iterati
 ```json
 {
     "model": "gpt-4o",
-    "message": "Convert the following text to uppercase: Hello, world!",
+    "message": "Get a random user from the FakerAPI",
     "maxIterations": 10
 }
 ```
@@ -85,16 +85,20 @@ node app.js
 
 The app runs the agent twice with the same message:
 
-1. **Without tools** — the model uppercases the text on its own
-2. **With the `uppercase` tool** — the model calls the tool to uppercase the text
+1. **Without tools** — the model answers on its own
+2. **With the `get_random_user` tool** — the model calls the tool to fetch a random user from the FakerAPI
 
 Example output:
 
 ```
-HELLO, WORLD!
-[agent] calling tool "uppercase" with { text: 'Hello, world!' }
-[agent] tool "uppercase" returned HELLO, WORLD!
-The text "Hello, world!" converted to uppercase is "HELLO, WORLD!".
+To get a random user from the FakerAPI, you can use a HTTP client to make a request to the API endpoint provided by FakerAPI or a similar service. If yougramming language like Python, you can use the `requests` library for this purpose.
+[agent] calling tool "get_random_user" with {}
+[agent] tool "get_random_user" returned { firstname: 'Maks', lastname: 'Wysocki', username: 'kucharski.dawid' }
+Here is a random user from the FakerAPI:
+
+- **First Name:** Maks
+- **Last Name:** Wysocki
+- **Username:** kucharski.dawid
 ```
 
 The agent will loop, executing any tool calls made by the model, until a final text response is produced. Tool calls and their results are logged to the console as they happen.
