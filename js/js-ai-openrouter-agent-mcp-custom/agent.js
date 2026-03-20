@@ -1,6 +1,6 @@
-const { callAI } = require('./ai');
+import { callAI } from './ai.js';
 
-async function runAgent(model, initialMessage, tools = [], maxIterations = 10) {
+export async function runAgent(model, initialMessage, tools = [], maxIterations = 10) {
     const messages = [{ role: 'user', content: initialMessage }];
     const toolMap = Object.fromEntries(tools.map(t => [t.definition.name, t]));
 
@@ -33,5 +33,3 @@ async function runAgent(model, initialMessage, tools = [], maxIterations = 10) {
 
     throw new Error(`Agent reached maximum iterations (${maxIterations}) without a final response`);
 }
-
-module.exports = { runAgent };
