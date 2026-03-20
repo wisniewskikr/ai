@@ -1,17 +1,17 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { z } from 'zod';
+import { definition, execute } from './tools/uppercase.js';
 
 const server = new McpServer({ name: 'tools-server', version: '1.0.0' });
 
 server.registerTool(
-    'uppercase',
+    definition.name,
     {
-        description: 'Converts a string to uppercase letters',
-        inputSchema: { text: z.string() },
+        description: definition.description,
+        inputSchema: {},
     },
-    async ({ text }) => ({
-        content: [{ type: 'text', text: text.toUpperCase() }],
+    async () => ({
+        content: [{ type: 'text', text: JSON.stringify(await execute()) }],
     })
 );
 
