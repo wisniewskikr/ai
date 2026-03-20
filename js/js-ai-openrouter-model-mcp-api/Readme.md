@@ -1,4 +1,4 @@
-# js-ai-openrouter-model-mcp-custom
+# js-ai-openrouter-model-mcp-api
 
 ## Description
 
@@ -13,7 +13,7 @@ A minimal Node.js application demonstrating how to call an AI model via the [Ope
 | `mcp-server.js` | MCP server exposing tools over stdio |
 | `config.json` | Stores the model name and input message |
 | `.key` | Stores your OpenRouter API key (never commit this file) |
-| `tools/uppercase.js` | Tool reference (logic lives in `mcp-server.js`) |
+| `tools/userapi.js` | Tool definition and execution logic for `get_random_user` |
 
 ## How it works
 
@@ -26,7 +26,7 @@ Instead of importing tools directly, `model.js` starts `mcp-server.js` as a subp
 5. The tool result is appended to the conversation and sent back for a final response
 
 ```
-model.js  <--stdio-->  mcp-server.js  (exposes: uppercase)
+model.js  <--stdio-->  mcp-server.js  (exposes: get_random_user)
     |
     v
 OpenRouter API  (tool definitions from MCP)
@@ -36,28 +36,28 @@ OpenRouter API  (tool definitions from MCP)
 
 **First call** — message sent **without** tools. The model answers on its own:
 
-```json
+```
+--- Response without tools ---
 {
-  "role": "assistant",
-  "content": "HELLO, WORLD!",
-  "refusal": null,
-  "reasoning": null
+  role: 'assistant',
+  content: "To get a random user using the Faker library, you first need to install the Faker library, if you haven't already
+...
 }
 ```
 
-**Second call** — message sent **with** tools discovered via MCP. If the model decides to delegate:
+**Second call** — message sent **with** tools discovered via MCP. The model calls `get_random_user`, the result is sent back, and the model returns a final answer:
 
-```json
+```
+--- Response with tools via MCP ---
 {
-  "role": "assistant",
-  "content": null,
-  "tool_calls": [
-    {
-      "type": "function",
-      "id": "call_...",
-      "function": { "name": "uppercase", "arguments": "{\"text\":\"hello, world!\"}" }
-    }
-  ]
+  role: 'assistant',
+  content: 'Here is a random user generated from the FakerAPI:\n' +
+    '\n' +
+    '- **First Name:** Kacper\n' +
+    '- **Last Name:** Rutkowska\n' +
+    '- **Username:** gajewski.mateusz',
+  refusal: null,
+  reasoning: null
 }
 ```
 
@@ -65,17 +65,19 @@ The tool is executed via `client.callTool()` on the MCP server, and the result i
 
 ## Adding a custom tool
 
-Add a new tool in `mcp-server.js` using `server.registerTool()`:
+Create a new file in `tools/` exporting `definition` and `execute`, then import and register it in `mcp-server.js`:
 
 ```js
+import { definition, execute } from './tools/mytool.js';
+
 server.registerTool(
-    'my_tool',
+    definition.name,
     {
-        description: 'What this tool does',
-        inputSchema: { input: z.string() },
+        description: definition.description,
+        inputSchema: {},
     },
-    async ({ input }) => ({
-        content: [{ type: 'text', text: /* your logic */ input }],
+    async () => ({
+        content: [{ type: 'text', text: JSON.stringify(await execute()) }],
     })
 );
 ```
@@ -107,7 +109,7 @@ Edit `config.json`:
 ```json
 {
     "model": "gpt-4o",
-    "message": "Convert the text 'hello world' to uppercase."
+    "message": "Get me a random user."
 }
 ```
 
