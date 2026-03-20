@@ -1,4 +1,4 @@
-# js-ai-openrouter-agent
+# js-ai-openrouter-agent-tools-custom
 
 ## Description
 
@@ -11,6 +11,7 @@ A Node.js AI agent that communicates with AI models via the [OpenRouter](https:/
 | `ai.js` | Handles all communication with the OpenRouter API |
 | `agent.js` | Agent loop — manages messages, tool calls, and iteration control |
 | `app.js` | Entry point — reads config, defines tools, and starts the agent |
+| `tools/uppercase.js` | Tool that converts a string to uppercase |
 | `config.json` | Stores the model name, input message, and max iterations |
 | `.key` | Stores your OpenRouter API key (never commit this file) |
 
@@ -35,7 +36,7 @@ Edit `config.json` to set your desired model, message, and maximum agent iterati
 ```json
 {
     "model": "gpt-4o",
-    "message": "Hello! What can you do?",
+    "message": "Convert the following text to uppercase: Hello, world!",
     "maxIterations": 10
 }
 ```
@@ -44,34 +45,56 @@ Edit `config.json` to set your desired model, message, and maximum agent iterati
 
 **4. Add tools (optional)**
 
-Register tools in the `tools` array in `app.js`. Each tool requires a `definition` (sent to the model) and an `execute` function (called when the model uses the tool):
+Place tools in the `tools/` directory. Each tool must export a `definition` (sent to the model) and an `execute` function (called when the model uses the tool):
 
 ```js
-const tools = [
-    {
-        definition: {
-            name: 'get_weather',
-            description: 'Get the current weather for a city',
-            parameters: {
-                type: 'object',
-                properties: {
-                    city: { type: 'string', description: 'City name' }
-                },
-                required: ['city']
-            }
+const definition = {
+    type: 'function',
+    name: 'my_tool',
+    description: 'What the tool does',
+    parameters: {
+        type: 'object',
+        properties: {
+            input: { type: 'string' }
         },
-        execute: async ({ city }) => {
-            // fetch and return weather data
-            return { temperature: 22, condition: 'sunny' };
-        }
+        required: ['input']
     }
-];
+};
+
+const execute = ({ input }) => {
+    // process and return result
+    return input;
+};
+
+module.exports = { definition, execute };
+```
+
+Then import and pass the tool to `runAgent` in `app.js`:
+
+```js
+const myTool = require('./tools/my_tool');
+
+const response = await runAgent(model, message, [myTool], maxIterations);
 ```
 
 **5. Run the application**
 
 ```bash
 node app.js
+```
+
+The app runs the agent twice with the same message:
+
+1. **Without tools** — the model uppercases the text on its own
+2. **With the `uppercase` tool** — the model calls the tool to uppercase the text
+
+Example output:
+
+```
+HELLO, WORLD!
+[agent] calling tool "uppercase" with { text: 'Hello, world!' }
+[agent] tool "uppercase" returned HELLO, WORLD!
+The text "Hello, world!" converted to uppercase is "HELLO, WORLD!".
 ```
 
 The agent will loop, executing any tool calls made by the model, until a final text response is produced. Tool calls and their results are logged to the console as they happen.
