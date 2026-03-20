@@ -1,0 +1,9 @@
+{
+    "name": "js-ai-openrouter-model-mcp-custom",
+    "version": "1.0.0",
+    "type": "module",
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.12.0",
+        "zod": "^3.25.0"
+    }
+}

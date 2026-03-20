@@ -1,0 +1,4 @@
+{
+    "model": "gpt-4o",
+    "message": "Convert the following text to uppercase: Hello, world!"
+}
