@@ -1,5 +1,5 @@
 {
     "model": "gpt-4o",
-    "message": "Convert the following text to uppercase: Hello, world!",
+    "message": "Get a random user from the FakerAPI",
     "maxIterations": 10
 }
