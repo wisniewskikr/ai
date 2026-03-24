@@ -4,20 +4,20 @@
 
 A Node.js AI agent that communicates with AI models via the [OpenRouter](https://openrouter.ai) API. The agent supports multi-turn conversations and function calling — it automatically executes tools requested by the model and feeds results back until a final response is produced.
 
-Tools are provided via a local [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server. The app spawns `mcp-server.js` as a subprocess, connects to it over stdio, and discovers available tools at runtime.
+Tools are provided via a local [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server. The app spawns `src/mcp/client.js` as a subprocess, connects to it over stdio, and discovers available tools at runtime.
 
 **File structure:**
 
 | File | Purpose |
 |------|---------|
-| `ai.js` | Handles all communication with the OpenRouter API |
-| `agent.js` | Agent loop — manages messages, tool calls, and iteration control |
+| `src/native/openrouter.js` | Handles all communication with the OpenRouter API |
+| `src/native/agent.js` | Agent loop — manages messages, tool calls, and iteration control |
+| `src/native/tools.js` | Spawns the MCP server, connects the client, and returns wrapped tools |
+| `src/mcp/client.js` | MCP server — registers and exposes tools over stdio |
+| `src/tools/uppercase.js` | Tool that converts a string to uppercase |
 | `app.js` | Entry point — reads config and starts the agent |
-| `tools.js` | Spawns the MCP server, connects the client, and returns wrapped tools |
-| `mcp-server.js` | MCP server — registers and exposes tools over stdio |
-| `tools/uppercase.js` | Tool that converts a string to uppercase |
 | `config.json` | Stores the model name, input message, and max iterations |
-| `.key` | Stores your OpenRouter API key (never commit this file) |
+| `.env` | Stores your OpenRouter API key (never commit this file) |
 
 ## Usage
 
@@ -33,10 +33,10 @@ npm install
 
 **3. Add your API key**
 
-Replace the placeholder in `.key` with your actual OpenRouter API key:
+Replace the placeholder in `.env` with your actual OpenRouter API key:
 
 ```
-sk-or-xxxxxxxxxxxxxxxxxxxxxxxx
+OPENROUTER_API_KEY=sk-or-xxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 **4. Configure the agent**
@@ -55,7 +55,7 @@ Edit `config.json` to set your desired model, message, and maximum agent iterati
 
 **5. Add tools (optional)**
 
-Place tools in the `tools/` directory. Each tool must export a `definition` and an `execute` function:
+Place tools in the `src/tools/` directory. Each tool must export a `definition` and an `execute` function:
 
 ```js
 export const definition = {
@@ -77,10 +77,10 @@ export const execute = ({ input }) => {
 };
 ```
 
-Then register the tool in `mcp-server.js`:
+Then register the tool in `src/mcp/client.js`:
 
 ```js
-import { definition, execute } from './tools/my_tool.js';
+import { definition, execute } from '../tools/my_tool.js';
 import { z } from 'zod';
 
 server.registerTool(
