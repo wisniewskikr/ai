@@ -1,20 +1,14 @@
-import { readFileSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { runAgent } from './src/native/agent.js';
-import { getTools } from './src/native/tools.js';
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+import { htmlToPdf } from "./src/native/tools.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const config = JSON.parse(readFileSync(join(__dirname, 'config.json'), 'utf8'));
 
-const { tools, client } = await getTools();
+const htmlPath = "workspace/input/demo.html";
+const outputPath = join(__dirname, "workspace/output/demo.pdf");
 
-// Run the agent without tools — model uppercases by itself
-const response1 = await runAgent(config.model, config.message, [], config.maxIterations);
-console.log(response1);
+console.log(`Converting ${htmlPath} → workspace/output/demo.pdf ...`);
 
-// Run the agent with MCP tools
-const response2 = await runAgent(config.model, config.message, tools, config.maxIterations);
-console.log(response2);
+await htmlToPdf(htmlPath, outputPath);
 
-await client.close();
+console.log("Done.");

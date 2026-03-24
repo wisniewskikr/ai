@@ -1,32 +1,52 @@
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { readFile, mkdir } from "fs/promises";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+import puppeteer from "puppeteer";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const PROJECT_ROOT = join(__dirname, "../..");
 
-export async function getTools() {
-    const transport = new StdioClientTransport({
-        command: 'node',
-        args: [join(__dirname, '../mcp/client.js')],
-    });
+const ensureDir = async (dir) => {
+  await mkdir(dir, { recursive: true });
+};
 
-    const client = new Client({ name: 'app-client', version: '1.0.0' });
-    await client.connect(transport);
+/**
+ * Convert an HTML file to PDF using Puppeteer.
+ * @param {string} htmlPath - Path to HTML file relative to project root
+ * @param {string} outputPath - Absolute path for the output PDF
+ * @param {object} options - PDF options (format, landscape, margin, printBackground)
+ */
+export async function htmlToPdf(htmlPath, outputPath, options = {}) {
+  const fullHtmlPath = join(PROJECT_ROOT, htmlPath);
 
-    const { tools: mcpTools } = await client.listTools();
+  await readFile(fullHtmlPath); // throws if file not found
 
-    const tools = mcpTools.map(tool => ({
-        definition: {
-            name: tool.name,
-            description: tool.description,
-            parameters: tool.inputSchema,
-        },
-        execute: async (args) => {
-            const result = await client.callTool({ name: tool.name, arguments: args });
-            return result.content[0].text;
-        },
-    }));
+  await ensureDir(dirname(outputPath));
 
-    return { tools, client };
+  const pdfOptions = {
+    path: outputPath,
+    format: options.format || "A4",
+    landscape: options.landscape || false,
+    printBackground: options.printBackground !== false,
+    margin: options.margin || {
+      top: "20mm",
+      right: "20mm",
+      bottom: "20mm",
+      left: "20mm"
+    }
+  };
+
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"]
+  });
+
+  try {
+    const page = await browser.newPage();
+    await page.goto(`file://${fullHtmlPath}`, { waitUntil: "networkidle0" });
+    await page.pdf(pdfOptions);
+  } finally {
+    await browser.close();
+  }
 }
