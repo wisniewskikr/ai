@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export async function callAI(model, messages, tools = []) {
-    const apiKey = readFileSync(join(__dirname, '.key'), 'utf8').trim();
+    const apiKey = readFileSync(join(__dirname, '../../.key'), 'utf8').trim();
 
     if (typeof messages === 'string') {
         messages = [{ role: 'user', content: messages }];

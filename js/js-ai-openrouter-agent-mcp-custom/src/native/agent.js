@@ -1,4 +1,4 @@
-import { callAI } from '../../ai.js';
+import { callAI } from './openrouter.js';
 
 export async function runAgent(model, initialMessage, tools = [], maxIterations = 10) {
     const messages = [{ role: 'user', content: initialMessage }];
