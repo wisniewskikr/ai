@@ -1,0 +1,54 @@
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: join(__dirname, '../../.env') });
+
+export async function callAI(model, messages, tools = []) {
+    const apiKey = process.env.OPENROUTER_API_KEY;
+
+    if (typeof messages === 'string') {
+        messages = [{ role: 'user', content: messages }];
+    }
+
+    const body = { model, messages };
+
+    if (tools.length > 0) {
+        body.tools = tools.map(t => ({
+            type: 'function',
+            function: {
+                name: t.definition.name,
+                description: t.definition.description,
+                parameters: t.definition.parameters,
+            }
+        }));
+    }
+
+    const maxRetries = 3;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            return data.choices[0].message;
+        }
+
+        const error = await response.text();
+        if (response.status >= 500 && attempt < maxRetries) {
+            const delay = attempt * 2000;
+            console.warn(`[ai] ${response.status} error, retrying in ${delay}ms... (attempt ${attempt}/${maxRetries})`);
+            await new Promise(r => setTimeout(r, delay));
+            continue;
+        }
+
+        throw new Error(`OpenRouter API error ${response.status}: ${error}`);
+    }
+}
