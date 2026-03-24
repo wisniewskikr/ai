@@ -1,6 +1,7 @@
 import { callAI } from './openrouter.js';
+import config from '../../config.json' with { type: 'json' };
 
-export async function runAgent(model, initialMessage, tools = [], maxIterations = 10) {
+export async function runAgent(model, initialMessage, tools = [], maxIterations = config.maxIterations) {
     const messages = [{ role: 'user', content: initialMessage }];
     const toolMap = Object.fromEntries(tools.map(t => [t.definition.name, t]));
 
