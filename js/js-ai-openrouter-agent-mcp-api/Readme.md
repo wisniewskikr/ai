@@ -1,4 +1,4 @@
-# js-ai-openrouter-agent-mcp-custom
+# js-ai-openrouter-agent-mcp-api
 
 ## Description
 
@@ -14,7 +14,7 @@ Tools are provided via a local [Model Context Protocol (MCP)](https://modelconte
 | `src/native/agent.js` | Agent loop — manages messages, tool calls, and iteration control |
 | `src/native/tools.js` | Spawns the MCP server, connects the client, and returns wrapped tools |
 | `src/mcp/client.js` | MCP server — registers and exposes tools over stdio |
-| `src/tools/uppercase.js` | Tool that converts a string to uppercase |
+| `src/tools/userapi.js` | Tool that fetches a random user from the FakerAPI |
 | `app.js` | Entry point — reads config and starts the agent |
 | `config.json` | Stores the model name, input message, and max iterations |
 | `.env` | Stores your OpenRouter API key (never commit this file) |
@@ -46,7 +46,7 @@ Edit `config.json` to set your desired model, message, and maximum agent iterati
 ```json
 {
     "model": "gpt-4o",
-    "message": "Convert the following text to uppercase: Hello, world!",
+    "message": "Get a random user from the FakerAPI",
     "maxIterations": 10
 }
 ```
@@ -64,16 +64,14 @@ export const definition = {
     description: 'What the tool does',
     parameters: {
         type: 'object',
-        properties: {
-            input: { type: 'string' }
-        },
-        required: ['input']
+        properties: {},
+        required: []
     }
 };
 
-export const execute = ({ input }) => {
-    // process and return result
-    return input;
+export const execute = async () => {
+    // fetch and return result
+    return { key: 'value' };
 };
 ```
 
@@ -81,16 +79,15 @@ Then register the tool in `src/mcp/client.js`:
 
 ```js
 import { definition, execute } from '../tools/my_tool.js';
-import { z } from 'zod';
 
 server.registerTool(
     definition.name,
     {
         description: definition.description,
-        inputSchema: { input: z.string() },
+        inputSchema: {},
     },
-    async (args) => ({
-        content: [{ type: 'text', text: execute(args) }],
+    async () => ({
+        content: [{ type: 'text', text: JSON.stringify(await execute()) }],
     })
 );
 ```
@@ -103,16 +100,16 @@ npm run start
 
 The app runs the agent twice with the same message:
 
-1. **Without tools** — the model uppercases the text on its own
-2. **With MCP tools** — the model calls the tool via the MCP server to uppercase the text
+1. **Without tools** — the model responds based on its own knowledge
+2. **With MCP tools** — the model calls the tool via the MCP server to fetch a real random user
 
 Example output:
 
 ```
-HELLO, WORLD!
-[agent] calling tool "uppercase" with { text: 'Hello, world!' }
-[agent] tool "uppercase" returned HELLO, WORLD!
-The text "Hello, world!" converted to uppercase is "HELLO, WORLD!".
+Here is a randomly generated user: John Doe (@johndoe123).
+[agent] calling tool "get_random_user" with {}
+[agent] tool "get_random_user" returned {"firstname":"Anna","lastname":"Kowalska","username":"anna_kowalska"}
+The random user fetched from the FakerAPI is Anna Kowalska, username: anna_kowalska.
 ```
 
 The agent will loop, executing any tool calls made by the model, until a final text response is produced. Tool calls and their results are logged to the console as they happen.
