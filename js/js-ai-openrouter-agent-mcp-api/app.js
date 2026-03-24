@@ -1,8 +1,8 @@
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { runAgent } from './agent.js';
-import { getTools } from './tools.js';
+import { runAgent } from './src/native/agent.js';
+import { getTools } from './src/native/tools.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const config = JSON.parse(readFileSync(join(__dirname, 'config.json'), 'utf8'));

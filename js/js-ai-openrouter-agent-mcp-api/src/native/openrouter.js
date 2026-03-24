@@ -1,11 +1,12 @@
-import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: join(__dirname, '../../.env') });
 
 export async function callAI(model, messages, tools = []) {
-    const apiKey = readFileSync(join(__dirname, '.key'), 'utf8').trim();
+    const apiKey = process.env.OPENROUTER_API_KEY;
 
     if (typeof messages === 'string') {
         messages = [{ role: 'user', content: messages }];

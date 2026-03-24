@@ -1,23 +1,23 @@
-# js-ai-openrouter-agent-mcp-api
+# js-ai-openrouter-agent-mcp-custom
 
 ## Description
 
 A Node.js AI agent that communicates with AI models via the [OpenRouter](https://openrouter.ai) API. The agent supports multi-turn conversations and function calling — it automatically executes tools requested by the model and feeds results back until a final response is produced.
 
-Tools are provided via a local [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server. The app spawns `mcp-server.js` as a subprocess, connects to it over stdio, and discovers available tools at runtime.
+Tools are provided via a local [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server. The app spawns `src/mcp/client.js` as a subprocess, connects to it over stdio, and discovers available tools at runtime.
 
 **File structure:**
 
 | File | Purpose |
 |------|---------|
-| `ai.js` | Handles all communication with the OpenRouter API |
-| `agent.js` | Agent loop — manages messages, tool calls, and iteration control |
+| `src/native/openrouter.js` | Handles all communication with the OpenRouter API |
+| `src/native/agent.js` | Agent loop — manages messages, tool calls, and iteration control |
+| `src/native/tools.js` | Spawns the MCP server, connects the client, and returns wrapped tools |
+| `src/mcp/client.js` | MCP server — registers and exposes tools over stdio |
+| `src/tools/uppercase.js` | Tool that converts a string to uppercase |
 | `app.js` | Entry point — reads config and starts the agent |
-| `tools.js` | Spawns the MCP server, connects the client, and returns wrapped tools |
-| `mcp-server.js` | MCP server — registers and exposes tools over stdio |
-| `tools/userapi.js` | Tool that fetches a random user from the FakerAPI |
 | `config.json` | Stores the model name, input message, and max iterations |
-| `.key` | Stores your OpenRouter API key (never commit this file) |
+| `.env` | Stores your OpenRouter API key (never commit this file) |
 
 ## Usage
 
@@ -33,10 +33,10 @@ npm install
 
 **3. Add your API key**
 
-Replace the placeholder in `.key` with your actual OpenRouter API key:
+Replace the placeholder in `.env` with your actual OpenRouter API key:
 
 ```
-sk-or-xxxxxxxxxxxxxxxxxxxxxxxx
+OPENROUTER_API_KEY=sk-or-xxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 **4. Configure the agent**
@@ -46,7 +46,7 @@ Edit `config.json` to set your desired model, message, and maximum agent iterati
 ```json
 {
     "model": "gpt-4o",
-    "message": "Get me a random user.",
+    "message": "Convert the following text to uppercase: Hello, world!",
     "maxIterations": 10
 }
 ```
@@ -55,7 +55,7 @@ Edit `config.json` to set your desired model, message, and maximum agent iterati
 
 **5. Add tools (optional)**
 
-Place tools in the `tools/` directory. Each tool must export a `definition` and an `execute` function:
+Place tools in the `src/tools/` directory. Each tool must export a `definition` and an `execute` function:
 
 ```js
 export const definition = {
@@ -64,58 +64,55 @@ export const definition = {
     description: 'What the tool does',
     parameters: {
         type: 'object',
-        properties: {},
-        required: [],
-        additionalProperties: false,
+        properties: {
+            input: { type: 'string' }
+        },
+        required: ['input']
     }
 };
 
-export const execute = async () => {
-    // fetch data and return result
-    return { key: 'value' };
+export const execute = ({ input }) => {
+    // process and return result
+    return input;
 };
 ```
 
-Then register the tool in `mcp-server.js`:
+Then register the tool in `src/mcp/client.js`:
 
 ```js
-import { definition, execute } from './tools/my_tool.js';
+import { definition, execute } from '../tools/my_tool.js';
+import { z } from 'zod';
 
 server.registerTool(
     definition.name,
     {
         description: definition.description,
-        inputSchema: {},
+        inputSchema: { input: z.string() },
     },
-    async () => {
-        const result = await execute();
-        return { content: [{ type: 'text', text: JSON.stringify(result) }] };
-    }
+    async (args) => ({
+        content: [{ type: 'text', text: execute(args) }],
+    })
 );
 ```
 
 **6. Run the application**
 
 ```bash
-node app.js
+npm run start
 ```
 
 The app runs the agent twice with the same message:
 
-1. **Without tools** — the model attempts to answer on its own
-2. **With MCP tools** — the model calls the tool via the MCP server to fetch a real random user
+1. **Without tools** — the model uppercases the text on its own
+2. **With MCP tools** — the model calls the tool via the MCP server to uppercase the text
 
 Example output:
 
 ```
-To get a random user using the FakerAPI, you can use the `Faker` library in Python. The Faker library allows you to generate fake data, including user profiles.
-...
-[agent] calling tool "get_random_user" with {}
-[agent] tool "get_random_user" returned {"firstname":"Dagmara","lastname":"Kaźmierczak","username":"omichalska"}
-Here is a random user generated by the FakerAPI:
-
-- Name: Dagmara Kaźmierczak
-- Username: omichalska
+HELLO, WORLD!
+[agent] calling tool "uppercase" with { text: 'Hello, world!' }
+[agent] tool "uppercase" returned HELLO, WORLD!
+The text "Hello, world!" converted to uppercase is "HELLO, WORLD!".
 ```
 
 The agent will loop, executing any tool calls made by the model, until a final text response is produced. Tool calls and their results are logged to the console as they happen.
