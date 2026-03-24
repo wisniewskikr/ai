@@ -8,7 +8,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export async function getTools() {
     const transport = new StdioClientTransport({
         command: 'node',
-        args: [join(__dirname, '../../mcp-server.js')],
+        args: [join(__dirname, '../mcp/client.js')],
     });
 
     const client = new Client({ name: 'app-client', version: '1.0.0' });
