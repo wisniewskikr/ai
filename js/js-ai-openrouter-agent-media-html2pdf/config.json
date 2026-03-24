@@ -1,5 +1,7 @@
 {
     "model": "gpt-4o",
     "message": "Convert the following text to uppercase: Hello, world!",
-    "maxIterations": 10
+    "maxIterations": 10,
+    "input": "workspace/input/demo.html",
+    "output": "workspace/output/demo.pdf"
 }
