@@ -98,7 +98,7 @@ server.registerTool(
 **6. Run the application**
 
 ```bash
-node app.js
+npm run start
 ```
 
 The app runs the agent twice with the same message:
