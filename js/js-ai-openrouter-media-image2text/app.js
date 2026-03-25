@@ -1,43 +1,84 @@
 /**
- * Image Recognition Agent
+ * Image to Text
+ * Asks which image to analyze and prints an AI description.
  */
 
-import { createMcpClient, listMcpTools } from "./src/mcp/client.js";
-import { run } from "./src/agent.js";
-import { nativeTools } from "./src/native/tools.js";
+import { createInterface } from "readline";
+import { readdir, readFile } from "fs/promises";
+import { join, extname } from "path";
+import { vision } from "./src/native/vision.js";
 import log from "./src/helpers/logger.js";
-import { logStats } from "./src/helpers/stats.js";
 
-const CLASSIFICATION_QUERY = `Classify all images in the images/ folder based on the character knowledge files.
-Read the knowledge files first, then analyze each image and copy it to the appropriate character folder(s).`;
+const IMAGES_FOLDER = "images";
+
+const MIME_TYPES = {
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".gif": "image/gif",
+  ".webp": "image/webp"
+};
+
+const ask = (rl, question) =>
+  new Promise((resolve) => rl.question(question, resolve));
+
+const listImages = async () => {
+  const entries = await readdir(IMAGES_FOLDER, { withFileTypes: true });
+  return entries
+    .filter((e) => e.isFile() && /\.(jpg|jpeg|png|gif|webp)$/i.test(e.name))
+    .map((e) => e.name);
+};
 
 const main = async () => {
-  log.box("Image Recognition Agent\nClassify images by character");
+  log.box("Image to Text\nAI image description tool");
 
-  let mcpClient;
+  const images = await listImages();
 
-  try {
-    log.start("Connecting to MCP server...");
-    mcpClient = await createMcpClient();
-    const mcpTools = await listMcpTools(mcpClient);
-    log.success(`MCP: ${mcpTools.map((tool) => tool.name).join(", ")}`);
-    log.success(`Native: ${nativeTools.map((tool) => tool.name).join(", ")}`);
+  if (images.length === 0) {
+    log.error("No images found", `Place images in the ${IMAGES_FOLDER}/ folder`);
+    process.exit(1);
+  }
 
-    log.start("Starting image classification...");
-    const result = await run(CLASSIFICATION_QUERY, { mcpClient, mcpTools });
-    log.success("Classification complete");
-    log.info(result.response);
-    logStats();
-  } catch (error) {
-    throw error;
-  } finally {
-    if (mcpClient) {
-      await mcpClient.close().catch(() => {});
+  console.log("Available images:\n");
+  images.forEach((name, i) => console.log(`  ${i + 1}. ${name}`));
+  console.log();
+
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+
+  let selected;
+  while (!selected) {
+    const answer = await ask(rl, "Enter image number or filename: ");
+    const num = parseInt(answer, 10);
+    if (!isNaN(num) && num >= 1 && num <= images.length) {
+      selected = images[num - 1];
+    } else if (images.includes(answer.trim())) {
+      selected = answer.trim();
+    } else {
+      console.log("  Invalid selection, try again.\n");
     }
   }
+
+  rl.close();
+
+  log.start(`Analyzing ${selected}...`);
+
+  const imageBuffer = await readFile(join(IMAGES_FOLDER, selected));
+  const imageBase64 = imageBuffer.toString("base64");
+  const mimeType = MIME_TYPES[extname(selected).toLowerCase()] || "image/jpeg";
+
+  const description = await vision({
+    imageBase64,
+    mimeType,
+    question: "Describe this image in detail. What do you see?"
+  });
+
+  console.log();
+  log.box("Image Description");
+  console.log(description);
+  console.log();
 };
 
 main().catch((error) => {
-  log.error("Startup error", error.message);
+  log.error("Error", error.message);
   process.exit(1);
 });
