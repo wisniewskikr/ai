@@ -1,4 +1,9 @@
-import { OPENROUTER_API_KEY, resolveModelForProvider } from "../../config.js";
+export const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY?.trim() ?? "";
+export const AI_API_KEY = OPENROUTER_API_KEY;
+export const RESPONSES_API_ENDPOINT = "https://openrouter.ai/api/v1/responses";
+export const EXTRA_API_HEADERS = {};
+export const OPENROUTER_EXTRA_HEADERS = {};
+export const resolveModelForProvider = (model) => model;
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY?.trim() ?? "";
 const hasGeminiImageBackend = Boolean(GEMINI_API_KEY);

@@ -3,7 +3,7 @@ import {
   AI_API_KEY,
   EXTRA_API_HEADERS,
   RESPONSES_API_ENDPOINT
-} from "../../../config.js";
+} from "../config.js";
 import { recordUsage } from "./stats.js";
 
 const extractResponseText = (data) => {
