@@ -17,10 +17,32 @@ npm start
 
 ## What it does
 
-1. Reads files from `workspace/input/` through `files-mcp`
-2. Transcribes or analyzes audio with Gemini
-3. Generates speech to `workspace/output/` when asked
-4. Supports both local files and YouTube URLs
+### Audio → Text (analysis)
+
+- **Transcribe** audio to text with speaker labels, timestamps, emotion detection, and optional translation
+- **Analyze** audio content — music genre/tempo/instruments, speech patterns, sound identification
+- **Query** audio with any custom question ("What topics are discussed?", "How many speakers?")
+
+Supported input sources:
+- Local files in `workspace/input/` — MP3, WAV, AIFF, AAC, OGG, FLAC
+- YouTube URLs directly
+
+### Text → Audio (generation)
+
+- **Generate speech** (TTS) from text using 30 different Gemini voices (Kore, Puck, Aoede, etc.)
+- Style control via natural language: `"Say cheerfully: Hello!"`
+- Multi-speaker dialogue support (up to 2 voices)
+- Output saved as WAV files to `workspace/output/`
+
+## Example prompts
+
+```
+Transcribe workspace/input/audio.mp3
+Analyze the music in workspace/input/song.mp3
+What topics are discussed in this recording?
+Generate audio: Welcome to our demo
+Translate this recording to Spanish
+```
 
 ## Notes
 
