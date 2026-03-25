@@ -2,8 +2,8 @@
   "name": "js-ai-openrouter-vide2text",
   "type": "module",
   "scripts": {
-    "start": "node app.js",
-    "dev": "node --watch app.js"
+    "start": "node --env-file=.env app.js",
+    "dev": "node --watch --env-file=.env app.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1"

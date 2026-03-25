@@ -1,16 +1,28 @@
-import { resolveModelForProvider } from "../../config.js";
-
-// Validate Gemini API key
-if (!process.env.GEMINI_API_KEY) {
-  console.error(`\x1b[31mError: GEMINI_API_KEY environment variable is not set\x1b[0m`);
-  console.error("       Add it to the repo root .env file: GEMINI_API_KEY=...");
+// Validate API keys
+if (!process.env.OPENROUTER_API_KEY) {
+  console.error(`\x1b[31mError: OPENROUTER_API_KEY environment variable is not set\x1b[0m`);
+  console.error("       Add it to the .env file: OPENROUTER_API_KEY=...");
   process.exit(1);
 }
 
+if (!process.env.GEMINI_API_KEY) {
+  console.error(`\x1b[31mError: GEMINI_API_KEY environment variable is not set\x1b[0m`);
+  console.error("       Add it to the .env file: GEMINI_API_KEY=...");
+  process.exit(1);
+}
+
+export const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 export const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
+export const AI_API_KEY = OPENROUTER_API_KEY;
+export const RESPONSES_API_ENDPOINT = "https://openrouter.ai/api/v1/responses";
+export const EXTRA_API_HEADERS = {
+  "HTTP-Referer": "http://localhost",
+  "X-Title": "Video Processing Agent"
+};
+
 export const api = {
-  model: resolveModelForProvider("gpt-4.1"),
+  model: "openai/gpt-4.1",
   maxOutputTokens: 16384,
   instructions: `You are an autonomous video processing agent.
 
