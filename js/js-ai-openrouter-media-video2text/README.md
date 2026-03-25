@@ -1,17 +1,19 @@
-# 01_04_video
+# js-ai-openrouter-media-video2text
 
 Video analysis, transcription, extraction, and question answering with Gemini plus MCP file tools.
 
 ## Run
 
 ```bash
-npm run lesson4:video
+npm start
+# or
+npm run dev
 ```
 
 ## Required setup
 
-1. Copy `env.example` to `.env` in the repo root.
-2. Set one Responses API key: `OPENAI_API_KEY` or `OPENROUTER_API_KEY`.
+1. Copy `.env.example` to `.env` (or edit `.env` directly).
+2. Set `OPENROUTER_API_KEY` for the AI agent (OpenRouter).
 3. Set `GEMINI_API_KEY` for video processing.
 4. Put local videos in `workspace/input/` when not using YouTube URLs.
 
