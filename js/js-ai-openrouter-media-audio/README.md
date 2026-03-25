@@ -11,9 +11,11 @@ npm start
 ## Required setup
 
 1. Copy `.env.example` to `.env` in this folder.
-2. Set `OPENROUTER_API_KEY` for LLM orchestration.
-3. Set `GEMINI_API_KEY` for audio understanding and TTS.
+2. Set `OPENROUTER_API_KEY` for LLM orchestration — get one at [openrouter.ai](https://openrouter.ai).
+3. Set `GEMINI_API_KEY` for audio understanding and TTS — get one at [aistudio.google.com](https://aistudio.google.com).
 4. Put source files in `workspace/input/` when working with local audio.
+
+Both keys are required. `OPENROUTER_API_KEY` handles LLM orchestration only. `GEMINI_API_KEY` is needed for all audio tools (transcribe, analyze, generate).
 
 ## What it does
 

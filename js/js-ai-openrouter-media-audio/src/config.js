@@ -7,11 +7,10 @@ if (!process.env.OPENROUTER_API_KEY) {
   process.exit(1);
 }
 
-// Validate Gemini API key
+// Warn if Gemini API key is missing (audio tools will not work without it)
 if (!process.env.GEMINI_API_KEY) {
-  console.error(`\x1b[31mError: GEMINI_API_KEY environment variable is not set\x1b[0m`);
-  console.error("       Add it to the .env file: GEMINI_API_KEY=...");
-  process.exit(1);
+  console.warn(`\x1b[33mWarning: GEMINI_API_KEY is not set — audio tools (transcribe, analyze, generate) will not work\x1b[0m`);
+  console.warn("         Add it to the .env file: GEMINI_API_KEY=...");
 }
 
 export const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
