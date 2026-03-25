@@ -5,7 +5,8 @@ Frame-based video generation with OpenRouter or Gemini for frames and Kling via 
 ## Run
 
 ```bash
-npm run lesson4:video_generation
+npm install
+npm start
 ```
 
 ## Required setup
