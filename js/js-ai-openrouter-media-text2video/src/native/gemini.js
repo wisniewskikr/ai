@@ -3,11 +3,7 @@
  * Video analysis still uses native Gemini.
  */
 
-import {
-  OPENROUTER_API_KEY,
-  OPENROUTER_EXTRA_HEADERS
-} from "../../../config.js";
-import { gemini } from "../config.js";
+import { gemini, OPENROUTER_API_KEY, OPENROUTER_EXTRA_HEADERS } from "../config.js";
 import { recordGemini } from "../helpers/stats.js";
 import log from "../helpers/logger.js";
 

@@ -1,5 +1,25 @@
-import { OPENROUTER_API_KEY, resolveModelForProvider } from "../../config.js";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { join, dirname } from "node:path";
 
+// Load .env file into process.env
+const __dirname = dirname(fileURLToPath(import.meta.url));
+try {
+  const envContent = readFileSync(join(__dirname, "../.env"), "utf-8");
+  for (const line of envContent.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const idx = trimmed.indexOf("=");
+    if (idx === -1) continue;
+    const key = trimmed.slice(0, idx).trim();
+    const value = trimmed.slice(idx + 1).trim();
+    if (!(key in process.env)) process.env[key] = value;
+  }
+} catch {
+  // .env file not found, rely on existing process.env
+}
+
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY?.trim() ?? "";
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY?.trim() ?? "";
 const hasGeminiImageBackend = Boolean(GEMINI_API_KEY);
 const hasOpenRouterImageBackend = Boolean(OPENROUTER_API_KEY);
@@ -19,12 +39,18 @@ if (!process.env.REPLICATE_API_TOKEN) {
   process.exit(1);
 }
 
-export { GEMINI_API_KEY };
+export { GEMINI_API_KEY, OPENROUTER_API_KEY };
 export const IMAGE_BACKEND = hasOpenRouterImageBackend ? "openrouter" : "gemini";
 
+// Chat / Responses API (OpenRouter)
+export const AI_API_KEY = OPENROUTER_API_KEY;
+export const RESPONSES_API_ENDPOINT = "https://openrouter.ai/api/v1/responses";
+export const EXTRA_API_HEADERS = { "X-Title": "js-ai-openrouter-media-text2video" };
+export const OPENROUTER_EXTRA_HEADERS = EXTRA_API_HEADERS;
+
 export const api = {
-  model: resolveModelForProvider("gpt-4.1"),
-  visionModel: resolveModelForProvider("gpt-4.1"),
+  model: "openai/gpt-4.1",
+  visionModel: "openai/gpt-4.1",
   maxOutputTokens: 16384,
   instructions: `You are a video generation agent using JSON-based prompting for consistent frame generation.
 
