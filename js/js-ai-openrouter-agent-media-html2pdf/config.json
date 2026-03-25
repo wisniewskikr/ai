@@ -1,6 +1,0 @@
-{
-    "model": "gpt-4o",
-    "maxIterations": 10,
-    "input": "workspace/input/demo.html",
-    "output": "workspace/output/demo.pdf"
-}
