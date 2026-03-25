@@ -1,17 +1,17 @@
-# 01_04_audio
+# js-ai-openrouter-media-audio
 
 Audio transcription, analysis, and text-to-speech with Gemini plus MCP file tools.
 
 ## Run
 
 ```bash
-npm run lesson4:audio
+npm start
 ```
 
 ## Required setup
 
-1. Copy `env.example` to `.env` in the repo root.
-2. Set one Responses API key: `OPENAI_API_KEY` or `OPENROUTER_API_KEY`.
+1. Copy `.env.example` to `.env` in this folder.
+2. Set `OPENROUTER_API_KEY` for LLM orchestration.
 3. Set `GEMINI_API_KEY` for audio understanding and TTS.
 4. Put source files in `workspace/input/` when working with local audio.
 
