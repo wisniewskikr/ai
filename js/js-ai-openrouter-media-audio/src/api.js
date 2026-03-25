@@ -2,12 +2,7 @@
  * Responses API client — chat completions with tool support.
  */
 
-import { api } from "./config.js";
-import {
-  AI_API_KEY,
-  EXTRA_API_HEADERS,
-  RESPONSES_API_ENDPOINT
-} from "../../config.js";
+import { api, AI_API_KEY, EXTRA_API_HEADERS, RESPONSES_API_ENDPOINT } from "./config.js";
 import { recordUsage } from "./helpers/stats.js";
 
 const extractResponseText = (data) => {
