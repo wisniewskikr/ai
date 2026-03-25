@@ -1,0 +1,15 @@
+{
+  "name": "js-ai-openrouter-media-text2video",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "replicate": "^1.0.1"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0"
+  }
+}
