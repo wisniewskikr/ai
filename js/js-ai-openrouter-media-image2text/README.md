@@ -10,9 +10,10 @@ npm start
 
 ## Required setup
 
-1. Copy `.env.example` to `.env`.
-2. Set `OPENROUTER_API_KEY`.
-3. Put images in `workspace/input/`.
+1. Install dependencies: `npm install`.
+2. Copy `.env.example` to `.env`.
+3. Set `OPENROUTER_API_KEY`.
+4. Put images in `workspace/input/`.
 
 ## What it does
 
