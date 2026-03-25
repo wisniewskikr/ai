@@ -46,7 +46,17 @@ Edit `workspace/template.json` to change the default subject, style, colors, res
 
 The `output.filename` value is used as the base name for the generated image (e.g. `hello_world_1749959315686.png`).
 
-## REPL commands
+## Usage
 
-- `clear` — reset the conversation
-- `exit` — quit
+After running `npm start`, an interactive prompt appears where you type requests in plain English and the agent generates images accordingly:
+
+```
+You: Generate a Hello World image
+You: Make the letters bigger
+You: clear
+You: exit
+```
+
+Special commands:
+- `clear` — resets the conversation history (agent forgets previous messages)
+- `exit` — stops the program
