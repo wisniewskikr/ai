@@ -1,26 +1,52 @@
-# 01_04_json_image
+# js-ai-openrouter-media-text2image
 
-Token-efficient image generation from JSON prompt templates.
+Image generation agent using JSON-based prompt templates.
 
 ## Run
 
 ```bash
-npm run lesson4:json_image
+npm start
+# or
+npm run dev
 ```
 
 ## Required setup
 
-1. Copy `env.example` to `.env` in the repo root.
-2. Set one Responses API key: `OPENAI_API_KEY` or `OPENROUTER_API_KEY`.
-3. For image generation, set `OPENROUTER_API_KEY` or `GEMINI_API_KEY`.
+1. Copy `.env.example` to `.env` in this project folder.
+2. Set at least one image generation key:
+   - `OPENROUTER_API_KEY` — uses `google/gemini-3.1-flash-image-preview` via OpenRouter
+   - `GEMINI_API_KEY` — uses native Gemini image generation
+
+If both keys are present, OpenRouter takes priority.
 
 ## What it does
 
-1. Copies `workspace/template.json` into `workspace/prompts/`
-2. Edits only the subject section of the copied JSON
-3. Generates an image from the full JSON prompt
-4. Saves outputs to `workspace/output/`
+1. Reads `workspace/template.json` for subject, style, and technical settings
+2. Copies the template to `workspace/prompts/` (named after `output.filename` + timestamp)
+3. Edits only the `subject` section in the copied file to match the user's request
+4. Generates an image and saves it to `workspace/output/`
 
-## Notes
+## Customizing the template
 
-This example is built around reproducible prompt files rather than one-off raw prompts. If both keys are present, image generation prefers OpenRouter with `google/gemini-3.1-flash-image-preview`. Use `clear` to reset the conversation and `exit` to quit the REPL.
+Edit `workspace/template.json` to change the default subject, style, colors, resolution, and output filename:
+
+```json
+{
+  "output": {
+    "filename": "hello_world"
+  },
+  "subject": { ... },
+  "style": { ... },
+  "technical": {
+    "resolution": "2k",
+    "aspect_ratio": "16:9"
+  }
+}
+```
+
+The `output.filename` value is used as the base name for the generated image (e.g. `hello_world_1749959315686.png`).
+
+## REPL commands
+
+- `clear` — reset the conversation
+- `exit` — quit
