@@ -1,9 +1,4 @@
-import { api } from "../config.js";
-import {
-  AI_API_KEY,
-  EXTRA_API_HEADERS,
-  RESPONSES_API_ENDPOINT
-} from "../../../config.js";
+import { api, AI_API_KEY, EXTRA_API_HEADERS, RESPONSES_API_ENDPOINT } from "../config.js";
 import { extractResponseText } from "../helpers/response.js";
 import { recordUsage } from "../helpers/stats.js";
 

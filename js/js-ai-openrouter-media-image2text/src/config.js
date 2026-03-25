@@ -1,8 +1,10 @@
-import { resolveModelForProvider } from "../../config.js";
+export const AI_API_KEY = process.env.OPENROUTER_API_KEY;
+export const RESPONSES_API_ENDPOINT = "https://openrouter.ai/api/v1/responses";
+export const EXTRA_API_HEADERS = {};
 
 export const api = {
-  model: resolveModelForProvider("gpt-5.2"),
-  visionModel: resolveModelForProvider("gpt-5.2"),
+  model: "openai/gpt-4o",
+  visionModel: "openai/gpt-4o",
   maxOutputTokens: 16384,
   instructions: `You are an autonomous classification agent.
 
