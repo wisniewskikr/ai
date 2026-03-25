@@ -16,6 +16,11 @@ npm run dev
 2. Set `OPENROUTER_API_KEY` for the AI agent (OpenRouter).
 3. Set `GEMINI_API_KEY` for video processing.
 4. Put local videos in `workspace/input/` when not using YouTube URLs.
+5. Install dependencies:
+
+```bash
+npm install
+```
 
 ## What it does
 
