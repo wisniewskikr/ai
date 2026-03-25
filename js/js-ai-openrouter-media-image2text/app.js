@@ -9,7 +9,7 @@ import { join, extname } from "path";
 import { vision } from "./src/native/vision.js";
 import log from "./src/helpers/logger.js";
 
-const IMAGES_FOLDER = "images";
+const IMAGES_FOLDER = "workspace/input";
 
 const MIME_TYPES = {
   ".jpg": "image/jpeg",

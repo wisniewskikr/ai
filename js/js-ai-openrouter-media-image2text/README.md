@@ -12,11 +12,11 @@ npm start
 
 1. Copy `.env.example` to `.env`.
 2. Set `OPENROUTER_API_KEY`.
-3. Put images in `images/`.
+3. Put images in `workspace/input/`.
 
 ## What it does
 
-1. Lists all images found in `images/`
+1. Lists all images found in `workspace/input/`
 2. Prompts you to pick one by number or filename
 3. Sends the image to the AI vision model (`openai/gpt-4o`)
 4. Prints a detailed description to the console
