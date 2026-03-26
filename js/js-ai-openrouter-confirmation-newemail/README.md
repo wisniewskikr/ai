@@ -1,4 +1,4 @@
-# 01_05_confirmation
+# js-ai-openrouter-confirmation-newemail
 
 Interactive file-and-email agent with whitelist enforcement and a terminal confirmation step before sending email.
 
@@ -10,10 +10,11 @@ npm run lesson5:confirmation
 
 ## Required setup
 
-1. Copy `env.example` to `.env` in the repo root.
-2. Set one Responses API key: `OPENAI_API_KEY` or `OPENROUTER_API_KEY`.
-3. Set `RESEND_API_KEY` and `RESEND_FROM`.
-4. Edit `workspace/whitelist.json` with allowed recipients or domains.
+1. Run `npm install` to install dependencies.
+2. Copy `env.example` to `.env` in the repo root.
+3. Set one Responses API key: `OPENAI_API_KEY` or `OPENROUTER_API_KEY`.
+4. Set `RESEND_API_KEY` and `RESEND_FROM`.
+5. Edit `workspace/whitelist.json` with allowed recipients or domains.
 
 ## What it does
 
