@@ -1,0 +1,11 @@
+{
+  "name": "js-ai-openrouter-confirmation-newemail",
+  "type": "module",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1"
+  }
+}
