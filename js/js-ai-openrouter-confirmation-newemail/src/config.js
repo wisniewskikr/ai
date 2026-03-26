@@ -1,34 +1,46 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { resolveModelForProvider } from "../../config.js";
 
-// Load local project .env (RESEND_API_KEY, RESEND_FROM) after workspace root .env is loaded
-// Imports are hoisted and evaluated first, so this runs before the checks below
+// Load local project .env (OPENROUTER_API_KEY, RESEND_API_KEY, RESEND_FROM)
 const __dir = path.dirname(fileURLToPath(import.meta.url));
 const localEnv = path.resolve(__dir, "../.env");
 if (existsSync(localEnv) && typeof process.loadEnvFile === "function") {
   process.loadEnvFile(localEnv);
 }
 
+// Validate OpenRouter API key
+if (!process.env.OPENROUTER_API_KEY) {
+  console.error(`\x1b[31mError: OPENROUTER_API_KEY environment variable is not set\x1b[0m`);
+  console.error("       Add it to the .env file: OPENROUTER_API_KEY=sk-or-...");
+  process.exit(1);
+}
+
 // Validate Resend API key
 if (!process.env.RESEND_API_KEY) {
   console.error(`\x1b[31mError: RESEND_API_KEY environment variable is not set\x1b[0m`);
-  console.error("       Add it to the repo root .env file: RESEND_API_KEY=re_...");
+  console.error("       Add it to the .env file: RESEND_API_KEY=re_...");
   process.exit(1);
 }
 
 if (!process.env.RESEND_FROM) {
   console.error(`\x1b[31mError: RESEND_FROM environment variable is not set\x1b[0m`);
-  console.error("       Add it to the repo root .env file: RESEND_FROM=noreply@yourdomain.com");
+  console.error("       Add it to the .env file: RESEND_FROM=noreply@yourdomain.com");
   process.exit(1);
 }
+
+export const AI_API_KEY = process.env.OPENROUTER_API_KEY;
+export const RESPONSES_API_ENDPOINT = "https://openrouter.ai/api/v1/responses";
+export const EXTRA_API_HEADERS = {
+  "HTTP-Referer": "https://github.com/js-ai-openrouter-confirmation-newemail",
+  "X-Title": "File & Email Agent",
+};
 
 export const RESEND_API_KEY = process.env.RESEND_API_KEY;
 export const RESEND_FROM = process.env.RESEND_FROM;
 
 export const api = {
-  model: resolveModelForProvider("gpt-5.4"),
+  model: "openai/gpt-4.1",
   maxOutputTokens: 16384,
   instructions: `You are an assistant with access to file system tools and email sending.
 
