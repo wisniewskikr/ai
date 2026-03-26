@@ -6,7 +6,6 @@ Multi-provider AI agent server with tool execution, MCP integration, and markdow
 
 ```bash
 npm install
-cp .env.example .env   # fill in API keys
 npm run db:push         # create SQLite tables
 npm run db:seed         # seed default user
 npm run dev             # start dev server (http://127.0.0.1:3000)
