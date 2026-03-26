@@ -2,7 +2,7 @@
   "mcpServers": {
     "files": {
       "command": "npx",
-      "args": ["tsx", "../mcp/files-mcp/src/index.ts"],
+      "args": ["tsx", "./sandbox/src/index.ts"],
       "env": {
         "LOG_LEVEL": "info",
         "FS_ROOT": "."
