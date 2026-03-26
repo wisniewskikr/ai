@@ -5,7 +5,7 @@ Interactive file-and-email agent with whitelist enforcement and a terminal confi
 ## Run
 
 ```bash
-npm run lesson5:confirmation
+npm run start
 ```
 
 ## Required setup
