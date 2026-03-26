@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { z } from 'zod/v4'
@@ -17,10 +17,46 @@ const loadEnvFile = (file: string) => {
   }
 }
 
-// Local project .env first — process.loadEnvFile never overrides already-set vars,
-// so local keys take priority; root fills in anything not set locally.
+/** Parse a .env file into a key→value map without touching process.env. */
+const parseDotEnv = (file: string): Record<string, string> => {
+  if (!existsSync(file)) return {}
+  const result: Record<string, string> = {}
+  for (const line of readFileSync(file, 'utf8').split('\n')) {
+    const trimmed = line.trim()
+    if (!trimmed || trimmed.startsWith('#')) continue
+    const idx = trimmed.indexOf('=')
+    if (idx === -1) continue
+    result[trimmed.slice(0, idx).trim()] = trimmed.slice(idx + 1).trim()
+  }
+  return result
+}
+
+// Keys that must only ever come from the local project .env, never the root.
+const LOCAL_ONLY_KEYS = [
+  'OPENAI_API_KEY',
+  'OPENROUTER_API_KEY',
+  'GEMINI_API_KEY',
+  'AI_PROVIDER',
+  'DEFAULT_MODEL',
+  'LANGFUSE_SECRET_KEY',
+  'LANGFUSE_PUBLIC_KEY',
+  'LANGFUSE_BASE_URL',
+] as const
+
+// Load local first so its vars are set, then root fills in anything missing.
 loadEnvFile(LOCAL_ENV_FILE)
 loadEnvFile(ROOT_ENV_FILE)
+
+// Enforce that LOCAL_ONLY_KEYS are sourced exclusively from the local .env.
+// This prevents root values from leaking in (e.g. when local has an empty value).
+const localVars = parseDotEnv(LOCAL_ENV_FILE)
+for (const key of LOCAL_ONLY_KEYS) {
+  if (key in localVars) {
+    process.env[key] = localVars[key]
+  } else {
+    delete process.env[key]
+  }
+}
 
 const envSchema = z.object({
   PORT: z.coerce.number().int().min(1).max(65535).default(3000),
