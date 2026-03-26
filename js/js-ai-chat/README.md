@@ -1,4 +1,4 @@
-# Agent API
+# js-ai-chat
 
 Multi-provider AI agent server with tool execution, MCP integration, and markdown-based agent templates.
 
