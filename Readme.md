@@ -119,3 +119,35 @@ Artificial Intelligence (AI) is a broad field of computer science focused on cre
 | **Step 2 – Configure controls** | For each access point, set minimum required permissions. Create dedicated tokens with limited scope. Enable logging from day one. Set up alerts for anomalies, unusual query volume, access to unusual resources, or privilege escalation attempts. |
 | **Step 3 – Build a safety net** | Backup before destructive operations. Human in the loop for critical actions. A kill switch: the ability to immediately cut off the agent from all systems. When something goes wrong, you want one button, not a 20-step procedure. |
 | **Step 4 – Check compliance** | Do you have a legal basis for the agent to process data? Do users know they are interacting with AI? Does your logging meet audit requirements? Do you have a procedure for reporting incidents within 72 hours? |
+
+## Pillars of Context
+
+Context engineering is the practice of ensuring an agent has the right information at the right time to make good decisions — not just a longer prompt, but the right information.
+
+| Pillar | Description |
+| --- | --- |
+| **System instruction as a map** | The system instruction should act as a map, not a phone book. It provides orientation and key landmarks, not an exhaustive list of every possible case. |
+| **Dynamic context** | Context should change based on the situation. The agent receives relevant information that is appropriate for the current task, not a static block of text. |
+| **Context through observation** | Agents can infer context by analyzing existing structure and patterns (e.g., how files are already organized) rather than requiring everything to be stated explicitly. |
+| **User-specific knowledge** | The agent must understand who the user is and how they think — e.g., "sensible folders" means something different to an accountant than to a photographer. |
+
+## Safety Rules
+
+Even with perfect context, agents operating on large datasets carry risk. These four rules form a safety baseline for any agent that modifies data:
+
+| Rule | Description |
+| --- | --- |
+| **Dry run by default** | The agent first shows a plan of intended actions and waits for user approval before executing. Changes the interaction from "act then explain" to "plan then confirm". |
+| **Backup before every operation** | Before any move, delete, or rename, the agent creates a backup. The cost of a backup (seconds, disk space) is disproportionately small compared to the cost of irreversible data loss. |
+| **Confirmation for large operations** | If an agent plans to execute hundreds of operations, it must summarize and ask for confirmation. Silence during bulk actions is a red flag, not a feature. |
+| **Operation log with undo** | Every action is recorded: what file, from where, to where, when. This creates a time-machine effect — any batch of actions can be reversed with a single command. |
+
+## Relation Between Context and Safety
+
+Context and safety are complementary layers — neither alone is sufficient.
+
+| Scenario | Result |
+| --- | --- |
+| **Context without safety** | Agent makes better decisions but when it fails, the damage is large and potentially irreversible. |
+| **Safety without context** | Agent is safe but useless — it lacks the knowledge to make good decisions, so it falls back to generic behavior (e.g., filing 80% of files into "other"). |
+| **Context + safety** | Context raises decision quality; safety ensures poor decisions are not catastrophic. Together they shift the interaction from *"I hope it works"* to *"I know I can undo it"*. |
