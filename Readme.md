@@ -151,3 +151,36 @@ Context and safety are complementary layers — neither alone is sufficient.
 | **Context without safety** | Agent makes better decisions but when it fails, the damage is large and potentially irreversible. |
 | **Safety without context** | Agent is safe but useless — it lacks the knowledge to make good decisions, so it falls back to generic behavior (e.g., filing 80% of files into "other"). |
 | **Context + safety** | Context raises decision quality; safety ensures poor decisions are not catastrophic. Together they shift the interaction from *"I hope it works"* to *"I know I can undo it"*. |
+
+## Voice Recordings and Privacy
+
+### Four Things to Remember
+
+| # | Rule | Description |
+| --- | --- | --- |
+| **1** | **Voice may be biometrics** | Treat voice recordings as personal data — because legally they are. Under GDPR, voice is a special category requiring explicit consent. An exception applies only if the system is strictly limited to speech-to-text with no emotion detection and immediately deletes source files. |
+| **2** | **Local processing is real** | Local speech-to-text quality now matches cloud APIs. The entry barrier has dropped drastically — choose the right tool for your constraints. |
+| **3** | **Don't send sensitive recordings to the cloud** | Apply a simple rule: if you wouldn't send the content of the recording by email to a stranger, don't send the recording to someone else's server. |
+| **4** | **Privacy routing is mandatory when designing agents** | Your users may not know their recording just flew to another country. You should know when and why you make that decision — and make it before deployment, not after. |
+
+### Speech-to-Text Models
+
+| Model | Type | Notes |
+| --- | --- | --- |
+| **Whisper API** (OpenAI) | Cloud | Fast, high quality; recording leaves your device. OpenAI API does not use data for training. |
+| **Google Cloud Speech-to-Text** | Cloud | Fast, high quality; recording leaves your device. |
+| **Deepgram Nova** | Cloud | Fast, high quality; recording leaves your device. |
+| **Nvidia Canary-Qwen 2.5B** | Local | #1 on OpenASR Leaderboard (July 2025), ~5% WER, processes audio 418× faster than real time. **English only.** |
+| **Whisper Large V3** | Local | Best local option for Polish. High quality, suitable for notes, meetings, and interviews. |
+| **Whisper Large V3 Turbo** | Local | Faster variant of Large V3, requires ~6 GB VRAM. Quality comparable to paid APIs. Recommended default for Polish. |
+| **MacWhisper** | Local | macOS wrapper around Whisper models; supports many languages with a convenient UI. |
+| **VOSK** | Local / Offline | Lightweight engine with Polish support; runs offline even on a phone without GPU. Lower quality than Whisper, sufficient for field notes. |
+
+### Privacy Routing
+
+Privacy routing is the conscious decision of which processing channel to use based on the sensitivity of what is being said.
+
+| Content type | Recommended channel |
+| --- | --- |
+| Shopping lists, public webinar notes | Cloud — fast, convenient, low risk |
+| Client meetings, therapy sessions, financial data, any sensitive content | Local — recording never leaves your device |
