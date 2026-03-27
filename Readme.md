@@ -184,3 +184,13 @@ Privacy routing is the conscious decision of which processing channel to use bas
 | --- | --- |
 | Shopping lists, public webinar notes | Cloud — fast, convenient, low risk |
 | Client meetings, therapy sessions, financial data, any sensitive content | Local — recording never leaves your device |
+
+## Screen Activity Tracking and Privacy
+
+### Three Things to Remember
+
+| # | Rule | Description |
+| --- | --- | --- |
+| **1** | **Raw screen data is surveillance, not analytics** | Screenshots, window titles containing client names, mouse inactivity tracking — each element alone can violate GDPR. Together they create a system for which Amazon paid €32 million in fines. |
+| **2** | **Aggregates are enough** | If all you need is the answer to "how much time do I spend coding vs. on emails", you don't need to know which emails you're reading. Local classification with Ollama gives exactly that: meaningful results without sensitive data. Instead of storing "Gmail, salary renegotiation, 23 minutes", store "email, 23 minutes". |
+| **3** | **Architecture is a decision** | If your screen tracker takes screenshots every 5 seconds and sends them to a server, that is an architectural decision. If you classify locally and save only aggregates, that is also an architectural decision. Both provide analytics, but only one respects privacy. |
