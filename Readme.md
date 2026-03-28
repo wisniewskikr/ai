@@ -259,3 +259,75 @@ Rules for using AI to write and send communications honestly:
 | **2** | **Never impersonate** | AI can write in someone's style, but the recipient should know who they are talking to. Writing to a client in AI's words while still being yourself is fine. Writing to a client in AI's words while pretending to be someone else is fraud. |
 | **3** | **Approval flow as standard** | Every message the AI sends should pass through your eyes before it reaches the recipient. You decide. You click send. You take responsibility. AI writes, you send — that is the fair division. |
 | **4** | **Supervise** | Log what the AI does. Check whether results match your expectations. Build a system that can catch when something goes wrong. AI cannot stop itself — it is a tool that does what it is told. If no one is watching, there is no one to say stop. |
+
+---
+
+## Web Scraping
+
+### Definition
+
+Web scraping is the practice of writing bots that crawl websites and collect data automatically — product prices in online stores, listing titles and descriptions, article content for knowledge bases. At its core, scraping is a technical capability: it becomes ethical or unethical based entirely on *how* it is used and whether it respects the rules of the sites being scraped.
+
+### Spectrum of Scraping — From Legal to Illegal
+
+| Practice | Description |
+| --- | --- |
+| **Ethical scraping** | Parses `robots.txt` before the first request, respects `Disallow` rules, uses an honest user agent with contact info, applies rate limiting (≥5 s between requests), stops when personal data is detected. |
+| **Gray zone** | Scrapes public data but ignores `robots.txt`; does not fake identity but sends requests at a rate that strains the target server. |
+| **Illegal / harmful** | Fakes user agents (e.g., impersonating Googlebot), ignores explicit `Disallow` directives, harvests email addresses or personal data without consent, copies copyrighted content for commercial use. Legal precedent: Reddit v. Perplexity AI (2025), Reddit v. Anthropic (2025), Ziff Davis v. OpenAI (2025). |
+
+> "Nobody forbids data collection. They forbid doing it rudely." — the key distinction in recent lawsuits is not scraping itself but scraping *without asking* or *ignoring explicit rules*.
+
+### Anti-Bot Defense — Passive vs Active
+
+| Type | Tool | How it works |
+| --- | --- | --- |
+| **Passive** | `robots.txt` | Declares which paths and bots are disallowed. Nearly 6 million sites now block GPTBot — a 70% increase year-over-year. |
+| **Active – deception** | **Cloudflare AI Labyrinth** | Instead of blocking a non-compliant bot, it feeds it an infinite maze of AI-generated pages that look real but contain no useful data. The bot keeps crawling, consuming tokens and compute, while collecting nothing. |
+| **Active – friction** | **Anubis** (open source) | Requires the client to solve a proof-of-work puzzle before receiving a response. A real browser solves it in ~1 second. A bot farm sending thousands of requests per minute faces a cost that makes mass scraping economically unviable. |
+
+### 4 Rules of an Ethical Scraper
+
+| # | Rule | Description |
+| --- | --- | --- |
+| **1** | **Respect `robots.txt`** | Parse it automatically before sending the first request. If the site says no — that's no. "Public" does not mean "free to take". |
+| **2** | **Rate limiting is mandatory** | A minimum of 5 seconds between requests is a sensible baseline — not because the server needs it, but to signal you are not a DDoS attack and that you respect resources someone else is paying for. |
+| **3** | **Honest user agent** | Stop pretending to be Googlebot. Your bot identifies itself with its real name and leaves contact information. If you are afraid of being blocked when you show your real user agent, ask yourself why — the answer is probably "because I am doing something I shouldn't." |
+| **4** | **Flag personal data** | If your scraper encounters anything that looks like a name, surname, email address, or phone number, the system must pause and ask the operator what to do next. Do not collect personal data automatically. GDPR has no sense of humor. |
+
+### New Standards — ai.txt and llm.txt
+
+The web is not only defending itself; it is also trying to establish new rules of engagement. Two standard proposals have emerged:
+
+| Standard | Description |
+| --- | --- |
+| **`ai.txt`** | An extension of the `robots.txt` idea, specific to AI. Not just "do not scrape" but "scrape these sections, not those; permitted uses are X, prohibited uses are Y." More granular and more precise. |
+| **`llm.txt`** | A page declaration addressed directly to language models. What does the page contain? What are the citation rules? May the content be used for training? Not yet a legal standard — only a proposal — but the direction is clear. |
+
+Beyond access control, content monetization is emerging as a third layer:
+
+| Initiative | Description |
+| --- | --- |
+| **IAB TechLab Content Monetization Protocol** | If AI wants to use your content, it pays. Not steal, not ask for forgiveness — it pays. |
+| **Cloudflare Pay Per Crawl** | Want to scrape a Cloudflare-protected site? You can — but you pay a rate set by the owner for each request. |
+
+> The internet is moving from "free for all bots" to "an internet with a price list" — one that says: *my content has value; if you want to process it, respect my rules or pay.*
+
+### Practice — Ethics and Contextual Feedback
+
+Building a scraper that works today is only half the job. A site can change its structure tomorrow, Cloudflare can deploy new protection, or a new standard can come into force. A good scraper does two things:
+
+**1. Follow the 4 ethical rules** (see above) on every run, automatically — `robots.txt` check, rate limiting, honest user agent, personal-data flag.
+
+**2. Report what is happening — contextual feedback.** A scraper should not simply return data; it should tell you the state of its environment:
+
+| Signal | Meaning |
+| --- | --- |
+| Site responding normally | Data is reliable |
+| Structure changed | Selectors may be broken; review required |
+| New blocks detected | Access rules have changed |
+| Content looks generated / nonsensical | Possible honeypot or AI Labyrinth trap |
+
+> "The difference between a good and a bad scraper is the ability to say *I don't know* or *something is wrong*. A scraper that stays silent and delivers garbage is worse than one that says *I couldn't do it*."
+
+A scraper that detects anomalies and surfaces them immediately lets you catch problems before they silently corrupt your data pipeline.
