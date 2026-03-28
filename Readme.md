@@ -194,3 +194,68 @@ Privacy routing is the conscious decision of which processing channel to use bas
 | **1** | **Raw screen data is surveillance, not analytics** | Screenshots, window titles containing client names, mouse inactivity tracking — each element alone can violate GDPR. Together they create a system for which Amazon paid €32 million in fines. |
 | **2** | **Aggregates are enough** | If all you need is the answer to "how much time do I spend coding vs. on emails", you don't need to know which emails you're reading. Local classification with Ollama gives exactly that: meaningful results without sensitive data. Instead of storing "Gmail, salary renegotiation, 23 minutes", store "email, 23 minutes". |
 | **3** | **Architecture is a decision** | If your screen tracker takes screenshots every 5 seconds and sends them to a server, that is an architectural decision. If you classify locally and save only aggregates, that is also an architectural decision. Both provide analytics, but only one respects privacy. |
+
+## Bot - Two Faces
+
+An AI bot writing messages is not inherently harmful — it depends entirely on how it is used and whether a human remains in the loop.
+
+| Face | Description |
+| --- | --- |
+| **Ethical use** | The bot writes messages on behalf of a busy person. Every message is reviewed, corrected, and approved by the human before sending. The human is the author; the bot is the tool. |
+| **Malicious use** | The bot sends messages autonomously, impersonates non-existent people, builds fake profiles with AI-generated photos and fabricated work histories, conducts relationship-building campaigns over weeks, and then delivers phishing links, exclusive offers, or data requests. At scale: 1,000 parallel conversations per day. |
+
+Beyond text, the threat extends to voice cloning (a few seconds of audio is enough) and real-time deepfake video. Notable cases:
+* **January 2025** – A Canadian company lost **$12 million** via a single phone call using a cloned CFO voice.
+* **2024** – Engineering firm Arup lost **$25 million** in a live video call featuring a deepfake CFO.
+* A deepfake costs less than **$2** to create. Deepfake-as-a-Service platforms offer subscription models like Netflix.
+* Deepfake volume grew **16×** in two years (500K in 2023 → 8M now). AI voice phishing rose **1,600%** in Q1 2025 alone.
+* Only **0.1%** of people can consistently detect deepfakes. Automated detection tools are bypassed in over **90%** of cases.
+
+## Psychological Playbook
+
+Four steps used in social engineering attacks — amplified by AI to unprecedented scale:
+
+| Step | Trigger | Example |
+| --- | --- | --- |
+| **Authority** | The sender appears to be someone with power | *"The CEO is calling", "From the law firm", "I'm from the bank"* |
+| **Urgency** | Time pressure disables rational thinking | *"Today. By end of day. Immediately."* |
+| **Familiarity** | The message sounds like someone you know, based on analyzed contacts and posts | *"I sound like someone you know — because I analyzed your network"* |
+| **Isolation** | Prevents verification through other channels | *"Don't tell anyone. This is confidential. Just between us."* |
+
+> "Video call is not verification. If the only proof that you are talking to a real person is that you see their face and hear their voice — you have no proof at all."
+
+## How to Defend — Private Person vs Company
+
+### Private Person
+
+| Action | Description |
+| --- | --- |
+| **Family password** | Agree on a secret word known only to your close circle. If someone calls in your daughter's voice claiming danger and requesting a transfer — ask for the password. No deepfake knows your password. |
+| **Cross-channel verification** | Got an email from your boss? Call them. Got a phone call? Send an SMS to the number you have saved in your contacts — not the number the caller is calling from. |
+
+### Company
+
+| Action | Description |
+| --- | --- |
+| **Callback on a known number** | Never call back the number provided during the conversation. Call the number you have in your system. |
+| **Dual approval for transfers** | Two people must confirm any transfer above a set threshold. Even if one is deceived, the chance that both fall for the same deepfake is minimal. |
+
+## AI With Supervision vs AI Without Supervision
+
+| Scenario | Result |
+| --- | --- |
+| **AI with supervision** | The human reads every message before it is sent. The human is the filter. AI is the tool, the human is the author. This works. |
+| **AI without supervision** | No logging, no approval flow, no monitoring. When something goes wrong, there is no one to say "stop". Problems are not caused by AI becoming malicious — they are caused by no one watching. |
+
+The difference between AI being incredibly useful and causing irreversible harm at scale is: **oversight, monitoring, evaluation, and a human in the loop** — not as an obstacle, but as a guarantee.
+
+## Four Rules
+
+Rules for using AI to write and send communications honestly:
+
+| # | Rule | Description |
+| --- | --- | --- |
+| **1** | **Transparency** | Optionally add a signature: *"Sent with AI assistance"*. Not everyone wants this, but give the recipient a chance to know. This is a matter of respect, not regulation. |
+| **2** | **Never impersonate** | AI can write in someone's style, but the recipient should know who they are talking to. Writing to a client in AI's words while still being yourself is fine. Writing to a client in AI's words while pretending to be someone else is fraud. |
+| **3** | **Approval flow as standard** | Every message the AI sends should pass through your eyes before it reaches the recipient. You decide. You click send. You take responsibility. AI writes, you send — that is the fair division. |
+| **4** | **Supervise** | Log what the AI does. Check whether results match your expectations. Build a system that can catch when something goes wrong. AI cannot stop itself — it is a tool that does what it is told. If no one is watching, there is no one to say stop. |
