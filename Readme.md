@@ -331,3 +331,99 @@ Building a scraper that works today is only half the job. A site can change its 
 > "The difference between a good and a bad scraper is the ability to say *I don't know* or *something is wrong*. A scraper that stays silent and delivers garbage is worse than one that says *I couldn't do it*."
 
 A scraper that detects anomalies and surfaces them immediately lets you catch problems before they silently corrupt your data pipeline.
+
+---
+
+## Three Types of AI Queries
+
+Not all questions are equal. There is no single retrieval strategy that handles all query types well. Every AI system encounters three fundamentally different kinds of queries daily:
+
+| Type | Description | Best Tool | Examples |
+| --- | --- | --- | --- |
+| **Similarity** | Find documents semantically related to a topic | Vector search (embeddings) | *"Find documents related to GDPR."*, *"Show me emails about Project Delta."*, *"Did the Eagle 1 have one engine or two?"* |
+| **Relationship** | Discover explicit connections between entities | Knowledge graph | *"Who reports to Mauricio?"*, *"Which microservices call this endpoint?"*, *"What are the dependencies between component A and component B?"* |
+| **Global** | Summarize patterns across an entire corpus | GraphRAG / community summaries | *"What were the main topics across the last 100 meetings?"*, *"Summarize customer complaint trends this quarter."* |
+
+**Why vectors alone fail for relationship queries:** The relation "reports to" is not a matter of semantic proximity — it is an explicit edge in a graph. Mauricio and his direct reports may work on completely different topics, so their documents are far apart in vector space. A vector search for "who reports to Mauricio" will match documents that mention reporting structures in general, not the actual org-chart edge.
+
+**Why vectors alone fail for global queries:** Vector search finds the nearest neighbors to a query, but "what are the main themes across 100 meetings" requires seeing the forest, not individual trees. Techniques like Microsoft's GraphRAG build *community summaries* — summaries of clusters of related nodes — that enable answering big-picture questions.
+
+---
+
+## Three Approaches to AI Memory Architecture
+
+| Approach | When to use | Pros | Cons |
+| --- | --- | --- | --- |
+| **PostgreSQL + pgvector** | Up to ~500K vectors, simple RAG, no massive scaling plans | Single system, ACID, 40 years of stability, easy ops | Architectural mismatch at scale: HNSW index builds take hours, unpredictable latency above ~5M vectors, requires pgvector Scale extension for production |
+| **Dedicated vector database** (Qdrant, Milvus, Weaviate) | Millions of vectors, hybrid BM25 + semantic search needed | Native sharding, indexes optimized for vectors, built-in hybrid search | Additional operational complexity — another system to maintain, monitor, and back up |
+| **PolyStore** (2026 consensus) | Production systems with mixed query types | Right tool for the right job: Postgres as relational source of truth, dedicated vector DB for semantic search, optional graph for relationship queries | Most complex setup; requires deliberate separation of responsibilities |
+
+> Benchmarks from May 2025 show pgvector Scale outperforming Qdrant by 11× in certain tests, but above 100 million vectors dedicated databases take the lead.
+
+---
+
+## GraphRAG (Microsoft) — Pros and Cons
+
+GraphRAG is Microsoft's approach to automatically building a knowledge graph from documents using LLMs, then using that graph structure to answer questions about relationships and global patterns.
+
+| | Details |
+| --- | --- |
+| **How it works** | An LLM processes your documents, extracts entities and relationships, resolves naming conflicts, and builds a hierarchy. *Community summaries* are generated for clusters of related nodes, enabling global queries. |
+| **Best for** | Relationship queries (*"which components depend on X?"*) and global queries (*"what are the main themes across the corpus?"*) |
+
+### Pros
+- Answers questions about structure and dependencies that pure vector search cannot handle
+- Community summaries enable high-quality responses to big-picture questions
+- Combines well with vector search for a complete retrieval strategy
+
+### Cons
+- **Expensive to build and maintain** — not a licensing cost, but the cost of constructing and keeping the graph current. LLMs must traverse all documents, extract entities and relations, and resolve conflicts
+- **Pipeline overhead** — graph-building pipelines must re-run on every significant change to source documents
+- **Research prototype origin** — the Nvidia/BlackRock *Hybrid RAG* paper (August 2024) that formally described combining vector search with knowledge graphs was a research prototype, not a production system. The industry has not reached consensus on naming or implementation
+
+> **When to use it:** Start from the types of questions your system must answer. If you never need relationship or global queries, GraphRAG is overkill. If those queries are core to your use case, it may be the only viable path.
+
+---
+
+## Embedding Inversion
+
+### What Is an Embedding?
+
+An **embedding** is a numerical representation of a piece of text as a vector of floating-point numbers (e.g., 1 536 dimensions for OpenAI's `text-embedding-3-small`). Semantically similar texts produce vectors that are close together in that high-dimensional space. Embeddings are the foundation of vector search: you embed a query, then find the nearest stored vectors.
+
+### The Myth: "Embeddings Are Safe Because You Can't Reconstruct the Original Text"
+
+This claim was repeated across the industry for years. It is false.
+
+| Research | Year | Finding |
+| --- | --- | --- |
+| **Song & Raktunathan** | 2020 | Recovered 50–70% of words from embeddings, but without preserving sentence order |
+| **Vec2Text** (John Morris et al.) | 2023 | Recovered **92%** of original text from 32-token embeddings — including names, surnames, and medical diagnoses from clinical notes — with full sentence coherence |
+| **Algen** | Feb 2025 | Inversion attack that works **without access to the embedding model**. A single leaked data point is sufficient to align embedding spaces and begin inversion |
+| **ZS-Invert** | 2025 | Eliminates the need to train an attacker model altogether |
+
+> The direction is clear: inversion attacks become cheaper and easier every year. Treat stored embeddings as sensitive data.
+
+---
+
+## Three Practical Tips for Embedding Security
+
+| # | Rule | Why |
+| --- | --- | --- |
+| **1** | **Never expose raw embeddings via API** | If your API returns embedding vectors to clients, that is an attack surface. Return search results, not the underlying vectors. |
+| **2** | **Apply access control to your vector database** | A vector database left open internally "because it's just vectors" is not safe — it stores semantic representations of your documents from which substantial content can be recovered. |
+| **3** | **Consider encrypted embeddings** | Solutions like **Cloaked AI** (Iron Core Labs) encrypt vectors in a way that preserves enough properties for similarity search, but inversion returns nonsense. A relatively new category of tooling, worth monitoring. |
+
+---
+
+## Payment API — Three Solution Paths
+
+The scenario: a dependency graph query returns 3 of 8 projects that depend on a payments API, because the other 5 use words like "billing", "invoices", or "transactions" in their documentation. Vector search found semantic similarity to "payments" and stopped there.
+
+| Option | Approach | Cost | Scalability |
+| --- | --- | --- | --- |
+| **Minimal** | Enrich document metadata with explicit relationship fields. Add a "dependencies" and "related components" section to every document. Vector search now hits phrases that describe dependencies, dramatically improving recall without building a full graph. | Low | Good for simple dependency structures |
+| **Compromise** | **Hybrid search** — combine semantic vector search with keyword search (BM25). A query for the payments API now matches both semantically similar documents *and* documents that literally mention the endpoint name. Supported natively by Weaviate, Qdrant, and Elasticsearch. | Medium | Good for most production systems |
+| **Full** | Build an **automatic dependency graph** from technical documentation using an LLM. Add **intent routing**: the system classifies each incoming query as similarity, relationship, or global, then routes it to the appropriate retrieval mechanism. | High | The only approach that scales to complex dependency questions in large systems |
+
+> No option is universally best. Each is best for a specific context — system scale, query types, and infrastructure maintenance budget. **Start from the questions, not the technology.**
