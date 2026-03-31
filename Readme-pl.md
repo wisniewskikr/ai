@@ -110,6 +110,21 @@ Prompt + schemat JSON → Model → Odpowiedź zgodna ze schematem
 
 ---
 
+## Fundamentalna lista AI
+
+Podstawowe koncepcje działania modeli językowych (LLM), na których opierają się wszystkie architektury.
+
+| # | Koncepcja | Opis |
+|---|---|---|
+| 1 | **Model jako funkcja** | Model przyjmuje tekst na wejściu i zwraca tekst na wyjściu. Nie wiesz co jest w środku — traktuj go jak dowolną zewnętrzną funkcję. |
+| 2 | **API & Chat Completion** | API to sposób komunikacji z modelem. Wysyłasz prompt przez HTTP POST, otrzymujesz odpowiedź (completion). |
+| 3 | **Prompt = Instrukcja + Historia** | Model nie ma pamięci między wywołaniami. Każde zapytanie musi zawierać pełną historię rozmowy: system prompt → poprzednie wiadomości → nowe zapytanie. |
+| 4 | **Narzędzia = Schematy JSON** | Narzędzia to nie kod uruchamiany przez model. To schematy JSON dołączane do promptu — model czyta je jak tekst i decyduje, jaki JSON zwrócić. |
+| 5 | **Function Calling** | Model zwraca JSON opisujący co wywołać. Twój kod go odczytuje i uruchamia właściwą funkcję, a wynik odsyła z powrotem do modelu. |
+| 6 | **Agent Loop** | Pętla wywołań API. W każdej iteracji model decyduje: zwróć JSON (wywołaj narzędzie → kontynuuj pętlę) lub zwróć tekst (odpowiedź końcowa → zatrzymaj się). |
+
+---
+
 ## Fine-tuning
 
 Alternatywa wobec RAG i prompt engineeringu — modyfikuje wagi modelu zamiast kontekstu.
