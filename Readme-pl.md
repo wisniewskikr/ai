@@ -13,6 +13,21 @@
 
 ---
 
+---
+
+## Wymiary ortogonalne
+
+Każda architektura może być skonfigurowana wzdłuż tych osi niezależnie:
+
+| Wymiar | Opcje |
+|---|---|
+| **Narzędzia** | Brak / Natywne / MCP (protokół transportu narzędzi) |
+| **Pamięć** | Brak / Kontekstowa / Zewnętrzna (vector DB, pliki, baza danych) |
+| **Nadzór** | Pełny automat / Human-in-the-loop / Human-on-the-loop |
+| **Ewaluacja** | Brak / LLM-as-judge / Testy automatyczne |
+
+---
+
 ## RAG (Retrieval-Augmented Generation)
 
 Technika dostępu do danych — może działać w każdej architekturze:
@@ -38,19 +53,6 @@ Pytanie → [Wyszukiwarka] → Fragmenty dokumentów → Prompt + fragmenty → 
 | **Architektura** | Single call / Workflow | Agent |
 | **Przewidywalność** | Wysoka | Niska |
 | **Kiedy używać** | Znane, powtarzalne zapytania | Złożone zadania wymagające iteracji |
-
----
-
-## Wymiary ortogonalne
-
-Każda architektura może być skonfigurowana wzdłuż tych osi niezależnie:
-
-| Wymiar | Opcje |
-|---|---|
-| **Narzędzia** | Brak / Natywne / MCP (protokół transportu narzędzi) |
-| **Pamięć** | Brak / Kontekstowa / Zewnętrzna (vector DB, pliki, baza danych) |
-| **Nadzór** | Pełny automat / Human-in-the-loop / Human-on-the-loop |
-| **Ewaluacja** | Brak / LLM-as-judge / Testy automatyczne |
 
 ---
 
