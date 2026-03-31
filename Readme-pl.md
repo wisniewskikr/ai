@@ -71,6 +71,19 @@ Każda architektura może być skonfigurowana wzdłuż tych osi niezależnie:
 
 ---
 
+## Natywne narzędzie vs MCP
+
+| | Natywne narzędzie | MCP |
+|---|---|---|
+| **Gdzie żyje kod narzędzia** | W aplikacji | Na zewnętrznym serwerze |
+| **Protokół** | Brak (bezpośrednie wywołanie) | MCP (JSON-RPC) |
+| **Wielokrotne użycie** | Tylko w tej aplikacji | Dowolna aplikacja/agent |
+| **Przykład** | Funkcja `search()` w kodzie | Serwer `filesystem`, `github`, `postgres` |
+
+> Z perspektywy modelu nie ma różnicy — w obu przypadkach dostaje listę narzędzi i wywołuje je tak samo.
+
+---
+
 ## Uwagi
 
 - **MCP** to protokół, nie osobna architektura — standaryzuje dostęp do narzędzi
