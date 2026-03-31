@@ -73,7 +73,7 @@ async function main() {
   const messages = [
     {
       role: "user",
-      content: `Convert the following text to uppercase using the to_uppercase tool: "${inputText}"`,
+      content: inputText,
     },
   ];
 
