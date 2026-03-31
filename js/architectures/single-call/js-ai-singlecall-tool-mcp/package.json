@@ -1,0 +1,15 @@
+{
+  "name": "js-ai-singlecall-tool-mcp",
+  "version": "1.0.0",
+  "description": "Hello World – single-call architecture with MCP tool use",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "openai": "^4.52.7",
+    "winston": "^3.13.0"
+  }
+}

@@ -1,0 +1,4 @@
+{
+  "prompt": "Convert the following text to uppercase using the to_uppercase tool: \"hello world\"",
+  "model": "gpt-4o"
+}
