@@ -26,7 +26,7 @@ function log(level, message, data = null) {
   const consoleLine = `[${timestamp}] [${level.padEnd(5)}] ${message}${dataStr}`;
   const fileLine = consoleLine + "\n";
 
-  const colors = { INFO: "\x1b[36m", TOOL: "\x1b[33m", OK: "\x1b[32m", ERROR: "\x1b[31m" };
+  const colors = { INFO: "\x1b[36m", OK: "\x1b[32m", ERROR: "\x1b[31m", CALL: "\x1b[35m" };
   const reset = "\x1b[0m";
   const color = colors[level] ?? "";
 
@@ -54,17 +54,6 @@ const tools = [
     },
   },
 ];
-
-// ── Tool executor ─────────────────────────────────────────────────────────────
-
-function executeTool(name, args) {
-  if (name === "to_uppercase") {
-    const result = args.text.toUpperCase();
-    log("TOOL", `Executing tool: ${name}`, { input: args.text, output: result });
-    return result;
-  }
-  throw new Error(`Unknown tool: ${name}`);
-}
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 
@@ -110,19 +99,18 @@ async function main() {
     process.exit(1);
   }
 
-  // Execute every tool the model requested (single call → typically one)
-  let finalResult = null;
+  // Display what tool(s) the model wants to call — no execution
+  console.log("\n" + "▶".repeat(50));
   for (const toolCall of assistantMessage.tool_calls) {
     const { name, arguments: argsJson } = toolCall.function;
-    const args = JSON.parse(argsJson);
-    finalResult = executeTool(name, args);
+    log("CALL", `Model wants to call tool: ${name}`, {
+      tool_call_id: toolCall.id,
+      arguments: JSON.parse(argsJson),
+    });
   }
+  console.log("▶".repeat(50) + "\n");
 
-  log("OK", `Final result: "${finalResult}"`);
-  console.log("\n" + "─".repeat(50));
-  console.log(`  Result: ${finalResult}`);
-  console.log("─".repeat(50) + "\n");
-
+  log("INFO", "Single call complete — tool was NOT executed (by design)");
   log("INFO", "Done. Log written to: " + getLogFilePath());
 }
 
