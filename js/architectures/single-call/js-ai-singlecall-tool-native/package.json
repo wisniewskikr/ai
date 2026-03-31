@@ -1,0 +1,14 @@
+{
+  "name": "js-ai-singlecall-tool-native",
+  "version": "1.0.0",
+  "description": "Hello World - Single Call architecture with native tool use",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "openai": "^4.77.0"
+  }
+}
