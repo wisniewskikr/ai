@@ -5,12 +5,27 @@
 | Architektura | Opis |
 |---|---|
 | **Single call** | Pojedyncze zapytanie, brak pętli |
-| **RAG** | Pobieranie kontekstu przed odpowiedzią (vector DB, wyszukiwanie) |
 | **Workflow** | Deterministyczny przepływ: chain, routing, map-reduce, parallelization |
 | **Agent** | Model sam decyduje co dalej — pętla: *think → act → observe* |
 | **Multi-agent** | Orkiestrator + subagenci lub agenci peer-to-peer |
 
 > **Kluczowe pytanie:** Czy przepływ jest z góry znany? → Workflow. Czy model go odkrywa? → Agent.
+
+---
+
+## RAG (Retrieval-Augmented Generation)
+
+Technika dostępu do danych — może działać w każdej architekturze:
+
+```
+Pytanie → [Wyszukiwarka] → Fragmenty dokumentów → Prompt + fragmenty → Odpowiedź
+```
+
+| Architektura | RAG wewnątrz |
+|---|---|
+| Single call | Retrieve raz → generate (klasyczny RAG) |
+| Workflow | Retrieval jako jeden z kroków |
+| Agent | Model sam decyduje kiedy i czy wyszukać |
 
 ---
 
@@ -47,5 +62,5 @@ Każda architektura może być skonfigurowana wzdłuż tych osi niezależnie:
 ## Uwagi
 
 - **MCP** to protokół, nie osobna architektura — standaryzuje dostęp do narzędzi
-- **RAG** to odrębny wzorzec od workflow — retrieval ma inną logikę niż wykonywanie akcji
+- **RAG** to technika przekrojowa — działa w single call, workflow i agencie
 - **Pamięć** i **narzędzia** są niezależne — agent może mieć pamięć długoterminową bez MCP
