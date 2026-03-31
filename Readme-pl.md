@@ -29,6 +29,18 @@ Pytanie → [Wyszukiwarka] → Fragmenty dokumentów → Prompt + fragmenty → 
 
 ---
 
+## RAG vs Agent z search
+
+| | RAG | Agent z search |
+|---|---|---|
+| **Kto decyduje o wyszukaniu** | System (zawsze) | Model (sam ocenia czy potrzebuje) |
+| **Kiedy** | Przed odpowiedzią, raz | W dowolnym momencie, wielokrotnie |
+| **Architektura** | Single call / Workflow | Agent |
+| **Przewidywalność** | Wysoka | Niska |
+| **Kiedy używać** | Znane, powtarzalne zapytania | Złożone zadania wymagające iteracji |
+
+---
+
 ## Wymiary ortogonalne
 
 Każda architektura może być skonfigurowana wzdłuż tych osi niezależnie:
