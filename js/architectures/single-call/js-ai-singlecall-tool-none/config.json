@@ -1,4 +1,4 @@
 {
-  "text": "hello world",
+  "prompt": "Convert the following text to uppercase: \"hello world\"",
   "model": "gpt-4o"
 }

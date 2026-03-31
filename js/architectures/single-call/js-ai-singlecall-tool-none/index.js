@@ -34,17 +34,15 @@ function log(level, message) {
 }
 
 // ── Main ─────────────────────────────────────────────────────────────────────
-async function run(inputText) {
+async function run(prompt) {
   log("INFO", `Starting single-call example`);
-  log("INFO", `Input text    : "${inputText}"`);
+  log("INFO", `Prompt        : "${prompt}"`);
   log("INFO", `Model         : ${config.model}`);
 
   const client = new OpenAI({
     apiKey: process.env.OPENROUTER_API_KEY,
     baseURL: "https://openrouter.ai/api/v1",
   });
-
-  const prompt = `Convert the following text to UPPERCASE and return ONLY the result with no extra explanation:\n\n${inputText}`;
 
   log("INFO", `Sending request to model...`);
 
@@ -64,5 +62,4 @@ async function run(inputText) {
 }
 
 // ── Entry point ───────────────────────────────────────────────────────────────
-const inputText = config.text;
-run(inputText);
+run(config.prompt);

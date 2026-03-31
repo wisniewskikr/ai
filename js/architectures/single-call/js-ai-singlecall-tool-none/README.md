@@ -1,15 +1,15 @@
 # JS AI Single Call — No Tools
 
-A minimal "Hello World" example of a single-call AI architecture in JavaScript. The model receives a text prompt and returns it converted to uppercase. No tools or function-calling are used.
+A minimal "Hello World" example of a single-call AI architecture in JavaScript. The model receives a prompt and returns the result. No tools or function-calling are used.
 
 ## Architecture
 
 ```
-Input text → Single LLM call → Uppercase result
+Prompt → Single LLM call → Result
 ```
 
 The application:
-1. Reads `config.json` for the input text and model name
+1. Reads `config.json` for the prompt and model name
 2. Sends one chat completion request to the model
 3. Returns and logs the result
 
@@ -32,18 +32,18 @@ The application:
 
 ## Configuration
 
-Edit `config.json` to change the input or model:
+Edit `config.json` to change the prompt or model:
 
 ```json
 {
-  "text": "hello world",
+  "prompt": "Convert the following text to uppercase: \"hello world\"",
   "model": "gpt-4o"
 }
 ```
 
 | Field   | Description                        |
 |---------|------------------------------------|
-| `text`  | Input text sent to the model       |
+| `prompt` | Prompt sent to the model          |
 | `model` | Model ID used for the completion   |
 
 ## Usage
@@ -56,7 +56,7 @@ npm start
 
 ```
 [INFO] Starting single-call example
-[INFO] Input text    : "hello world"
+[INFO] Prompt        : "Convert the following text to uppercase: "hello world""
 [INFO] Model         : gpt-4o
 [INFO] Sending request to model...
 [SUCCESS] Response received
