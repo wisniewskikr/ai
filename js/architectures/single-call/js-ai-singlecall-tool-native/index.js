@@ -59,9 +59,9 @@ const tools = [
 
 async function main() {
   log("INFO", "Starting single-call tool-native example");
-  log("INFO", "Loaded config", { model: config.model, text: config.text });
+  log("INFO", "Loaded config", { model: config.model, prompt: config.prompt });
 
-  const inputText = config.text;
+  const inputText = config.prompt;
   log("INFO", `Input text: "${inputText}"`);
 
   // Build the OpenRouter client (OpenAI-compatible)
