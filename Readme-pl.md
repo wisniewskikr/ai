@@ -13,8 +13,6 @@
 
 ---
 
----
-
 ## Wymiary ortogonalne
 
 Każda architektura może być skonfigurowana wzdłuż tych osi niezależnie:
@@ -86,8 +84,39 @@ Pytanie → [Wyszukiwarka] → Fragmenty dokumentów → Prompt + fragmenty → 
 
 ---
 
-## Uwagi
+## Prompt engineering
 
-- **MCP** to protokół, nie osobna architektura — standaryzuje dostęp do narzędzi
-- **RAG** to technika przekrojowa — działa w single call, workflow i agencie
-- **Pamięć** i **narzędzia** są niezależne — agent może mieć pamięć długoterminową bez MCP
+Podstawa działania każdej architektury — sposób instruowania modelu przez prompt.
+
+| Technika | Opis |
+|---|---|
+| **System prompt** | Stała instrukcja definiująca rolę i zachowanie modelu |
+| **Few-shot** | Przykłady w prompcie pokazujące oczekiwany format odpowiedzi |
+| **Chain-of-thought** | Instrukcja do myślenia krok po kroku przed odpowiedzią |
+
+---
+
+## Structured output
+
+Wymuszenie odpowiedzi modelu w określonym schemacie (JSON, XML) — kluczowe przy integracji z kodem i narzędziami.
+
+```
+Prompt + schemat JSON → Model → Odpowiedź zgodna ze schematem
+```
+
+- Eliminuje potrzebę parsowania tekstu
+- Niezbędne gdy wynik trafia do kolejnego kroku workflow lub narzędzia
+- Wspierane natywnie przez większość dostawców modeli
+
+---
+
+## Fine-tuning
+
+Alternatywa wobec RAG i prompt engineeringu — modyfikuje wagi modelu zamiast kontekstu.
+
+| | Prompt engineering / RAG | Fine-tuning |
+|---|---|---|
+| **Co modyfikuje** | Kontekst (prompt) | Wagi modelu |
+| **Koszt** | Niski | Wysoki (trening) |
+| **Elastyczność** | Wysoka | Niska |
+| **Kiedy używać** | Domyślny wybór | Gdy styl/format odpowiedzi jest ściśle określony i niezmienny |
