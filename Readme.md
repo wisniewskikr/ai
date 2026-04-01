@@ -427,3 +427,90 @@ The scenario: a dependency graph query returns 3 of 8 projects that depend on a 
 | **Full** | Build an **automatic dependency graph** from technical documentation using an LLM. Add **intent routing**: the system classifies each incoming query as similarity, relationship, or global, then routes it to the appropriate retrieval mechanism. | High | The only approach that scales to complex dependency questions in large systems |
 
 > No option is universally best. Each is best for a specific context — system scale, query types, and infrastructure maintenance budget. **Start from the questions, not the technology.**
+
+---
+
+## Silent Degradation
+
+The system keeps running but quietly produces incorrect, incomplete, or misleading results — no crash, no alert. Example: a Slack-summarization workflow silently omitted discussion threads for 14 days after the LLM provider raised token limits. Nobody noticed.
+
+> *"In distributed systems you don't ask whether something will break — you ask when, and how you will respond."* — Marc Brooker, AWS (2015)
+
+### Script vs AI Workflow
+
+| Dimension | Classic Script | AI Workflow |
+| --- | --- | --- |
+| **Cost per call** | None | Tokens (money) |
+| **Result** | Deterministic | Non-deterministic |
+| **Latency** | Stable | 200 ms – 1 min |
+| **Failure mode** | Binary — works or doesn't | Spectrum — may succeed technically but return garbage |
+| **Debugging** | Stack trace | No trace; output looks valid but is wrong |
+
+### 4 Design Patterns
+
+### Pattern 1. Retry + Exponential Backoff + Jitter
+
+Naive retry causes the **Thundering Herd** problem — thousands of instances retrying simultaneously DDoS their own provider.
+
+- **Exponential backoff**: 1 s → 2 s → 4 s → 8 s
+- **Jitter**: random deviation from the base delay breaks synchronization (decorrelated jitter reduces collisions by an order of magnitude — Brooker, AWS Architecture Blog)
+- **Retry costs money** — distinguish error types first:
+
+| Error | Retry? |
+| --- | --- |
+| Timeout | Yes |
+| HTTP 400 Bad Request | No — prompt is wrong |
+| HTTP 429 Rate limit | Yes — with longer backoff |
+| HTTP 500 Server error | Yes |
+
+### Pattern 2. Circuit Breaker
+
+Stops retrying a permanently unavailable service. Acts like an electrical fuse (Martin Fowler):
+
+| State | Behavior |
+| --- | --- |
+| **Closed** | Requests pass through normally |
+| **Open** | Requests fail immediately — no timeout wait |
+| **Half-open** | One probe request allowed through |
+
+- **Closed → Open**: 5 of last 10 calls failed
+- **Open → Half-open**: after 60 s
+- **Half-open → Closed / Open**: probe succeeded / failed
+
+> AI-specific: HTTP 200 with a hallucination is not a "success" for the circuit breaker — connect this to output validation (Pattern 4).
+
+### Pattern 3. Dead Letter Queue
+
+Every task that exhausts its retries moves to a **DLQ** (a simple DB table) instead of being discarded.
+
+| Column | Purpose |
+| --- | --- |
+| `timestamp` | When the task failed |
+| `payload` | Original input |
+| `error_type` | What went wrong |
+| `attempt_count` | Number of tries |
+| `status` | Pending / resolved / discarded |
+
+- *"We lost 7 days of data"* → panic, manual reconstruction
+- *"We have a queue of 7 days to reprocess"* → start reprocessing, go for coffee
+
+### Pattern 4. AI Workflow Monitoring
+
+Classical monitoring (uptime, latency, error rate) is not enough — AI workflows must also monitor **output quality**.
+
+| Layer | What to check |
+| --- | --- |
+| **Schema compliance** | Expected JSON fields exist and are non-empty |
+| **Length and proportions** | Output token count within expected range (300 tokens → 50 tokens = red flag) |
+| **Canary checks** | Known test inputs sent periodically; output validated against expected results |
+
+- Alert threshold: **≤ 5 minutes** after the first anomalous result
+
+### Pattern Prioritization
+
+| Priority | Pattern | When |
+| --- | --- | --- |
+| **1** | Retry + Backoff + Jitter | Always — covers ~80% of transient failures |
+| **1** | Monitoring | Always — tells you when Retry isn't enough |
+| **2** | Circuit Breaker | Multiple external dependencies (LLM + vector DB + CRM…) |
+| **3** | Dead Letter Queue | Business-critical data whose loss has a real cost |
