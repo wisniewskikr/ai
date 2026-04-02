@@ -1,0 +1,15 @@
+{
+  "name": "js-ai-agent-tool-none",
+  "version": "1.0.0",
+  "description": "Hello World agent — no tools, prompt-to-uppercase via OpenRouter",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "start:custom": "node index.js \"your prompt here\""
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "openai": "^4.96.0"
+  }
+}
