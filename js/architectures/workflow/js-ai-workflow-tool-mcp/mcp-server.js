@@ -18,10 +18,12 @@ const server = new McpServer({
 });
 
 // Register the "to_uppercase" tool
-server.tool(
+server.registerTool(
   'to_uppercase',
-  'Converts the given text to uppercase letters',
-  { text: z.string().describe('The text to convert to uppercase') },
+  {
+    description: 'Converts the given text to uppercase letters',
+    inputSchema: { text: z.string().describe('The text to convert to uppercase') },
+  },
   async ({ text }) => ({
     content: [{ type: 'text', text: text.toUpperCase() }],
   }),
