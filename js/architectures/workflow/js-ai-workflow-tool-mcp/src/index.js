@@ -1,8 +1,11 @@
-require('dotenv').config();
-const fs = require('fs');
-const path = require('path');
-const logger = require('./logger');
-const { runWorkflow } = require('./workflow');
+import 'dotenv/config';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import logger from './logger.js';
+import { runWorkflow } from './workflow.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function main() {
   logger.separator('Hello World MCP Workflow');
@@ -17,7 +20,7 @@ async function main() {
   logger.info('API key loaded from .env');
 
   // --- Load config.json ---
-  const configPath = path.join(process.cwd(), 'config.json');
+  const configPath = path.join(__dirname, '..', 'config.json');
   if (!fs.existsSync(configPath)) {
     logger.error(`config.json not found at: ${configPath}`);
     process.exit(1);
@@ -36,7 +39,7 @@ async function main() {
     process.exit(1);
   }
 
-  logger.info(`Config loaded  — model: "${config.model}", input: "${config.input}"`);
+  logger.info(`Config loaded — model: "${config.model}", input: "${config.input}"`);
 
   // --- Run workflow ---
   await runWorkflow(config, apiKey);
