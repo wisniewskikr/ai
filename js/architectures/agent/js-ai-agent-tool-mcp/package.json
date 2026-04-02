@@ -1,0 +1,16 @@
+{
+  "name": "js-ai-agent-tool-mcp",
+  "version": "1.0.0",
+  "description": "Hello World agent: uppercase via model, then via MCP tool",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "start:custom": "node index.js \"your prompt here\""
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.10.2",
+    "dotenv": "^16.4.7",
+    "openai": "^4.96.2"
+  }
+}
