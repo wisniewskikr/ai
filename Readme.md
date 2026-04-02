@@ -514,3 +514,58 @@ Classical monitoring (uptime, latency, error rate) is not enough — AI workflow
 | **1** | Monitoring | Always — tells you when Retry isn't enough |
 | **2** | Circuit Breaker | Multiple external dependencies (LLM + vector DB + CRM…) |
 | **3** | Dead Letter Queue | Business-critical data whose loss has a real cost |
+
+---
+
+## Automation
+
+### Trust Gap
+
+The gap between *"task completed"* and *"task completed correctly"* is where most automation failures live. The better automation looks, the less you scrutinize it — and the longer failures go undetected.
+
+### Three Phases and the Irony of Automation
+
+Honeymoon → Reality → Irony. Lisanne Bainbridge (*Ironies of Automation*, 1983): advanced automation eliminates the repetitive contact with the process that built human intuition. The more automated the system, the harder it is to notice when something goes wrong. Written for pilots — applies equally to cron jobs.
+
+### Heartbeat Monitoring
+
+A silent refusal is as bad as a silent error. Two required behaviors:
+- **Refuse loudly** — if input data is invalid, do not run *and* alert immediately.
+- **Confirm loudly** — after every successful run, ping an external service (e.g. healthchecks.io). If the ping doesn't arrive in the expected window, an alert fires. No ping = something is wrong.
+
+### Timezone — Always Explicit
+
+Declare timezone in config, code, or comment — never rely on the server default.
+`0 9 * * * TZ=Europe/Warsaw /path/to/task`
+If anyone on the team has to guess the scheduler's timezone, that is a bug.
+
+### Output Verification — Four Questions
+
+Do not trust the exit code. Verify the result is useful:
+
+| # | Question |
+| --- | --- |
+| **1** | Does the result exist? |
+| **2** | Does it have a sensible size? (0-byte backup is not a backup) |
+| **3** | Is the format correct? (parse JSON, count CSV columns) |
+| **4** | Is the content complete? (7-day report has 7 days of data) |
+
+GitLab (2017): backup script logged *"Backup Complete"* for months while writing to a non-existent directory. 6 hours of production data lost — not because the script failed, but because no one verified the output.
+
+### Overlapping Runs and the Lock File
+
+If a task runs longer than its interval, a second instance starts before the first finishes — two processes writing to the same output produce corrupted data. Fix: lock file with a timestamp TTL. On start → check lock → exit if present. On finish → delete lock. On crash → lock expires after TTL (e.g. 2 h).
+
+### Final Report Pattern
+
+| Component | Purpose |
+| --- | --- |
+| Explicit timezone | Runs when expected |
+| Input validation | Refuses stale data |
+| Output validation (size, format, completeness) | Confirms result is usable |
+| Heartbeat ping | External proof the task ran |
+| Lock file with TTL | Prevents overlapping runs |
+| Alert on failure | Never silent |
+
+Version 1: cron → model → Slack. 3 lines. Lasted one week.
+Final version: ~30 lines. The difference between automation you *trust* and automation you *pray for*.
