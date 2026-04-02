@@ -1,4 +1,4 @@
-# js-ai-singlecall-tool-native
+# js-ai-workflow-tool-native
 
 A **Hello World** example of a **workflow architecture** using native LLM tool calling (no MCP). The workflow takes a text prompt and converts it to uppercase in two distinct ways:
 

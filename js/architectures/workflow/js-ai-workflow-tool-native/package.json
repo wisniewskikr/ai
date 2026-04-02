@@ -1,5 +1,5 @@
 {
-  "name": "js-ai-singlecall-tool-native",
+  "name": "js-ai-workflow-tool-native",
   "version": "1.0.0",
   "description": "Hello World workflow: model without tools vs model with native tools",
   "main": "index.js",
