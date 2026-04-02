@@ -1,0 +1,14 @@
+{
+  "name": "js-ai-workflow-tool-none",
+  "version": "1.0.0",
+  "description": "Hello World - AI Workflow (no tools) - uppercase transformation",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "openai": "^4.78.1"
+  }
+}
