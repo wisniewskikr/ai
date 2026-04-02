@@ -558,7 +558,11 @@ GitLab (2017): backup script logged *"Backup Complete"* for months while writing
 
 ### Overlapping Runs and the Lock File
 
-If a task runs longer than its interval, a second instance starts before the first finishes — two processes writing to the same output produce corrupted data. Fix: lock file with a timestamp TTL. On start → check lock → exit if present. On finish → delete lock. On crash → lock expires after TTL (e.g. 2 h).
+If a task runs longer than its interval, a second instance starts before the first finishes — two processes writing to the same output produce corrupted data. Fix: lock file with a timestamp TTL.
+Phases: 
+- On start → check lock → exit if present. 
+- On finish → delete lock. 
+- On crash → lock expires after TTL (e.g. 2 h).
 
 ### Final Report Pattern
 
