@@ -1,0 +1,15 @@
+{
+  "name": "js-ai-workflow-tool-mcp",
+  "version": "1.0.0",
+  "description": "Hello World workflow example using MCP tools with OpenRouter API",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
