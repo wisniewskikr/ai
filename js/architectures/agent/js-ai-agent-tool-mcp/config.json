@@ -1,0 +1,6 @@
+{
+  "model": "gpt-4o",
+  "maxTokens": 1024,
+  "temperature": 0,
+  "input": "hello world"
+}
