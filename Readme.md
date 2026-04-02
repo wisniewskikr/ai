@@ -525,7 +525,11 @@ The gap between *"task completed"* and *"task completed correctly"* is where mos
 
 ### Three Phases and the Irony of Automation
 
-Honeymoon → Reality → Irony. Lisanne Bainbridge (*Ironies of Automation*, 1983): advanced automation eliminates the repetitive contact with the process that built human intuition. The more automated the system, the harder it is to notice when something goes wrong. Written for pilots — applies equally to cron jobs.
+Lisanne Bainbridge (*Ironies of Automation*, 1983): advanced automation eliminates the repetitive contact with the process that built human intuition. The more automated the system, the harder it is to notice when something goes wrong.
+
+- **Honeymoon** — script works, data flows, you feel like Tony Stark.
+- **Reality** — edge cases, timezone bugs, stale data, overlapping runs.
+- **Irony** — the better automation looks, the less you scrutinize it.
 
 ### Heartbeat Monitoring
 
