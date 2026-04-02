@@ -21,8 +21,9 @@ import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js'
 import { resolve, dirname }     from 'path';
 import { fileURLToPath }        from 'url';
 
-import { config } from './config.js';
-import { logger } from './logger.js';
+import { config }           from './config.js';
+import { logger }           from './logger.js';
+import { SYSTEM_UPPERCASE } from './prompts.js';
 
 const MCP_SERVER_PATH = resolve(
   dirname(fileURLToPath(import.meta.url)),
@@ -42,14 +43,8 @@ function makeOpenAIClient() {
 
 function baseMessages(prompt) {
   return [
-    {
-      role: 'system',
-      content:
-        'You are a text processing assistant. ' +
-        'Convert the given text to uppercase. ' +
-        'Return ONLY the uppercase text, nothing else.',
-    },
-    { role: 'user', content: prompt },
+    { role: 'system', content: SYSTEM_UPPERCASE },
+    { role: 'user',   content: prompt },
   ];
 }
 
