@@ -1,0 +1,17 @@
+{
+  "name": "js-ai-multiagent-tool-mcp",
+  "version": "1.0.0",
+  "description": "Multi-agent hello world — one subagent uses MCP tool, one does not",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.11.0",
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}
