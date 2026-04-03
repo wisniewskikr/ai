@@ -3,3 +3,4 @@ node_modules/
 logs/
 workspace/
 .claude
+cache_state.json

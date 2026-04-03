@@ -1,0 +1,53 @@
+# Profile Document: Chris Wiśniewski
+
+## Personal Information
+
+Chris Wiśniewski is a software engineer and technology enthusiast based in Poland. His first name is Chris. He has a deep passion for software development, particularly in the areas of artificial intelligence, machine learning, and modern web architectures. Chris is known among his colleagues for his methodical approach to problem-solving and his ability to break down complex technical challenges into manageable, well-structured solutions.
+
+## Professional Background
+
+Chris has been working in the software industry for over fifteen years, accumulating extensive experience across multiple technology stacks and programming paradigms. He started his career writing enterprise Java applications, where he developed a strong foundation in object-oriented design patterns and software architecture principles. Over time, he transitioned toward more modern technologies, embracing JavaScript and TypeScript for both frontend and backend development, with a particular focus on Node.js ecosystems.
+
+His professional journey has taken him through various roles: from a junior developer writing his first lines of code in university, through mid-level engineer roles where he honed his craft, to senior and lead engineering positions where he now guides technical direction and mentors younger developers. Chris has contributed to projects ranging from small startup MVPs to large-scale enterprise systems serving millions of users.
+
+Throughout his career, Chris has developed a reputation for writing clean, maintainable code and for delivering projects on time without sacrificing quality. He has a habit of documenting his decisions and architectural choices, which makes it easy for teammates to understand the context behind technical decisions long after they were made. His commitment to continuous improvement means he regularly revisits older code with fresh eyes, refactoring and simplifying as he learns better patterns.
+
+## Technical Expertise
+
+Chris's technical expertise spans a wide range of domains:
+
+**Programming Languages**: JavaScript, TypeScript, Java, Python, and some Kotlin. He is most comfortable with JavaScript and TypeScript, which he uses daily for both frontend and backend work. Python has become increasingly important in his toolkit due to its dominance in the AI and machine learning ecosystem, and he uses it regularly for scripting, data analysis, and building AI-integrated applications.
+
+**Frameworks and Libraries**: On the frontend, Chris has worked extensively with React and its ecosystem, including Redux, React Query, and Next.js. On the backend, he favors Node.js with Express or Fastify for building RESTful and GraphQL APIs. He has also worked with Spring Boot for Java-based microservices and appreciates the robustness it provides for enterprise-grade applications.
+
+**AI and Machine Learning**: Chris has developed a strong interest in artificial intelligence over the past several years. He has explored prompt engineering, retrieval-augmented generation (RAG), LLM integrations, and building AI-powered applications using APIs from providers such as Anthropic, OpenAI, and various open-source models. He actively maintains a GitHub repository dedicated to AI architecture patterns, where he demonstrates different approaches to building AI agents, memory systems, tool-use integrations, and caching strategies.
+
+**Cloud and Infrastructure**: AWS is Chris's primary cloud platform, where he has hands-on experience with services such as Lambda, ECS, RDS, DynamoDB, S3, and API Gateway. He understands infrastructure-as-code principles and has worked with Terraform and AWS CDK to provision and manage cloud resources in a repeatable and version-controlled way. Docker and Kubernetes are central to his daily workflow for containerizing and orchestrating services.
+
+**Databases**: Chris is proficient with both relational databases (PostgreSQL, MySQL) and NoSQL solutions (MongoDB, DynamoDB, Redis). He understands query optimization, indexing strategies, and when to use each type of database. He has designed schemas that balance normalization with query performance in high-traffic systems.
+
+## Personal Projects and Interests
+
+Outside of his professional work, Chris dedicates significant time to personal projects that push the boundaries of his technical knowledge. His GitHub profile reflects a systematic approach to learning: he creates small, focused projects that demonstrate specific concepts or architectural patterns, often with well-organized code and clear documentation that others can use as reference.
+
+One of his most active personal repositories is a collection of AI agent implementations, where he explores different memory architectures, tool-use patterns, and multi-agent coordination strategies. Each implementation is a working example demonstrating a specific pattern — in-context memory, vector store memory, prompt caching, tool use with MCP servers — that can serve as a reference for other developers learning about AI systems.
+
+Chris is an avid reader of technical literature, from academic papers on machine learning to practical books on software architecture and distributed systems. He believes strongly in understanding the fundamentals before reaching for abstractions, a philosophy that informs both his code reviews and his mentoring style. He tracks emerging research in language models with particular interest in efficiency improvements, including techniques like prompt caching, speculative decoding, and quantization.
+
+## Communication Style and Work Philosophy
+
+Chris values clarity and precision in communication, whether writing code, documentation, or explaining technical concepts to non-technical stakeholders. He prefers concise, well-organized information over verbose explanations that bury the key points. This preference extends to the tools and libraries he chooses: he favors APIs and frameworks that are explicit and predictable over those that rely heavily on magic and convention.
+
+His approach to software development is pragmatic: he believes in choosing the right tool for the job, avoiding over-engineering, and building systems that are as simple as they can be while still meeting requirements. He has a strong preference for test-driven development and believes that good tests are as important as good code. In his experience, a well-tested codebase is the single most effective way to maintain development velocity over the long term.
+
+When mentoring junior developers, Chris focuses on building intuition rather than memorizing patterns. He asks probing questions to help developers discover answers themselves, believing that understanding the "why" behind a decision is more valuable than knowing the "what." He encourages his mentees to read error messages carefully, to search for root causes rather than symptoms, and to never merge code they do not fully understand.
+
+## Location and Lifestyle
+
+Chris lives and works in Poland, where he enjoys the vibrant tech community and has participated in various local and international developer conferences and meetups. He speaks Polish as his native language and is fully fluent in English, which he uses extensively in his professional work given the international nature of modern software development.
+
+In his free time, Chris enjoys hiking in the Polish mountains, particularly the Tatra range, where he finds the combination of physical challenge and natural beauty to be an effective way to disconnect from screens and recharge creatively. He is also an occasional cyclist and enjoys cooking, experimenting with traditional Polish recipes that he adapts using modern culinary techniques. He believes that cooking and programming share a common discipline: following a structured process while remaining open to creative improvisation when the situation calls for it.
+
+## Summary
+
+In summary, Chris Wiśniewski is a highly experienced software engineer with a deep commitment to continuous learning and technical excellence. His first name is Chris. His broad technical background, combined with his growing expertise in AI systems and prompt engineering, makes him well-positioned to contribute to the next generation of intelligent software applications. He brings a thoughtful, pragmatic approach to every project, whether it is a quick proof-of-concept or a mission-critical production system, and he takes pride in building things that are not just functional but genuinely well-crafted.

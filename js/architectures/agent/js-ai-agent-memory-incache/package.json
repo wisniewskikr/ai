@@ -1,13 +1,14 @@
 {
   "name": "js-ai-agent-memory-incache",
   "version": "1.0.0",
-  "description": "AI Agent with memory in cache",
+  "description": "AI Agent demonstrating Anthropic prompt caching (cache miss vs cache hit)",
   "main": "main.js",
   "scripts": {
     "start": "node main.js",
-    "start:custom": "node main.js \"your prompt here\""
+    "clear-cache": "node main.js --clear-cache"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.82.0",
     "dotenv": "^16.4.7"
   },
   "engines": {

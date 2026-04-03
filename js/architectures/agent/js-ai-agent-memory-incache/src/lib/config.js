@@ -3,8 +3,8 @@
 /*
  * config.js — load and validate all external configuration.
  *
- * Fail fast and loud. A missing API key discovered at startup is a minor
- * annoyance; discovering it mid-pipeline after API calls is a waste of time.
+ * Reads config.json from the project root and ANTHROPIC_API_KEY from .env.
+ * Fails fast if anything required is missing.
  */
 
 require('dotenv').config();
@@ -26,20 +26,15 @@ function loadConfig() {
         throw new Error(`Failed to parse config.json: ${err.message}`);
     }
 
-    const { inputs, model, baseUrl, maxTokens, temperature } = parsed;
+    const { model, maxTokens, temperature } = parsed;
 
-    if (!inputs || !Array.isArray(inputs) || inputs.length === 0)
-        throw new Error('config.json is missing required field: "inputs" (must be a non-empty array)');
-    if (!model)   throw new Error('config.json is missing required field: "model"');
-    if (!baseUrl) throw new Error('config.json is missing required field: "baseUrl"');
+    if (!model) throw new Error('config.json is missing required field: "model"');
 
-    const apiKey = process.env.OPENROUTER_API_KEY;
-    if (!apiKey)  throw new Error('OPENROUTER_API_KEY is not set in .env');
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) throw new Error('ANTHROPIC_API_KEY is not set in .env');
 
     return {
-        inputs,
         model,
-        baseUrl,
         maxTokens:   maxTokens   ?? 1024,
         temperature: temperature ?? 0,
         apiKey,
