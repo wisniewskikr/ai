@@ -26,9 +26,10 @@ function loadConfig() {
         throw new Error(`Failed to parse config.json: ${err.message}`);
     }
 
-    const { input, model, baseUrl, maxTokens, temperature } = parsed;
+    const { inputs, model, baseUrl, maxTokens, temperature } = parsed;
 
-    if (!input)   throw new Error('config.json is missing required field: "input"');
+    if (!inputs || !Array.isArray(inputs) || inputs.length === 0)
+        throw new Error('config.json is missing required field: "inputs" (must be a non-empty array)');
     if (!model)   throw new Error('config.json is missing required field: "model"');
     if (!baseUrl) throw new Error('config.json is missing required field: "baseUrl"');
 
@@ -36,7 +37,7 @@ function loadConfig() {
     if (!apiKey)  throw new Error('OPENROUTER_API_KEY is not set in .env');
 
     return {
-        input,
+        inputs,
         model,
         baseUrl,
         maxTokens:   maxTokens   ?? 1024,

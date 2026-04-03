@@ -3,10 +3,10 @@
 /*
  * agent.js — agent orchestration.
  *
- * Single phase — in-weights memory demo:
- *   Ask the model for the user's name. Because the model only has in-weights
- *   memory (knowledge from training), it has no personal data about the user
- *   and responds with "Hello World, stranger".
+ * In-context memory demo:
+ *   The agent maintains a growing conversation history across multiple turns.
+ *   Information shared by the user in earlier messages (e.g. their name) is
+ *   retained in the context window and can be recalled in later turns.
  *
  * System prompt: src/prompts/agent.txt
  */
@@ -21,26 +21,34 @@ const SYSTEM_PROMPT = fs
     .trim();
 
 /**
- * Ask the model for the user's name using only in-weights memory.
+ * Send one turn of the conversation, carrying forward the history.
  *
- * @param {object} config - Config from loadConfig()
- * @param {string} prompt - User message
- * @returns {Promise<string>}
+ * @param {object}   config  - Config from loadConfig()
+ * @param {string}   prompt  - New user message for this turn
+ * @param {Array}    history - Previous [{role, content}] pairs (user + assistant)
+ * @returns {Promise<{answer: string, history: Array}>}
  */
-async function run(config, prompt) {
-    logger.step('In-weights memory demo');
-    logger.info(`[Agent] Question: "${prompt}"`);
+async function run(config, prompt, history = []) {
+    logger.info(`[Agent] User: "${prompt}"`);
 
     const messages = [
         { role: 'system', content: SYSTEM_PROMPT },
-        { role: 'user',   content: prompt },
+        ...history,
+        { role: 'user', content: prompt },
     ];
 
-    logger.info(`[Agent] Calling API — model: ${config.model}`);
-    const result = await chatCompletion(config, messages);
+    logger.info(`[Agent] Calling API — model: ${config.model} | context turns: ${history.length / 2}`);
+    const answer = await chatCompletion(config, messages);
 
-    logger.result(`[Agent] Answer: "${result}"`);
-    return result;
+    logger.result(`[Agent] Assistant: "${answer}"`);
+
+    const updatedHistory = [
+        ...history,
+        { role: 'user',      content: prompt },
+        { role: 'assistant', content: answer  },
+    ];
+
+    return { answer, history: updatedHistory };
 }
 
 module.exports = { run };

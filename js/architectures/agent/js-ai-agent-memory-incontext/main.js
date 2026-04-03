@@ -3,12 +3,12 @@
 /*
  * main.js — entry point. Bootstrap and run.
  *
- * Demonstrates in-weights memory: the model only knows what was baked in
- * during training, so it cannot retrieve personal user data (e.g. a name).
+ * Demonstrates in-context memory: conversation history is preserved across
+ * multiple turns so the model can recall information from earlier messages.
  *
  * Usage:
- *   node main.js
- *   node main.js "What is my name?"
+ *   npm start
+ *   node main.js "My name is Alice" "What is my name?"
  */
 
 const { loadConfig } = require('./src/lib/config');
@@ -17,7 +17,7 @@ const agent          = require('./src/agents/agent');
 
 async function main() {
     logger.info('========================================');
-    logger.info('     Agent — In-Weights Memory Demo     ');
+    logger.info('   Agent — In-Context Memory Demo      ');
     logger.info('========================================');
 
     let config;
@@ -28,19 +28,31 @@ async function main() {
         process.exit(1);
     }
 
-    const prompt = process.argv[2] || config.input;
-    logger.info(`Config loaded — model: ${config.model} | input: "${prompt}"`);
+    // Accept inputs from CLI args or fall back to config.inputs / config.input
+    const inputs = process.argv.length > 2
+        ? process.argv.slice(2)
+        : (Array.isArray(config.inputs) ? config.inputs : [config.input]);
 
-    let result;
-    try {
-        result = await agent.run(config, prompt);
-    } catch (err) {
-        logger.error(`Agent crashed: ${err.message}`);
-        process.exit(1);
+    logger.info(`Config loaded — model: ${config.model} | turns: ${inputs.length}`);
+
+    let history = [];
+
+    for (let i = 0; i < inputs.length; i++) {
+        logger.step(`Turn ${i + 1} / ${inputs.length}`);
+        try {
+            const { answer, history: next } = await agent.run(config, inputs[i], history);
+            history = next;
+            logger.info('----------------------------------------');
+            logger.info(`  Result [turn ${i + 1}]: ${answer}`);
+            logger.info('----------------------------------------');
+        } catch (err) {
+            logger.error(`Agent crashed on turn ${i + 1}: ${err.message}`);
+            process.exit(1);
+        }
     }
 
     logger.info('========================================');
-    logger.info(`  Result: ${result}`);
+    logger.info('  Done.');
     logger.info('========================================');
 }
 
