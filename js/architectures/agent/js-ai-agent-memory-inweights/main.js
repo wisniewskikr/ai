@@ -3,12 +3,12 @@
 /*
  * main.js — entry point. Bootstrap and run.
  *
- * Thin by design: load config, hand off to agent, print results.
- * All business logic lives in src/agents/. All I/O lives in src/lib/.
+ * Demonstrates in-weights memory: the model only knows what was baked in
+ * during training, so it cannot retrieve personal user data (e.g. a name).
  *
  * Usage:
  *   node main.js
- *   node main.js "your prompt here"
+ *   node main.js "What is my name?"
  */
 
 const { loadConfig } = require('./src/lib/config');
@@ -17,7 +17,7 @@ const agent          = require('./src/agents/agent');
 
 async function main() {
     logger.info('========================================');
-    logger.info('       Agent Hello World (MCP)          ');
+    logger.info('     Agent — In-Weights Memory Demo     ');
     logger.info('========================================');
 
     let config;
@@ -31,17 +31,16 @@ async function main() {
     const prompt = process.argv[2] || config.input;
     logger.info(`Config loaded — model: ${config.model} | input: "${prompt}"`);
 
-    let results;
+    let result;
     try {
-        results = await agent.run(config, prompt);
+        result = await agent.run(config, prompt);
     } catch (err) {
         logger.error(`Agent crashed: ${err.message}`);
         process.exit(1);
     }
 
     logger.info('========================================');
-    logger.info(`  Result (no tool):  ${results.withoutTools}`);
-    logger.info(`  Result (MCP tool): ${results.withMcpTools}`);
+    logger.info(`  Result: ${result}`);
     logger.info('========================================');
 }
 

@@ -3,5 +3,5 @@
   "maxTokens": 1024,
   "temperature": 0,
   "baseUrl": "https://openrouter.ai/api/v1",
-  "input": "hello world"
+  "input": "Display text 'Hello World' plus my name."
 }
