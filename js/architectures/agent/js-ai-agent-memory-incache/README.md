@@ -1,67 +1,79 @@
-# js-ai-agent-memory-incontext
+# js-ai-agent-memory-incache
 
-A minimal "Hello World" demonstrating **in-context memory** in an LLM agent.
+A minimal "Hello World" demonstrating **prompt caching (in-cache memory)** with the Anthropic API.
 
-The agent runs a two-turn conversation. In the first turn the user introduces
-themselves (`"My name is Chris"`). In the second turn the agent is asked to
-display `"Hello World"` plus the user's name. Because the full conversation
-history is passed to the model each time, it can recall the name from the
-context window and answer correctly.
+The agent loads a large fictional profile document (~1 100 words) as the system prompt
+and marks it with `cache_control: { type: "ephemeral" }`.  The same question is asked
+twice in a row so the difference between a cache miss and a cache hit is clearly visible
+in the token-usage stats.
 
 ---
 
 ## What it does
 
 ```
-Turn 1 — user:      "My name is Chris"
-Turn 1 — assistant: "Nice to meet you, Chris!"
+Call 1 — CACHE MISS
+  cache_creation_input_tokens : 1 6xx   ← document processed and written to cache
+  cache_read_input_tokens     : 0
+  Answer: Hello World, Chris
 
-Turn 2 — user:      "Display text 'Hello World' plus my name."
-Turn 2 — assistant: "Hello World, Chris"   ← name recalled from context
+Call 2 — CACHE HIT
+  cache_creation_input_tokens : 0
+  cache_read_input_tokens     : 1 6xx   ← document read from cache (faster & cheaper)
+  Answer: Hello World, Chris
 ```
 
-The key difference from **in-weights memory**: the model was not trained on
-this fact — it simply has access to the earlier part of the conversation
-(the context window) when answering the second question.
+The name **Chris** is extracted from `src/prompts/chris_profile.txt` — a fictional
+profile document that also serves as the large cached payload.
 
 ---
 
 ## Architecture
 
 ```
-main.js                   - entry point; loops through inputs, passes history
+main.js                        - entry point; runs call 1 (miss) then call 2 (hit)
 src/
-  agents/agent.js         - one turn per call; grows the history array
-  lib/api.js              - OpenAI-compatible API wrapper
-  lib/config.js           - loads config.json + .env
-  lib/logger.js           - console + file logging
-  prompts/agent.txt       - system prompt
-logs/                     - daily log files (YYYY-MM-DD.log)
-config.json               - model, baseUrl, default inputs
-.env                      - OPENROUTER_API_KEY (never commit this)
+  agents/agent.js              - builds the system prompt with cache version suffix
+  lib/api.js                   - Anthropic SDK wrapper with cache_control
+  lib/config.js                - loads config.json + .env
+  lib/logger.js                - console + file logging
+  prompts/chris_profile.txt    - ~1 100-word fictional profile (the cached document)
+cache_state.json               - auto-created; stores cache version for --clear-cache
+logs/                          - daily log files (YYYY-MM-DD.log)
+config.json                    - model, maxTokens, temperature
+.env                           - ANTHROPIC_API_KEY (never commit this)
 ```
+
+---
+
+## How prompt caching works
+
+```
+First call                         Second call (within ~5 min)
+──────────────────────────────     ──────────────────────────────
+[system]  chris_profile.txt        [system]  chris_profile.txt
+          cache_control ──►  ✔ written to cache   ◄── read from cache
+[user]    "Hello World + name?"    [user]    "Hello World + name?"
+
+usage.cache_creation_input_tokens > 0    usage.cache_read_input_tokens > 0
+```
+
+Anthropic caches the system prompt server-side.  On the first call the full document
+is processed (cache miss) and written to the cache.  On every subsequent call within
+the TTL (~5 minutes) the cached version is reused — the document is not re-processed,
+which reduces latency and cost.
+
+Clearing the cache increments a version counter appended to the document, which changes
+the cache key and forces a miss on the next call.
 
 ---
 
 ## Dependencies
 
-| Package  | Purpose                        |
-|----------|--------------------------------|
-| `dotenv` | Load `OPENROUTER_API_KEY` from `.env` |
-
-### How in-context memory works
-
-```
-Turn 1                          Turn 2
-──────────────────────────      ──────────────────────────────────────────
-[system]                        [system]
-[user]  "My name is Chris"      [user]  "My name is Chris"
-                                [assistant] "Nice to meet you, Chris!"
-                        →       [user]  "Display text 'Hello World' plus my name."
-```
-
-Each call to `agent.run()` receives the accumulated history and appends the new
-user message + assistant reply before returning the updated array.
+| Package              | Purpose                              |
+|----------------------|--------------------------------------|
+| `@anthropic-ai/sdk`  | Anthropic API client with caching    |
+| `dotenv`             | Load `ANTHROPIC_API_KEY` from `.env` |
 
 ---
 
@@ -74,19 +86,25 @@ npm install
 Create `.env`:
 
 ```
-OPENROUTER_API_KEY=sk-or-...
+ANTHROPIC_API_KEY=sk-ant-...
 ```
+
+> **Why Anthropic directly and not OpenRouter?**
+> OpenRouter's non-BYOK mode uses its own Anthropic account and does not forward
+> prompt-cache stats (`cache_creation_input_tokens` / `cache_read_input_tokens`) back
+> to the caller — both fields are always `0`.  The Anthropic SDK is required to observe
+> real caching behaviour.
 
 ---
 
 ## Usage
 
 ```bash
-# Use the default inputs from config.json
+# Run the two-call demo (miss → hit)
 npm start
 
-# Pass custom turns as CLI arguments
-node main.js "My name is Alice" "Display text 'Hello World' plus my name."
+# Invalidate the cache (next run will be a miss again)
+npm run clear-cache
 ```
 
 ---
@@ -95,19 +113,17 @@ node main.js "My name is Alice" "Display text 'Hello World' plus my name."
 
 `config.json`:
 
-| Field         | Default                        | Description                        |
-|---------------|--------------------------------|------------------------------------|
-| `model`       | `openai/gpt-4o`                | Model ID on OpenRouter             |
-| `maxTokens`   | `1024`                         | Maximum tokens in response         |
-| `temperature` | `0`                            | Sampling temperature               |
-| `baseUrl`     | `https://openrouter.ai/api/v1` | OpenAI-compatible API base URL     |
-| `inputs`      | `["My name is Chris", "Display text 'Hello World' plus my name."]` | Ordered list of conversation turns |
+| Field         | Default                    | Description                    |
+|---------------|----------------------------|--------------------------------|
+| `model`       | `claude-haiku-4-5-20251001`| Anthropic model ID             |
+| `maxTokens`   | `256`                      | Maximum tokens in response     |
+| `temperature` | `0`                        | Sampling temperature           |
 
 `.env`:
 
-| Variable             | Required | Description        |
-|----------------------|----------|--------------------|
-| `OPENROUTER_API_KEY` | Yes      | OpenRouter API key |
+| Variable            | Required | Description         |
+|---------------------|----------|---------------------|
+| `ANTHROPIC_API_KEY` | Yes      | Anthropic API key   |
 
 ---
 
@@ -116,9 +132,9 @@ node main.js "My name is Alice" "Display text 'Hello World' plus my name."
 Every run appends to `logs/YYYY-MM-DD.log`. Log levels:
 
 - `INFO`   - general progress
-- `STEP`   - start of a new conversation turn
+- `STEP`   - start of a major phase
 - `RESULT` - assistant reply
-- `WARN`   - unexpected but non-fatal events
+- `WARN`   - cache miss or unexpected event
 - `ERROR`  - fatal problems
 
 ---
@@ -126,4 +142,4 @@ Every run appends to `logs/YYYY-MM-DD.log`. Log levels:
 ## Requirements
 
 - Node.js 18+
-- An OpenRouter API key with access to `openai/gpt-4o`
+- An Anthropic API key with access to `claude-haiku-4-5-20251001`

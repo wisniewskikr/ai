@@ -12,12 +12,15 @@
  * cache_creation_input_tokens > 0 (cache MISS — document written to cache).
  * On subsequent calls within the TTL (~5 min) cache_read_input_tokens > 0
  * (cache HIT — document read from cache, faster and cheaper).
+ *
+ * NOTE: OpenRouter does not expose Anthropic prompt-cache stats (cache_write_tokens
+ * is always 0 in non-BYOK mode).  The Anthropic SDK is used here instead.
  */
 
 const Anthropic = require('@anthropic-ai/sdk');
 
 /**
- * Send a user message with a cached system prompt.
+ * Send a user message with a cached system prompt via Anthropic API.
  *
  * @param {object} config       - Config from loadConfig()
  * @param {string} systemPrompt - Large document to cache server-side
