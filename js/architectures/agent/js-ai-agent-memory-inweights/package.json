@@ -8,7 +8,6 @@
     "start:custom": "node main.js \"your prompt here\""
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.10.2",
     "dotenv": "^16.4.7"
   },
   "engines": {

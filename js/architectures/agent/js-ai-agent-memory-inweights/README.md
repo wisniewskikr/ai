@@ -24,16 +24,16 @@ Output: "Hello World, stranger"
 ## Architecture
 
 ```
-main.js                   - entry point, reads prompt, runs agent
+main.js                 - entry point, reads prompt, runs agent
 src/
-  agents/agent.js         - single-phase agent, calls LLM directly
-  lib/api.js              - OpenAI-compatible API wrapper
-  lib/config.js           - loads config.json + .env
-  lib/logger.js           - console + file logging
-  prompts/agent.txt       - system prompt
-logs/                     - daily log files (YYYY-MM-DD.log)
-config.json               - model, baseUrl, default input
-.env                      - OPENROUTER_API_KEY (never commit this)
+  agents/agent.js       - single-phase agent, calls LLM directly
+  lib/api.js            - OpenAI-compatible API wrapper
+  lib/config.js         - loads config.json + .env
+  lib/logger.js         - console + file logging
+  prompts/agent.txt     - system prompt
+logs/                   - daily log files (YYYY-MM-DD.log)
+config.json             - model, baseUrl, default input
+.env                    - OPENROUTER_API_KEY (never commit this)
 ```
 
 ---
