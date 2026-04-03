@@ -22,7 +22,10 @@ const {
 const fs   = require('fs');
 const path = require('path');
 
-const MEMORY_FILE = path.join(process.cwd(), 'memory.txt');
+const WORKSPACE_DIR = path.join(process.cwd(), 'workspace');
+const MEMORY_FILE   = path.join(WORKSPACE_DIR, 'memory.txt');
+
+fs.mkdirSync(WORKSPACE_DIR, { recursive: true });
 
 const server = new Server(
     { name: 'memory-server', version: '1.0.0' },

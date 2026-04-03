@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "node main.js",
-    "reset": "node -e \"const fs=require('fs'); try { fs.unlinkSync('memory.txt'); console.log('memory.txt deleted — demo reset.'); } catch(e) { console.log('memory.txt not found, nothing to delete.'); }\""
+    "reset": "node -e \"const fs=require('fs'); try { fs.unlinkSync('workspace/memory.txt'); console.log('workspace/memory.txt deleted — demo reset.'); } catch(e) { console.log('workspace/memory.txt not found, nothing to delete.'); }\""
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.10.2",

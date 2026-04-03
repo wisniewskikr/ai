@@ -2,7 +2,7 @@
 
 A minimal demo showing an LLM agent that uses **external memory** (a local file) via MCP tools.
 
-The agent reads `memory.txt` on every run. If the file is missing or empty it greets a
+The agent reads `workspace/memory.txt` on every run. If the file is missing or empty it greets a
 stranger and writes a name to memory. On subsequent runs it reads the stored name and
 greets by name. Run `npm run reset` to delete the memory file and repeat the demo.
 
@@ -23,7 +23,7 @@ First run (memory.txt missing or empty):
   LLM   -> agent: "Hello World stranger"
 
 Output: Hello World stranger
-memory.txt: "My name is Chris"
+workspace/memory.txt: "My name is Chris"
 
 ---
 
@@ -57,7 +57,8 @@ src/
   prompts/
     agent.txt                 - system prompt
 logs/                         - daily log files (YYYY-MM-DD.log)
-memory.txt                    - external memory (created at runtime, gitignored)
+workspace/
+  memory.txt                  - external memory (created at runtime, gitignored)
 config.json                   - model, baseUrl, default input
 .env                          - OPENROUTER_API_KEY (never commit this)
 ```
