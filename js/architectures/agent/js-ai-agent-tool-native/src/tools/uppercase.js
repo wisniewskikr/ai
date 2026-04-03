@@ -1,10 +1,10 @@
 /**
- * tools.js
+ * uppercase.js
  *
- * Native tool registry.
+ * Native tool: to_uppercase.
  *
- * TOOLS        — OpenAI function-calling schema the model sees.
- * TOOL_HANDLERS — the actual JavaScript that runs when the model calls a tool.
+ * SCHEMA       — OpenAI function-calling schema the model sees.
+ * TOOL_HANDLERS — the actual JavaScript that runs when the model calls the tool.
  * executeTool  — looks up the handler and runs it with parsed arguments.
  *
  * To add a new tool: add its schema to TOOLS and its handler to TOOL_HANDLERS.
