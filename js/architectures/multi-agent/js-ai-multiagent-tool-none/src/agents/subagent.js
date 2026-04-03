@@ -9,25 +9,27 @@
  *
  * Single responsibility is not just good practice — it makes agents
  * composable and independently testable.
+ *
+ * System prompt lives in: src/prompts/subagent.txt
  */
 
+const fs             = require('fs');
+const path           = require('path');
 const { chatCompletion } = require('../lib/api');
 const logger             = require('../lib/logger');
 
-const SYSTEM_PROMPT = `\
-You are a text transformation agent. Your sole responsibility is to convert \
-the user's input to uppercase. Return ONLY the uppercase text — no explanation, \
-no surrounding quotes, no extra words.`;
+const SYSTEM_PROMPT = fs
+    .readFileSync(path.join(__dirname, '../prompts/subagent.txt'), 'utf8')
+    .trim();
 
 /**
  * Transform text to uppercase via LLM.
  *
- * @param {string} apiKey - OpenRouter API key
- * @param {string} model  - Model identifier
+ * @param {object} config - Config object from loadConfig()
  * @param {string} text   - Input text to transform
  * @returns {Promise<string>} - Uppercased result
  */
-async function run(apiKey, model, text) {
+async function run(config, text) {
     logger.info('[Subagent] Task received: text transformation');
     logger.info(`[Subagent] Input: "${text}"`);
 
@@ -36,8 +38,8 @@ async function run(apiKey, model, text) {
         { role: 'user',   content: text },
     ];
 
-    logger.debug(`[Subagent] Calling API — model: ${model}`);
-    const result = await chatCompletion(apiKey, model, messages);
+    logger.debug(`[Subagent] Calling API — model: ${config.model}`);
+    const result = await chatCompletion(config, messages);
 
     logger.info(`[Subagent] Output: "${result}"`);
     logger.info('[Subagent] Task complete');

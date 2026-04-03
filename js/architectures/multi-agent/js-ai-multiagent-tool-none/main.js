@@ -26,7 +26,7 @@ async function main() {
         process.exit(1);
     }
 
-    logger.info(`Config loaded — model: ${config.model} | prompt: "${config.prompt}"`);
+    logger.info(`Config loaded — model: ${config.model} | input: "${config.input}"`);
 
     /* Run the multi-agent pipeline */
     let result;

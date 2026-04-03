@@ -51,10 +51,21 @@ Configure the input and model in `config.json`:
 
 ```json
 {
-  "prompt": "hello world",
-  "model": "openai/gpt-4o"
+  "model": "openai/gpt-4o",
+  "maxTokens": 1024,
+  "temperature": 0,
+  "baseUrl": "https://openrouter.ai/api/v1",
+  "input": "hello world"
 }
 ```
+
+| Field         | Required | Description                                      |
+|---------------|----------|--------------------------------------------------|
+| `input`       | yes      | Text to be transformed by the agent pipeline     |
+| `model`       | yes      | Model identifier passed to the API               |
+| `baseUrl`     | yes      | API base URL (swap to use a different provider)  |
+| `maxTokens`   | no       | Max tokens in the response (default: 1024)       |
+| `temperature` | no       | Sampling temperature — 0 = deterministic (default: 0) |
 
 ---
 
@@ -71,7 +82,7 @@ Expected output:
 [...] [INFO ]        Multi-Agent Hello World
 [...] [INFO ] ========================================
 [...] [INFO ] Log file: logs/run-2026-04-03T12-00-00.log
-[...] [INFO ] Config loaded — model: openai/gpt-4o | prompt: "hello world"
+[...] [INFO ] Config loaded — model: openai/gpt-4o | input: "hello world"
 [...] [INFO ] [Orchestrator] Starting
 [...] [INFO ] [Orchestrator] Task: "hello world"
 [...] [DEBUG] [Orchestrator] Requesting task plan from LLM
@@ -96,29 +107,46 @@ Logs are written to `logs/run-<timestamp>.log`.
 
 ```
 .
-├── .env                        # API key (not committed)
-├── config.json                 # Input prompt and model selection
-├── main.js                     # Entry point
+├── .env                            # API key (not committed)
+├── config.json                     # Input, model, and API settings
+├── main.js                         # Entry point
 ├── package.json
 ├── README.md
 └── src/
     ├── agents/
-    │   ├── orchestrator.js     # Plans and delegates tasks
-    │   └── subagent.js         # Executes text transformation
-    └── lib/
-        ├── api.js              # OpenRouter HTTP wrapper
-        ├── config.js           # Config + env loading
-        └── logger.js           # Console + file logging
+    │   ├── orchestrator.js         # Plans and delegates tasks
+    │   └── subagent.js             # Executes text transformation
+    ├── lib/
+    │   ├── api.js                  # OpenRouter HTTP wrapper
+    │   ├── config.js               # Config + env loading
+    │   └── logger.js               # Console + file logging
+    └── prompts/
+        ├── orchestrator.txt        # System prompt for the orchestrator agent
+        └── subagent.txt            # System prompt for the text-transformer agent
 ```
+
+---
+
+## Editing system prompts
+
+Each agent's behavior is controlled by a plain text file in `src/prompts/`.
+To change what an agent does, edit the corresponding `.txt` file and restart.
+No code changes needed.
+
+| File                        | Controls                                      |
+|-----------------------------|-----------------------------------------------|
+| `src/prompts/orchestrator.txt` | How the orchestrator plans and delegates   |
+| `src/prompts/subagent.txt`     | How the subagent transforms text           |
 
 ---
 
 ## Adding a new subagent
 
-1. Create `src/agents/my-new-agent.js` with a `run(apiKey, model, input)` export.
-2. Import it in `orchestrator.js`.
-3. Add it to the orchestrator's system prompt so the LLM knows it exists.
-4. Call it when the orchestrator decides the task warrants it.
+1. Create `src/agents/my-new-agent.js` with a `run(config, input)` export.
+2. Create `src/prompts/my-new-agent.txt` with the agent's system prompt.
+3. Import the agent in `orchestrator.js`.
+4. Add it to `src/prompts/orchestrator.txt` so the LLM knows it exists.
+5. Call it when the orchestrator decides the task warrants it.
 
 That's it. No framework registration, no special wiring.
 

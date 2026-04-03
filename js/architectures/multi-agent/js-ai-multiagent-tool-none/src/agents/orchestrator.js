@@ -11,49 +11,46 @@
  *
  * No tools are used. Agent-to-agent communication is explicit function calls
  * in code — clear, debuggable, and easy to trace in logs.
+ *
+ * System prompt lives in: src/prompts/orchestrator.txt
  */
 
+const fs                 = require('fs');
+const path               = require('path');
 const { chatCompletion } = require('../lib/api');
 const subagent           = require('./subagent');
 const logger             = require('../lib/logger');
 
-const SYSTEM_PROMPT = `\
-You are an orchestrator agent. Your job is to analyze incoming tasks and \
-describe which subagent should handle them. Available subagents:
-
-  - text-transformer: converts text to uppercase
-
-Respond with a brief one-line plan describing what you will delegate and why. \
-Be concise and direct.`;
+const SYSTEM_PROMPT = fs
+    .readFileSync(path.join(__dirname, '../prompts/orchestrator.txt'), 'utf8')
+    .trim();
 
 /**
  * Run the orchestration pipeline.
  *
- * @param {object} config         - Validated config object
- * @param {string} config.apiKey  - OpenRouter API key
- * @param {string} config.model   - Model identifier
- * @param {string} config.prompt  - Input text from config.json
- * @returns {Promise<string>}     - Final transformed result
+ * @param {object} config        - Config object from loadConfig()
+ * @param {string} config.input  - Input text from config.json
+ * @returns {Promise<string>}    - Final transformed result
  */
 async function run(config) {
-    const { apiKey, model, prompt } = config;
+    const { input } = config;
 
     logger.info('[Orchestrator] Starting');
-    logger.info(`[Orchestrator] Task: "${prompt}"`);
+    logger.info(`[Orchestrator] Task: "${input}"`);
 
     /* Step 1: ask the LLM orchestrator to plan the task */
     const planMessages = [
         { role: 'system', content: SYSTEM_PROMPT },
-        { role: 'user',   content: `Task: convert this text to uppercase — "${prompt}"` },
+        { role: 'user',   content: `Task: convert this text to uppercase — "${input}"` },
     ];
 
     logger.debug('[Orchestrator] Requesting task plan from LLM');
-    const plan = await chatCompletion(apiKey, model, planMessages);
+    const plan = await chatCompletion(config, planMessages);
     logger.info(`[Orchestrator] Plan: ${plan}`);
 
     /* Step 2: execute the plan — delegate to text-transformer subagent */
     logger.info('[Orchestrator] Delegating to text-transformer subagent');
-    const result = await subagent.run(apiKey, model, prompt);
+    const result = await subagent.run(config, input);
 
     logger.info(`[Orchestrator] Pipeline complete — final result: "${result}"`);
     return result;

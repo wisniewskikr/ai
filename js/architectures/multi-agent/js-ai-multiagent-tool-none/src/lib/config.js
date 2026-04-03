@@ -26,15 +26,23 @@ function loadConfig() {
         throw new Error(`Failed to parse config.json: ${err.message}`);
     }
 
-    const { prompt, model } = parsed;
+    const { input, model, baseUrl, maxTokens, temperature } = parsed;
 
-    if (!prompt) throw new Error('config.json is missing required field: "prompt"');
-    if (!model)  throw new Error('config.json is missing required field: "model"');
+    if (!input)   throw new Error('config.json is missing required field: "input"');
+    if (!model)   throw new Error('config.json is missing required field: "model"');
+    if (!baseUrl) throw new Error('config.json is missing required field: "baseUrl"');
 
     const apiKey = process.env.OPENROUTER_API_KEY;
     if (!apiKey)  throw new Error('OPENROUTER_API_KEY is not set in .env');
 
-    return { prompt, model, apiKey };
+    return {
+        input,
+        model,
+        baseUrl,
+        maxTokens:   maxTokens   ?? 1024,
+        temperature: temperature ?? 0,
+        apiKey,
+    };
 }
 
 module.exports = { loadConfig };

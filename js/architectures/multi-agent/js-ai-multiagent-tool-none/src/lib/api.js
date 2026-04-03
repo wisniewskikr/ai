@@ -4,28 +4,40 @@
  * api.js — thin wrapper around the OpenRouter chat completions endpoint.
  *
  * OpenRouter exposes an OpenAI-compatible API, so the request shape is
- * standard: POST /chat/completions with {model, messages}.
+ * standard: POST /chat/completions with {model, messages, ...params}.
  *
  * This module does exactly one thing: send a message array, get a reply.
  * No retries, no caching — keep it simple, let the caller decide policy.
  */
 
-const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
-
 /**
- * @param {string}   apiKey   - OpenRouter API key
- * @param {string}   model    - Model identifier (e.g. "openai/gpt-4o")
- * @param {Array}    messages - OpenAI-style message array [{role, content}]
- * @returns {Promise<string>} - The assistant's reply text
+ * Send a chat completion request.
+ *
+ * @param {object} config              - Config object from loadConfig()
+ * @param {string} config.apiKey       - OpenRouter API key
+ * @param {string} config.model        - Model identifier (e.g. "openai/gpt-4o")
+ * @param {string} config.baseUrl      - API base URL
+ * @param {number} config.maxTokens    - Maximum tokens in the response
+ * @param {number} config.temperature  - Sampling temperature (0 = deterministic)
+ * @param {Array}  messages            - OpenAI-style message array [{role, content}]
+ * @returns {Promise<string>}          - The assistant's reply text
  */
-async function chatCompletion(apiKey, model, messages) {
-    const response = await fetch(OPENROUTER_URL, {
+async function chatCompletion(config, messages) {
+    const { apiKey, model, baseUrl, maxTokens, temperature } = config;
+    const url = `${baseUrl}/chat/completions`;
+
+    const response = await fetch(url, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${apiKey}`,
             'Content-Type':  'application/json',
         },
-        body: JSON.stringify({ model, messages }),
+        body: JSON.stringify({
+            model,
+            messages,
+            max_tokens:  maxTokens,
+            temperature,
+        }),
     });
 
     if (!response.ok) {
