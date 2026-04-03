@@ -1,32 +1,41 @@
-# js-ai-agent-tool-mcp
+# js-ai-agent-memory-external
 
-A minimal "Hello World" demonstrating an LLM agent with MCP tool use.
+A minimal demo showing an LLM agent that uses **external memory** (a local file) via MCP tools.
 
-The agent converts a prompt string to uppercase **twice** - once without any
-tools (the model does it from general knowledge), and once using a custom MCP
-server tool (the model calls an external function). Both runs produce the same
-result. The point is to show how the agent loop works, not to do anything useful.
+The agent reads `memory.txt` on every run. If the file is missing or empty it greets a
+stranger and writes a name to memory. On subsequent runs it reads the stored name and
+greets by name. Run `npm run reset` to delete the memory file and repeat the demo.
 
 ---
 
 ## What it does
 
 ```
-Input:  "hello world"
+First run (memory.txt missing or empty):
 
-Phase 1 - Model only:
-  agent  -> LLM: "convert to uppercase"
-  LLM   -> agent: "HELLO WORLD"
+  agent  -> LLM: "Display text 'Hello World' plus my name"
+  LLM   -> agent: tool_call read_memory()
+  agent  -> MCP server: read_memory()
+  MCP   -> agent: ""
+  LLM   -> agent: tool_call write_memory("My name is Chris")
+  agent  -> MCP server: write_memory("My name is Chris")
+  MCP   -> agent: "Memory saved."
+  LLM   -> agent: "Hello World stranger"
 
-Phase 2 - With MCP tool:
-  agent  -> LLM: "convert to uppercase" + [to_uppercase tool available]
-  LLM   -> agent: tool_call to_uppercase("hello world")
-  agent  -> MCP server: to_uppercase("hello world")
-  MCP   -> agent: "HELLO WORLD"
-  agent  -> LLM: here is the tool result "HELLO WORLD"
-  LLM   -> agent: "HELLO WORLD"
+Output: Hello World stranger
+memory.txt: "My name is Chris"
 
-Output: "HELLO WORLD" (x2)
+---
+
+Second run (memory.txt exists):
+
+  agent  -> LLM: "Display text 'Hello World' plus my name"
+  LLM   -> agent: tool_call read_memory()
+  agent  -> MCP server: read_memory()
+  MCP   -> agent: "My name is Chris"
+  LLM   -> agent: "Hello World Chris"
+
+Output: Hello World Chris
 ```
 
 ---
@@ -34,21 +43,28 @@ Output: "HELLO WORLD" (x2)
 ## Architecture
 
 ```
-index.js                  - entry point, reads prompt, runs agent
+main.js                       - entry point, loads config, runs agent, prints greeting
 src/
-  config.js               - loads config.json + .env
-  logger.js               - console + file logging
-  agent.js                - orchestrates both phases, runs the tool loop
-  mcp-server.js           - standalone MCP server (child process)
-logs/                     - daily log files (YYYY-MM-DD.log)
-config.json               - model, baseUrl, default input
-.env                      - OPENROUTER_API_KEY (never commit this)
+  agents/
+    agent.js                  - agentic loop: calls MCP tools, drives the LLM
+  lib/
+    api.js                    - OpenAI-compatible chat completion wrapper
+    config.js                 - loads config.json + .env
+    logger.js                 - console + file logging
+    mcp-client.js             - spawns MCP server, returns connected client
+  mcp/
+    server.js                 - MCP server exposing read_memory / write_memory tools
+  prompts/
+    agent.txt                 - system prompt
+logs/                         - daily log files (YYYY-MM-DD.log)
+memory.txt                    - external memory (created at runtime, gitignored)
+config.json                   - model, baseUrl, default input
+.env                          - OPENROUTER_API_KEY (never commit this)
 ```
 
-The MCP server runs as a **separate Node.js child process**. The agent spawns it
-via `StdioClientTransport` and communicates over stdin/stdout using the Model
-Context Protocol (JSON-RPC). This is intentional - MCP servers are independent
-processes, not in-process libraries.
+The MCP server runs as a **separate Node.js child process**. The agent spawns it via
+`StdioClientTransport` and communicates over stdin/stdout using the Model Context
+Protocol (JSON-RPC).
 
 ---
 
@@ -69,11 +85,11 @@ OPENROUTER_API_KEY=sk-or-...
 ## Usage
 
 ```bash
-# Use the default prompt from config.json
+# Run the agent (uses default prompt from config.json)
 npm start
 
-# Pass a custom prompt
-node index.js "your text here"
+# Reset the demo by deleting memory.txt
+npm run reset
 ```
 
 ---
@@ -82,19 +98,41 @@ node index.js "your text here"
 
 `config.json`:
 
-| Field         | Default                          | Description                    |
-|---------------|----------------------------------|--------------------------------|
-| `model`       | `openai/gpt-4o`                  | Model ID on OpenRouter         |
-| `maxTokens`   | `1024`                           | Maximum tokens in response     |
-| `temperature` | `0`                              | Sampling temperature           |
-| `baseUrl`     | `https://openrouter.ai/api/v1`   | OpenAI-compatible API base URL |
-| `input`       | `hello world`                    | Default prompt                 |
+| Field         | Default                                      | Description                    |
+|---------------|----------------------------------------------|--------------------------------|
+| `model`       | `openai/gpt-4o`                              | Model ID on OpenRouter         |
+| `maxTokens`   | `1024`                                       | Maximum tokens in response     |
+| `temperature` | `0`                                          | Sampling temperature           |
+| `baseUrl`     | `https://openrouter.ai/api/v1`               | OpenAI-compatible API base URL |
+| `input`       | `Display text 'Hello World' plus my name`    | Default prompt                 |
 
 `.env`:
 
-| Variable              | Required | Description          |
-|-----------------------|----------|----------------------|
-| `OPENROUTER_API_KEY`  | Yes      | OpenRouter API key   |
+| Variable             | Required | Description        |
+|----------------------|----------|--------------------|
+| `OPENROUTER_API_KEY` | Yes      | OpenRouter API key |
+
+---
+
+## MCP tools
+
+Defined in `src/mcp/server.js`.
+
+### `read_memory`
+
+Reads `memory.txt`. Returns its content, or an empty string if the file is missing or blank.
+
+```json
+{}
+```
+
+### `write_memory`
+
+Writes text to `memory.txt`, overwriting any existing content.
+
+```json
+{ "text": "My name is Chris" }
+```
 
 ---
 
@@ -105,28 +143,9 @@ Every run appends to `logs/YYYY-MM-DD.log`. Log levels:
 - `INFO`   - general progress
 - `STEP`   - start of a major phase
 - `TOOL`   - MCP tool call activity
-- `RESULT` - final output values
+- `RESULT` - final output value
 - `WARN`   - unexpected but non-fatal events
 - `ERROR`  - fatal problems
-
----
-
-## MCP tool: `to_uppercase`
-
-Defined in `src/mcp-server.js`. Accepts:
-
-```json
-{ "text": "hello world" }
-```
-
-Returns:
-
-```json
-{ "content": [{ "type": "text", "text": "HELLO WORLD" }] }
-```
-
-To add more tools, add entries to the `ListToolsRequestSchema` handler and
-corresponding cases in the `CallToolRequestSchema` handler in `mcp-server.js`.
 
 ---
 

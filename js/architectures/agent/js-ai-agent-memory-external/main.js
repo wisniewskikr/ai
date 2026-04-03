@@ -1,14 +1,12 @@
 'use strict';
 
 /*
- * main.js — entry point. Bootstrap and run.
- *
- * Thin by design: load config, hand off to agent, print results.
- * All business logic lives in src/agents/. All I/O lives in src/lib/.
+ * main.js — entry point for the external-memory agent demo.
  *
  * Usage:
- *   node main.js
- *   node main.js "your prompt here"
+ *   node main.js          — run with the default prompt from config.json
+ *   node main.js "prompt" — run with a custom prompt
+ *   npm run reset         — delete memory.txt to restart the demo
  */
 
 const { loadConfig } = require('./src/lib/config');
@@ -17,7 +15,7 @@ const agent          = require('./src/agents/agent');
 
 async function main() {
     logger.info('========================================');
-    logger.info('       Agent Hello World (MCP)          ');
+    logger.info('    Agent Demo: External Memory         ');
     logger.info('========================================');
 
     let config;
@@ -31,17 +29,16 @@ async function main() {
     const prompt = process.argv[2] || config.input;
     logger.info(`Config loaded — model: ${config.model} | input: "${prompt}"`);
 
-    let results;
+    let greeting;
     try {
-        results = await agent.run(config, prompt);
+        greeting = await agent.run(config, prompt);
     } catch (err) {
         logger.error(`Agent crashed: ${err.message}`);
         process.exit(1);
     }
 
     logger.info('========================================');
-    logger.info(`  Result (no tool):  ${results.withoutTools}`);
-    logger.info(`  Result (MCP tool): ${results.withMcpTools}`);
+    logger.info(`  ${greeting}`);
     logger.info('========================================');
 }
 

@@ -3,9 +3,9 @@
 /*
  * server.js — MCP tool server (stdio transport).
  *
- * Exposes a single tool: to_uppercase(text) → TEXT.
- * Intentionally trivial — the point is to show the MCP wiring pattern,
- * not to do anything clever with the transformation itself.
+ * Exposes two tools for external memory management:
+ *   read_memory  — reads memory.txt; returns its content or "" if absent/empty
+ *   write_memory — writes text to memory.txt (overwrites)
  *
  * Run standalone: node src/mcp/server.js
  * In normal use:  spawned automatically by the MCP client.
@@ -19,9 +19,13 @@ const {
     CallToolRequestSchema,
     ListToolsRequestSchema,
 } = require('@modelcontextprotocol/sdk/types.js');
+const fs   = require('fs');
+const path = require('path');
+
+const MEMORY_FILE = path.join(process.cwd(), 'memory.txt');
 
 const server = new Server(
-    { name: 'uppercase-server', version: '1.0.0' },
+    { name: 'memory-server', version: '1.0.0' },
     { capabilities: { tools: {} } }
 );
 
@@ -30,14 +34,23 @@ const server = new Server(
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
     tools: [
         {
-            name:        'to_uppercase',
-            description: 'Converts a text string to uppercase and returns it.',
+            name:        'read_memory',
+            description: 'Reads memory.txt and returns its content. Returns an empty string if the file does not exist or is empty.',
+            inputSchema: {
+                type:       'object',
+                properties: {},
+                required:   [],
+            },
+        },
+        {
+            name:        'write_memory',
+            description: 'Writes text to memory.txt, overwriting any existing content.',
             inputSchema: {
                 type:       'object',
                 properties: {
                     text: {
                         type:        'string',
-                        description: 'The text to convert to uppercase.',
+                        description: 'The text to write to memory.txt.',
                     },
                 },
                 required: ['text'],
@@ -51,17 +64,25 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
 
-    if (name !== 'to_uppercase') {
-        throw new Error(`Unknown tool: ${name}`);
+    if (name === 'read_memory') {
+        let content = '';
+        try {
+            content = fs.readFileSync(MEMORY_FILE, 'utf8').trim();
+        } catch (_) {
+            /* file missing — return empty string */
+        }
+        return { content: [{ type: 'text', text: content }] };
     }
 
-    if (typeof args.text !== 'string') {
-        throw new Error('to_uppercase requires a string argument "text"');
+    if (name === 'write_memory') {
+        if (typeof args.text !== 'string') {
+            throw new Error('write_memory requires a string argument "text"');
+        }
+        fs.writeFileSync(MEMORY_FILE, args.text, 'utf8');
+        return { content: [{ type: 'text', text: 'Memory saved.' }] };
     }
 
-    return {
-        content: [{ type: 'text', text: args.text.toUpperCase() }],
-    };
+    throw new Error(`Unknown tool: ${name}`);
 });
 
 /* ── Entry point ────────────────────────────────────────────────────────── */
