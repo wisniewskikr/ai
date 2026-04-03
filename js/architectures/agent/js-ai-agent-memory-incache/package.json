@@ -1,0 +1,17 @@
+{
+  "name": "js-ai-agent-memory-incache",
+  "version": "1.0.0",
+  "description": "AI Agent with memory in cache",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "start:custom": "node main.js \"your prompt here\""
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}
