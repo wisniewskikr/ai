@@ -23,11 +23,10 @@ function loadConfig() {
         throw new Error(`Cannot read config.json: ${err.message}`);
     }
 
-    const { model, maxTokens, baseUrl, name } = raw;
+    const { model, maxTokens, baseUrl } = raw;
 
     if (!model)   throw new Error('config.json: missing required field "model"');
     if (!baseUrl) throw new Error('config.json: missing required field "baseUrl"');
-    if (!name)    throw new Error('config.json: missing required field "name"');
 
     const apiKey = process.env.OPENROUTER_API_KEY;
     if (!apiKey) throw new Error('.env: OPENROUTER_API_KEY is not set');
@@ -36,7 +35,6 @@ function loadConfig() {
         model,
         maxTokens: maxTokens ?? 1024,
         baseUrl,
-        name,
         apiKey,
     };
 }

@@ -40,7 +40,6 @@ async function main() {
 
     logger.info(`Model    : ${config.model}`);
     logger.info(`Max tokens: ${config.maxTokens}`);
-    logger.info(`Name     : ${config.name}`);
     logger.separator();
 
     /* ---- Workspace ------------------------------------------------ */
@@ -53,8 +52,9 @@ async function main() {
     /* ---- Task definition (Orchestrator → Agent) ------------------- */
 
     const task =
-        `Write exactly this text to the file workspace/output.txt:\n` +
-        `Hello World, ${config.name}!`;
+        `Write a greeting to the file workspace/output.txt in the format:\n` +
+        `Hello World, <name>!\n` +
+        `Choose any name you like — be creative.`;
 
     logger.step('[Orchestrator] Assigning task to agent');
     logger.info(`Task: ${task.replace('\n', ' ')}`);
