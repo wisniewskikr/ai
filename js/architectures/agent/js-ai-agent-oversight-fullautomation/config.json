@@ -1,7 +1,6 @@
 {
-  "model": "openai/gpt-4o",
+  "model": "openai/gpt-4o-mini",
   "maxTokens": 1024,
-  "temperature": 0,
   "baseUrl": "https://openrouter.ai/api/v1",
-  "input": "hello world"
+  "name": "Ada"
 }

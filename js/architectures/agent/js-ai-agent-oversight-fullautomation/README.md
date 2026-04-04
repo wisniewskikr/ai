@@ -1,136 +1,174 @@
-# js-ai-agent-tool-mcp
+# js-ai-agent-oversight-fullautomation
 
-A minimal "Hello World" demonstrating an LLM agent with MCP tool use.
+A minimal "Hello World" demonstrating the **AI agent oversight architecture**
+running in **full-automation mode** — the agent acts without human approval.
 
-The agent converts a prompt string to uppercase **twice** - once without any
-tools (the model does it from general knowledge), and once using a custom MCP
-server tool (the model calls an external function). Both runs produce the same
-result. The point is to show how the agent loop works, not to do anything useful.
-
----
-
-## What it does
-
-```
-Input:  "hello world"
-
-Phase 1 - Model only:
-  agent  -> LLM: "convert to uppercase"
-  LLM   -> agent: "HELLO WORLD"
-
-Phase 2 - With MCP tool:
-  agent  -> LLM: "convert to uppercase" + [to_uppercase tool available]
-  LLM   -> agent: tool_call to_uppercase("hello world")
-  agent  -> MCP server: to_uppercase("hello world")
-  MCP   -> agent: "HELLO WORLD"
-  agent  -> LLM: here is the tool result "HELLO WORLD"
-  LLM   -> agent: "HELLO WORLD"
-
-Output: "HELLO WORLD" (x2)
-```
+The agent's only task: write `Hello World, Ada!` to `workspace/output.txt`.
+Simple on purpose.  The point is the *pattern*, not the task.
 
 ---
 
-## Architecture
+## The Pattern
 
 ```
-index.js                  - entry point, reads prompt, runs agent
+Orchestrator  ──(task)──►  Agent  ──(tool call)──►  write_file
+     │                       │                           │
+     │◄───────(result)────────┘◄──────(result)───────────┘
+     │
+  [Oversight checkpoint]
+  Full-automation: auto-approve
+  Supervised mode: wait for human
+```
+
+**Orchestrator** (`main.js`) — the supervisor:
+- Defines the task.
+- Monitors every tool call the agent makes.
+- In *full-automation* mode: approves all calls automatically.
+- In *supervised* mode (not implemented here): pauses and asks a human.
+
+**Agent** (`src/agents/agent.js`) — the autonomous worker:
+- Receives the task from the orchestrator.
+- Runs an agentic loop until the task is complete:
+  1. Call the model.
+  2. If the model requests a tool → execute it, feed result back, repeat.
+  3. If the model says `end_turn` → done.
+
+**Tools** (`src/tools/tools.js`) — capabilities the agent can use:
+- `write_file` — write text to a file.
+
+---
+
+## Project Structure
+
+```
+main.js                    entry point; orchestrator logic
+config.json                model name, token limit, output name
+.env                       API key (never commit this)
 src/
-  config.js               - loads config.json + .env
-  logger.js               - console + file logging
-  agent.js                - orchestrates both phases, runs the tool loop
-  mcp-server.js           - standalone MCP server (child process)
-logs/                     - daily log files (YYYY-MM-DD.log)
-config.json               - model, baseUrl, default input
-.env                      - OPENROUTER_API_KEY (never commit this)
+  agents/
+    agent.js               agentic loop
+  libs/
+    config.js              load and validate config.json + .env
+    logger.js              colorized console + daily log files
+  prompts/
+    agent.txt              system prompt for the model
+  tools/
+    tools.js               tool definitions and execution
+workspace/                 output files (git-ignored)
+logs/                      daily log files (git-ignored)
 ```
-
-The MCP server runs as a **separate Node.js child process**. The agent spawns it
-via `StdioClientTransport` and communicates over stdin/stdout using the Model
-Context Protocol (JSON-RPC). This is intentional - MCP servers are independent
-processes, not in-process libraries.
 
 ---
 
 ## Setup
 
+**1. Install dependencies**
+
 ```bash
 npm install
 ```
 
-Create `.env`:
+**2. Set your API key**
+
+Edit `.env`:
 
 ```
-OPENROUTER_API_KEY=sk-or-...
+ANTHROPIC_API_KEY=sk-ant-...
 ```
+
+Get a key at [console.anthropic.com](https://console.anthropic.com/).
+
+**3. (Optional) Edit config.json**
+
+```json
+{
+  "model": "claude-haiku-4-5-20251001",
+  "maxTokens": 1024,
+  "name": "Ada"
+}
+```
+
+| Field       | Description                        | Default                     |
+|-------------|------------------------------------|-----------------------------|
+| `model`     | Anthropic model ID                 | `claude-haiku-4-5-20251001` |
+| `maxTokens` | Maximum tokens per model response  | `1024`                      |
+| `name`      | Name inserted into the output text | `Ada`                       |
 
 ---
 
-## Usage
+## Run
 
 ```bash
-# Use the default prompt from config.json
 npm start
-
-# Pass a custom prompt
-node index.js "your text here"
 ```
 
----
+Expected console output:
 
-## Configuration
+```
+╔════════════════════════════════════════════════════════╗
+║         AI Agent Oversight — Full Automation Mode      ║
+╚════════════════════════════════════════════════════════╝
 
-`config.json`:
+[2026-04-04 12:00:00] [INFO  ] Model    : claude-haiku-4-5-20251001
+[2026-04-04 12:00:00] [INFO  ] Name     : Ada
+────────────────────────────────────────────────────────
+[2026-04-04 12:00:00] [STEP  ] [Orchestrator] Assigning task to agent
+[2026-04-04 12:00:00] [INFO  ] [Orchestrator] Supervision mode: full-automation
+────────────────────────────────────────────────────────
+[2026-04-04 12:00:00] [STEP  ] [Agent] Entering agentic loop
+[2026-04-04 12:00:00] [INFO  ] [Agent] Sending request to model...
+[2026-04-04 12:00:01] [INFO  ] [Agent] Stop reason: tool_use
+[2026-04-04 12:00:01] [TOOL  ] [Agent] Tool call : write_file
+[2026-04-04 12:00:01] [TOOL  ] [Agent] Arguments : {"path":"workspace/output.txt","content":"Hello World, Ada!"}
+[2026-04-04 12:00:01] [INFO  ] [Oversight] Full-automation — tool call auto-approved
+[2026-04-04 12:00:01] [TOOL  ] [Agent] Result    : OK — wrote 17 chars to "workspace/output.txt"
+[2026-04-04 12:00:01] [STEP  ] [Orchestrator] Agent completed task
+[2026-04-04 12:00:01] [RESULT] File content : "Hello World, Ada!"
+```
 
-| Field         | Default                          | Description                    |
-|---------------|----------------------------------|--------------------------------|
-| `model`       | `openai/gpt-4o`                  | Model ID on OpenRouter         |
-| `maxTokens`   | `1024`                           | Maximum tokens in response     |
-| `temperature` | `0`                              | Sampling temperature           |
-| `baseUrl`     | `https://openrouter.ai/api/v1`   | OpenAI-compatible API base URL |
-| `input`       | `hello world`                    | Default prompt                 |
+Output file:
 
-`.env`:
-
-| Variable              | Required | Description          |
-|-----------------------|----------|----------------------|
-| `OPENROUTER_API_KEY`  | Yes      | OpenRouter API key   |
+```bash
+cat workspace/output.txt
+# Hello World, Ada!
+```
 
 ---
 
 ## Logging
 
-Every run appends to `logs/YYYY-MM-DD.log`. Log levels:
+Every run appends to `logs/YYYY-MM-DD.log`.  The log file uses plain ASCII
+(no ANSI codes) so it is readable with any tool.
 
-- `INFO`   - general progress
-- `STEP`   - start of a major phase
-- `TOOL`   - MCP tool call activity
-- `RESULT` - final output values
-- `WARN`   - unexpected but non-fatal events
-- `ERROR`  - fatal problems
+Log levels:
+
+| Level    | Meaning                                      |
+|----------|----------------------------------------------|
+| `INFO`   | General status messages                      |
+| `STEP`   | Major phase transitions                      |
+| `TOOL`   | Tool call / result details                   |
+| `RESULT` | Final output values                          |
+| `WARN`   | Non-fatal oddities                           |
+| `ERROR`  | Fatal problems                               |
 
 ---
 
-## MCP tool: `to_uppercase`
+## Extending This Demo
 
-Defined in `src/mcp-server.js`. Accepts:
+**Add a new tool** — two steps:
 
-```json
-{ "text": "hello world" }
-```
+1. Append a definition to `definitions` in `src/tools/tools.js`.
+2. Add the matching execution branch in the `execute()` function.
 
-Returns:
+The agent discovers available tools automatically on each run.
 
-```json
-{ "content": [{ "type": "text", "text": "HELLO WORLD" }] }
-```
-
-To add more tools, add entries to the `ListToolsRequestSchema` handler and
-corresponding cases in the `CallToolRequestSchema` handler in `mcp-server.js`.
+**Switch to supervised mode** — in `src/agents/agent.js`, find the oversight
+checkpoint comment and add a `readline` prompt before calling `execute()`.
+The rest of the loop stays unchanged.
 
 ---
 
 ## Requirements
 
-- Node.js 18+
-- An OpenRouter API key with access to `openai/gpt-4o`
+- Node.js >= 18
+- An [Anthropic API key](https://console.anthropic.com/)

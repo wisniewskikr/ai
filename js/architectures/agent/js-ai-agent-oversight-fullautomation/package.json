@@ -1,14 +1,12 @@
 {
   "name": "js-ai-agent-oversight-fullautomation",
   "version": "1.0.0",
-  "description": "Oversight agent: full automation of the oversight process",
+  "description": "Hello World demo: AI agent oversight architecture in full-automation mode",
   "main": "main.js",
   "scripts": {
-    "start": "node main.js",
-    "start:custom": "node main.js \"your prompt here\""
+    "start": "node main.js"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.10.2",
     "dotenv": "^16.4.7"
   },
   "engines": {

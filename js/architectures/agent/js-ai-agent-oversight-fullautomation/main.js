@@ -1,48 +1,88 @@
 'use strict';
 
 /*
- * main.js — entry point. Bootstrap and run.
+ * main.js — entry point.
  *
- * Thin by design: load config, hand off to agent, print results.
- * All business logic lives in src/agents/. All I/O lives in src/lib/.
+ * Orchestrator responsibilities (this file):
+ *   - Load and validate configuration.
+ *   - Define the task and hand it to the agent.
+ *   - Log every oversight event (approvals, results).
+ *   - Report the final outcome.
+ *
+ * The agent (src/agent.js) is the worker.  The orchestrator is the
+ * supervisor.  In full-automation mode the orchestrator approves every
+ * agent action automatically — no human in the loop.
  *
  * Usage:
  *   node main.js
- *   node main.js "your prompt here"
  */
 
-const { loadConfig } = require('./src/lib/config');
-const logger         = require('./src/lib/logger');
-const agent          = require('./src/agents/agent');
+const path             = require('path');
+const fs               = require('fs');
+const { loadConfig }   = require('./src/libs/config');
+const logger           = require('./src/libs/logger');
+const { runAgent }     = require('./src/agents/agent');
+
+/* ------------------------------------------------------------------ */
 
 async function main() {
-    logger.info('========================================');
-    logger.info('       Agent Hello World (MCP)          ');
-    logger.info('========================================');
+    logger.banner('AI Agent Oversight — Full Automation Mode');
+
+    /* ---- Configuration ------------------------------------------- */
 
     let config;
     try {
         config = loadConfig();
     } catch (err) {
-        logger.error(`Configuration error: ${err.message}`);
+        logger.error(`Configuration: ${err.message}`);
         process.exit(1);
     }
 
-    const prompt = process.argv[2] || config.input;
-    logger.info(`Config loaded — model: ${config.model} | input: "${prompt}"`);
+    logger.info(`Model    : ${config.model}`);
+    logger.info(`Max tokens: ${config.maxTokens}`);
+    logger.info(`Name     : ${config.name}`);
+    logger.separator();
 
-    let results;
+    /* ---- Workspace ------------------------------------------------ */
+
+    const workspaceDir  = path.join(process.cwd(), 'workspace');
+    const outputFile    = path.join(workspaceDir, 'output.txt');
+
+    fs.mkdirSync(workspaceDir, { recursive: true });
+
+    /* ---- Task definition (Orchestrator → Agent) ------------------- */
+
+    const task =
+        `Write exactly this text to the file workspace/output.txt:\n` +
+        `Hello World, ${config.name}!`;
+
+    logger.step('[Orchestrator] Assigning task to agent');
+    logger.info(`Task: ${task.replace('\n', ' ')}`);
+    logger.info('[Orchestrator] Supervision mode: full-automation (all actions auto-approved)');
+    logger.separator();
+
+    /* ---- Run agent ------------------------------------------------ */
+
+    let writtenContent;
     try {
-        results = await agent.run(config, prompt);
+        writtenContent = await runAgent(config, task);
     } catch (err) {
-        logger.error(`Agent crashed: ${err.message}`);
+        logger.error(`Agent failed: ${err.message}`);
         process.exit(1);
     }
 
-    logger.info('========================================');
-    logger.info(`  Result (no tool):  ${results.withoutTools}`);
-    logger.info(`  Result (MCP tool): ${results.withMcpTools}`);
-    logger.info('========================================');
+    /* ---- Report --------------------------------------------------- */
+
+    logger.separator();
+    logger.step('[Orchestrator] Agent completed task');
+    logger.result(`Output file  : workspace/output.txt`);
+    logger.result(`File content : "${writtenContent}"`);
+    logger.info('[Orchestrator] Run finished successfully');
 }
 
-main();
+/* ------------------------------------------------------------------ */
+
+main().catch((err) => {
+    logger.error(`Unhandled error: ${err.message}`);
+    process.exit(1);
+});
