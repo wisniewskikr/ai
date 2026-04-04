@@ -3,18 +3,15 @@
 /*
  * agent.js — autonomous agent that executes tasks using tools.
  *
- * Architecture: oversight pattern, full-automation mode.
+ * Architecture: oversight pattern, human-in-the-loop (HITL) mode.
  *
  * The agent runs an agentic loop:
  *   1. Send task + message history to the model.
- *   2. If the model stops with "tool_calls", execute the requested tools
- *      and feed the results back (loop continues).
+ *   2. If the model stops with "tool_calls", the oversight checkpoint
+ *      pauses and asks the human to approve each tool call before
+ *      execution.  If approved, the result is fed back (loop continues).
+ *      If rejected, the task is cancelled immediately.
  *   3. If the model stops with "stop", the task is complete.
- *
- * In a supervised mode, step 2 would pause and ask a human to approve
- * each tool call before execution.  In full-automation mode (this file)
- * every tool call is approved automatically — the oversight is still
- * present as a logging checkpoint so the audit trail is intact.
  *
  * The agent is intentionally stateless: all state lives in the `messages`
  * array that grows with each turn of the loop.
@@ -22,6 +19,7 @@
 
 const fs                       = require('fs');
 const path                     = require('path');
+const readline                 = require('readline');
 const { chatWithTools }        = require('../libs/api');
 const logger                   = require('../libs/logger');
 const { definitions, execute } = require('../tools/tools');
@@ -35,10 +33,25 @@ const SYSTEM_PROMPT = fs
 /* ------------------------------------------------------------------ */
 
 /*
+ * askHuman(question) — prompt the human and return the trimmed answer.
+ */
+function askHuman(question) {
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+    return new Promise((resolve) => {
+        rl.question(question, (answer) => {
+            rl.close();
+            resolve(answer.trim().toLowerCase());
+        });
+    });
+}
+
+/* ------------------------------------------------------------------ */
+
+/*
  * runAgent(config, task) — run the agent until the task is complete.
  *
- * Returns the text content written to the output file, or an empty
- * string if the write_file tool was never called.
+ * Returns the text content written to the output file, or null if the
+ * human rejected the action.
  */
 async function runAgent(config, task) {
     const messages = [
@@ -87,13 +100,28 @@ async function runAgent(config, task) {
             logger.tool(`[Agent] Arguments : ${JSON.stringify(args)}`);
 
             /*
-             * Oversight checkpoint.
+             * Oversight checkpoint — HUMAN-IN-THE-LOOP.
              *
-             * Full-automation: auto-approve and execute immediately.
-             * Supervised mode: pause here, show the call to a human,
-             * and wait for explicit approval before proceeding.
+             * Pause and ask the human to approve every tool call before
+             * it is executed.  A rejection cancels the task immediately.
              */
-            logger.info('[Oversight] Full-automation — tool call auto-approved');
+            logger.info('[Oversight] HUMAN-IN-THE-LOOP — awaiting human approval');
+
+            if (name === 'write_file') {
+                logger.info(`[Oversight] Agent wants to write to file:`);
+                logger.info(`  Path   : ${args.path}`);
+                logger.info(`  Content: "${args.content}"`);
+            }
+
+            const answer = await askHuman('\n[Oversight] Approve this action? (y/n): ');
+            const approved = answer === 'y' || answer === 'yes';
+
+            if (!approved) {
+                logger.info('[Oversight] Human REJECTED the action — task cancelled');
+                return null;
+            }
+
+            logger.info('[Oversight] Human APPROVED the action — executing');
 
             let result;
             try {

@@ -31,12 +31,19 @@ async function run(config) {
 
     logger.step('[Orchestrator] Assigning task to agent');
     logger.info(`Task: ${TASK.replaceAll('\n', ' ')}`);
-    logger.info('[Orchestrator] Supervision mode: full-automation (all actions auto-approved)');
+    logger.info('[Orchestrator] Supervision mode: human-in-the-loop (actions require human approval)');
     logger.separator();
 
     const writtenContent = await runAgent(config, TASK);
 
     logger.separator();
+
+    if (writtenContent === null) {
+        logger.step('[Orchestrator] Task cancelled by human');
+        logger.info('[Orchestrator] No file was written');
+        return;
+    }
+
     logger.step('[Orchestrator] Agent completed task');
     logger.result(`Output file  : ${OUTPUT_FILE}`);
     logger.result(`File content : "${writtenContent}"`);

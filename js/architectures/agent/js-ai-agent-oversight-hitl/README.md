@@ -1,7 +1,8 @@
-# js-ai-agent-oversight-fullautomation
+# js-ai-agent-oversight-hitl
 
 A minimal "Hello World" demonstrating the **AI agent oversight architecture**
-running in **full-automation mode** — the agent acts without human approval.
+running in **human-in-the-loop (HITL) mode** — the agent proposes an action,
+and a human must approve it before it is executed.
 
 The agent's task: write `Hello World, <name>!` to `workspace/output.txt`,
 where the name is chosen freely by the model on each run.
@@ -12,26 +13,26 @@ Simple on purpose.  The point is the *pattern*, not the task.
 ## The Pattern
 
 ```
-Orchestrator  ──(task)──►  Agent  ──(tool call)──►  write_file
-     │                       │                           │
-     │◄───────(result)────────┘◄──────(result)───────────┘
-     │
-  [Oversight checkpoint]
-  Full-automation: auto-approve
-  Supervised mode: wait for human
+Orchestrator  ──(task)──►  Agent  ──(tool call)──►  [Oversight checkpoint]
+     │                       │                               │
+     │                       │                        ask human (y/n)
+     │                       │                          │         │
+     │                       │                        yes         no
+     │                       │                          │         │
+     │◄───────(result)────────┘◄──(result)──────────────┘    cancel task
 ```
 
 **Orchestrator** (`src/agents/orchestrator.js`) — the supervisor:
 - Loads the task prompt and ensures the workspace exists.
 - Monitors every tool call the agent makes.
-- In *full-automation* mode: approves all calls automatically.
-- In *supervised* mode (not implemented here): pauses and asks a human.
+- Reports the final outcome, or logs cancellation if the human rejected.
 
 **Agent** (`src/agents/agent.js`) — the autonomous worker:
 - Receives the task from the orchestrator.
-- Runs an agentic loop until the task is complete:
+- Runs an agentic loop until the task is complete or cancelled:
   1. Call the model.
-  2. If the model requests a tool → execute it, feed result back, repeat.
+  2. If the model requests a tool → pause at the oversight checkpoint,
+     ask the human for approval, then execute (or cancel) and feed result back.
   3. If the model returns `stop` → done.
 
 **Tools** (`src/tools/tools.js`) — capabilities the agent can use:
@@ -48,7 +49,7 @@ config.json                model, token limit, API base URL
 src/
   agents/
     orchestrator.js        supervisor; loads task, manages run lifecycle
-    agent.js               agentic loop
+    agent.js               agentic loop with HITL oversight checkpoint
   libs/
     api.js                 OpenRouter HTTP client
     config.js              load and validate config.json + .env
@@ -106,39 +107,50 @@ Get a key at [openrouter.ai/keys](https://openrouter.ai/keys).
 npm start
 ```
 
-Expected console output:
+### Scenario A — human approves
 
 ```
 ╔════════════════════════════════════════════════════════╗
-║        AI Agent Oversight — Full Automation Mode       ║
+║      AI Agent Oversight — Human-in-the-Loop Mode       ║
 ╚════════════════════════════════════════════════════════╝
 
 [2026-04-04 12:00:00] [INFO  ] Model    : openai/gpt-4o-mini
 [2026-04-04 12:00:00] [INFO  ] Max tokens: 1024
 ────────────────────────────────────────────────────────
 [2026-04-04 12:00:00] [STEP  ] [Orchestrator] Assigning task to agent
-[2026-04-04 12:00:00] [INFO  ] [Orchestrator] Supervision mode: full-automation
+[2026-04-04 12:00:00] [INFO  ] [Orchestrator] Supervision mode: human-in-the-loop
 ────────────────────────────────────────────────────────
 [2026-04-04 12:00:00] [STEP  ] [Agent] Entering agentic loop
 [2026-04-04 12:00:00] [INFO  ] [Agent] Sending request to model...
 [2026-04-04 12:00:01] [INFO  ] [Agent] Stop reason: tool_calls
 [2026-04-04 12:00:01] [TOOL  ] [Agent] Tool call : write_file
 [2026-04-04 12:00:01] [TOOL  ] [Agent] Arguments : {"path":"workspace/output.txt","content":"Hello World, Zephyr!"}
-[2026-04-04 12:00:01] [INFO  ] [Oversight] Full-automation — tool call auto-approved
-[2026-04-04 12:00:01] [TOOL  ] [Agent] Result    : OK — wrote 21 chars to "workspace/output.txt"
-[2026-04-04 12:00:02] [INFO  ] [Agent] Stop reason: stop
-[2026-04-04 12:00:02] [STEP  ] [Orchestrator] Agent completed task
-[2026-04-04 12:00:02] [RESULT] File content : "Hello World, Zephyr!"
+[2026-04-04 12:00:01] [INFO  ] [Oversight] HUMAN-IN-THE-LOOP — awaiting human approval
+[2026-04-04 12:00:01] [INFO  ] [Oversight] Agent wants to write to file:
+[2026-04-04 12:00:01] [INFO  ]   Path   : workspace/output.txt
+[2026-04-04 12:00:01] [INFO  ]   Content: "Hello World, Zephyr!"
+
+[Oversight] Approve this action? (y/n): y
+
+[2026-04-04 12:00:03] [INFO  ] [Oversight] Human APPROVED the action — executing
+[2026-04-04 12:00:03] [TOOL  ] [Agent] Result    : OK — wrote 21 chars to "workspace/output.txt"
+[2026-04-04 12:00:04] [INFO  ] [Agent] Stop reason: stop
+[2026-04-04 12:00:04] [STEP  ] [Orchestrator] Agent completed task
+[2026-04-04 12:00:04] [RESULT] File content : "Hello World, Zephyr!"
+```
+
+### Scenario B — human rejects
+
+```
+[Oversight] Approve this action? (y/n): n
+
+[2026-04-04 12:00:03] [INFO  ] [Oversight] Human REJECTED the action — task cancelled
+────────────────────────────────────────────────────────
+[2026-04-04 12:00:03] [STEP  ] [Orchestrator] Task cancelled by human
+[2026-04-04 12:00:03] [INFO  ] [Orchestrator] No file was written
 ```
 
 The name changes on every run — the model picks it freely.
-
-Output file:
-
-```bash
-cat workspace/output.txt
-# Hello World, Zephyr!
-```
 
 ---
 
@@ -169,9 +181,9 @@ Log levels:
 
 The agent discovers available tools automatically on each run.
 
-**Switch to supervised mode** — in `src/agents/orchestrator.js`, find the
-oversight checkpoint comment and add a `readline` prompt before the agent
-executes each tool call.  The rest of the loop stays unchanged.
+**Customize the approval prompt** — in `src/agents/agent.js`, find the
+oversight checkpoint and adjust the `askHuman()` call or the display logic
+for any tool type.
 
 ---
 
