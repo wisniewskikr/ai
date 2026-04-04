@@ -1,0 +1,3 @@
+Write a greeting to the file workspace/output.txt in the format:
+Hello World, <name>!
+Choose any name you like — be creative.

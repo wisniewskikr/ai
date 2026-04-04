@@ -3,7 +3,8 @@
 A minimal "Hello World" demonstrating the **AI agent oversight architecture**
 running in **full-automation mode** — the agent acts without human approval.
 
-The agent's only task: write `Hello World, Ada!` to `workspace/output.txt`.
+The agent's task: write `Hello World, <name>!` to `workspace/output.txt`,
+where the name is chosen freely by the model on each run.
 Simple on purpose.  The point is the *pattern*, not the task.
 
 ---
@@ -31,7 +32,7 @@ Orchestrator  ──(task)──►  Agent  ──(tool call)──►  write_fi
 - Runs an agentic loop until the task is complete:
   1. Call the model.
   2. If the model requests a tool → execute it, feed result back, repeat.
-  3. If the model says `end_turn` → done.
+  3. If the model returns `stop` → done.
 
 **Tools** (`src/tools/tools.js`) — capabilities the agent can use:
 - `write_file` — write text to a file.
@@ -42,12 +43,13 @@ Orchestrator  ──(task)──►  Agent  ──(tool call)──►  write_fi
 
 ```
 main.js                    entry point; orchestrator logic
-config.json                model name, token limit, output name
+config.json                model, token limit, API base URL
 .env                       API key (never commit this)
 src/
   agents/
     agent.js               agentic loop
   libs/
+    api.js                 OpenRouter HTTP client
     config.js              load and validate config.json + .env
     logger.js              colorized console + daily log files
   prompts/
@@ -73,26 +75,26 @@ npm install
 Edit `.env`:
 
 ```
-ANTHROPIC_API_KEY=sk-ant-...
+OPENROUTER_API_KEY=sk-or-...
 ```
 
-Get a key at [console.anthropic.com](https://console.anthropic.com/).
+Get a key at [openrouter.ai/keys](https://openrouter.ai/keys).
 
 **3. (Optional) Edit config.json**
 
 ```json
 {
-  "model": "claude-haiku-4-5-20251001",
+  "model": "openai/gpt-4o-mini",
   "maxTokens": 1024,
-  "name": "Ada"
+  "baseUrl": "https://openrouter.ai/api/v1"
 }
 ```
 
-| Field       | Description                        | Default                     |
-|-------------|------------------------------------|-----------------------------|
-| `model`     | Anthropic model ID                 | `claude-haiku-4-5-20251001` |
-| `maxTokens` | Maximum tokens per model response  | `1024`                      |
-| `name`      | Name inserted into the output text | `Ada`                       |
+| Field       | Description                       | Default                          |
+|-------------|-----------------------------------|----------------------------------|
+| `model`     | OpenRouter model ID               | `openai/gpt-4o-mini`             |
+| `maxTokens` | Maximum tokens per model response | `1024`                           |
+| `baseUrl`   | OpenRouter API base URL           | `https://openrouter.ai/api/v1`   |
 
 ---
 
@@ -106,31 +108,34 @@ Expected console output:
 
 ```
 ╔════════════════════════════════════════════════════════╗
-║         AI Agent Oversight — Full Automation Mode      ║
+║        AI Agent Oversight — Full Automation Mode       ║
 ╚════════════════════════════════════════════════════════╝
 
-[2026-04-04 12:00:00] [INFO  ] Model    : claude-haiku-4-5-20251001
-[2026-04-04 12:00:00] [INFO  ] Name     : Ada
+[2026-04-04 12:00:00] [INFO  ] Model    : openai/gpt-4o-mini
+[2026-04-04 12:00:00] [INFO  ] Max tokens: 1024
 ────────────────────────────────────────────────────────
 [2026-04-04 12:00:00] [STEP  ] [Orchestrator] Assigning task to agent
 [2026-04-04 12:00:00] [INFO  ] [Orchestrator] Supervision mode: full-automation
 ────────────────────────────────────────────────────────
 [2026-04-04 12:00:00] [STEP  ] [Agent] Entering agentic loop
 [2026-04-04 12:00:00] [INFO  ] [Agent] Sending request to model...
-[2026-04-04 12:00:01] [INFO  ] [Agent] Stop reason: tool_use
+[2026-04-04 12:00:01] [INFO  ] [Agent] Stop reason: tool_calls
 [2026-04-04 12:00:01] [TOOL  ] [Agent] Tool call : write_file
-[2026-04-04 12:00:01] [TOOL  ] [Agent] Arguments : {"path":"workspace/output.txt","content":"Hello World, Ada!"}
+[2026-04-04 12:00:01] [TOOL  ] [Agent] Arguments : {"path":"workspace/output.txt","content":"Hello World, Zephyr!"}
 [2026-04-04 12:00:01] [INFO  ] [Oversight] Full-automation — tool call auto-approved
-[2026-04-04 12:00:01] [TOOL  ] [Agent] Result    : OK — wrote 17 chars to "workspace/output.txt"
-[2026-04-04 12:00:01] [STEP  ] [Orchestrator] Agent completed task
-[2026-04-04 12:00:01] [RESULT] File content : "Hello World, Ada!"
+[2026-04-04 12:00:01] [TOOL  ] [Agent] Result    : OK — wrote 21 chars to "workspace/output.txt"
+[2026-04-04 12:00:02] [INFO  ] [Agent] Stop reason: stop
+[2026-04-04 12:00:02] [STEP  ] [Orchestrator] Agent completed task
+[2026-04-04 12:00:02] [RESULT] File content : "Hello World, Zephyr!"
 ```
+
+The name changes on every run — the model picks it freely.
 
 Output file:
 
 ```bash
 cat workspace/output.txt
-# Hello World, Ada!
+# Hello World, Zephyr!
 ```
 
 ---
@@ -171,4 +176,4 @@ The rest of the loop stays unchanged.
 ## Requirements
 
 - Node.js >= 18
-- An [Anthropic API key](https://console.anthropic.com/)
+- An [OpenRouter API key](https://openrouter.ai/keys)

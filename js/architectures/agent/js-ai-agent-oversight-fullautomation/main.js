@@ -51,10 +51,9 @@ async function main() {
 
     /* ---- Task definition (Orchestrator → Agent) ------------------- */
 
-    const task =
-        `Write a greeting to the file workspace/output.txt in the format:\n` +
-        `Hello World, <name>!\n` +
-        `Choose any name you like — be creative.`;
+    const task = fs
+        .readFileSync(path.join(__dirname, 'src/prompts/task.txt'), 'utf8')
+        .trim();
 
     logger.step('[Orchestrator] Assigning task to agent');
     logger.info(`Task: ${task.replace('\n', ' ')}`);
