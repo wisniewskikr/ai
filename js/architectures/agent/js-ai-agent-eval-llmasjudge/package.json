@@ -1,0 +1,16 @@
+{
+  "name": "js-ai-agent-eval-llmasjudge",
+  "version": "1.0.0",
+  "description": "AI agent with evaluation by LLM judge",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}
