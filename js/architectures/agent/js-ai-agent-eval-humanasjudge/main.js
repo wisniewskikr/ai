@@ -17,7 +17,7 @@ const orchestrator       = require('./src/agents/orchestrator');
 /* ------------------------------------------------------------------ */
 
 async function main() {
-    logger.banner('AI Agent Oversight — Full Automation Mode');
+    logger.banner('AI Agent — Human-as-Judge Evaluation');
 
     let config;
     try {

@@ -3,7 +3,7 @@
 /*
  * agent.js — autonomous agent that executes tasks using tools.
  *
- * Architecture: oversight pattern, full-automation mode.
+ * Architecture: human-as-judge evaluation.
  *
  * The agent runs an agentic loop:
  *   1. Send task + message history to the model.
@@ -11,10 +11,7 @@
  *      and feed the results back (loop continues).
  *   3. If the model stops with "stop", the task is complete.
  *
- * In a supervised mode, step 2 would pause and ask a human to approve
- * each tool call before execution.  In full-automation mode (this file)
- * every tool call is approved automatically — the oversight is still
- * present as a logging checkpoint so the audit trail is intact.
+ * After the agent finishes, a human evaluator judges the output.
  *
  * The agent is intentionally stateless: all state lives in the `messages`
  * array that grows with each turn of the loop.
@@ -86,14 +83,8 @@ async function runAgent(config, task) {
             logger.tool(`[Agent] Tool call : ${name}`);
             logger.tool(`[Agent] Arguments : ${JSON.stringify(args)}`);
 
-            /*
-             * Oversight checkpoint.
-             *
-             * Full-automation: auto-approve and execute immediately.
-             * Supervised mode: pause here, show the call to a human,
-             * and wait for explicit approval before proceeding.
-             */
-            logger.info('[Oversight] Full-automation — tool call auto-approved');
+            /* Execute tool call */
+            logger.info('[Agent] Executing tool call');
 
             let result;
             try {

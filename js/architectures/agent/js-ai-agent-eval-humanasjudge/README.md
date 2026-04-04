@@ -1,12 +1,13 @@
-# js-ai-agent-eval-automatedtests
+# js-ai-agent-eval-humanasjudge
 
-A minimal "Hello World" demonstrating the **AI agent oversight architecture**
-running in **full-automation mode** with **automated evaluation tests**.
+A minimal "Hello World" demonstrating the **AI agent architecture**
+with **human-as-judge evaluation**.
 
 The agent's task: write `Hello World, <name>!` to `workspace/output.txt`,
 where the name is chosen freely by the model on each run.
-After the agent finishes, an evaluator runs automated tests to verify the output
-matches the expected format.  Simple on purpose.  The point is the *pattern*, not the task.
+After the agent finishes, a human evaluator reads the output and decides
+whether it meets their expectations.  If yes — the file stays.  If no — the file is deleted.
+Simple on purpose.  The point is the *pattern*, not the task.
 
 ---
 
@@ -17,19 +18,13 @@ Orchestrator  ──(task)──►  Agent  ──(tool call)──►  write_fi
      │                       │                           │
      │◄───────(result)────────┘◄──────(result)───────────┘
      │
-  [Oversight checkpoint]
-  Full-automation: auto-approve
-  Supervised mode: wait for human
-     │
      ▼
-  Evaluator  ──(read file)──►  Tests  ──►  PASS / FAIL
+  Evaluator  ──(show output)──►  Human  ──►  PASS (file stays)
+                                          └──►  FAIL (file deleted)
 ```
 
 **Orchestrator** (`src/agents/orchestrator.js`) — the supervisor:
 - Loads the task prompt and ensures the workspace exists.
-- Monitors every tool call the agent makes.
-- In *full-automation* mode: approves all calls automatically.
-- In *supervised* mode (not implemented here): pauses and asks a human.
 - Triggers the evaluator after the agent finishes.
 
 **Agent** (`src/agents/agent.js`) — the autonomous worker:
@@ -42,10 +37,11 @@ Orchestrator  ──(task)──►  Agent  ──(tool call)──►  write_fi
 **Tools** (`src/tools/tools.js`) — capabilities the agent can use:
 - `write_file` — write text to a file.
 
-**Evaluator** (`src/eval/evaluator.js`) — automated tests on agent output:
-- Test 0: output file exists and is readable.
-- Test 1: content contains `"Hello World"`.
-- Test 2: content contains a name after `"Hello World"` (non-empty word).
+**Evaluator** (`src/eval/evaluator.js`) — human-as-judge evaluation:
+- Step 0: output file exists and is readable.
+- Step 1: display the file content to the human evaluator.
+- Step 2: ask — does this meet your expectations? (`yes` / `no`)
+- Step 3: `yes` → file stays, evaluation passes. `no` → file deleted, evaluation fails.
 
 ---
 
@@ -60,7 +56,7 @@ src/
     orchestrator.js        supervisor; loads task, manages run lifecycle
     agent.js               agentic loop
   eval/
-    evaluator.js           automated tests that verify the agent's output
+    evaluator.js           human-as-judge evaluation of the agent's output
   libs/
     api.js                 OpenRouter HTTP client
     config.js              load and validate config.json + .env
@@ -122,48 +118,46 @@ Expected console output:
 
 ```
 ╔════════════════════════════════════════════════════════╗
-║        AI Agent Oversight — Full Automation Mode       ║
+║          AI Agent — Human-as-Judge Evaluation          ║
 ╚════════════════════════════════════════════════════════╝
 
 [2026-04-04 12:00:00] [INFO  ] Model    : openai/gpt-4o-mini
 [2026-04-04 12:00:00] [INFO  ] Max tokens: 1024
 ────────────────────────────────────────────────────────
 [2026-04-04 12:00:00] [STEP  ] [Orchestrator] Assigning task to agent
-[2026-04-04 12:00:00] [INFO  ] [Orchestrator] Supervision mode: full-automation
+[2026-04-04 12:00:00] [INFO  ] [Orchestrator] Eval mode: human-as-judge
 ────────────────────────────────────────────────────────
 [2026-04-04 12:00:00] [STEP  ] [Agent] Entering agentic loop
 [2026-04-04 12:00:00] [INFO  ] [Agent] Sending request to model...
 [2026-04-04 12:00:01] [INFO  ] [Agent] Stop reason: tool_calls
 [2026-04-04 12:00:01] [TOOL  ] [Agent] Tool call : write_file
 [2026-04-04 12:00:01] [TOOL  ] [Agent] Arguments : {"path":"workspace/output.txt","content":"Hello World, Aurora!"}
-[2026-04-04 12:00:01] [INFO  ] [Oversight] Full-automation — tool call auto-approved
+[2026-04-04 12:00:01] [INFO  ] [Agent] Executing tool call
 [2026-04-04 12:00:01] [TOOL  ] [Agent] Result    : OK — wrote 20 chars to "workspace/output.txt"
 [2026-04-04 12:00:02] [INFO  ] [Agent] Stop reason: stop
 ────────────────────────────────────────────────────────
 [2026-04-04 12:00:02] [STEP  ] [Orchestrator] Agent completed task
 [2026-04-04 12:00:02] [RESULT] File content : "Hello World, Aurora!"
 ────────────────────────────────────────────────────────
-[2026-04-04 12:00:02] [STEP  ] [Evaluator] Running automated tests on agent output
-[2026-04-04 12:00:02] [PASS  ] Output file exists
-[2026-04-04 12:00:02] [PASS  ] Content contains "Hello World"
-[2026-04-04 12:00:02] [PASS  ] Content contains a name — Name found: "Aurora"
+[2026-04-04 12:00:02] [STEP  ] [Evaluator] Human-as-judge evaluation
+[2026-04-04 12:00:02] [PASS  ] Output file exists (workspace/output.txt)
+────────────────────────────────────────────────────────
+[2026-04-04 12:00:02] [RESULT] File content : "Hello World, Aurora!"
+────────────────────────────────────────────────────────
+Does this meet your expectations? [yes/no]: yes
+[2026-04-04 12:00:05] [PASS  ] Human approved — file kept
 
 ╔════════════════════════════════════════════════════════╗
-║              ALL TESTS PASSED  (3/3)                  ║
+║              ALL TESTS PASSED  (1/1)                  ║
 ╚════════════════════════════════════════════════════════╝
 
 ────────────────────────────────────────────────────────
-[2026-04-04 12:00:02] [INFO  ] [Orchestrator] Run finished — eval PASSED
+[2026-04-04 12:00:05] [INFO  ] [Orchestrator] Run finished — eval PASSED
 ```
 
 The name changes on every run — the model picks it freely.
 
-Output file:
-
-```bash
-cat workspace/output.txt
-# Hello World, Aurora!
-```
+If the human answers `no`, the output is deleted and the run ends with `eval FAILED`.
 
 ---
 
@@ -180,8 +174,8 @@ Log levels:
 | `STEP`   | Major phase transitions                      |
 | `TOOL`   | Tool call / result details                   |
 | `RESULT` | Final output values                          |
-| `PASS`   | Automated test passed                        |
-| `FAIL`   | Automated test failed                        |
+| `PASS`   | Evaluation passed                            |
+| `FAIL`   | Evaluation failed                            |
 | `WARN`   | Non-fatal oddities                           |
 | `ERROR`  | Fatal problems                               |
 
@@ -196,23 +190,8 @@ Log levels:
 
 The agent discovers available tools automatically on each run.
 
-**Add a new eval test** — one step:
-
-Append an object to the `TESTS` array in `src/eval/evaluator.js`:
-
-```js
-{
-    name: 'Content ends with "!"',
-    run(content) {
-        const ok = content.endsWith('!');
-        return { pass: ok, detail: ok ? null : `Got: "${content}"` };
-    },
-},
-```
-
-**Switch to supervised mode** — in `src/agents/orchestrator.js`, find the
-oversight checkpoint comment and add a `readline` prompt before the agent
-executes each tool call.  The rest of the loop stays unchanged.
+**Switch evaluation to automated tests** — replace the body of `runEval()` in
+`src/eval/evaluator.js` with assertions on `content` and remove the `readline` prompt.
 
 ---
 

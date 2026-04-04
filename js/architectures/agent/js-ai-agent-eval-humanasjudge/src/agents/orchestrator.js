@@ -7,12 +7,11 @@
  *   - Load the task prompt.
  *   - Ensure the workspace directory exists.
  *   - Hand the task to the agent.
- *   - Log every oversight event (approvals, results).
+ *   - Log every run event (approvals, results).
  *   - Report the final outcome.
  *
- * In full-automation mode every agent action is approved automatically.
- * In a supervised mode this is where a human would be asked to approve
- * each tool call before it is executed.
+ * Evaluation is performed by a human (human-as-judge): after the file is written,
+ * the human decides whether the output meets their expectations.
  */
 
 const fs             = require('fs');
@@ -32,7 +31,7 @@ async function run(config) {
 
     logger.step('[Orchestrator] Assigning task to agent');
     logger.info(`Task: ${TASK.replaceAll('\n', ' ')}`);
-    logger.info('[Orchestrator] Supervision mode: full-automation (all actions auto-approved)');
+    logger.info('[Orchestrator] Eval mode: human-as-judge');
     logger.separator();
 
     const writtenContent = await runAgent(config, TASK);
