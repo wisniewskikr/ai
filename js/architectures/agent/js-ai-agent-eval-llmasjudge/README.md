@@ -1,12 +1,12 @@
-# js-ai-agent-eval-automatedtests
+# js-ai-agent-eval-llmasjudge
 
-A minimal "Hello World" demonstrating the **AI agent oversight architecture**
-running in **full-automation mode** with **automated evaluation tests**.
+A minimal "Hello World" demonstrating the **AI agent architecture**
+with **LLM-as-judge evaluation**.
 
 The agent's task: write `Hello World, <name>!` to `workspace/output.txt`,
 where the name is chosen freely by the model on each run.
-After the agent finishes, an evaluator runs automated tests to verify the output
-matches the expected format.  Simple on purpose.  The point is the *pattern*, not the task.
+After the agent finishes, an LLM judge evaluates the output and decides
+whether it meets the expected format.  Simple on purpose.  The point is the *pattern*, not the task.
 
 ---
 
@@ -17,20 +17,17 @@ Orchestrator  ──(task)──►  Agent  ──(tool call)──►  write_fi
      │                       │                           │
      │◄───────(result)────────┘◄──────(result)───────────┘
      │
-  [Oversight checkpoint]
-  Full-automation: auto-approve
-  Supervised mode: wait for human
-     │
      ▼
-  Evaluator  ──(read file)──►  Tests  ──►  PASS / FAIL
+  LLM Judge  ──(file content)──►  Evaluation  ──►  PASS / FAIL
+                                       │
+                              verdict + reasoning
+                              + name detected
 ```
 
 **Orchestrator** (`src/agents/orchestrator.js`) — the supervisor:
 - Loads the task prompt and ensures the workspace exists.
-- Monitors every tool call the agent makes.
-- In *full-automation* mode: approves all calls automatically.
-- In *supervised* mode (not implemented here): pauses and asks a human.
-- Triggers the evaluator after the agent finishes.
+- Hands the task to the agent and waits for completion.
+- Triggers the LLM judge after the agent finishes.
 
 **Agent** (`src/agents/agent.js`) — the autonomous worker:
 - Receives the task from the orchestrator.
@@ -42,10 +39,11 @@ Orchestrator  ──(task)──►  Agent  ──(tool call)──►  write_fi
 **Tools** (`src/tools/tools.js`) — capabilities the agent can use:
 - `write_file` — write text to a file.
 
-**Evaluator** (`src/eval/evaluator.js`) — automated tests on agent output:
-- Test 0: output file exists and is readable.
-- Test 1: content contains `"Hello World"`.
-- Test 2: content contains a name after `"Hello World"` (non-empty word).
+**Evaluator / LLM Judge** (`src/eval/evaluator.js`) — LLM-based evaluation of agent output:
+- Check 0: output file exists and is readable.
+- Check 1 (LLM): content contains `"Hello World"`.
+- Check 2 (LLM): content contains a name after `"Hello World"`.
+- The judge returns a structured verdict with reasoning and the detected name.
 
 ---
 
@@ -60,7 +58,7 @@ src/
     orchestrator.js        supervisor; loads task, manages run lifecycle
     agent.js               agentic loop
   eval/
-    evaluator.js           automated tests that verify the agent's output
+    evaluator.js           LLM-as-judge evaluation of agent output
   libs/
     api.js                 OpenRouter HTTP client
     config.js              load and validate config.json + .env
@@ -110,6 +108,8 @@ Get a key at [openrouter.ai/keys](https://openrouter.ai/keys).
 | `maxTokens` | Maximum tokens per model response | `1024`                           |
 | `baseUrl`   | OpenRouter API base URL           | `https://openrouter.ai/api/v1`   |
 
+The same model is used for both the agent and the LLM judge.
+
 ---
 
 ## Run
@@ -122,41 +122,44 @@ Expected console output:
 
 ```
 ╔════════════════════════════════════════════════════════╗
-║        AI Agent Oversight — Full Automation Mode       ║
+║        AI Agent — LLM-as-Judge Evaluation Mode        ║
 ╚════════════════════════════════════════════════════════╝
 
 [2026-04-04 12:00:00] [INFO  ] Model    : openai/gpt-4o-mini
 [2026-04-04 12:00:00] [INFO  ] Max tokens: 1024
 ────────────────────────────────────────────────────────
 [2026-04-04 12:00:00] [STEP  ] [Orchestrator] Assigning task to agent
-[2026-04-04 12:00:00] [INFO  ] [Orchestrator] Supervision mode: full-automation
 ────────────────────────────────────────────────────────
 [2026-04-04 12:00:00] [STEP  ] [Agent] Entering agentic loop
 [2026-04-04 12:00:00] [INFO  ] [Agent] Sending request to model...
 [2026-04-04 12:00:01] [INFO  ] [Agent] Stop reason: tool_calls
 [2026-04-04 12:00:01] [TOOL  ] [Agent] Tool call : write_file
 [2026-04-04 12:00:01] [TOOL  ] [Agent] Arguments : {"path":"workspace/output.txt","content":"Hello World, Aurora!"}
-[2026-04-04 12:00:01] [INFO  ] [Oversight] Full-automation — tool call auto-approved
 [2026-04-04 12:00:01] [TOOL  ] [Agent] Result    : OK — wrote 20 chars to "workspace/output.txt"
 [2026-04-04 12:00:02] [INFO  ] [Agent] Stop reason: stop
 ────────────────────────────────────────────────────────
 [2026-04-04 12:00:02] [STEP  ] [Orchestrator] Agent completed task
 [2026-04-04 12:00:02] [RESULT] File content : "Hello World, Aurora!"
 ────────────────────────────────────────────────────────
-[2026-04-04 12:00:02] [STEP  ] [Evaluator] Running automated tests on agent output
+[2026-04-04 12:00:02] [STEP  ] [Evaluator] Running LLM-as-judge evaluation on agent output
 [2026-04-04 12:00:02] [PASS  ] Output file exists
-[2026-04-04 12:00:02] [PASS  ] Content contains "Hello World"
-[2026-04-04 12:00:02] [PASS  ] Content contains a name — Name found: "Aurora"
+[2026-04-04 12:00:02] [STEP  ] [LLM Judge] Sending file content to judge model for evaluation
+[2026-04-04 12:00:03] [STEP  ] [LLM Judge] Evaluation result
+[2026-04-04 12:00:03] [PASS  ] Criteria 1 — contains "Hello World"
+[2026-04-04 12:00:03] [PASS  ] Criteria 2 — name present after "Hello World": "Aurora"
+[2026-04-04 12:00:03] [RESULT] Judge reasoning : The text contains 'Hello World' and is followed by the name 'Aurora'.
+[2026-04-04 12:00:03] [RESULT] Name detected   : Aurora
+[2026-04-04 12:00:03] [RESULT] Verdict         : PASS
 
 ╔════════════════════════════════════════════════════════╗
-║              ALL TESTS PASSED  (3/3)                  ║
+║                 ALL TESTS PASSED  (1/1)                ║
 ╚════════════════════════════════════════════════════════╝
 
 ────────────────────────────────────────────────────────
-[2026-04-04 12:00:02] [INFO  ] [Orchestrator] Run finished — eval PASSED
+[2026-04-04 12:00:03] [INFO  ] [Orchestrator] Run finished — eval PASSED
 ```
 
-The name changes on every run — the model picks it freely.
+The name changes on every run — the agent picks it freely.
 
 Output file:
 
@@ -180,8 +183,8 @@ Log levels:
 | `STEP`   | Major phase transitions                      |
 | `TOOL`   | Tool call / result details                   |
 | `RESULT` | Final output values                          |
-| `PASS`   | Automated test passed                        |
-| `FAIL`   | Automated test failed                        |
+| `PASS`   | Evaluation criterion passed                  |
+| `FAIL`   | Evaluation criterion failed                  |
 | `WARN`   | Non-fatal oddities                           |
 | `ERROR`  | Fatal problems                               |
 
@@ -196,23 +199,13 @@ Log levels:
 
 The agent discovers available tools automatically on each run.
 
-**Add a new eval test** — one step:
+**Change the evaluation criteria** — edit `src/eval/evaluator.js`:
 
-Append an object to the `TESTS` array in `src/eval/evaluator.js`:
+Update `buildJudgePrompt()` to describe different or additional criteria.
+The LLM judge will adapt automatically — no regex or hard-coded assertions needed.
 
-```js
-{
-    name: 'Content ends with "!"',
-    run(content) {
-        const ok = content.endsWith('!');
-        return { pass: ok, detail: ok ? null : `Got: "${content}"` };
-    },
-},
-```
-
-**Switch to supervised mode** — in `src/agents/orchestrator.js`, find the
-oversight checkpoint comment and add a `readline` prompt before the agent
-executes each tool call.  The rest of the loop stays unchanged.
+**Use a different judge model** — add a `judgeModel` field to `config.json`
+and read it in `evaluator.js` to separate the agent model from the judge model.
 
 ---
 

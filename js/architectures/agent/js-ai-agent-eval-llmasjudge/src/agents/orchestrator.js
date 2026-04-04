@@ -1,18 +1,14 @@
 'use strict';
 
 /*
- * orchestrator.js — supervise the agent and manage the run lifecycle.
+ * orchestrator.js — manage the run lifecycle and trigger evaluation.
  *
  * Responsibilities:
  *   - Load the task prompt.
  *   - Ensure the workspace directory exists.
  *   - Hand the task to the agent.
- *   - Log every oversight event (approvals, results).
+ *   - Trigger the LLM judge after the agent finishes.
  *   - Report the final outcome.
- *
- * In full-automation mode every agent action is approved automatically.
- * In a supervised mode this is where a human would be asked to approve
- * each tool call before it is executed.
  */
 
 const fs             = require('fs');
@@ -32,7 +28,7 @@ async function run(config) {
 
     logger.step('[Orchestrator] Assigning task to agent');
     logger.info(`Task: ${TASK.replaceAll('\n', ' ')}`);
-    logger.info('[Orchestrator] Supervision mode: full-automation (all actions auto-approved)');
+    logger.info('[Orchestrator] Evaluation mode: LLM-as-judge (output verified by judge model after completion)');
     logger.separator();
 
     const writtenContent = await runAgent(config, TASK);
@@ -42,7 +38,7 @@ async function run(config) {
     logger.result(`Output file  : ${OUTPUT_FILE}`);
     logger.result(`File content : "${writtenContent}"`);
 
-    const allPassed = await runEval();
+    const allPassed = await runEval(config);
 
     logger.separator();
     logger.info(`[Orchestrator] Run finished — eval ${allPassed ? 'PASSED' : 'FAILED'}`);
