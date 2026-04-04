@@ -22,7 +22,7 @@ Każda architektura może być skonfigurowana wzdłuż tych osi niezależnie:
 | **Narzędzia** | Brak / Natywne / MCP (protokół transportu narzędzi) |
 | **Pamięć** | W wagach (trening/fine-tuning) / Kontekstowa (okno kontekstu) / Cache (KV cache) / Zewnętrzna (vector DB, pliki, baza danych) |
 | **Nadzór** | Pełny automat / Human-in-the-loop / Human-on-the-loop |
-| **Ewaluacja** | Brak / LLM-as-judge / Testy automatyczne |
+| **Ewaluacja** | Testy automatyczne / LLM-as-judge / Human-as-judge |
 
 ---
 
