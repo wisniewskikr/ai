@@ -44,6 +44,8 @@ const LABEL = {
     RESULT: `${C.white}${C.bold}RESULT${C.reset}`,
     WARN:   `${C.yellow}WARN  ${C.reset}`,
     ERROR:  `${C.red}${C.bold}ERROR ${C.reset}`,
+    PASS:   `${C.green}${C.bold}PASS  ${C.reset}`,
+    FAIL:   `${C.red}${C.bold}FAIL  ${C.reset}`,
 };
 
 /* ------------------------------------------------------------------ */
@@ -96,13 +98,37 @@ function separator() {
 
 /* ------------------------------------------------------------------ */
 
+function evalSummary(passed, total) {
+    const allPassed = passed === total;
+    const rule      = '═'.repeat(56);
+    const statusText = allPassed
+        ? `ALL TESTS PASSED  (${passed}/${total})`
+        : `TESTS FAILED  (${passed}/${total} passed)`;
+    const color     = allPassed ? C.green : C.red;
+    const pad       = Math.max(0, Math.floor((54 - statusText.length) / 2));
+    const centered  = ' '.repeat(pad) + statusText;
+    const ts        = timestamp();
+
+    console.log(`\n${color}${C.bold}╔${rule}╗${C.reset}`);
+    console.log(`${color}${C.bold}║  ${centered.padEnd(54)}║${C.reset}`);
+    console.log(`${color}${C.bold}╚${rule}╝${C.reset}\n`);
+
+    const plain = `\n${'='.repeat(58)}\n  EVAL SUMMARY: ${statusText}\n${'='.repeat(58)}\n`;
+    fs.appendFileSync(logFilePath(), `[${ts}] ${plain}`);
+}
+
+/* ------------------------------------------------------------------ */
+
 module.exports = {
-    info:      (msg) => write('INFO',   msg),
-    step:      (msg) => write('STEP',   msg),
-    tool:      (msg) => write('TOOL',   msg),
-    result:    (msg) => write('RESULT', msg),
-    warn:      (msg) => write('WARN',   msg),
-    error:     (msg) => write('ERROR',  msg),
+    info:        (msg) => write('INFO',   msg),
+    step:        (msg) => write('STEP',   msg),
+    tool:        (msg) => write('TOOL',   msg),
+    result:      (msg) => write('RESULT', msg),
+    warn:        (msg) => write('WARN',   msg),
+    error:       (msg) => write('ERROR',  msg),
+    pass:        (msg) => write('PASS',   msg),
+    fail:        (msg) => write('FAIL',   msg),
     banner,
     separator,
+    evalSummary,
 };

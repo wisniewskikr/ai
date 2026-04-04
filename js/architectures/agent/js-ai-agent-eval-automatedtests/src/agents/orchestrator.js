@@ -19,6 +19,7 @@ const fs             = require('fs');
 const path           = require('path');
 const logger         = require('../libs/logger');
 const { runAgent }   = require('./agent');
+const { runEval }    = require('../eval/evaluator');
 
 const TASK        = fs.readFileSync(path.join(__dirname, '../prompts/orchestrator.txt'), 'utf8').trim();
 const WORKSPACE   = path.join(process.cwd(), 'workspace');
@@ -40,7 +41,11 @@ async function run(config) {
     logger.step('[Orchestrator] Agent completed task');
     logger.result(`Output file  : ${OUTPUT_FILE}`);
     logger.result(`File content : "${writtenContent}"`);
-    logger.info('[Orchestrator] Run finished successfully');
+
+    const allPassed = await runEval();
+
+    logger.separator();
+    logger.info(`[Orchestrator] Run finished — eval ${allPassed ? 'PASSED' : 'FAILED'}`);
 }
 
 /* ------------------------------------------------------------------ */
