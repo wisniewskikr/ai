@@ -23,7 +23,7 @@ function loadConfig() {
         throw new Error(`Cannot read config.json: ${err.message}`);
     }
 
-    const { model, maxTokens, baseUrl } = raw;
+    const { model, maxTokens, baseUrl, greetingCount, intervalSeconds } = raw;
 
     if (!model)   throw new Error('config.json: missing required field "model"');
     if (!baseUrl) throw new Error('config.json: missing required field "baseUrl"');
@@ -33,9 +33,11 @@ function loadConfig() {
 
     return {
         model,
-        maxTokens: maxTokens ?? 1024,
+        maxTokens:       maxTokens       ?? 1024,
         baseUrl,
         apiKey,
+        greetingCount:   greetingCount   ?? 10,
+        intervalSeconds: intervalSeconds ?? 3,
     };
 }
 

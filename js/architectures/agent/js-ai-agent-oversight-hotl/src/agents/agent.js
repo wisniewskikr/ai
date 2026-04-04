@@ -1,152 +1,141 @@
 'use strict';
 
 /*
- * agent.js — autonomous agent that executes tasks using tools.
+ * agent.js — HOTL (Human-on-the-Loop) agent.
  *
- * Architecture: oversight pattern, human-in-the-loop (HITL) mode.
+ * Architecture: oversight pattern, human-ON-the-loop mode.
  *
- * The agent runs an agentic loop:
- *   1. Send task + message history to the model.
- *   2. If the model stops with "tool_calls", the oversight checkpoint
- *      pauses and asks the human to approve each tool call before
- *      execution.  If approved, the result is fed back (loop continues).
- *      If rejected, the task is cancelled immediately.
- *   3. If the model stops with "stop", the task is complete.
+ * The agent acts fully autonomously:
+ *   1. Asks the model to generate N creative names (one API call).
+ *   2. Writes "Hello World, <name>!" greetings to the output file,
+ *      one per line, with a configurable delay between each write.
+ *   3. After every write the orchestrator is notified so the human
+ *      can see what happened in real-time.
+ *   4. The human can press Enter at any moment — this sets
+ *      oversight.interrupted = true and the agent stops after the
+ *      current write finishes.
  *
- * The agent is intentionally stateless: all state lives in the `messages`
- * array that grows with each turn of the loop.
+ * Key difference from HITL: no per-action approval.  The human is
+ * "on the loop" (observing) rather than "in the loop" (approving).
  */
 
-const fs                       = require('fs');
-const path                     = require('path');
-const readline                 = require('readline');
-const { chatWithTools }        = require('../libs/api');
-const logger                   = require('../libs/logger');
-const { definitions, execute } = require('../tools/tools');
+const fs                  = require('fs');
+const path                = require('path');
+const { chatWithTools }   = require('../libs/api');
+const logger              = require('../libs/logger');
+
+const OUTPUT_FILE = path.join(process.cwd(), 'workspace', 'output.txt');
 
 /* ------------------------------------------------------------------ */
 
-const SYSTEM_PROMPT = fs
-    .readFileSync(path.join(__dirname, '../prompts/agent.txt'), 'utf8')
-    .trim();
-
-/* ------------------------------------------------------------------ */
+function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 /*
- * askHuman(question) — prompt the human and return the trimmed answer.
+ * interruptibleSleep(ms, oversight)
+ *
+ * Sleeps for `ms` milliseconds but wakes every 100 ms to check if the
+ * human has requested an interrupt — so the response feels instant.
  */
-function askHuman(question) {
-    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-    return new Promise((resolve) => {
-        rl.question(question, (answer) => {
-            rl.close();
-            resolve(answer.trim().toLowerCase());
-        });
-    });
+async function interruptibleSleep(ms, oversight) {
+    const deadline = Date.now() + ms;
+    while (Date.now() < deadline) {
+        if (oversight.interrupted) return;
+        await sleep(100);
+    }
 }
 
 /* ------------------------------------------------------------------ */
 
 /*
- * runAgent(config, task) — run the agent until the task is complete.
+ * generateNames(config, count)
  *
- * Returns the text content written to the output file, or null if the
- * human rejected the action.
+ * Ask the model for `count` creative first names.
+ * Returns a string array.
  */
-async function runAgent(config, task) {
+async function generateNames(config, count) {
+    logger.info(`[Agent] Asking model to generate ${count} random names...`);
+
     const messages = [
-        { role: 'system', content: SYSTEM_PROMPT },
-        { role: 'user',   content: task },
+        {
+            role: 'user',
+            content:
+                `Generate exactly ${count} creative and diverse first names. ` +
+                `Return ONLY the names, one per line, with no numbering, ` +
+                `no punctuation, and no extra text.`,
+        },
     ];
 
-    let writtenContent = '';
+    const { message } = await chatWithTools(config, messages, []);
 
-    logger.step('[Agent] Entering agentic loop');
+    const names = message.content
+        .split('\n')
+        .map((l) => l.trim())
+        .filter(Boolean)
+        .slice(0, count);
 
-    for (;;) {
-        logger.info('[Agent] Sending request to model...');
+    logger.info(`[Agent] Names received: ${names.join(', ')}`);
+    return names;
+}
 
-        const { message, finish_reason, tool_calls } =
-            await chatWithTools(config, messages, definitions);
+/* ------------------------------------------------------------------ */
 
-        logger.info(`[Agent] Stop reason: ${finish_reason}`);
+/*
+ * runAgent(config, oversight)
+ *
+ * Main agent loop.  Writes greetings autonomously until done or interrupted.
+ *
+ * `oversight.interrupted` is a flag set by the orchestrator when the
+ * human decides to stop the run.
+ *
+ * Returns the number of greetings actually written.
+ */
+async function runAgent(config, oversight) {
+    const { greetingCount, intervalSeconds } = config;
 
-        /* ---------------------------------------------------------- */
-        /* Task complete                                               */
-        /* ---------------------------------------------------------- */
+    /* Ensure workspace directory exists and start with a clean file */
+    fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true });
+    fs.writeFileSync(OUTPUT_FILE, '', 'utf8');
 
-        if (finish_reason === 'stop') {
-            if (message.content) logger.info(`[Agent] Final message: ${message.content}`);
+    /* Step 1 — use the model to generate names (single API call) */
+    const names = await generateNames(config, greetingCount);
+
+    logger.separator();
+    logger.step('[Agent] Entering autonomous greeting loop');
+    logger.info(`[Agent] Greetings to write : ${greetingCount}`);
+    logger.info(`[Agent] Interval           : ${intervalSeconds}s`);
+    logger.info(`[Oversight] Press Enter at any time to interrupt`);
+    logger.separator();
+
+    let written = 0;
+
+    for (let i = 0; i < names.length; i++) {
+        /* Check interrupt before each write */
+        if (oversight.interrupted) {
+            logger.info('[Oversight] Interrupt detected — agent stopping');
             break;
         }
 
-        /* ---------------------------------------------------------- */
-        /* Model wants to call tools                                   */
-        /* ---------------------------------------------------------- */
+        const line = `Hello World, ${names[i]}!`;
 
-        if (finish_reason !== 'tool_calls') {
-            throw new Error(`Unexpected stop reason: "${finish_reason}"`);
-        }
+        /* Autonomous action — no human approval required in HOTL */
+        fs.appendFileSync(OUTPUT_FILE, line + '\n', 'utf8');
+        written++;
 
-        /* Append the full assistant turn to message history */
-        messages.push(message);
+        logger.tool(`[Agent] Written (${written}/${greetingCount}): "${line}"`);
+        logger.info(
+            `[Oversight] File updated — ${greetingCount - written} greeting(s) remaining`,
+        );
 
-        /* Process each tool call */
-        for (const call of tool_calls) {
-            const name = call.function.name;
-            const args = JSON.parse(call.function.arguments);
-
-            logger.tool(`[Agent] Tool call : ${name}`);
-            logger.tool(`[Agent] Arguments : ${JSON.stringify(args)}`);
-
-            /*
-             * Oversight checkpoint — HUMAN-IN-THE-LOOP.
-             *
-             * Pause and ask the human to approve every tool call before
-             * it is executed.  A rejection cancels the task immediately.
-             */
-            logger.info('[Oversight] HUMAN-IN-THE-LOOP — awaiting human approval');
-
-            if (name === 'write_file') {
-                logger.info(`[Oversight] Agent wants to write to file:`);
-                logger.info(`  Path   : ${args.path}`);
-                logger.info(`  Content: "${args.content}"`);
-            }
-
-            const answer = await askHuman('\n[Oversight] Approve this action? (y/n): ');
-            const approved = answer === 'y' || answer === 'yes';
-
-            if (!approved) {
-                logger.info('[Oversight] Human REJECTED the action — task cancelled');
-                return null;
-            }
-
-            logger.info('[Oversight] Human APPROVED the action — executing');
-
-            let result;
-            try {
-                result = execute(name, args);
-            } catch (err) {
-                result = `ERROR: ${err.message}`;
-                logger.warn(`[Agent] Tool error: ${err.message}`);
-            }
-
-            logger.tool(`[Agent] Result    : ${result}`);
-
-            if (name === 'write_file') {
-                writtenContent = args.content;
-            }
-
-            /* Feed tool result back as a separate tool message */
-            messages.push({
-                role:         'tool',
-                tool_call_id: call.id,
-                content:      result,
-            });
+        /* Wait between writes (skip delay after the last one) */
+        if (written < greetingCount && !oversight.interrupted) {
+            logger.info(`[Agent] Next greeting in ${intervalSeconds}s  (Press Enter to interrupt)`);
+            await interruptibleSleep(intervalSeconds * 1000, oversight);
         }
     }
 
-    return writtenContent;
+    return written;
 }
 
 /* ------------------------------------------------------------------ */

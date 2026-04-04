@@ -17,7 +17,7 @@ const orchestrator       = require('./src/agents/orchestrator');
 /* ------------------------------------------------------------------ */
 
 async function main() {
-    logger.banner('AI Agent Oversight — Human-in-the-Loop Mode');
+    logger.banner('AI Agent Oversight — Human-on-the-Loop Mode');
 
     let config;
     try {
@@ -27,8 +27,10 @@ async function main() {
         process.exit(1);
     }
 
-    logger.info(`Model    : ${config.model}`);
-    logger.info(`Max tokens: ${config.maxTokens}`);
+    logger.info(`Model            : ${config.model}`);
+    logger.info(`Max tokens       : ${config.maxTokens}`);
+    logger.info(`Greetings        : ${config.greetingCount}`);
+    logger.info(`Interval         : ${config.intervalSeconds}s`);
     logger.separator();
 
     try {
