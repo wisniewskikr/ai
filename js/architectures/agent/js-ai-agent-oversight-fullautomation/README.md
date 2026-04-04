@@ -21,8 +21,8 @@ Orchestrator  ──(task)──►  Agent  ──(tool call)──►  write_fi
   Supervised mode: wait for human
 ```
 
-**Orchestrator** (`main.js`) — the supervisor:
-- Defines the task.
+**Orchestrator** (`src/agents/orchestrator.js`) — the supervisor:
+- Loads the task prompt and ensures the workspace exists.
 - Monitors every tool call the agent makes.
 - In *full-automation* mode: approves all calls automatically.
 - In *supervised* mode (not implemented here): pauses and asks a human.
@@ -42,18 +42,20 @@ Orchestrator  ──(task)──►  Agent  ──(tool call)──►  write_fi
 ## Project Structure
 
 ```
-main.js                    entry point; orchestrator logic
+main.js                    entry point; load config, start orchestrator
 config.json                model, token limit, API base URL
 .env                       API key (never commit this)
 src/
   agents/
+    orchestrator.js        supervisor; loads task, manages run lifecycle
     agent.js               agentic loop
   libs/
     api.js                 OpenRouter HTTP client
     config.js              load and validate config.json + .env
     logger.js              colorized console + daily log files
   prompts/
-    agent.txt              system prompt for the model
+    agent.txt              system prompt for the model (agent.js)
+    orchestrator.txt       task prompt handed to the agent (orchestrator.js)
   tools/
     tools.js               tool definitions and execution
 workspace/                 output files (git-ignored)
@@ -167,9 +169,9 @@ Log levels:
 
 The agent discovers available tools automatically on each run.
 
-**Switch to supervised mode** — in `src/agents/agent.js`, find the oversight
-checkpoint comment and add a `readline` prompt before calling `execute()`.
-The rest of the loop stays unchanged.
+**Switch to supervised mode** — in `src/agents/orchestrator.js`, find the
+oversight checkpoint comment and add a `readline` prompt before the agent
+executes each tool call.  The rest of the loop stays unchanged.
 
 ---
 
