@@ -23,22 +23,24 @@ npm start
 
 ## Usage
 
-- Type a message and press Enter to chat.
-- Type `/history` to display the conversation history.
-- Type `exit` (or the configured command) to quit.
+Type a message and press Enter to chat. Available commands:
+
+| Command     | Description                        |
+|-------------|------------------------------------|
+| `/history`  | Show conversation history          |
+| `/clear`    | Clear the console                  |
+| `/exit`     | Quit the chatbot                   |
 
 ## Configuration
 
-Edit `config.json` to change model, tokens, temperature, or the exit command/message.
+Edit `config.json` to change model, tokens, or temperature.
 
-| Field          | Default                                      | Description                    |
-|----------------|----------------------------------------------|--------------------------------|
-| `model`        | `meta-llama/llama-3.1-8b-instruct:free`      | OpenRouter model ID            |
-| `maxTokens`    | `1024`                                       | Max tokens per response        |
-| `temperature`  | `0.7`                                        | Sampling temperature           |
-| `baseUrl`      | `https://openrouter.ai/api/v1`               | API base URL                   |
-| `exitCommand`  | `exit`                                       | Keyword to quit                |
-| `exitMessage`  | `Type 'exit' to quit the chatbot.`           | Shown at startup               |
+| Field         | Default                          | Description             |
+|---------------|----------------------------------|-------------------------|
+| `model`       | `openai/gpt-4o`                  | OpenRouter model ID     |
+| `maxTokens`   | `1024`                           | Max tokens per response |
+| `temperature` | `0.7`                            | Sampling temperature    |
+| `baseUrl`     | `https://openrouter.ai/api/v1`   | API base URL            |
 
 ## Logs
 

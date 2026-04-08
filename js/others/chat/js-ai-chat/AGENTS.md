@@ -20,9 +20,7 @@ Dopiero gdy AI potrzebuje wykonywać akcje: szukać w sieci, czytać pliki, wywo
 
 ## Model
 
-**Domyślny (development):** `meta-llama/llama-3.1-8b-instruct:free`
-- Darmowy, wystarczająca jakość do czatu
-- Limit ~20 req/min
+**Domyślny:** `openai/gpt-4o`
 
 **Alternatywy produkcyjne:**
 | Model | Cena |
@@ -38,29 +36,22 @@ Zmiana modelu = jedna linia w `config.json`.
 
 - **Język:** TypeScript
 - **API:** OpenRouter (`https://openrouter.ai/api/v1`)
-- **Konfiguracja:** `config.json`
+- **Konfiguracja:** `config.json` (model, maxTokens, temperature, baseUrl)
 
 ---
 
 ## Funkcjonalności
 
-### Komenda wyjścia
-- Użytkownik wpisuje słowo kluczowe (domyślnie `exit`) aby zakończyć działanie
-- Komenda i komunikat powitalny są konfigurowalne w `config.json`:
-  ```json
-  {
-    "exitCommand": "exit",
-    "exitMessage": "Type 'exit' to quit the chatbot."
-  }
-  ```
+### Komendy (hardcoded)
+- `/exit` — kończy działanie aplikacji
+- `/history` — wyświetla sformatowaną historię konwersacji w trakcie sesji
+- `/clear` — czyści konsolę i ponownie wyświetla listę dostępnych komend
 
-### Historia konwersacji
-- Komenda `/history` wyświetla sformatowaną historię w trakcie trwania sesji
+Komendy nie są konfigurowalne — żyją w kodzie razem z logiką, która je obsługuje.
 
 ### Logowanie do plików
-- Logi zapisywane w folderze `logs/YYYY-MM-DD.log`
+- Logi zapisywane wyłącznie do pliku `logs/YYYY-MM-DD.log` (nie na konsolę)
 - Każdy wpis ma timestamp i poziom (`INFO`, `ERROR`, `USER`, `ASSISTANT`)
-- Kolorowe wyjście w konsoli (`INFO` = cyan, `ERROR` = czerwony)
 - Logowane zdarzenia: start/koniec sesji, każda wiadomość, błędy API
 
 ---
