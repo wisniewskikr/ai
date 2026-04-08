@@ -6,8 +6,6 @@ export interface Config {
   maxTokens: number;
   temperature: number;
   baseUrl: string;
-  exitCommand: string;
-  exitMessage: string;
 }
 
 export function loadConfig(): Config {

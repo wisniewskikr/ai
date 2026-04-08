@@ -43,7 +43,7 @@ export async function runChat(config: Config): Promise<void> {
 
     if (!trimmed) continue;
 
-    if (trimmed === config.exitCommand) {
+    if (trimmed === '/exit') {
       log('INFO', 'Session ended by user');
       console.log('Goodbye!');
       rl.close();
