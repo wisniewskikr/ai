@@ -1,5 +1,6 @@
 .env
 node_modules/
 logs/
+dist/
 workspace/
 .claude
