@@ -1,5 +1,5 @@
 {
-  "name": "js-ai-chat",
+  "name": "js-ai-chat-devs4",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
