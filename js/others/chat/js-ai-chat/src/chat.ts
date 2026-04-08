@@ -21,12 +21,16 @@ export async function runChat(config: Config): Promise<void> {
   const rl = readline.createInterface({ input, output });
   const history: Message[] = [];
 
+  function printHelp(): void {
+    console.log('Available commands:');
+    console.log('  /history  — show conversation history');
+    console.log('  /clear    — clear the console');
+    console.log('  /exit     — quit the chatbot');
+    console.log();
+  }
+
   log('INFO', 'Session started');
-  console.log('Available commands:');
-  console.log('  /history  — show conversation history');
-  console.log('  /clear    — clear the console');
-  console.log('  /exit     — quit the chatbot');
-  console.log();
+  printHelp();
 
   while (true) {
     let userInput: string;
@@ -57,6 +61,7 @@ export async function runChat(config: Config): Promise<void> {
 
     if (trimmed === '/clear') {
       console.clear();
+      printHelp();
       continue;
     }
 
