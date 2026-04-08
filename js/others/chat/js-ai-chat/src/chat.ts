@@ -22,8 +22,11 @@ export async function runChat(config: Config): Promise<void> {
   const history: Message[] = [];
 
   log('INFO', 'Session started');
-  console.log(config.exitMessage);
-  console.log("Type '/history' to show conversation history.\n");
+  console.log('Available commands:');
+  console.log('  /history  — show conversation history');
+  console.log('  /clear    — clear the console');
+  console.log('  /exit     — quit the chatbot');
+  console.log();
 
   while (true) {
     let userInput: string;
@@ -49,6 +52,11 @@ export async function runChat(config: Config): Promise<void> {
 
     if (trimmed === '/history') {
       printHistory(history);
+      continue;
+    }
+
+    if (trimmed === '/clear') {
+      console.clear();
       continue;
     }
 
