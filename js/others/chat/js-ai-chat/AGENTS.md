@@ -55,8 +55,7 @@ Zmiana modelu = jedna linia w `config.json`.
   ```
 
 ### Historia konwersacji
-- Wyświetlana w terminalu w trakcie czatu (naturalny REPL)
-- Wyświetlana w sformatowanej formie po wpisaniu `exit` (przed zamknięciem)
+- Komenda `/history` wyświetla sformatowaną historię w trakcie trwania sesji
 
 ### Logowanie do plików
 - Logi zapisywane w folderze `logs/YYYY-MM-DD.log`
@@ -82,17 +81,37 @@ Zmiana modelu = jedna linia w `config.json`.
 js-ai-chat/
 ├── src/
 │   ├── index.ts      # punkt wejścia
-│   ├── chat.ts       # pętla REPL i historia
+│   ├── chat.ts       # pętla REPL, historia, interfejsy Message/Config
 │   ├── api.ts        # wywołania OpenRouter
 │   ├── logger.ts     # logowanie do pliku i konsoli
-│   ├── config.ts     # ładowanie konfiguracji
-│   └── types.ts      # interfejsy Message, Config
-├── logs/             # pliki logów (gitignore)
+│   └── config.ts     # ładowanie konfiguracji i interfejs Config
+├── logs/             # pliki logów (gitignored)
 ├── config.json       # konfiguracja
+├── .env.example      # szablon zmiennych środowiskowych
+├── .gitignore        # ignoruje: logs/, .env, dist/, node_modules/
 ├── package.json
 ├── tsconfig.json
 └── README.md         # po angielsku
 ```
 
+> `types.ts` nie istnieje — interfejsy `Message` i `Config` żyją w plikach, które ich używają.
+
 ### API Key
-Przekazywany przez zmienną środowiskową `OPENROUTER_API_KEY` (nie w `config.json`).
+Przekazywany przez zmienną środowiskową `OPENROUTER_API_KEY` (nie w `config.json`). Szablon w `.env.example`.
+
+---
+
+## Kolejność implementacji
+
+```
+1. package.json + tsconfig.json          ← środowisko
+2. config.ts + config.json               ← wczytaj config, waliduj API key
+3. logger.ts                             ← logi od razu, żeby debugować resztę
+4. api.ts                                ← jeden fetch do OpenRouter
+5. chat.ts (pętla bez /history)          ← działający czat
+6. chat.ts (dodaj /history)              ← dopiero teraz feature
+7. README.md + .gitignore + .env.example ← dokumentacja na końcu
+```
+
+### Kluczowa decyzja techniczna
+`node:readline/promises` (Node 18+) zamiast callback-based readline — eliminuje callback hell w pętli REPL.
