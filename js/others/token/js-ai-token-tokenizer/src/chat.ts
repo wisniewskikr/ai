@@ -45,7 +45,7 @@ export async function runChat(config: Config): Promise<void> {
 
     // Build the full context for estimation (history + new message)
     const pendingHistory: Message[] = [...history, { role: 'user', content: trimmed }];
-    const estimatedTokens = estimateTokens(pendingHistory);
+    const estimatedTokens = estimateTokens(pendingHistory, config.model);
 
     console.log(`\nEstimated input tokens: ${estimatedTokens}`);
     let confirm: string;
