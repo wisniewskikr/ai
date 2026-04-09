@@ -3,6 +3,15 @@ import { stdin as input, stdout as output } from 'node:process';
 import { Config } from './config';
 import { Message, sendMessage } from './api';
 import { estimateTokens } from './tokenizer';
+import {
+  logSessionStart,
+  logSessionEnd,
+  logClear,
+  logUserMessage,
+  logSkipped,
+  logAssistantMessage,
+  logError,
+} from './logger';
 
 export async function runChat(config: Config): Promise<void> {
   const rl = readline.createInterface({ input, output });
@@ -15,6 +24,7 @@ export async function runChat(config: Config): Promise<void> {
     console.log();
   }
 
+  logSessionStart(config.model);
   printHelp();
 
   while (true) {
@@ -23,6 +33,7 @@ export async function runChat(config: Config): Promise<void> {
       userInput = await rl.question('You: ');
     } catch {
       console.log('\nGoodbye!');
+      logSessionEnd('eof');
       rl.close();
       return;
     }
@@ -32,12 +43,14 @@ export async function runChat(config: Config): Promise<void> {
 
     if (trimmed === '/exit') {
       console.log('Goodbye!');
+      logSessionEnd('exit');
       rl.close();
       return;
     }
 
     if (trimmed === '/clear') {
       history = [];
+      logClear();
       console.clear();
       printHelp();
       continue;
@@ -47,17 +60,21 @@ export async function runChat(config: Config): Promise<void> {
     const pendingHistory: Message[] = [...history, { role: 'user', content: trimmed }];
     const estimatedTokens = estimateTokens(pendingHistory, config.model);
 
+    logUserMessage(trimmed, estimatedTokens);
+
     console.log(`\nEstimated input tokens: ${estimatedTokens}`);
     let confirm: string;
     try {
       confirm = await rl.question('Continue? (y/n): ');
     } catch {
       console.log('\nGoodbye!');
+      logSessionEnd('eof');
       rl.close();
       return;
     }
 
     if (confirm.trim().toLowerCase() !== 'y') {
+      logSkipped();
       console.log();
       continue;
     }
@@ -72,9 +89,11 @@ export async function runChat(config: Config): Promise<void> {
       console.log(
         `Tokens — estimated input: ${estimatedTokens} | actual input: ${result.promptTokens} | output: ${result.completionTokens}\n`
       );
+      logAssistantMessage(result.content, estimatedTokens, result.promptTokens, result.completionTokens);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       console.error(`Error: ${message}\n`);
+      logError(message);
       history.pop();
     }
   }
