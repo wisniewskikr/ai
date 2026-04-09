@@ -1,48 +1,47 @@
-# AI Chat Token Tokenizer — Specyfikacja aplikacji
+# AI Chat Token Tokenizer — Application Specification
 
-## Opis
+## Description
 
-Konsolowa aplikacja czatu AI z podglądem liczby tokenów przed wysłaniem wiadomości i po otrzymaniu odpowiedzi.
+A console-based AI chat application with token count preview before sending a message and after receiving a response.
 
-## Konfiguracja
+## Configuration
 
-- Model i parametry API definiowane w `config.json` (model, maxTokens, temperature, baseUrl)
-- Klucz API pobierany ze zmiennej środowiskowej `OPENROUTER_API_KEY` z pliku `.env`
+- Model and API parameters defined in `config.json` (model, maxTokens, temperature, baseUrl)
+- API key loaded from the `OPENROUTER_API_KEY` environment variable in `.env`
 
-## Funkcjonalności
+## Features
 
-### Ekran startowy i po `/clear`
-Przy uruchomieniu oraz po wyczyszczeniu konsoli wyświetlane są dostępne polecenia:
+### Startup screen and after `/clear`
+On launch and after clearing the console, available commands are displayed:
 ```
-Dostępne polecenia:
-  /clear  — czyści konsolę
-  /exit   — kończy pracę
+Available commands:
+  /clear  — clear the console and reset conversation history
+  /exit   — exit the application
 ```
 
-### Przepływ rozmowy
+### Conversation flow
 
-1. Użytkownik wpisuje wiadomość
-2. Aplikacja oblicza **przewidywaną liczbę tokenów inputu** (cały kontekst: historia + nowa wiadomość)
-3. Aplikacja wyświetla tę liczbę i pyta: **"Czy chcesz kontynuować? (t/n)"**
-4. Jeśli użytkownik potwierdzi (`t`), wiadomość jest wysyłana do API
-5. Wyświetlana jest **odpowiedź AI**
-6. Pod odpowiedzią wyświetlane jest podsumowanie tokenów:
+1. User types a message
+2. Application calculates the **estimated input token count** (full context: history + new message) using `tiktoken`
+3. Application displays that count and asks: **"Continue? (y/n)"**
+4. If the user confirms (`y`), the message is sent to the API
+5. The **AI response** is displayed
+6. Below the response, a token summary is shown:
    ```
-   Tokeny — przewidywane input: X | rzeczywiste input: Y | output: Z
+   Tokens — estimated input: X | actual input: Y | output: Z
    ```
 
-### Polecenia specjalne
+### Special commands
 
-| Polecenie | Działanie |
-|-----------|-----------|
-| `/clear`  | Czyści ekran konsoli, resetuje historię rozmowy, wyświetla ponownie listę poleceń |
-| `/exit`   | Kończy działanie aplikacji |
+| Command  | Action |
+|----------|--------|
+| `/clear` | Clears the console, resets conversation history, redisplays the command list |
+| `/exit`  | Exits the application |
 
-## Wymagania techniczne
+## Technical requirements
 
 - Node.js
-- Biblioteka `@anthropic-ai/sdk` lub dedykowana biblioteka tokenizacji (np. `tiktoken` / `js-tiktoken`) do szacowania tokenów **przed** wysłaniem
-- Wywołania API przez OpenRouter (baseUrl z `config.json`)
-- Historia rozmowy przechowywana w pamięci (tablica wiadomości `messages`)
-- Liczba tokenów inputu szacowana lokalnie na podstawie całej historii + nowej wiadomości
-- Rzeczywista liczba tokenów pobierana z odpowiedzi API (`usage.prompt_tokens`, `usage.completion_tokens`)
+- `tiktoken` library for local token estimation **before** sending (based on full history + new message)
+- API calls via OpenRouter (baseUrl from `config.json`)
+- Conversation history kept in memory (array of `messages`)
+- Actual token counts read from API response (`usage.prompt_tokens`, `usage.completion_tokens`)
