@@ -1,5 +1,7 @@
 ﻿TODO:
 - RAG
+* js-ai-rag-text-neutralembeddings
+* js-ai-rag-json-embeddings
 - obserwacja - langfuse
 - kompresja
 - skille
