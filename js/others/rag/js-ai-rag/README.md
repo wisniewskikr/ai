@@ -91,3 +91,44 @@ It **fails** when the question uses different words with the same meaning:
 | `"What's my diet?"` | `"I'm vegan."` | no — no shared words |
 | `"Where do I reside?"` | `"I live in Szczecin."` | no — `reside` ≠ `live` |
 | `"What's my profession?"` | `"I'm Java Developer."` | no — no shared words |
+
+### Example: what actually gets sent to the LLM
+
+Question: `"What is my name?"`
+
+```
+Cosine similarity against each line:
+  [0] My name is Krzysztof Wisniewski.          → score: 0.63  ✓
+  [1] I'm Java Developer.                        → score: 0.00
+  [2] I live in Szczecin, Poland.                → score: 0.00
+  [3] I'm vegan. My favorite dish is dumplings.  → score: 0.18
+  [4] My hobbies are traveling and dancing.      → score: 0.27
+
+topK=3 → lines [0], [4], [3] are selected
+```
+
+Prompt sent to the LLM:
+```
+Relevant context:
+My name is Krzysztof Wisniewski.
+My hobbies are traveling and dancing.
+I'm vegan. My favorite dish is dumplings with mushrooms.
+
+Question: What is my name?
+```
+
+Lines `[1]` and `[2]` are **never sent** — their score is 0.
+
+To see only the single best match, set `topK: 1` in `config.json`.
+
+### Two levels of filtering
+
+Retrieving the right answer involves two independent steps:
+
+**Level 1 — RAG (mechanical):**
+Drops lines with score=0 (no shared words), returns the top-K remaining lines. Pure math — no understanding of meaning.
+
+**Level 2 — LLM (intelligent):**
+Receives the selected lines as context and decides which ones are actually useful for the answer. If a line is irrelevant, the LLM simply ignores it.
+
+This means `topK` does not need to be perfect. The LLM is smart enough to filter out noise in the context — so it is safe to pass a few extra lines rather than risk missing the right one.
