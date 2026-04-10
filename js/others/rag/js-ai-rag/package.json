@@ -1,5 +1,5 @@
 {
-  "name": "js-ai-rag",
+  "name": "js-ai-rag-text-bagofwords",
   "version": "1.0.0",
   "description": "RAG chat — answers questions from a personal knowledge file",
   "main": "dist/index.js",

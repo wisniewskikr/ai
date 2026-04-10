@@ -50,7 +50,7 @@ The interactive chat loop already exists there; keep it as-is.
 ## File Structure (expected)
 
 ```
-js-ai-rag/
+js-ai-rag-text-bagofwords/
   data/
     knowledge.txt       <- empty, to be filled by user
   logs/                 <- runtime logs
