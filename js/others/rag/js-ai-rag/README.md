@@ -70,6 +70,24 @@ Edit `config.json`:
 
 Session logs are written to `logs/YYYY-MM-DD.log`. Each entry has a timestamp and level (`INFO`, `ERROR`, `USER`, `ASSISTANT`).
 
-## Upgrading to neural embeddings
+## Similarity search: bag-of-words
 
-The similarity search lives entirely in `src/rag.ts`. To replace bag-of-words with neural embeddings, swap the `buildVector` + `cosineSimilarity` logic in that file with any embedding API call. Everything else stays the same.
+The current implementation uses **bag-of-words** cosine similarity — no external dependencies, no API calls, no model downloads.
+
+Each line from `knowledge.txt` and each user question are converted to a word-frequency vector. The chunks with the highest cosine similarity to the question are injected as context.
+
+This works well when the question shares vocabulary with the stored facts:
+
+| Question | Matching chunk | Works? |
+|---|---|---|
+| `"What is my name?"` | `"My name is Krzysztof Wisniewski."` | yes — shares `name` |
+| `"Where do I live?"` | `"I live in Szczecin, Poland."` | yes — shares `live` |
+
+It **fails** when the question uses different words with the same meaning:
+
+| Question | Matching chunk | Works? |
+|---|---|---|
+| `"What do I enjoy in my spare time?"` | `"My hobbies are traveling and dancing."` | no — no shared words |
+| `"What's my diet?"` | `"I'm vegan."` | no — no shared words |
+| `"Where do I reside?"` | `"I live in Szczecin."` | no — `reside` ≠ `live` |
+| `"What's my profession?"` | `"I'm Java Developer."` | no — no shared words |
