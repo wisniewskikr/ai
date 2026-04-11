@@ -1,4 +1,4 @@
-# js-ai-rag-text-bagofwords
+# js-ai-rag-text-neutralembeddings
 
 Personal knowledge RAG chat. Fill `data/knowledge.txt` with facts about yourself — the assistant answers questions using that file as its knowledge base.
 
