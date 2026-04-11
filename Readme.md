@@ -2,6 +2,7 @@
 - RAG
 * js-ai-rag-text-neutralembeddings
 * js-ai-rag-json-embeddings
+- Sandbox: devs4, Daytona, e2b, docker
 - obserwacja - langfuse
 - kompresja
 - skille
