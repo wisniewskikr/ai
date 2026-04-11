@@ -121,3 +121,14 @@ Encodes both the question and all chunks into dense vectors, then returns the to
 Receives the selected lines as context and decides which ones are actually useful for the answer. If a line is irrelevant, the LLM simply ignores it.
 
 This means `topK` does not need to be perfect. The LLM is smart enough to filter out noise in the context — so it is safe to pass a few extra lines rather than risk missing the right one.
+
+## Models
+
+Two AI models are used, each with a distinct role:
+
+| Model | Role | Runs |
+|---|---|---|
+| `Xenova/all-MiniLM-L6-v2` | Encodes text into 384-dim vectors; finds top-K chunks by cosine similarity | locally |
+| LLM (`gpt-4o` etc.) | Receives question + top-K chunks as context; generates the answer | OpenRouter API |
+
+The LLM does not explicitly validate chunks — it simply ignores irrelevant ones while answering.
