@@ -69,7 +69,7 @@ export async function runChat(config: Config, kb: KnowledgeBase): Promise<void> 
     log('USER', trimmed);
 
     // RAG: find relevant knowledge and inject as context before sending to LLM
-    const context = findRelevantChunks(trimmed, kb, config.topK);
+    const context = await findRelevantChunks(trimmed, kb, config.topK);
     let userContent = trimmed;
     if (context.length > 0) {
       log('INFO', `RAG: injecting ${context.length} relevant chunk(s)`);

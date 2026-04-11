@@ -13,7 +13,7 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const kb = loadKnowledge(config.knowledgeFile);
+  const kb = await loadKnowledge(config.knowledgeFile);
 
   try {
     await runChat(config, kb);
