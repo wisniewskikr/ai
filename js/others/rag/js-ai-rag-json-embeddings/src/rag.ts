@@ -4,14 +4,16 @@ import { pipeline } from '@xenova/transformers';
 import { log } from './logger';
 
 /*
- * Neutral-embeddings RAG — uses a pre-trained sentence-transformer model
- * (all-MiniLM-L6-v2) to create dense semantic vectors for each chunk.
+ * JSON-embeddings RAG — pre-computes dense semantic vectors once (build mode)
+ * and stores them in a JSON file.  At chat time the file is loaded directly,
+ * so the knowledge base never needs to be re-embedded between sessions.
  *
- * Unlike bag-of-words, this approach captures semantic meaning, so queries
- * like "Where do I reside?" will match "I live in Szczecin, Poland." even
- * though they share no common words.
+ * The embedding model (all-MiniLM-L6-v2, ~23 MB) is still used at chat time
+ * to embed each user query before comparing it against the stored vectors.
  *
- * The model is downloaded and cached locally on first run (~23 MB).
+ * Two entry points:
+ *   buildEmbeddings()  — reads knowledge.txt → writes embeddings.json
+ *   loadKnowledge()    — reads embeddings.json → returns KnowledgeBase
  */
 
 const MODEL = 'Xenova/all-MiniLM-L6-v2';
@@ -43,27 +45,45 @@ export interface KnowledgeBase {
   chunkVectors: number[][];
 }
 
-export async function loadKnowledge(filePath: string): Promise<KnowledgeBase> {
-  const absPath = path.join(process.cwd(), filePath);
+interface EmbeddingsFile {
+  chunks: string[];
+  vectors: number[][];
+}
 
-  if (!fs.existsSync(absPath)) {
-    log('INFO', `Knowledge file not found: ${absPath} — RAG disabled`);
-    return { chunks: [], chunkVectors: [] };
+export async function buildEmbeddings(knowledgeFile: string, embeddingsFile: string): Promise<void> {
+  const absKnowledge = path.join(process.cwd(), knowledgeFile);
+  if (!fs.existsSync(absKnowledge)) {
+    throw new Error(`Knowledge file not found: ${absKnowledge}`);
   }
 
-  const raw = fs.readFileSync(absPath, 'utf-8');
+  const raw = fs.readFileSync(absKnowledge, 'utf-8');
   const chunks = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  if (chunks.length === 0) throw new Error('Knowledge file is empty.');
 
-  if (chunks.length === 0) {
-    log('INFO', 'Knowledge file is empty — RAG disabled');
+  log('INFO', `Building embeddings for ${chunks.length} chunks, model: ${MODEL}`);
+  console.log(`Loading embedding model: ${MODEL}`);
+  const vectors = await Promise.all(chunks.map(embed));
+
+  const store: EmbeddingsFile = { chunks, vectors };
+  const absOutput = path.join(process.cwd(), embeddingsFile);
+  const dir = path.dirname(absOutput);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(absOutput, JSON.stringify(store, null, 2), 'utf-8');
+
+  log('INFO', `Embeddings saved to ${absOutput} — ${chunks.length} chunks`);
+  console.log(`Embeddings saved to ${embeddingsFile} (${chunks.length} chunks)`);
+}
+
+export function loadKnowledge(embeddingsFile: string): KnowledgeBase {
+  const absPath = path.join(process.cwd(), embeddingsFile);
+  if (!fs.existsSync(absPath)) {
+    log('INFO', `Embeddings file not found: ${absPath} — RAG disabled`);
     return { chunks: [], chunkVectors: [] };
   }
 
-  log('INFO', `Loading embedding model: ${MODEL}`);
-  const chunkVectors = await Promise.all(chunks.map(embed));
-
-  log('INFO', `Knowledge base ready — ${chunks.length} chunks, model: ${MODEL}`);
-  return { chunks, chunkVectors };
+  const store = JSON.parse(fs.readFileSync(absPath, 'utf-8')) as EmbeddingsFile;
+  log('INFO', `Embeddings loaded from ${embeddingsFile} — ${store.chunks.length} chunks`);
+  return { chunks: store.chunks, chunkVectors: store.vectors };
 }
 
 export async function findRelevantChunks(question: string, kb: KnowledgeBase, topK: number): Promise<string[]> {

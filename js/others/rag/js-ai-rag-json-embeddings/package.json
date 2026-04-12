@@ -6,7 +6,11 @@
   "scripts": {
     "build": "tsc",
     "start": "node -r dotenv/config dist/index.js",
-    "dev": "ts-node -r dotenv/config src/index.ts"
+    "start:build-embeddings": "node -r dotenv/config dist/index.js build",
+    "start:chat": "node -r dotenv/config dist/index.js chat",
+    "dev": "ts-node -r dotenv/config src/index.ts",
+    "dev:build-embeddings": "ts-node -r dotenv/config src/index.ts build",
+    "dev:chat": "ts-node -r dotenv/config src/index.ts chat"
   },
   "dependencies": {
     "@xenova/transformers": "^2.17.2",

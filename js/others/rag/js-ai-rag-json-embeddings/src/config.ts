@@ -7,6 +7,7 @@ export interface Config {
   temperature: number;
   baseUrl: string;
   knowledgeFile: string;
+  embeddingsFile: string;
   topK: number;
 }
 

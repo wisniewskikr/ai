@@ -1,16 +1,35 @@
 # js-ai-rag-json-embeddings
 
-Personal knowledge RAG chat. Fill `data/knowledge.txt` with facts about yourself — the assistant answers questions using that file as its knowledge base.
+Personal knowledge RAG chat using **JSON embeddings** — embeddings are computed once and stored in a JSON file, so the knowledge base never needs to be re-embedded between sessions.
 
 ## How it works
 
 ```
-knowledge.txt → split by line → embed with neural model
-                                       ↓
-user question → embed with neural model → find closest lines (cosine similarity)
-                                       ↓
-              → inject as context → LLM generates answer
+BUILD MODE (once):
+  knowledge.txt → split by line → embed with neural model → save to embeddings.json
+
+CHAT MODE (every session):
+  embeddings.json → load vectors (no model needed for knowledge)
+  user question   → embed with neural model → find closest lines (cosine similarity)
+                                           ↓
+                 → inject as context → LLM generates answer
 ```
+
+## JSON embeddings vs text neutral embeddings
+
+This project uses **JSON embeddings**. The alternative approach — **text neutral embeddings** — computes vectors for all knowledge chunks on every application start.
+
+|                              | Text neutral embeddings | JSON embeddings        |
+|------------------------------|-------------------------|------------------------|
+| Knowledge vector computation | every startup           | once (build mode)      |
+| ML model needed at startup   | yes                     | no                     |
+| Startup time                 | slower                  | fast (file read only)  |
+| Knowledge base format        | plain `.txt`            | `.json` with vectors   |
+| After changing knowledge     | restart is enough       | must re-run build      |
+
+### Main advantage of JSON embeddings
+
+Embeddings are computed only once, during the build step. This is especially important for **large knowledge bases** — embedding thousands of lines with a neural model can take tens of seconds or even minutes. With JSON embeddings, that cost is paid once; every subsequent chat session starts instantly by reading the pre-computed file.
 
 ## Setup
 
@@ -34,39 +53,63 @@ I enjoy hiking and photography.
 
 ## Run
 
+### Step 1 — Build embeddings (once, or after editing knowledge.txt)
+
 ```bash
 # Development
-npm run dev
+npm run dev:build-embeddings
 
 # Production
 npm run build
-npm start
+npm run start:build-embeddings
 ```
 
-On the first run the embedding model (`all-MiniLM-L6-v2`, ~23 MB) is downloaded and cached locally. Subsequent runs use the cache.
+This reads `data/knowledge.txt`, embeds each line and saves the vectors to `data/embeddings.json`.
+
+On the first run the embedding model (`all-MiniLM-L6-v2`, ~23 MB) is downloaded and cached locally.
+
+### Step 2 — Start the chat
+
+```bash
+# Development
+npm run dev:chat
+
+# Production
+npm run start:chat
+```
+
+### Or: interactive mode (no argument)
+
+```bash
+npm run dev
+# Select mode:
+#   1. Build embeddings  (reads knowledge.txt, saves embeddings.json)
+#   2. Run chat          (loads embeddings.json, starts conversation)
+```
 
 ## Usage
 
 Type a question and press Enter. Available commands:
 
-| Command     | Description                  |
-|-------------|------------------------------|
-| `/history`  | Show conversation history    |
-| `/clear`    | Clear the console            |
-| `/exit`     | Quit                         |
+| Command     | Description               |
+|-------------|---------------------------|
+| `/history`  | Show conversation history |
+| `/clear`    | Clear the console         |
+| `/exit`     | Quit                      |
 
 ## Configuration
 
 Edit `config.json`:
 
-| Field           | Default                        | Description                          |
-|-----------------|--------------------------------|--------------------------------------|
-| `model`         | `openai/gpt-4o`                | OpenRouter model ID                  |
-| `maxTokens`     | `1024`                         | Max tokens per response              |
-| `temperature`   | `0.7`                          | Sampling temperature                 |
-| `baseUrl`       | `https://openrouter.ai/api/v1` | API base URL                         |
-| `knowledgeFile` | `data/knowledge.txt`           | Path to your knowledge file          |
-| `topK`          | `3`                            | Number of chunks injected as context |
+| Field            | Default                        | Description                          |
+|------------------|--------------------------------|--------------------------------------|
+| `model`          | `openai/gpt-4o`                | OpenRouter model ID                  |
+| `maxTokens`      | `1024`                         | Max tokens per response              |
+| `temperature`    | `0.7`                          | Sampling temperature                 |
+| `baseUrl`        | `https://openrouter.ai/api/v1` | API base URL                         |
+| `knowledgeFile`  | `data/knowledge.txt`           | Path to your knowledge file          |
+| `embeddingsFile` | `data/embeddings.json`         | Path to the pre-computed embeddings  |
+| `topK`           | `3`                            | Number of chunks injected as context |
 
 ## Logs
 
@@ -74,7 +117,7 @@ Session logs are written to `logs/YYYY-MM-DD.log`. Each entry has a timestamp an
 
 ## Similarity search: neutral embeddings
 
-The implementation uses **neutral embeddings** (sentence-transformers) for retrieval — each line from `knowledge.txt` and each user question are encoded into a 384-dimensional dense vector using the `Xenova/all-MiniLM-L6-v2` model. The chunks with the highest cosine similarity to the question are injected as context.
+Each line from `knowledge.txt` and each user question are encoded into a 384-dimensional dense vector using the `Xenova/all-MiniLM-L6-v2` model. The chunks with the highest cosine similarity to the question are injected as context.
 
 Unlike bag-of-words, this approach captures **semantic meaning**, so queries work even when they share no words with the stored facts:
 

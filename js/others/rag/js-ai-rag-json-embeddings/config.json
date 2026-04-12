@@ -4,5 +4,6 @@
   "temperature": 0.7,
   "baseUrl": "https://openrouter.ai/api/v1",
   "knowledgeFile": "data/knowledge.txt",
+  "embeddingsFile": "data/embeddings.json",
   "topK": 3
 }
