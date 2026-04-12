@@ -1,6 +1,4 @@
 ﻿TODO:
-- RAG
-- obserwacja - langfuse
 - Sandbox: devs4, Daytona, e2b, docker
 - kompresja
 - skille
