@@ -1,13 +1,19 @@
 # js-ai-observability-langfuse
 
-Simple AI chat app using OpenRouter API.
+Simple AI chat app using OpenRouter API with observability powered by Langfuse.
+
+## What is Langfuse?
+
+[Langfuse](https://langfuse.com) is an open-source platform for observing and debugging LLM applications. It enables tracing model calls (traces, generations), monitoring costs and tokens, analyzing response quality, and building datasets for evaluation. Data is visible in the Langfuse dashboard in real time.
+
+In this project, each chat session creates a single **trace**, and every model API call is recorded as a **generation** with full context: input messages, response, model, parameters, and token usage.
 
 ## Setup
 
 ```bash
 npm install
 cp .env.example .env
-# Fill in your OPENROUTER_API_KEY in .env
+# Fill in OPENROUTER_API_KEY and Langfuse keys in .env
 ```
 
 ## Run
@@ -41,6 +47,18 @@ Edit `config.json` to change model, tokens, or temperature.
 | `maxTokens`   | `1024`                           | Max tokens per response |
 | `temperature` | `0.7`                            | Sampling temperature    |
 | `baseUrl`     | `https://openrouter.ai/api/v1`   | API base URL            |
+
+## Langfuse — Environment Variables
+
+Add to `.env`:
+
+```env
+LANGFUSE_SECRET_KEY=sk-lf-...
+LANGFUSE_PUBLIC_KEY=pk-lf-...
+LANGFUSE_BASE_URL=https://cloud.langfuse.com
+```
+
+You can find the keys in your project settings at [cloud.langfuse.com](https://cloud.langfuse.com).
 
 ## Logs
 
