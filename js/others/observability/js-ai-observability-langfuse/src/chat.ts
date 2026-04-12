@@ -1,7 +1,7 @@
 import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
 import { Config } from './config';
-import { Message, sendMessage } from './api';
+import { Message, sendMessage, langfuse } from './api';
 import { log } from './logger';
 
 function printHistory(history: Message[]): void {
@@ -20,6 +20,7 @@ function printHistory(history: Message[]): void {
 export async function runChat(config: Config): Promise<void> {
   const rl = readline.createInterface({ input, output });
   const history: Message[] = [];
+  const trace = langfuse.trace({ name: 'chat-session', metadata: { model: config.model } });
 
   function printHelp(): void {
     console.log('Available commands:');
@@ -51,6 +52,7 @@ export async function runChat(config: Config): Promise<void> {
       log('INFO', 'Session ended by user');
       console.log('Goodbye!');
       rl.close();
+      await langfuse.flushAsync();
       return;
     }
 
@@ -69,7 +71,7 @@ export async function runChat(config: Config): Promise<void> {
     history.push({ role: 'user', content: trimmed });
 
     try {
-      const reply = await sendMessage(history, config);
+      const reply = await sendMessage(history, config, trace);
       history.push({ role: 'assistant', content: reply });
       log('ASSISTANT', reply);
       console.log(`\nAssistant: ${reply}\n`);
