@@ -9,8 +9,8 @@
  *   5. Run the script and capture its output
  *   6. Delete the sandbox (always — even when something goes wrong)
  *
- * The sandbox never touches your local machine beyond network calls.
- * That's the whole point.
+ * Non-secret config lives in config.json.
+ * Secrets (API keys) live in .env.
  */
 
 import "dotenv/config";
@@ -23,6 +23,26 @@ import { logger } from "./logger.js";
 // ESM equivalent of __dirname
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+// ---------------------------------------------------------------------------
+// Config
+// ---------------------------------------------------------------------------
+
+interface Config {
+  daytona: {
+    apiUrl: string;
+    target: string;
+  };
+  sandbox: {
+    scriptName: string;
+  };
+}
+
+function loadConfig(): Config {
+  const configPath = path.resolve(__dirname, "config.json");
+  const raw = fs.readFileSync(configPath, "utf8");
+  return JSON.parse(raw) as Config;
+}
+
 function requireEnv(name: string): string {
   const value = process.env[name];
   if (!value) {
@@ -31,20 +51,34 @@ function requireEnv(name: string): string {
   return value;
 }
 
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
 function assertSuccess(exitCode: number, output: string, label: string): void {
   if (exitCode !== 0) {
     throw new Error(`${label} failed (exit ${exitCode}):\n${output}`);
   }
 }
 
+// ---------------------------------------------------------------------------
+// Main
+// ---------------------------------------------------------------------------
+
 async function main(): Promise<void> {
   logger.info("=== Daytona Hello World ===");
 
-  // Fail fast if credentials are missing — no point continuing otherwise.
-  const apiKey = requireEnv("DAYTONA_API_KEY");
-  const apiUrl = requireEnv("DAYTONA_BASE_URL");
+  const config = loadConfig();
+  logger.debug(`Config loaded  apiUrl=${config.daytona.apiUrl}  target=${config.daytona.target}`);
 
-  const daytona = new Daytona({ apiKey, apiUrl });
+  // API key is a secret — stays in .env, never in config.json.
+  const apiKey = requireEnv("DAYTONA_API_KEY");
+
+  const daytona = new Daytona({
+    apiKey,
+    apiUrl: config.daytona.apiUrl,
+    target: config.daytona.target as never,
+  });
 
   // --- Step 1: Create sandbox ---
   logger.info("Creating sandbox...");
@@ -59,15 +93,15 @@ async function main(): Promise<void> {
     const rootDir = await sandbox.getUserRootDir();
     logger.info(`Sandbox root dir: ${rootDir}`);
 
-    const remoteScriptPath = `${rootDir}/hello.ts`;
+    const remoteScriptPath = `${rootDir}/${config.sandbox.scriptName}`;
 
     // --- Step 3: Upload script ---
-    const localScriptPath = path.resolve(__dirname, "hello.ts");
+    const localScriptPath = path.resolve(__dirname, config.sandbox.scriptName);
     logger.info(`Uploading  local=${localScriptPath}  remote=${remoteScriptPath}`);
 
     // SDK expects a Web API File object (available globally in Node >= 20).
     const scriptBuffer = fs.readFileSync(localScriptPath);
-    const scriptFile = new File([scriptBuffer], path.basename(localScriptPath));
+    const scriptFile = new File([scriptBuffer], config.sandbox.scriptName);
     await sandbox.fs.uploadFile(remoteScriptPath, scriptFile);
     logger.info("Upload complete");
 
