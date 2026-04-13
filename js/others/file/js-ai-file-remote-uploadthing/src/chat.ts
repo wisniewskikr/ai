@@ -1,29 +1,33 @@
 import * as readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
-import * as path from 'path';
 import { Config } from './config';
 import { Message, OnToolCall, ToolExecutor, sendMessage } from './api';
-import { createMcpClient } from './mcp-client';
+import { createUploadThingMcpClient } from './mcp-client';
 import { mcpToolsToDefinitions, ToolDefinition } from './tools';
 import { log } from './logger';
 
-function buildSystemPrompt(fsRoot: string): string {
-  const mountName = path.basename(fsRoot);
-  return `You are a helpful AI assistant with access to the local filesystem via sandboxed tools.
-
-WORKSPACE: "${fsRoot}"
-All file paths use the virtual prefix "${mountName}/" — for example:
-  - Save a file → path: "${mountName}/chat.txt"
-  - Read a file → path: "${mountName}/notes.md"
+function buildSystemPrompt(): string {
+  return `You are a helpful AI assistant with access to UploadThing cloud storage via MCP tools.
 
 AVAILABLE TOOLS:
-- fs_read   — read files or list directories (returns line numbers + checksum)
-- fs_write  — create or update files (operation: "create" | "update")
-- fs_search — find files by name or content
-- fs_manage — delete, rename, move, copy, mkdir
+- upload_files  — upload files to UploadThing cloud (accepts base64-encoded content, 1-10 files per call)
+- list_files    — list uploaded files with pagination, or get info about a specific file by key
+- manage_files  — delete, rename, update ACL (public/private), or get a signed URL for a file
 
-When asked to save the conversation, format it as readable plain text with role labels.
-When asked to save to an absolute path like "C:\\workspace\\file.txt", use the virtual path instead (e.g. "${mountName}/file.txt").`;
+UPLOADING FILES:
+- Encode file content as raw base64 (without "data:" URI prefix)
+- Provide a file name with the correct extension matching the MIME type
+- Example — save plain text: { files: [{ base64: "<base64>", name: "chat.txt", type: "text/plain" }] }
+- After a successful upload the tool returns the public URL — always share it with the user
+
+SAVING THE CONVERSATION:
+- When asked to save the conversation, format it as readable plain text with role labels (USER / ASSISTANT)
+- Encode the text as base64 and upload it via upload_files with type "text/plain"
+
+MANAGING FILES:
+- Use list_files to browse previously uploaded files and retrieve their keys
+- Use manage_files with action "delete" to remove files (requires fileKeys array)
+- Use manage_files with action "get_url" to obtain a signed URL for private files`;
 }
 
 function printHistory(history: Message[]): void {
@@ -40,20 +44,15 @@ function printHistory(history: Message[]): void {
   console.log('--- end of history ---\n');
 }
 
-function makeOnToolCall(fsRoot: string): OnToolCall {
-  const mountName = path.basename(fsRoot);
-  return (name, args, result) => {
-    let parsed: { success?: boolean; status?: string; message?: string } = {};
+function makeOnToolCall(): OnToolCall {
+  return (name, _args, result) => {
+    let parsed: { success?: boolean; status?: string; message?: string; count?: number } = {};
     try { parsed = JSON.parse(result) as typeof parsed; } catch { /* raw text */ }
 
-    const ok = parsed.status === 'applied' || parsed.success === true;
-    const filePath = (args.path as string | undefined) ?? '';
-    const displayPath = filePath
-      ? filePath.replace(mountName + '/', fsRoot + path.sep).replace(mountName + '\\', fsRoot + path.sep)
-      : '';
+    const ok = parsed.success === true || parsed.status === 'applied' || parsed.count !== undefined;
     const status = ok ? '✓' : '✗';
 
-    console.log(`\n[Tool] ${name} ${status}${displayPath ? ` → ${displayPath}` : ''}`);
+    console.log(`\n[Tool] ${name} ${status}`);
     if (!ok && parsed.message) {
       console.log(`       Error: ${parsed.message}`);
     }
@@ -63,19 +62,18 @@ function makeOnToolCall(fsRoot: string): OnToolCall {
 export async function runChat(config: Config): Promise<void> {
   const rl = readline.createInterface({ input, output });
 
-  console.log('Starting files-mcp server...');
-  const mcpClient = await createMcpClient(config.fsRoot);
+  console.log('Starting uploadthing-mcp server...');
+  const mcpClient = await createUploadThingMcpClient();
   const mcpTools = await mcpClient.listTools();
   const tools: ToolDefinition[] = mcpToolsToDefinitions(mcpTools);
   const executor: ToolExecutor = (name, args) => mcpClient.callTool(name, args);
-  const onToolCall = makeOnToolCall(config.fsRoot);
+  const onToolCall = makeOnToolCall();
 
   const history: Message[] = [
-    { role: 'system', content: buildSystemPrompt(config.fsRoot) },
+    { role: 'system', content: buildSystemPrompt() },
   ];
 
   function printHelp(): void {
-    console.log(`Workspace: ${config.fsRoot}`);
     console.log('Available commands:');
     console.log('  /history  — show conversation history');
     console.log('  /clear    — clear the console');
@@ -83,12 +81,12 @@ export async function runChat(config: Config): Promise<void> {
     console.log();
     console.log('Examples:');
     console.log('  - Save this conversation to chat.txt');
-    console.log('  - Read the file chat.txt');
-    console.log('  - Remove the file chat.txt');
+    console.log('  - List my uploaded files');
+    console.log('  - Delete the file with key <key>');
     console.log();
   }
 
-  log('INFO', `Session started, fsRoot=${config.fsRoot}`);
+  log('INFO', `Session started, model=${config.model}`);
   printHelp();
 
   while (true) {

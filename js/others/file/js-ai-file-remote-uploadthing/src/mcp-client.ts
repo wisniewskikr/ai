@@ -12,6 +12,8 @@ interface JsonRpcMessage {
   error?: { code: number; message: string };
 }
 
+const MCP_SESSION_HEADER = 'Mcp-Session-Id';
+
 export interface McpTool {
   name: string;
   description: string;
@@ -95,6 +97,132 @@ export class McpClient {
     this.proc.kill();
   }
 }
+
+// ---------------------------------------------------------------------------
+// HTTP-based MCP client for StreamableHTTP servers (e.g. uploadthing-mcp)
+// ---------------------------------------------------------------------------
+
+export class HttpMcpClient {
+  private baseUrl: string;
+  private sessionId: string | null = null;
+  private proc: ChildProcess | null;
+  private nextId = 1;
+
+  constructor(port: number, proc?: ChildProcess) {
+    this.baseUrl = `http://127.0.0.1:${port}/mcp`;
+    this.proc = proc ?? null;
+  }
+
+  private async request(method: string, params?: unknown): Promise<unknown> {
+    const id = this.nextId++;
+    const body = JSON.stringify({ jsonrpc: '2.0', id, method, params });
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json, text/event-stream',
+    };
+    if (this.sessionId) {
+      headers[MCP_SESSION_HEADER] = this.sessionId;
+    }
+
+    const response = await fetch(this.baseUrl, { method: 'POST', headers, body });
+
+    if (!this.sessionId) {
+      const sid = response.headers.get(MCP_SESSION_HEADER);
+      if (sid) this.sessionId = sid;
+    }
+
+    const contentType = response.headers.get('Content-Type') ?? '';
+    let msg: JsonRpcMessage;
+
+    if (contentType.includes('text/event-stream')) {
+      const text = await response.text();
+      const dataLine = text.split('\n').find((l) => l.startsWith('data: '));
+      if (!dataLine) throw new Error('No data in SSE response');
+      msg = JSON.parse(dataLine.slice(6)) as JsonRpcMessage;
+    } else {
+      msg = (await response.json()) as JsonRpcMessage;
+    }
+
+    if (msg.error) throw new Error(`MCP ${msg.error.code}: ${msg.error.message}`);
+    return msg.result;
+  }
+
+  private async postNotify(method: string, params?: unknown): Promise<void> {
+    const body = JSON.stringify({ jsonrpc: '2.0', method, params });
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (this.sessionId) headers[MCP_SESSION_HEADER] = this.sessionId;
+    await fetch(this.baseUrl, { method: 'POST', headers, body }).catch(() => undefined);
+  }
+
+  async initialize(): Promise<void> {
+    await this.request('initialize', {
+      protocolVersion: '2024-11-05',
+      capabilities: {},
+      clientInfo: { name: 'js-ai-file-remote-uploadthing', version: '1.0.0' },
+    });
+    await this.postNotify('notifications/initialized', {});
+  }
+
+  async listTools(): Promise<McpTool[]> {
+    const result = (await this.request('tools/list', {})) as { tools: McpTool[] };
+    return result.tools;
+  }
+
+  async callTool(name: string, args: Record<string, unknown>): Promise<string> {
+    const result = (await this.request('tools/call', { name, arguments: args })) as {
+      content: { type: string; text: string }[];
+    };
+    return result.content.map((c) => c.text).join('');
+  }
+
+  close(): void {
+    this.proc?.kill();
+  }
+}
+
+async function waitForServer(url: string, maxAttempts = 30, delayMs = 500): Promise<void> {
+  for (let i = 0; i < maxAttempts; i++) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) return;
+    } catch {
+      // not ready yet
+    }
+    await new Promise<void>((resolve) => setTimeout(resolve, delayMs));
+  }
+  throw new Error(`Server at ${url} did not start within ${maxAttempts * delayMs}ms`);
+}
+
+export async function createUploadThingMcpClient(): Promise<HttpMcpClient> {
+  const mcpDir = path.join(process.cwd(), 'mcp', 'uploadthing-mcp');
+  const port = 3000;
+
+  const proc = spawn('bun', ['run', path.join(mcpDir, 'src', 'index.ts')], {
+    env: {
+      ...process.env,
+      PORT: String(port),
+      HOST: '127.0.0.1',
+      AUTH_STRATEGY: 'none',
+      LOG_LEVEL: 'error',
+    },
+    stdio: ['pipe', 'pipe', 'pipe'],
+    cwd: mcpDir,
+  });
+
+  proc.stderr?.resume();
+  proc.stdout?.resume();
+
+  await waitForServer(`http://127.0.0.1:${port}/health`);
+
+  const client = new HttpMcpClient(port, proc);
+  await client.initialize();
+  return client;
+}
+
+// ---------------------------------------------------------------------------
+// stdio-based MCP client (files-mcp)
+// ---------------------------------------------------------------------------
 
 export async function createMcpClient(fsRoot: string): Promise<McpClient> {
   const mcpDir = path.join(process.cwd(), 'mcp', 'files-mcp');

@@ -6,7 +6,7 @@ export interface Config {
   maxTokens: number;
   temperature: number;
   baseUrl: string;
-  fsRoot: string;
+  fsRoot?: string;
 }
 
 export function loadConfig(): Config {
@@ -18,8 +18,8 @@ export function loadConfig(): Config {
     throw new Error('OPENROUTER_API_KEY is not set. Copy .env.example to .env and fill it in.');
   }
 
-  if (!config.fsRoot) {
-    throw new Error('fsRoot is not set in config.json.');
+  if (!process.env.UPLOADTHING_TOKEN) {
+    throw new Error('UPLOADTHING_TOKEN is not set. Copy .env.example to .env and fill it in.');
   }
 
   return config;
