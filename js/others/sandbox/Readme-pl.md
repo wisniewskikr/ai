@@ -36,6 +36,23 @@ Kluczowa zasada: agent działa wewnątrz "piaskownicy", skąd nie może wyjść 
 
 ---
 
+## E2B: chmura managed vs self-hosted
+
+E2B można używać na dwa sposoby, które różnią się modelem dostępu, ale pod spodem używają tej samej technologii izolacji (Firecracker micro-VM):
+
+| | **E2B Cloud (managed)** | **E2B Self-hosted** |
+|---|---|---|
+| Dostęp | API + SDK, bez własnej infrastruktury | Własny serwer Linux z KVM |
+| Konfiguracja | Brak — `Sandbox.create()` i gotowe | Złożona (`e2b-dev/infra` na GitHubie) |
+| Izolacja | Firecracker VM (osobne jądro) | Firecracker VM (osobne jądro) |
+| Działa na Dockerze? | Nie dotyczy | Nie — wymaga KVM, nie działa w nested Docker |
+| Koszt | Płatne za czas działania sandboxa | Własna infrastruktura (prąd, serwer, ops) |
+| Kiedy używać? | Development, produkcja bez własnego infra | Regulacje, air-gap, pełna kontrola danych |
+
+> **Kluczowa różnica** nie leży w technologii, lecz w tym, *kto zarządza infrastrukturą*. W obu przypadkach sandbox to izolowana micro-VM, a nie zwykły kontener Docker.
+
+---
+
 ## Dlaczego sandbox jest krytyczny dla agentów?
 
 | Zagrożenie | Jak sandbox chroni |
