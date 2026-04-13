@@ -1,13 +1,12 @@
 /*
- * index.ts — Daytona Hello World
+ * index.ts — E2B Hello World
  *
  * What happens here, in order:
- *   1. Connect to Daytona and create an isolated Linux sandbox
- *   2. Resolve the sandbox's actual home directory (don't assume /home/user)
- *   3. Upload hello.ts into the sandbox
- *   4. Install tsx inside the sandbox
- *   5. Run the script and capture its output
- *   6. Delete the sandbox (always — even when something goes wrong)
+ *   1. Create an isolated E2B sandbox
+ *   2. Upload hello.ts into the sandbox
+ *   3. Install tsx inside the sandbox
+ *   4. Run the script and capture its output
+ *   5. Kill the sandbox (always — even when something goes wrong)
  *
  * Non-secret config lives in config.json.
  * Secrets (API keys) live in .env.
@@ -17,7 +16,7 @@ import "dotenv/config";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import { Daytona } from "@daytonaio/sdk";
+import { Sandbox } from "e2b";
 import { logger } from "./logger.js";
 
 // ESM equivalent of __dirname
@@ -28,10 +27,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // ---------------------------------------------------------------------------
 
 interface Config {
-  daytona: {
-    apiUrl: string;
-    target: string;
-  };
   sandbox: {
     scriptName: string;
   };
@@ -52,91 +47,62 @@ function requireEnv(name: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function assertSuccess(exitCode: number, output: string, label: string): void {
-  if (exitCode !== 0) {
-    throw new Error(`${label} failed (exit ${exitCode}):\n${output}`);
-  }
-}
-
-// ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 
 async function main(): Promise<void> {
-  logger.info("=== Daytona Hello World ===");
+  logger.info("=== E2B Hello World ===");
 
   const config = loadConfig();
-  logger.debug(`Config loaded  apiUrl=${config.daytona.apiUrl}  target=${config.daytona.target}`);
 
   // API key is a secret — stays in .env, never in config.json.
-  const apiKey = requireEnv("DAYTONA_API_KEY");
-
-  const daytona = new Daytona({
-    apiKey,
-    apiUrl: config.daytona.apiUrl,
-    target: config.daytona.target as never,
-  });
+  const apiKey = requireEnv("E2B_API_KEY");
 
   // --- Step 1: Create sandbox ---
   logger.info("Creating sandbox...");
-  const sandbox = await daytona.create();
-  logger.info(`Sandbox ready  id=${sandbox.id}`);
+  const sandbox = await Sandbox.create({ apiKey });
+  logger.info(`Sandbox ready  id=${sandbox.sandboxId}`);
 
   try {
-    // --- Step 2: Resolve actual home directory ---
-    //
-    // Never hardcode /home/user — it varies by image and org config.
-    // getUserRootDir() asks the sandbox itself where home is.
-    const rootDir = await sandbox.getUserRootDir();
-    logger.info(`Sandbox root dir: ${rootDir}`);
+    const remoteScriptPath = `/home/user/${config.sandbox.scriptName}`;
 
-    const remoteScriptPath = `${rootDir}/${config.sandbox.scriptName}`;
-
-    // --- Step 3: Upload script ---
+    // --- Step 2: Upload script ---
     const localScriptPath = path.resolve(__dirname, config.sandbox.scriptName);
     logger.info(`Uploading  local=${localScriptPath}  remote=${remoteScriptPath}`);
 
-    // SDK expects a Web API File object (available globally in Node >= 20).
-    const scriptBuffer = fs.readFileSync(localScriptPath);
-    const scriptFile = new File([scriptBuffer], config.sandbox.scriptName);
-    await sandbox.fs.uploadFile(remoteScriptPath, scriptFile);
+    const scriptContent = fs.readFileSync(localScriptPath, "utf8");
+    await sandbox.files.write(remoteScriptPath, scriptContent);
     logger.info("Upload complete");
 
-    // --- Step 4: Install tsx ---
-    //
-    // npm install -g is slow but self-contained: no assumptions about what
-    // the sandbox image ships with.  If you control the image, bake tsx in.
+    // --- Step 3: Install tsx ---
     logger.info("Installing tsx...");
-    const installResult = await sandbox.process.executeCommand(
-      "npm install -g tsx --quiet"
-    );
-    assertSuccess(installResult.exitCode, installResult.result, "tsx installation");
+    const installResult = await sandbox.commands.run("npm install -g tsx --quiet");
+    if (installResult.exitCode !== 0) {
+      throw new Error(`tsx installation failed (exit ${installResult.exitCode}):\n${installResult.stdout}`);
+    }
     logger.info("tsx installed");
 
-    // --- Step 5: Run the script ---
+    // --- Step 4: Run the script ---
     logger.info(`Running: tsx ${remoteScriptPath}`);
-    const runResult = await sandbox.process.executeCommand(
-      `tsx ${remoteScriptPath}`
-    );
-    assertSuccess(runResult.exitCode, runResult.result, "Script execution");
+    const runResult = await sandbox.commands.run(`tsx ${remoteScriptPath}`);
+    if (runResult.exitCode !== 0) {
+      throw new Error(`Script execution failed (exit ${runResult.exitCode}):\n${runResult.stderr}`);
+    }
 
-    const output = runResult.result.trim();
+    const output = runResult.stdout.trim();
     logger.info(`Script output: ${output}`);
 
     // Make it obvious in the terminal — this is what the user came to see.
     console.log(`\n  => ${output}\n`);
 
   } finally {
-    // --- Step 6: Always clean up ---
+    // --- Step 5: Always clean up ---
     //
-    // Daytona charges while a sandbox is alive.  The finally block guarantees
-    // we delete even when the try block throws.
-    logger.info(`Deleting sandbox  id=${sandbox.id}`);
-    await sandbox.delete();
-    logger.info("Sandbox deleted. All done.");
+    // E2B charges while a sandbox is alive.  The finally block guarantees
+    // we kill even when the try block throws.
+    logger.info(`Killing sandbox  id=${sandbox.sandboxId}`);
+    await sandbox.kill();
+    logger.info("Sandbox killed. All done.");
   }
 }
 
