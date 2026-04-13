@@ -198,7 +198,7 @@ export async function createUploadThingMcpClient(): Promise<HttpMcpClient> {
   const mcpDir = path.join(process.cwd(), 'mcp', 'uploadthing-mcp');
   const port = 3000;
 
-  const proc = spawn('bun', ['run', path.join(mcpDir, 'src', 'index.ts')], {
+  const proc = spawn('npx', ['tsx', path.join(mcpDir, 'src', 'index.ts')], {
     env: {
       ...process.env,
       PORT: String(port),
@@ -208,6 +208,7 @@ export async function createUploadThingMcpClient(): Promise<HttpMcpClient> {
     },
     stdio: ['pipe', 'pipe', 'pipe'],
     cwd: mcpDir,
+    shell: true,
   });
 
   proc.stderr?.resume();
