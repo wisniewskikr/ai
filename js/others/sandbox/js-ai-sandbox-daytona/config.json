@@ -1,0 +1,9 @@
+{
+  "daytona": {
+    "apiUrl": "https://app.daytona.io/api",
+    "target": "eu"
+  },
+  "sandbox": {
+    "scriptName": "hello.ts"
+  }
+}
