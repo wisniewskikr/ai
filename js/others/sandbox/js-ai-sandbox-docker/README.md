@@ -2,6 +2,11 @@
 
 AI agent with local filesystem access, powered by OpenRouter API. The agent can read, write, search, and manage files within a configured workspace directory.
 
+## Sandbox: two layers
+
+1. **MCP (files-mcp)** — All filesystem tools are scoped to a single root directory (`fsRoot` / `FS_ROOT`). Paths outside that root are rejected by the server.
+2. **Docker (optional)** — The chat app and MCP run inside a container. Only the host directory you mount (by default `./workspace` → `/workspace`) is shared with the agent. The rest of the host filesystem is not visible inside the container, which illustrates process and filesystem isolation (namespaces, bind mounts).
+
 ## Setup
 
 **1. Install dependencies**
@@ -46,6 +51,24 @@ npm run build
 npm start
 ```
 
+## Run with Docker (sandbox demo)
+
+**Prerequisites:** Docker with Compose support, `.env` with `OPENROUTER_API_KEY` (same as local setup).
+
+The Compose file sets `FS_ROOT=/workspace` and mounts `./workspace` on the host to `/workspace` in the container. Put files you want the agent to see under `./workspace` on the host.
+
+```bash
+cp .env.example .env
+# Edit .env and set OPENROUTER_API_KEY
+
+docker compose build
+docker compose run --rm app
+```
+
+Resource limits under `deploy.resources.limits` in [`docker-compose.yml`](./docker-compose.yml) are optional guardrails for the demo (applied by current Docker Compose on the local engine).
+
+**Note:** The image runs as the non-root `node` user. If the mounted `workspace` directory is not writable by that user on your system, fix host permissions or adjust the setup.
+
 ## Usage
 
 Type a message and press Enter. The agent will use filesystem tools automatically when needed.
@@ -74,6 +97,8 @@ Edit `config.json` to change model, tokens, temperature, or workspace path.
 | `temperature` | `0.7`                          | Sampling temperature                 |
 | `baseUrl`     | `https://openrouter.ai/api/v1` | API base URL                         |
 | `fsRoot`      | `C:\\workspace`                | Workspace directory for file access  |
+
+Environment variable **`FS_ROOT`**, when set, overrides `fsRoot` from `config.json` (used by Docker Compose so the container does not need a separate config file).
 
 ## Filesystem tools
 

@@ -18,9 +18,10 @@ export function loadConfig(): Config {
     throw new Error('OPENROUTER_API_KEY is not set. Copy .env.example to .env and fill it in.');
   }
 
-  if (!config.fsRoot) {
-    throw new Error('fsRoot is not set in config.json.');
+  const fsRoot = process.env.FS_ROOT?.trim() || config.fsRoot;
+  if (!fsRoot) {
+    throw new Error('fsRoot is not set in config.json and FS_ROOT is not set.');
   }
 
-  return config;
+  return { ...config, fsRoot };
 }

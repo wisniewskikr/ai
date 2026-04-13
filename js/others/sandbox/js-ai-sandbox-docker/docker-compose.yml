@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    stdin_open: true
+    tty: true
+    env_file: .env
+    environment:
+      FS_ROOT: /workspace
+    volumes:
+      - ./workspace:/workspace
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
