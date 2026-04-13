@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "build:mcp": "cd mcp/files-mcp && bun run build",
+    "build:mcp": "cd mcp/files-mcp && ./node_modules/.bin/tsc",
     "start": "node -r dotenv/config dist/index.js",
     "dev": "ts-node -r dotenv/config src/index.ts"
   },
