@@ -1,77 +1,42 @@
 # js-ai-sandbox-docker
 
-AI agent with local filesystem access, powered by OpenRouter API. The agent can read, write, search, and manage files within a configured workspace directory.
+AI agent with filesystem tools (OpenRouter), **intended to run only inside the Docker sandbox** via Docker Compose. The app and [files-mcp](./mcp/files-mcp/) run in a container; only `./workspace` on the host is mounted at `/workspace` inside the container.
 
 ## Sandbox: two layers
 
-1. **MCP (files-mcp)** — All filesystem tools are scoped to a single root directory (`fsRoot` / `FS_ROOT`). Paths outside that root are rejected by the server.
-2. **Docker (optional)** — The chat app and MCP run inside a container. Only the host directory you mount (by default `./workspace` → `/workspace`) is shared with the agent. The rest of the host filesystem is not visible inside the container, which illustrates process and filesystem isolation (namespaces, bind mounts).
+1. **Docker** — Process runs in a container. The host directory `./workspace` is bind-mounted to `/workspace`. The rest of the host filesystem is not visible inside the container.
+2. **MCP (files-mcp)** — All file tools are restricted to the workspace root (`fsRoot` / `FS_ROOT`). Paths outside that root are rejected by the server.
 
-## Setup
+## Prerequisites
 
-**1. Install dependencies**
+- [Docker](https://docs.docker.com/get-docker/) with Compose
+- OpenRouter API key
 
-```bash
-npm install
-```
+## Run (Docker Compose)
 
-**2. Build the files-mcp server** (requires [Bun](https://bun.sh))
-
-```bash
-npm run build:mcp
-```
-
-> If Bun is not installed, the app will attempt to run files-mcp directly via `bun run src/index.ts` at startup.
-
-**3. Configure environment**
+**1. Environment**
 
 ```bash
 cp .env.example .env
-# Fill in your OPENROUTER_API_KEY in .env
+# Set OPENROUTER_API_KEY in .env
 ```
 
-**4. Configure workspace**
-
-Edit `config.json` and set `fsRoot` to the directory the agent should have access to:
-
-```json
-{
-  "fsRoot": "C:\\workspace"
-}
-```
-
-## Run
+**2. Build and start the chat**
 
 ```bash
-# Development (ts-node, no build step)
-npm run dev
-
-# Production
-npm run build
-npm start
-```
-
-## Run with Docker (sandbox demo)
-
-**Prerequisites:** Docker with Compose support, `.env` with `OPENROUTER_API_KEY` (same as local setup).
-
-The Compose file sets `FS_ROOT=/workspace` and mounts `./workspace` on the host to `/workspace` in the container. Put files you want the agent to see under `./workspace` on the host.
-
-```bash
-cp .env.example .env
-# Edit .env and set OPENROUTER_API_KEY
-
 docker compose build
 docker compose run --rm app
 ```
 
-Resource limits under `deploy.resources.limits` in [`docker-compose.yml`](./docker-compose.yml) are optional guardrails for the demo (applied by current Docker Compose on the local engine).
+Put any files the agent should read or edit under [`workspace/`](./workspace/) on the host; they appear as `/workspace` in the container. Compose sets `FS_ROOT=/workspace`, which overrides `fsRoot` in `config.json` for a consistent sandbox path.
 
-**Note:** The image runs as the non-root `node` user. If the mounted `workspace` directory is not writable by that user on your system, fix host permissions or adjust the setup.
+Resource limits under `deploy.resources.limits` in [`docker-compose.yml`](./docker-compose.yml) are optional guardrails (applied by current Docker Compose on the local engine).
+
+**Note:** The image runs as the non-root `node` user. If the mounted `workspace` directory is not writable by that user on your system, adjust host permissions or the Compose user mapping.
 
 ## Usage
 
-Type a message and press Enter. The agent will use filesystem tools automatically when needed.
+Type a message and press Enter. The agent will use filesystem tools when needed.
 
 | Command    | Description               |
 |------------|---------------------------|
@@ -88,7 +53,7 @@ Type a message and press Enter. The agent will use filesystem tools automaticall
 
 ## Configuration
 
-Edit `config.json` to change model, tokens, temperature, or workspace path.
+Model and API settings live in [`config.json`](./config.json). The workspace directory for file tools defaults to `/workspace` (aligned with the container). Environment variable **`FS_ROOT`** overrides `fsRoot` when set (Compose sets it for you).
 
 | Field         | Default                        | Description                          |
 |---------------|--------------------------------|--------------------------------------|
@@ -96,13 +61,11 @@ Edit `config.json` to change model, tokens, temperature, or workspace path.
 | `maxTokens`   | `1024`                         | Max tokens per response              |
 | `temperature` | `0.7`                          | Sampling temperature                 |
 | `baseUrl`     | `https://openrouter.ai/api/v1` | API base URL                         |
-| `fsRoot`      | `C:\\workspace`                | Workspace directory for file access  |
-
-Environment variable **`FS_ROOT`**, when set, overrides `fsRoot` from `config.json` (used by Docker Compose so the container does not need a separate config file).
+| `fsRoot`      | `/workspace`                   | Workspace root (overridden by `FS_ROOT` in Compose) |
 
 ## Filesystem tools
 
-The agent uses [files-mcp](./mcp/files-mcp/) — a sandboxed MCP server that restricts all file operations to the configured `fsRoot` directory.
+The agent uses [files-mcp](./mcp/files-mcp/) — tools are scoped to the configured workspace root only.
 
 | Tool        | Description                                          |
 |-------------|------------------------------------------------------|
@@ -113,4 +76,8 @@ The agent uses [files-mcp](./mcp/files-mcp/) — a sandboxed MCP server that res
 
 ## Logs
 
-Session logs are written to `logs/YYYY-MM-DD.log`. Each entry has a timestamp and level (`INFO`, `ERROR`, `USER`, `ASSISTANT`).
+Session logs are written to `logs/YYYY-MM-DD.log` **inside the container** (under the app working directory). They are not persisted on the host unless you add a volume for `logs/` in Compose.
+
+## Developing the application
+
+The [Dockerfile](./Dockerfile) runs `npm ci`, builds `files-mcp`, and compiles the TypeScript app. To change code, edit the repository and run `docker compose build` again. Local `npm install` / `npm run dev` is optional and only for contributors who want a non-container toolchain; **running the agent as an end user is via Compose only.**

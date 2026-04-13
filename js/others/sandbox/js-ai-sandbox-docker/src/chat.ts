@@ -23,7 +23,7 @@ AVAILABLE TOOLS:
 - fs_manage — delete, rename, move, copy, mkdir
 
 When asked to save the conversation, format it as readable plain text with role labels.
-When asked to save to an absolute path like "C:\\workspace\\file.txt", use the virtual path instead (e.g. "${mountName}/file.txt").`;
+When asked to save to an absolute path like "/workspace/file.txt", use the virtual path instead (e.g. "${mountName}/file.txt").`;
 }
 
 function printHistory(history: Message[]): void {
