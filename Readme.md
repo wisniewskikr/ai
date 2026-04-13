@@ -1,5 +1,6 @@
 ﻿TODO:
-- Sandbox: devs4, Daytona, e2b, docker
+- files
+- Sandbox: docker
 - kompresja
 - skille
 - lokalne
