@@ -49,6 +49,7 @@ Create a `.env` file in the project root:
 ```env
 DAYTONA_API_KEY=your_key_here
 DAYTONA_BASE_URL=https://app.daytona.io/api
+DAYTONA_TARGET=eu        # available regions: eu, us, asia
 ```
 
 ---
