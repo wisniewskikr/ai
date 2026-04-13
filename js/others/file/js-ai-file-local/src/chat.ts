@@ -81,7 +81,10 @@ export async function runChat(config: Config): Promise<void> {
     console.log('  /clear    — clear the console');
     console.log('  /exit     — quit');
     console.log();
-    console.log('Example: "Save this conversation to chat.txt"');
+    console.log('Examples:');
+    console.log('  - Save this conversation to chat.txt');
+    console.log('  - Read the file chat.txt');
+    console.log('  - Remove the file chat.txt');
     console.log();
   }
 
