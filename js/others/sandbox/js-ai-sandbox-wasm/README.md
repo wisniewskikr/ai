@@ -20,6 +20,8 @@ Node.js checks the path:
 
 The host controls what WASM is allowed to do. That is the sandbox boundary.
 
+> **Simply put:** WASM is a robot with no hands. Node.js is a teacher who checks where the robot wants to put something. Allowed drawer (`C:/workspace`) — she puts it away. Wrong drawer — she refuses. The rules are written by the developer, in code.
+
 In this project, the WASM module (written in **AssemblyScript**) stores the chat history in its own isolated memory and can only write it to disk through `hostWriteFile` — and only if the path points to `C:/workspace`.
 
 ## Tech stack
