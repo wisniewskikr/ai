@@ -49,22 +49,6 @@ Host kontroluje, co WASM może zrobić. To jest granica sandboxu.
 
 Historia chatu zapisywana wyłącznie do: `C:/workspace`
 
-## Struktura projektu
-
-```
-wasm-chat-agent/
-├── assembly/
-│   └── index.ts        ← źródło AssemblyScript
-├── build/
-│   └── index.wasm      ← skompilowany moduł
-├── src/
-│   ├── index.ts        ← pętla chata
-│   ├── openrouter.ts   ← klient OpenRouter API
-│   └── wasmBridge.ts   ← loader WASM + host functions
-├── asconfig.json       ← konfiguracja AssemblyScript
-└── package.json
-```
-
 ## Co demonstruje projekt?
 
 | Concept WASM sandbox | Gdzie widoczny w kodzie |
@@ -78,12 +62,3 @@ wasm-chat-agent/
 
 JS/TS nie kompiluje się bezpośrednio do WASM.
 **AssemblyScript** to język inspirowany TypeScriptem, który kompiluje się do WASM — jest najbliższym odpowiednikiem dla JS/TS developerów.
-
-## Status
-
-- [ ] Inicjalizacja projektu (`package.json`, `asconfig.json`, `tsconfig.json`)
-- [ ] Moduł AssemblyScript (`assembly/index.ts`)
-- [ ] Klient OpenRouter (`src/openrouter.ts`)
-- [ ] WASM bridge z host functions (`src/wasmBridge.ts`)
-- [ ] Pętla chata CLI (`src/index.ts`)
-- [ ] Test zapisu historii do `C:/workspace`
