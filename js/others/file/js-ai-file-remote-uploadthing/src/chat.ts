@@ -82,7 +82,7 @@ export async function runChat(config: Config): Promise<void> {
     console.log('Examples:');
     console.log('  - Save this conversation to chat.txt');
     console.log('  - List my uploaded files');
-    console.log('  - Delete the file with key <key>');
+    console.log('  - Delete the file chat.txt');
     console.log();
   }
 

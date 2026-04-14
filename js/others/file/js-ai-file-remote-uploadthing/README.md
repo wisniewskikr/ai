@@ -66,7 +66,7 @@ Type a message and press Enter. The agent will use UploadThing tools automatical
 
 - `Save this conversation to chat.txt`
 - `List my uploaded files`
-- `Delete the file with key <key>`
+- `Delete the file chat.txt`
 - `Upload this text and give me the public URL`
 
 ## Configuration
@@ -96,6 +96,8 @@ When asked to save a file, the agent:
 1. Encodes the content as raw base64
 2. Calls `upload_files` with the base64 content, file name, and MIME type
 3. Returns the public URL of the uploaded file
+
+Uploaded files are accessible in the [UploadThing dashboard](https://uploadthing.com/).
 
 ## Architecture
 
