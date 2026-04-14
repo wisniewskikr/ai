@@ -6,14 +6,18 @@
   "scripts": {
     "build": "tsc",
     "build:mcp": "cd mcp/files-mcp && ./node_modules/.bin/tsc",
+    "build:wasm": "asc assembly/index.ts --target release",
+    "build:all": "npm run build:wasm && npm run build",
     "start": "node -r dotenv/config dist/index.js",
     "dev": "ts-node -r dotenv/config src/index.ts"
   },
   "dependencies": {
+    "@assemblyscript/loader": "^0.28.14",
     "dotenv": "^16.4.5"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
+    "assemblyscript": "^0.28.14",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   }

@@ -6,6 +6,13 @@ import { Message, OnToolCall, ToolExecutor, sendMessage } from './api';
 import { createMcpClient } from './mcp-client';
 import { mcpToolsToDefinitions, ToolDefinition } from './tools';
 import { log } from './logger';
+import {
+  initWasm,
+  wasmAddMessage,
+  wasmGetMessageCount,
+  wasmSaveHistory,
+  wasmClearHistory,
+} from './wasmBridge';
 
 function buildSystemPrompt(fsRoot: string): string {
   const mountName = path.basename(fsRoot);
@@ -63,6 +70,10 @@ function makeOnToolCall(fsRoot: string): OnToolCall {
 export async function runChat(config: Config): Promise<void> {
   const rl = readline.createInterface({ input, output });
 
+  console.log('Initializing WASM sandbox...');
+  await initWasm();
+  console.log('[WASM Sandbox] Moduł załadowany. Historia chatu przechowywana w izolowanej pamięci WASM.');
+
   console.log('Starting files-mcp server...');
   const mcpClient = await createMcpClient(config.fsRoot);
   const mcpTools = await mcpClient.listTools();
@@ -78,6 +89,7 @@ export async function runChat(config: Config): Promise<void> {
     console.log(`Workspace: ${config.fsRoot}`);
     console.log('Available commands:');
     console.log('  /history  — show conversation history');
+    console.log('  /save     — save chat history via WASM sandbox to C:/workspace/history.json');
     console.log('  /clear    — clear the console');
     console.log('  /exit     — quit');
     console.log();
@@ -116,6 +128,19 @@ export async function runChat(config: Config): Promise<void> {
 
     if (trimmed === '/history') {
       printHistory(history);
+      console.log(`[WASM] Wiadomości w pamięci WASM: ${wasmGetMessageCount()}`);
+      continue;
+    }
+
+    if (trimmed === '/save') {
+      const savePath = 'C:/workspace/history.json';
+      const ok = wasmSaveHistory(savePath);
+      if (ok) {
+        console.log(`\n[WASM Sandbox] Historia zapisana do: ${savePath}\n`);
+        log('INFO', `WASM saved history to ${savePath}`);
+      } else {
+        console.error('\n[WASM Sandbox] Zapis nieudany (ścieżka zablokowana lub błąd I/O)\n');
+      }
       continue;
     }
 
@@ -127,10 +152,12 @@ export async function runChat(config: Config): Promise<void> {
 
     log('USER', trimmed);
     history.push({ role: 'user', content: trimmed });
+    wasmAddMessage('user', trimmed); // mirror do izolowanej pamięci WASM
 
     try {
       const reply = await sendMessage(history, config, tools, executor, onToolCall);
       history.push({ role: 'assistant', content: reply });
+      wasmAddMessage('assistant', reply); // mirror do izolowanej pamięci WASM
       log('ASSISTANT', reply);
       console.log(`\nAssistant: ${reply}\n`);
     } catch (err) {

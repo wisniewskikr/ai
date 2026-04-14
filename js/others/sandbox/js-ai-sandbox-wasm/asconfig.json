@@ -1,0 +1,20 @@
+{
+  "targets": {
+    "release": {
+      "outFile": "assembly/build/release.wasm",
+      "textFile": "assembly/build/release.wat",
+      "sourceMap": false,
+      "optimizeLevel": 2,
+      "shrinkLevel": 0
+    },
+    "debug": {
+      "outFile": "assembly/build/debug.wasm",
+      "textFile": "assembly/build/debug.wat",
+      "sourceMap": true,
+      "debug": true
+    }
+  },
+  "options": {
+    "exportRuntime": true
+  }
+}
