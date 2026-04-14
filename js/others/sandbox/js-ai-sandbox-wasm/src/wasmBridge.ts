@@ -1,86 +1,86 @@
 // ============================================================
-// wasmBridge.ts — Node.js host dla modułu WASM
+// wasmBridge.ts — Node.js host for the WASM module
 //
-// Odpowiedzialności:
-//   1. Ładuje skompilowany moduł WASM (assembly/build/release.wasm)
-//   2. Dostarcza host function `hostWriteFile` — jedyną drogę I/O dla WASM
-//   3. Egzekwuje politykę sandbox: zapis dozwolony wyłącznie do C:/workspace
-//   4. Eksportuje JS API do zarządzania historią chatu przez WASM
+// Responsibilities:
+//   1. Loads the compiled WASM module (assembly/build/release.wasm)
+//   2. Provides host function `hostWriteFile` — the only I/O path for WASM
+//   3. Enforces sandbox policy: writes allowed only to C:/workspace
+//   4. Exports a JS API for managing chat history through WASM
 // ============================================================
 
 import * as fs from 'fs';
 import * as path from 'path';
 import { instantiate } from '@assemblyscript/loader';
 
-// Surowe eksporty WASM — stringi są przekazywane jako i32 (wskaźniki)
+// Raw WASM exports — strings are passed as i32 (pointers)
 interface WasmExports extends Record<string, unknown> {
   addMessage(rolePtr: number, contentPtr: number): void;
   getHistoryJson(): number;
   clearHistory(): void;
   getMessageCount(): number;
   saveHistory(filePathPtr: number): number;
-  // Narzędzia runtime AssemblyScript (dostępne dzięki exportRuntime: true)
+  // AssemblyScript runtime utilities (available thanks to exportRuntime: true)
   __newString(value: string): number;
   __getString(pointer: number): string;
   __pin(pointer: number): number;
   __unpin(pointer: number): void;
 }
 
-// Jedyna dozwolona lokalizacja zapisu — granica sandbox
+// The only allowed write location — sandbox boundary
 const WORKSPACE = 'C:/workspace';
 
-// Sprawdza, czy ścieżka wskazuje na folder C:/workspace.
-// Host odrzuca każde żądanie spoza tego folderu.
+// Checks whether a path points inside C:/workspace.
+// The host rejects any request outside this directory.
 function isAllowedPath(filePath: string): boolean {
   const norm = path.normalize(filePath).replace(/\\/g, '/');
   const ws = path.normalize(WORKSPACE).replace(/\\/g, '/');
   return norm.startsWith(ws + '/') || norm === ws;
 }
 
-// Eksporty modułu WASM — ustawiane po initWasm()
+// WASM module exports — set after initWasm()
 let wasmExports: WasmExports | null = null;
 
-// Ładuje i inicjalizuje moduł WASM.
-// Musi być wywołane przed użyciem pozostałych funkcji.
+// Loads and initializes the WASM module.
+// Must be called before any other function in this module.
 export async function initWasm(): Promise<void> {
   const wasmPath = path.join(process.cwd(), 'assembly', 'build', 'release.wasm');
 
   if (!fs.existsSync(wasmPath)) {
     throw new Error(
-      `Brak pliku WASM: ${wasmPath}\nUruchom najpierw: npm run build:wasm`
+      `WASM file not found: ${wasmPath}\nRun first: npm run build:wasm`
     );
   }
 
   const wasmBuffer = fs.readFileSync(wasmPath);
 
-  // ---- GRANICA SANDBOX ----
-  // WASM woła tę funkcję, przekazując wskaźniki do stringów w swojej pamięci.
-  // Host odczytuje stringi przez __getString(), waliduje ścieżkę, i zapisuje.
-  // Rzutowanie przez unknown potrzebne, bo loader typuje env tylko
-  // z wbudowanymi funkcjami AssemblyScript (abort, trace itp.).
+  // ---- SANDBOX BOUNDARY ----
+  // WASM calls this function, passing pointers to strings in its own memory.
+  // The host reads strings via __getString(), validates the path, then writes.
+  // Cast through unknown is needed because the loader types env only with
+  // built-in AssemblyScript functions (abort, trace, etc.).
   const hostImports = {
     env: {
       hostWriteFile(filePathPtr: number, contentPtr: number): number {
-        // wasmExports jest ustawiony przed pierwszym wywołaniem tej funkcji
+        // wasmExports is set before this function can ever be called
         const filePath = wasmExports!.__getString(filePathPtr);
         const content  = wasmExports!.__getString(contentPtr);
 
         if (!isAllowedPath(filePath)) {
           console.error(
-            `[WASM Sandbox] ZABLOKOWANO: zapis do "${filePath}" jest poza ${WORKSPACE}`
+            `[WASM Sandbox] BLOCKED: write to "${filePath}" is outside ${WORKSPACE}`
           );
-          return -1; // odmowa — poza sandbox
+          return -1; // denied — outside sandbox
         }
 
         try {
           const dir = path.dirname(filePath);
           if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
           fs.writeFileSync(filePath, content, 'utf-8');
-          console.log(`[WASM Sandbox] Dozwolono zapis: ${filePath}`);
-          return 0; // sukces
+          console.log(`[WASM Sandbox] Write allowed: ${filePath}`);
+          return 0; // success
         } catch (err) {
-          console.error(`[WASM Sandbox] Błąd zapisu: ${err}`);
-          return -2; // błąd I/O
+          console.error(`[WASM Sandbox] Write error: ${err}`);
+          return -2; // I/O error
         }
       },
     },
@@ -96,16 +96,16 @@ export async function initWasm(): Promise<void> {
 
 function getExports(): WasmExports {
   if (!wasmExports) {
-    throw new Error('Moduł WASM nie jest zainicjalizowany. Wywołaj initWasm() najpierw.');
+    throw new Error('WASM module is not initialized. Call initWasm() first.');
   }
   return wasmExports;
 }
 
-// Dodaje wiadomość do historii przechowywanej w pamięci WASM.
-// Stringi są alokowane w izolowanej pamięci WASM przez __newString().
+// Adds a message to the history stored in WASM memory.
+// Strings are allocated in isolated WASM memory via __newString().
 export function wasmAddMessage(role: string, content: string): void {
   const e = getExports();
-  // __pin zapobiega usunięciu obiektu przez GC WASM podczas wywołania
+  // __pin prevents the object from being collected by the WASM GC during the call
   const rolePtr    = e.__pin(e.__newString(role));
   const contentPtr = e.__pin(e.__newString(content));
   try {
@@ -116,25 +116,25 @@ export function wasmAddMessage(role: string, content: string): void {
   }
 }
 
-// Pobiera historię jako JSON string z pamięci WASM.
+// Retrieves the history as a JSON string from WASM memory.
 export function wasmGetHistory(): string {
   const e = getExports();
-  const ptr = e.getHistoryJson();   // wskaźnik do stringa w pamięci WASM
-  return e.__getString(ptr);        // odczyt przez loader
+  const ptr = e.getHistoryJson();   // pointer to a string in WASM memory
+  return e.__getString(ptr);        // read via loader
 }
 
-// Czyści historię w pamięci WASM.
+// Clears the history in WASM memory.
 export function wasmClearHistory(): void {
   getExports().clearHistory();
 }
 
-// Zwraca liczbę wiadomości w historii WASM.
+// Returns the number of messages in the WASM history.
 export function wasmGetMessageCount(): number {
   return getExports().getMessageCount();
 }
 
-// Zapisuje historię do pliku — WYŁĄCZNIE przez sandbox.
-// Ścieżka musi wskazywać na C:/workspace/, inaczej zostanie zablokowana.
+// Saves history to a file — ONLY through the sandbox.
+// The path must point to C:/workspace/, otherwise it will be blocked.
 export function wasmSaveHistory(filePath: string): boolean {
   const e = getExports();
   const ptr = e.__pin(e.__newString(filePath));

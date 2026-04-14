@@ -1,23 +1,23 @@
 // ============================================================
 // WASM module (AssemblyScript)
-// Przechowuje historię chatu w izolowanej pamięci WASM.
+// Stores chat history in isolated WASM memory.
 //
-// ZASADA SANDBOX:
-//   Ten moduł NIE MA dostępu do dysku (brak `import fs`).
-//   Każdy zapis przechodzi przez hostWriteFile — host function
-//   dostarczoną przez Node.js, który kontroluje dozwolone ścieżki.
+// SANDBOX RULE:
+//   This module has NO disk access (no `import fs`).
+//   Every write goes through hostWriteFile — a host function
+//   provided by Node.js, which controls allowed paths.
 // ============================================================
 
-// Host function dostarczana przez Node.js (wasmBridge.ts).
-// WASM nie może samodzielnie pisać plików — musi poprosić hosta.
+// Host function provided by Node.js (wasmBridge.ts).
+// WASM cannot write files on its own — it must ask the host.
 @external("env", "hostWriteFile")
 declare function hostWriteFile(filePath: string, content: string): i32;
 
-// Historia chatu przechowywana wyłącznie w pamięci WASM (ArrayBuffer).
-// Odizolowana od pamięci hosta — Node.js nie ma do niej bezpośredniego dostępu.
+// Chat history stored exclusively in WASM memory (ArrayBuffer).
+// Isolated from host memory — Node.js has no direct access to it.
 let messages: Array<string> = new Array<string>();
 
-// Escapuje znaki specjalne JSON wewnątrz wartości tekstowej.
+// Escapes special JSON characters inside a string value.
 function escapeJson(s: string): string {
   let result: string = "";
   for (let i: i32 = 0; i < s.length; i++) {
@@ -39,13 +39,13 @@ function escapeJson(s: string): string {
   return result;
 }
 
-// Dodaje wiadomość do historii przechowywanej w pamięci WASM.
+// Adds a message to the history stored in WASM memory.
 export function addMessage(role: string, content: string): void {
   messages.push('{"role":"' + role + '","content":"' + escapeJson(content) + '"}');
 }
 
-// Zwraca całą historię jako string JSON.
-// Hosta może ją odczytać przez __getString(ptr).
+// Returns the full history as a JSON string.
+// The host can read it via __getString(ptr).
 export function getHistoryJson(): string {
   if (messages.length == 0) return "[]";
   let json: string = "[";
@@ -56,18 +56,18 @@ export function getHistoryJson(): string {
   return json + "]";
 }
 
-// Czyści historię w pamięci WASM.
+// Clears the history in WASM memory.
 export function clearHistory(): void {
   messages = new Array<string>();
 }
 
-// Zwraca liczbę wiadomości w historii.
+// Returns the number of messages in the history.
 export function getMessageCount(): i32 {
   return messages.length;
 }
 
-// Zapisuje historię do pliku — WYŁĄCZNIE przez host function (sandbox boundary).
-// Host sprawdza, czy ścieżka jest w C:/workspace, i odrzuca inne żądania.
+// Saves history to a file — ONLY through a host function (sandbox boundary).
+// The host checks whether the path is under C:/workspace and rejects all others.
 export function saveHistory(filePath: string): i32 {
   const json = getHistoryJson();
   return hostWriteFile(filePath, json);

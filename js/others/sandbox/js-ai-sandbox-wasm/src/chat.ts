@@ -72,7 +72,7 @@ export async function runChat(config: Config): Promise<void> {
 
   console.log('Initializing WASM sandbox...');
   await initWasm();
-  console.log('[WASM Sandbox] Moduł załadowany. Historia chatu przechowywana w izolowanej pamięci WASM.');
+  console.log('[WASM Sandbox] Module loaded. Chat history is stored in isolated WASM memory.');
 
   console.log('Starting files-mcp server...');
   const mcpClient = await createMcpClient(config.fsRoot);
@@ -128,7 +128,7 @@ export async function runChat(config: Config): Promise<void> {
 
     if (trimmed === '/history') {
       printHistory(history);
-      console.log(`[WASM] Wiadomości w pamięci WASM: ${wasmGetMessageCount()}`);
+      console.log(`[WASM] Messages in WASM memory: ${wasmGetMessageCount()}`);
       continue;
     }
 
@@ -136,10 +136,10 @@ export async function runChat(config: Config): Promise<void> {
       const savePath = 'C:/workspace/history.json';
       const ok = wasmSaveHistory(savePath);
       if (ok) {
-        console.log(`\n[WASM Sandbox] Historia zapisana do: ${savePath}\n`);
+        console.log(`\n[WASM Sandbox] History saved to: ${savePath}\n`);
         log('INFO', `WASM saved history to ${savePath}`);
       } else {
-        console.error('\n[WASM Sandbox] Zapis nieudany (ścieżka zablokowana lub błąd I/O)\n');
+        console.error('\n[WASM Sandbox] Save failed (path blocked or I/O error)\n');
       }
       continue;
     }
@@ -152,12 +152,12 @@ export async function runChat(config: Config): Promise<void> {
 
     log('USER', trimmed);
     history.push({ role: 'user', content: trimmed });
-    wasmAddMessage('user', trimmed); // mirror do izolowanej pamięci WASM
+    wasmAddMessage('user', trimmed); // mirror to isolated WASM memory
 
     try {
       const reply = await sendMessage(history, config, tools, executor, onToolCall);
       history.push({ role: 'assistant', content: reply });
-      wasmAddMessage('assistant', reply); // mirror do izolowanej pamięci WASM
+      wasmAddMessage('assistant', reply); // mirror to isolated WASM memory
       log('ASSISTANT', reply);
       console.log(`\nAssistant: ${reply}\n`);
     } catch (err) {
