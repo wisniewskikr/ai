@@ -1,6 +1,4 @@
 ﻿TODO:
-- files
-- Sandbox: docker
 - kompresja
 - skille
 - lokalne
