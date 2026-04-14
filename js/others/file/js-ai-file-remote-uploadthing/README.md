@@ -8,7 +8,7 @@ AI agent with access to [UploadThing](https://uploadthing.com) cloud storage via
 
 ```bash
 npm install
-cd mcp/uploadthing-mcp && bun install
+cd mcp/uploadthing-mcp && npm install
 ```
 
 **2. Configure environment**
@@ -42,7 +42,7 @@ Edit `config.json` to change the model or other parameters:
 ## Run
 
 ```bash
-# Development (ts-node, no build step) — requires Bun for uploadthing-mcp
+# Development (ts-node, no build step)
 npm run dev
 
 # Production
@@ -50,7 +50,7 @@ npm run build
 npm start
 ```
 
-> [Bun](https://bun.sh) must be installed — it is used to run the `uploadthing-mcp` server at startup.
+> Requires **Node.js ≥ 20**. Bun is no longer required — the `uploadthing-mcp` server is started automatically using the local `tsx` package.
 
 ## Usage
 
@@ -82,7 +82,7 @@ Edit `config.json` to change model, tokens, or temperature.
 
 ## UploadThing tools
 
-The agent uses [uploadthing-mcp](./mcp/uploadthing-mcp/) — an MCP server that proxies requests to the UploadThing API. It starts automatically on port `3000` when the app launches.
+The agent uses [uploadthing-mcp](./mcp/uploadthing-mcp/) — an MCP server that proxies requests to the UploadThing API. It starts automatically on a free port (3000–3099) when the app launches.
 
 | Tool           | Description                                                  |
 |----------------|--------------------------------------------------------------|
@@ -108,6 +108,10 @@ src/config.ts         — config loader with env validation
 mcp/uploadthing-mcp/  — HTTP MCP server for UploadThing (Hono + StreamableHTTP)
 mcp/files-mcp/        — stdio MCP server for local filesystem (unused by default)
 ```
+
+### How uploadthing-mcp is started
+
+The main app spawns `uploadthing-mcp` as a detached child process via `tsx` (installed locally in `mcp/uploadthing-mcp/node_modules`). A free port in the range 3000–3099 is selected automatically to avoid conflicts. The process is unref'd so it does not block the parent's event loop.
 
 ## Logs
 

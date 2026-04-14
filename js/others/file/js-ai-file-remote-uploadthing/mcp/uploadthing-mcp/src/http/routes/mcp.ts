@@ -19,32 +19,40 @@ interface HonoContextWithAuth {
 }
 
 export function buildMcpRoutes(params: {
-  server: McpServer;
+  serverFactory: () => McpServer;
   transports: Map<string, StreamableHTTPServerTransport>;
 }) {
-  const { server, transports } = params;
+  const { serverFactory, transports } = params;
   const app = new Hono<{ Bindings: HttpBindings }>();
 
-  // Track which transports have been connected to avoid duplicate connect() calls
+  // Per-session server instances (one McpServer per transport)
+  const servers = new Map<string, McpServer>();
+  // Track which transports have been connected
   const connectedTransports = new WeakSet<StreamableHTTPServerTransport>();
 
   const MCP_SESSION_HEADER = 'Mcp-Session-Id';
 
   /**
-   * Connect transport to server only if not already connected.
+   * Connect transport to its own server instance only if not already connected.
    * McpServer.connect() should be called once per transport lifecycle.
    */
   async function ensureConnected(
+    sessionId: string,
     transport: StreamableHTTPServerTransport,
   ): Promise<void> {
     if (!connectedTransports.has(transport)) {
+      let server = servers.get(sessionId);
+      if (!server) {
+        server = serverFactory();
+        servers.set(sessionId, server);
+      }
       await server.connect(transport);
       connectedTransports.add(transport);
     }
   }
 
   app.post('/', async (c) => {
-    const { req, res } = toReqRes(c.req.raw);
+    const { req, res } = toReqRes(c.req.raw.clone());
 
     try {
       const sessionIdHeader = c.req.header(MCP_SESSION_HEADER) ?? undefined;
@@ -109,7 +117,7 @@ export function buildMcpRoutes(params: {
         });
       }
 
-      await ensureConnected(transport);
+      await ensureConnected(plannedSid ?? sessionIdHeader ?? '', transport);
 
       // SDK passes requestId to tool handlers, which look up auth context from registry
       await transport.handleRequest(req, res, body);
@@ -136,7 +144,7 @@ export function buildMcpRoutes(params: {
   });
 
   app.get('/', async (c) => {
-    const { req, res } = toReqRes(c.req.raw);
+    const { req, res } = toReqRes(c.req.raw.clone());
     const sessionIdHeader = c.req.header(MCP_SESSION_HEADER);
     if (!sessionIdHeader) {
       return c.json(
@@ -153,7 +161,7 @@ export function buildMcpRoutes(params: {
       if (!transport) {
         return c.text('Invalid session', 404);
       }
-      await ensureConnected(transport);
+      await ensureConnected(sessionIdHeader, transport);
       await transport.handleRequest(req, res);
       return toFetchResponse(res);
     } catch (error) {
@@ -173,7 +181,7 @@ export function buildMcpRoutes(params: {
   });
 
   app.delete('/', async (c) => {
-    const { req, res } = toReqRes(c.req.raw);
+    const { req, res } = toReqRes(c.req.raw.clone());
     const sessionIdHeader = c.req.header(MCP_SESSION_HEADER);
     if (!sessionIdHeader) {
       return c.json(
@@ -190,9 +198,10 @@ export function buildMcpRoutes(params: {
       if (!transport) {
         return c.text('Invalid session', 404);
       }
-      await ensureConnected(transport);
+      await ensureConnected(sessionIdHeader, transport);
       await transport.handleRequest(req, res);
       transports.delete(sessionIdHeader);
+      servers.delete(sessionIdHeader);
       transport.close();
       return toFetchResponse(res);
     } catch (error) {

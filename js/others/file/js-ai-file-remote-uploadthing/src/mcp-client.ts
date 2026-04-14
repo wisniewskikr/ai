@@ -1,4 +1,5 @@
 import { spawn, ChildProcess } from 'child_process';
+import * as net from 'net';
 import * as readline from 'readline';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -194,11 +195,26 @@ async function waitForServer(url: string, maxAttempts = 30, delayMs = 500): Prom
   throw new Error(`Server at ${url} did not start within ${maxAttempts * delayMs}ms`);
 }
 
+function getFreePort(start = 3000, end = 3099): Promise<number> {
+  return new Promise((resolve, reject) => {
+    let current = start;
+    const tryNext = () => {
+      if (current > end) { reject(new Error('No free port found')); return; }
+      const server = net.createServer();
+      server.once('error', () => { current++; tryNext(); });
+      server.once('listening', () => { server.close(() => resolve(current)); });
+      server.listen(current, '127.0.0.1');
+    };
+    tryNext();
+  });
+}
+
 export async function createUploadThingMcpClient(): Promise<HttpMcpClient> {
   const mcpDir = path.join(process.cwd(), 'mcp', 'uploadthing-mcp');
-  const port = 3000;
+  const port = await getFreePort();
 
-  const proc = spawn('npx', ['tsx', path.join(mcpDir, 'src', 'index.ts')], {
+  const tsxCli = path.join(mcpDir, 'node_modules', 'tsx', 'dist', 'cli.mjs');
+  const proc = spawn(process.execPath, [tsxCli, path.join(mcpDir, 'src', 'index.ts')], {
     env: {
       ...process.env,
       PORT: String(port),
@@ -206,13 +222,12 @@ export async function createUploadThingMcpClient(): Promise<HttpMcpClient> {
       AUTH_STRATEGY: 'none',
       LOG_LEVEL: 'error',
     },
-    stdio: ['pipe', 'pipe', 'pipe'],
+    stdio: 'ignore',
     cwd: mcpDir,
-    shell: true,
+    detached: true,
+    windowsHide: true,
   });
-
-  proc.stderr?.resume();
-  proc.stdout?.resume();
+  proc.unref();
 
   await waitForServer(`http://127.0.0.1:${port}/health`);
 

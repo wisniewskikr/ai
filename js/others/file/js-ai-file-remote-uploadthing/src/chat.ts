@@ -60,10 +60,10 @@ function makeOnToolCall(): OnToolCall {
 }
 
 export async function runChat(config: Config): Promise<void> {
-  const rl = readline.createInterface({ input, output });
-
   console.log('Starting uploadthing-mcp server...');
   const mcpClient = await createUploadThingMcpClient();
+
+  const rl = readline.createInterface({ input, output });
   const mcpTools = await mcpClient.listTools();
   const tools: ToolDefinition[] = mcpToolsToDefinitions(mcpTools);
   const executor: ToolExecutor = (name, args) => mcpClient.callTool(name, args);
