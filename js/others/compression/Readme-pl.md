@@ -101,3 +101,38 @@ Różne informacje trafiają do różnych "miejsc" — ostatnia rozmowa jest bli
 | Hierarchiczna pamięć | Sortuje info według ważności | mem0, Zep, LangChain.js kompozycja |
 
 Każda metoda to kompromis: **szybkość vs. dokładność vs. koszt**.
+
+---
+
+## Observational Memory (Mastra)
+
+**Observational Memory (OM)** to system pamięci od frameworka [Mastra](https://mastra.ai) — dwuagentowy pipeline inspirowany tym, jak człowiek przetwarza i zapamiętuje informacje. Osiągnął **94.87% na benchmarku LongMemEval** (najlepszy wynik spośród znanych systemów).
+
+### Jak działa
+
+Dwa agenty działają w tle i zarządzają oknem kontekstu:
+
+**Observer** — obserwuje surowe wiadomości. Gdy historia przekroczy ~30 000 tokenów, kompresuje je w zwięzłe notatki-obserwacje i usuwa oryginalne wiadomości.
+
+**Reflector** — obserwuje narastające obserwacje. Gdy przekroczą ~40 000 tokenów, łączy powiązane notatki, usuwa zdezaktualizowane informacje i kondensuje całość.
+
+```
+Wiadomości  →  [Observer]  →  Obserwacje  →  [Reflector]  →  Skondensowane obserwacje
+  (raw)        (30k limit)   (dense notes)    (40k limit)      (restructured log)
+```
+
+### Gdzie wpisuje się w klasyfikację
+
+| Komponent | Odpowiada typowi | Dlaczego |
+|-----------|-----------------|----------|
+| **Observer** | Podsumowanie + Truncation | Zamienia wiadomości w notatki, a oryginały usuwa |
+| **Reflector** | Kompresja tokenów + Hierarchiczna pamięć | Scala powtórzenia, buduje warstwę wyższego rzędu nad obserwacjami |
+
+### Co wyróżnia OM na tle klasycznych metod
+
+| Cecha | Klasyczne podejścia | Observational Memory |
+|-------|--------------------|--------------------|
+| Pobieranie kontekstu | Dynamiczne (RAG co turę) | Statyczne — kontekst stabilny między turami |
+| Prompt caching | Trudne (zmienny kontekst) | Naturalne — stabilny prefiks jest cacheowalny |
+| Kompresja tool calls | Brak | 5–40x dla workloadów z wieloma wywołaniami narzędzi |
+| Kompresja tekstu | — | 3–6x |
