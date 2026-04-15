@@ -65,6 +65,10 @@ containing the compressed prose paragraph. From that point on, the model
 works only from the compressed memory — old raw messages are gone. This is
 the key demonstration: context shrinks, facts survive.
 
+The resulting `messages[]` array after compression contains **exactly one
+entry**: the compressed `system` message. The original `system.txt` prompt
+is also discarded. There is no history — that is the point of the project.
+
 ### 2. What format do Observer observations use?
 
 **Plain list of strings — one fact per line.** No JSON, no schema, no keys.
@@ -85,14 +89,33 @@ The list is stored in the OM state (`memory.ts`) as `string[]`.
 between messages. The app runs from start to finish on its own. The user
 only launches the process.
 
-### 4. Does the model respond to each biography line?
+### 4. Execution order when Observer or Reflector triggers
+
+**Reply first, then compress.** When a trigger message is reached (e.g. line
+10 for Observer), the sequence is:
+
+```
+1. Send biography line to the model
+2. Receive and display the model's reply
+3. Run Observer / Reflector as a SEPARATE API call
+4. Display the phase banner (see §Visual Indicators)
+5. Update OM state
+6. Display OM status lines
+7. Proceed to next line
+```
+
+The model's reply to the triggering line is included in the observations that
+the Observer sees. The Observer/Reflector call is always a separate, dedicated
+API request — never merged with the biography-line call.
+
+### 5. Does the model respond to each biography line?
 
 **Yes.** Every line from `data.txt` is sent as a `user` message and the
 model replies before the next line is sent. The reply is printed to the
 terminal along with the OM status lines. This makes the compression effect
 visible in real time.
 
-### 5. How are tokens estimated?
+### 6. How are tokens estimated?
 
 **Simple heuristic: `Math.ceil(text.length / 4)`.** Applied to the full
 stringified message history before each API call. The `actual` value comes
@@ -204,6 +227,47 @@ a dense prose paragraph of ≤ 120 tokens, and discard raw observations.
 The final user message.
 Asks: "Based on everything you know, give me a complete summary of this user."
 Must NOT give any hints — tests whether OM preserved facts faithfully.
+
+---
+
+## Visual Indicators
+
+When Observer or Reflector fires, a clearly visible banner is printed to the
+terminal **between** the model's reply and the OM status lines. Banners use
+box-drawing characters so they stand out from normal chat output.
+
+### Observer banner
+```
+╔══════════════════════════════════════════╗
+║  🔍  OBSERVER  —  extracting facts...   ║
+╚══════════════════════════════════════════╝
+```
+
+### Reflector banner
+```
+╔══════════════════════════════════════════╗
+║  🗜  REFLECTOR  —  compressing memory... ║
+║  History wiped. Compressed context only. ║
+╚══════════════════════════════════════════╝
+```
+
+### Application start banner
+```
+╔══════════════════════════════════════════════════════╗
+║   ObservationalMemory Demo  —  powered by OpenRouter ║
+║   Loading 15 facts about the user...                 ║
+╚══════════════════════════════════════════════════════╝
+```
+
+### Final summary banner
+```
+╔══════════════════════════════════════════════════════╗
+║  📋  FINAL SUMMARY  —  What survived compression?   ║
+╚══════════════════════════════════════════════════════╝
+```
+
+All banners are printed via `src/io/display.ts`. Emoji usage is intentional
+here — they act as quick visual anchors when scrolling through terminal output.
 
 ---
 
