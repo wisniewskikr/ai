@@ -61,10 +61,9 @@ export function printSummaryBanner(): void {
   console.log('');
 }
 
-export function printReply(msgNum: number, line: string, reply: string): void {
+export function printUserLine(msgNum: number, line: string): void {
   console.log('');
   console.log(`[msg ${msgNum}] USER: ${line}`);
-  console.log(`[msg ${msgNum}] AI:   ${reply}`);
 }
 
 export function printMemoryStatus(memory: MemoryState, usage: UsageStats): void {

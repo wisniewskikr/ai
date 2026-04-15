@@ -8,7 +8,7 @@ import {
   printObserverBanner,
   printReflectorBanner,
   printSummaryBanner,
-  printReply,
+  printUserLine,
   printMemoryStatus,
   UsageStats,
 } from './io/display';
@@ -82,7 +82,7 @@ async function main(): Promise<void> {
 
     const usage: UsageStats = { estimated: estimatedTokens, actual: actualTokens, calibration };
 
-    printReply(messageCount, line, reply);
+    printUserLine(messageCount, line);
     logger.info(`[msg ${messageCount}] User: ${line}`);
     logger.info(`[msg ${messageCount}] AI: ${reply}`);
     logger.info(`Usage: estimated=${estimatedTokens} actual=${actualTokens} calibration=${calibration.toFixed(2)}`);
