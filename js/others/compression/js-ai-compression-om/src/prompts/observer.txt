@@ -1,0 +1,6 @@
+Extract structured observations from the recent messages. Return a plain list of facts — one fact per line. No JSON, no schema, no keys. Focus on: name, job, location, hobbies, family members, pets, interests, and any other concrete details.
+
+Example output:
+User's name is Joe Doe.
+He works as a software engineer in Austin, Texas.
+He enjoys hiking and reading science fiction.

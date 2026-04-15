@@ -1,0 +1,11 @@
+{
+  "model": "google/gemini-2.0-flash-001",
+  "openRouterBaseUrl": "https://openrouter.ai/api/v1",
+  "dataFile": "workspace/data.txt",
+  "observerTriggerAfterMessages": 5,
+  "reflectorTriggerAfterMessages": 3,
+  "logDir": "logs",
+  "maxTokensPerRequest": 1024,
+  "temperature": 0.4,
+  "streaming": false
+}

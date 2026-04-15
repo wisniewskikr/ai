@@ -1,0 +1,15 @@
+{
+  "name": "js-ai-compression-om",
+  "version": "1.0.0",
+  "description": "ObservationalMemory compression demo using OpenRouter",
+  "type": "commonjs",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0"
+  }
+}
