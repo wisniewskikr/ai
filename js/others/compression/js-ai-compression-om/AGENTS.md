@@ -37,19 +37,28 @@ OM is a memory-management strategy for LLM chat sessions:
 ### Trigger Rules (hard-coded defaults, overridable in `config.json`)
 
 ```
-OBSERVER_TRIGGER  = every 10 user messages
-REFLECTOR_TRIGGER = every 5 messages AFTER the Observer has run
+OBSERVER_TRIGGER  = every 5 user messages
+REFLECTOR_TRIGGER = every 3 messages AFTER the Observer has run
 ```
 
-Flow:
+Lower thresholds are intentional — with 15 biography lines they produce two
+full OM cycles, which is far more instructive than one cycle at the very end.
+
+Flow across 15 lines of `data.txt`:
 
 ```
-msg 1-10   → load lines, no compression yet
-msg 10     → Observer fires  → writes N observations to active slot
-msg 11-15  → continue loading lines
-msg 15     → Reflector fires → seals observations, compresses into memory
-msg 16     → final prompt: "Summarize what you know about this user"
+msg 1-5    → load lines, no compression yet
+msg 5      → Observer #1 fires  → extracts facts → active observations: 5
+msg 6-8    → continue loading lines
+msg 8      → Reflector #1 fires → compresses → history wiped → generation: 1
+msg 9-13   → continue loading lines (fresh context, compact memory)
+msg 13     → Observer #2 fires  → extracts new facts → active observations: 5
+msg 14-15  → continue loading lines
+msg 16     → final summary prompt (Reflector #2 would need msg 16 — skipped)
 ```
+
+Two compression cycles demonstrate the pattern. A single cycle at the end
+demonstrates a coincidence.
 
 ---
 
@@ -72,16 +81,18 @@ is also discarded. There is no history — that is the point of the project.
 ### 2. What format do Observer observations use?
 
 **Plain list of strings — one fact per line.** No JSON, no schema, no keys.
-Example output from the Observer call:
+The Observer does NOT call the LLM. It deterministically copies the recent
+biography lines directly into the observations list. Example:
 
-```
-User's name is Joe Doe.
-He is a software engineer in Austin, Texas.
-He enjoys hiking, reading sci-fi and historical novels.
-He plays acoustic guitar.
+```typescript
+// observer.ts — no API call needed
+// The lines ARE the observations. Simple, fast, free.
+const newObservations = recentLines.map(line => line.trim());
+memory.addObservations(newObservations);
 ```
 
-The list is stored in the OM state (`memory.ts`) as `string[]`.
+The list is stored in the OM state (`memory.ts`) as `string[]`. The LLM is
+reserved for the Reflector, which actually needs to understand and compress.
 
 ### 3. Does the user press Enter between lines?
 
@@ -92,28 +103,29 @@ only launches the process.
 ### 4. Execution order when Observer or Reflector triggers
 
 **Reply first, then compress.** When a trigger message is reached (e.g. line
-10 for Observer), the sequence is:
+5 for Observer), the sequence is:
 
 ```
 1. Send biography line to the model
 2. Receive and display the model's reply
-3. Run Observer / Reflector as a SEPARATE API call
-4. Display the phase banner (see §Visual Indicators)
+3. Display the phase banner (see §Visual Indicators)
+4. Run Observer (deterministic) OR Reflector (LLM call)
 5. Update OM state
 6. Display OM status lines
 7. Proceed to next line
 ```
 
-The model's reply to the triggering line is included in the observations that
-the Observer sees. The Observer/Reflector call is always a separate, dedicated
-API request — never merged with the biography-line call.
+The model's reply to the triggering line is visible before compression starts.
+Only the Reflector makes an API call — the Observer is deterministic (see §6).
+Never merge Observer/Reflector logic with the biography-line API call.
 
 ### 5. Does the model respond to each biography line?
 
-**Yes.** Every line from `data.txt` is sent as a `user` message and the
-model replies before the next line is sent. The reply is printed to the
-terminal along with the OM status lines. This makes the compression effect
-visible in real time.
+**Yes, but briefly.** Every line from `data.txt` is sent as a `user` message
+and the model replies before the next line is sent. The system prompt instructs
+the model to keep biography-line replies to **one sentence maximum** — enough
+to show it received the message, not enough to clutter the terminal. The
+compression effect must be the visual centrepiece, not chatty acknowledgements.
 
 ### 6. How are tokens estimated?
 
@@ -194,8 +206,8 @@ Every value that could ever change belongs here. No magic numbers in source.
   "model": "google/gemini-2.0-flash-001",
   "openRouterBaseUrl": "https://openrouter.ai/api/v1",
   "dataFile": "workspace/data.txt",
-  "observerTriggerAfterMessages": 10,
-  "reflectorTriggerAfterMessages": 5,
+  "observerTriggerAfterMessages": 5,
+  "reflectorTriggerAfterMessages": 3,
   "logDir": "logs",
   "maxTokensPerRequest": 1024,
   "temperature": 0.4,
@@ -224,9 +236,18 @@ Instructs the model to read the plain-string observations, compress them into
 a dense prose paragraph of ≤ 120 tokens, and discard raw observations.
 
 ### summary.txt
-The final user message.
-Asks: "Based on everything you know, give me a complete summary of this user."
-Must NOT give any hints — tests whether OM preserved facts faithfully.
+The final user message. Must ask for **specific, verifiable facts** — not a
+vague summary. Example:
+
+> Without looking at any previous messages — because there are none — answer
+> these questions precisely:
+> What is this person's full name? What city do they work in and what is their
+> job? What is their spouse's name and how long have they been together? What
+> are their children's names and ages? What is the dog's name and breed? What
+> sport do they compete in for charity? What do they teach volunteers?
+
+Concrete questions produce concrete answers. A vague prompt produces a vague
+answer that proves nothing about compression quality.
 
 ---
 
@@ -244,12 +265,21 @@ box-drawing characters so they stand out from normal chat output.
 ```
 
 ### Reflector banner
+Includes a compression report calculated from OM state before and after:
 ```
-╔══════════════════════════════════════════╗
-║  🗜  REFLECTOR  —  compressing memory... ║
-║  History wiped. Compressed context only. ║
-╚══════════════════════════════════════════╝
+╔══════════════════════════════════════════════════╗
+║  🗜  REFLECTOR  —  compressing memory...         ║
+║                                                  ║
+║  Before:  <N> messages  ~<T> tokens              ║
+║  After:    1 message    ~<C> tokens              ║
+║  Ratio:   <R>x compression  |  saved <P>%        ║
+║                                                  ║
+║  History wiped. Compressed context only.         ║
+╚══════════════════════════════════════════════════╝
 ```
+`display.ts` receives the before/after token counts from `reflector.ts` and
+formats the ratio. This is the single most important piece of output in the
+entire demo — make it impossible to miss.
 
 ### Application start banner
 ```
@@ -347,9 +377,11 @@ Field definitions:
 - [ ] `src/io/display.ts` — prints AI reply + two status lines
 - [ ] `src/core/memory.ts` — OM state machine (sealed/active/generation)
 - [ ] `src/core/chat.ts` — OpenRouter fetch, message history management
-- [ ] `src/core/observer.ts` — fires at trigger, calls observer prompt, updates state
+- [ ] `src/core/observer.ts` — fires at trigger, deterministically copies recent lines to observations (NO API call)
 - [ ] `src/core/reflector.ts` — fires at trigger, calls reflector prompt, seals + compresses
-- [ ] `src/prompts/*.txt` — all four prompt files
+- [ ] `src/prompts/reflector.txt` — compress observations into ≤120 token prose
+- [ ] `src/prompts/system.txt` — persona + ONE SENTENCE MAX for biography replies
+- [ ] `src/prompts/summary.txt` — specific fact-by-fact questions (name, spouse, kids, dog, etc.)
 - [ ] `src/index.ts` — main loop: load lines → send → maybe observe → maybe reflect → repeat → summary
 - [ ] `README.md` — usage, setup, concept explanation in English
 - [ ] `package.json` + `tsconfig.json`
