@@ -1,5 +1,5 @@
 ﻿TODO:
-- kompresja
+- baza wiedzy
 - skille
 - lokalne
 - Grounding
