@@ -53,6 +53,55 @@ msg 16     → final prompt: "Summarize what you know about this user"
 
 ---
 
+## Clarifications (Authoritative Decisions)
+
+These answers override any ambiguity elsewhere in this document.
+
+### 1. What happens to message history after the Reflector runs?
+
+**Full replacement (true compression).** The Reflector discards the entire
+previous message history and replaces it with a single `system` message
+containing the compressed prose paragraph. From that point on, the model
+works only from the compressed memory — old raw messages are gone. This is
+the key demonstration: context shrinks, facts survive.
+
+### 2. What format do Observer observations use?
+
+**Plain list of strings — one fact per line.** No JSON, no schema, no keys.
+Example output from the Observer call:
+
+```
+User's name is Joe Doe.
+He is a software engineer in Austin, Texas.
+He enjoys hiking, reading sci-fi and historical novels.
+He plays acoustic guitar.
+```
+
+The list is stored in the OM state (`memory.ts`) as `string[]`.
+
+### 3. Does the user press Enter between lines?
+
+**No.** Lines are sent automatically in batch — no user interaction needed
+between messages. The app runs from start to finish on its own. The user
+only launches the process.
+
+### 4. Does the model respond to each biography line?
+
+**Yes.** Every line from `data.txt` is sent as a `user` message and the
+model replies before the next line is sent. The reply is printed to the
+terminal along with the OM status lines. This makes the compression effect
+visible in real time.
+
+### 5. How are tokens estimated?
+
+**Simple heuristic: `Math.ceil(text.length / 4)`.** Applied to the full
+stringified message history before each API call. The `actual` value comes
+from the `usage.total_tokens` field in the OpenRouter response. Calibration
+is recalculated after each call as a rolling average:
+`calibration = estimated / actual`.
+
+---
+
 ## Technology Stack
 
 | Concern              | Choice                          |
@@ -142,12 +191,14 @@ Must NOT mention OM mechanics to the model — those are meta.
 ### observer.txt
 Injected as a system turn when the Observer fires.
 Instructs the model to extract structured observations from recent messages
-(name, job, hobbies, family, etc.) and return them as a JSON array.
+(name, job, hobbies, family, etc.) and return them as a **plain list of
+strings** (one fact per line). No JSON, no schema — simplest format that
+survives prompt iteration.
 
 ### reflector.txt
 Injected as a system turn when the Reflector fires.
-Instructs the model to read the JSON observations, compress them into a dense
-prose paragraph of ≤ 120 tokens, and discard raw observations.
+Instructs the model to read the plain-string observations, compress them into
+a dense prose paragraph of ≤ 120 tokens, and discard raw observations.
 
 ### summary.txt
 The final user message.
