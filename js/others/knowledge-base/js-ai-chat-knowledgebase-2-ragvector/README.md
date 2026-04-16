@@ -75,6 +75,32 @@ Question
 
 Only original questions and answers are kept in conversation history. RAG context is generated fresh for every question.
 
+### How the model receives context
+
+The model does not use any tool to query the vector store — all retrieval happens in your code **before** the API call. The model simply receives a regular user message with the context already injected:
+
+```
+User question: "What are Joe's hobbies?"
+         ↓
+1. Embed the question → vector [0.023, -0.441, 0.891, ...]
+         ↓
+2. Search Vectra → top-4 most similar chunks
+         ↓
+3. Build a user message:
+
+   "Context:
+    [1] Joe enjoys hiking and photography...
+    [2] He also plays guitar...
+
+    Question: What are Joe's hobbies?"
+         ↓
+4. Send to API → answer
+```
+
+The model has no awareness of RAG. From its perspective the user simply sent a message that happens to contain a relevant text excerpt followed by a question.
+
+Chunk matching uses **cosine similarity** between the question embedding and all chunk embeddings in Vectra. This means semantically related chunks are retrieved even when they share no exact words (e.g. "pastime" will match a chunk containing "hobbies").
+
 ## Knowledge Base
 
 Point `knowledgeBasePath` in `config.json` to any plain-text file (relative to the project root). The file is chunked and indexed automatically on startup.
