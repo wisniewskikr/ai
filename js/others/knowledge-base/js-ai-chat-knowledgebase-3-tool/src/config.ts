@@ -6,6 +6,7 @@ export interface Config {
   maxTokens: number;
   temperature: number;
   baseUrl: string;
+  seedDataPath: string;
 }
 
 export function loadConfig(): Config {
