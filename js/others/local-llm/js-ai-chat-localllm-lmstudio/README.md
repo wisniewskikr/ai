@@ -2,11 +2,24 @@
 
 Simple AI chat app using a local LLM via [LM Studio](https://lmstudio.ai).
 
-## Prerequisites
+## LM Studio — Starting the Local Server
 
-1. Install and open LM Studio
-2. Download any model (e.g. Llama 3, Mistral, Phi)
-3. Go to **Local Server** tab and click **Start Server** (default port: 1234)
+The steps below show how to start a local server with the **qwen3-4b-alpaca-chatwithme** model.
+
+1. Download and install [LM Studio](https://lmstudio.ai)
+2. Open LM Studio
+3. Go to the **Discover** tab (magnifying glass icon on the left) and search for `qwen3-4b-alpaca-chatwithme`
+4. Click **Download** next to your preferred variant (e.g. Q4_K_M — a good balance of quality and size)
+5. After downloading, go to the **Local Server** tab (`<->` icon on the left)
+6. From the **Select a model to load** dropdown, choose `qwen3-4b-alpaca-chatwithme`
+7. Click **Start Server** — the server will start at `http://localhost:1234`
+8. Make sure `config.json` contains:
+   ```json
+   {
+     "model": "qwen3-4b-alpaca-chatwithme",
+     "baseUrl": "http://localhost:1234/v1"
+   }
+   ```
 
 ## Setup
 
@@ -41,14 +54,14 @@ Type a message and press Enter to chat. Available commands:
 
 Edit `config.json` to change model, tokens, or temperature.
 
-| Field         | Default                    | Description                     |
-|---------------|----------------------------|---------------------------------|
-| `model`       | `local-model`              | Model identifier from LM Studio |
-| `maxTokens`   | `1024`                     | Max tokens per response         |
-| `temperature` | `0.7`                      | Sampling temperature            |
-| `baseUrl`     | `http://localhost:1234/v1` | LM Studio server URL            |
+| Field         | Default                        | Description                     |
+|---------------|--------------------------------|---------------------------------|
+| `model`       | `qwen3-4b-alpaca-chatwithme`   | Model identifier from LM Studio |
+| `maxTokens`   | `1024`                         | Max tokens per response         |
+| `temperature` | `0.7`                          | Sampling temperature            |
+| `baseUrl`     | `http://localhost:1234/v1`     | LM Studio server URL            |
 
-> **Tip:** The exact model identifier can be found in LM Studio under the loaded model's info panel. Use it as the `model` value in `config.json`.
+> **Tip:** The exact model identifier is shown in LM Studio in the loaded model's info panel (the **Model identifier** field). It must exactly match the `model` value in `config.json`.
 
 ## Logs
 
