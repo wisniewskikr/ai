@@ -18,6 +18,8 @@ db.exec(`
   )
 `);
 
+db.exec('DELETE FROM entries');
+
 const lines = fs.readFileSync(DATA_PATH, 'utf-8')
   .split('\n')
   .map(line => line.trim())

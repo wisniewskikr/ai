@@ -30,13 +30,13 @@ export const KNOWLEDGE_TOOLS: Tool[] = [
     type: 'function',
     function: {
       name: 'search_knowledge',
-      description: 'Search the knowledge base for information matching a query string.',
+      description: 'Search the knowledge base for entries whose content contains all the given keywords. Use short, specific keywords (e.g. "children", "dog", "wife") — not full sentences or questions. All words in the query must appear in the same entry.',
       parameters: {
         type: 'object',
         properties: {
           query: {
             type: 'string',
-            description: 'The search query to look for in the knowledge base.',
+            description: 'One or more keywords to search for (e.g. "children", "guitar", "cycling"). Avoid using full names or full sentences.',
           },
         },
         required: ['query'],
