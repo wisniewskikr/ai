@@ -1,6 +1,6 @@
-# js-ai-chat
+# js-ai-chat — Knowledge Base (Full Context)
 
-Simple AI chat app using OpenRouter API.
+AI chat app using OpenRouter API with a knowledge base loaded into the model's context window (Project 1 from the knowledge base series).
 
 ## Setup
 
@@ -37,10 +37,17 @@ Edit `config.json` to change model, tokens, or temperature.
 
 | Field         | Default                          | Description             |
 |---------------|----------------------------------|-------------------------|
-| `model`       | `openai/gpt-4o`                  | OpenRouter model ID     |
-| `maxTokens`   | `1024`                           | Max tokens per response |
-| `temperature` | `0.7`                            | Sampling temperature    |
-| `baseUrl`     | `https://openrouter.ai/api/v1`   | API base URL            |
+| `model`             | `openai/gpt-4o`                  | OpenRouter model ID               |
+| `maxTokens`         | `1024`                           | Max tokens per response           |
+| `temperature`       | `0.7`                            | Sampling temperature              |
+| `baseUrl`           | `https://openrouter.ai/api/v1`   | API base URL                      |
+| `knowledgeBasePath` | `data/data.txt`                  | Path to knowledge base file (relative to project root) |
+
+## Knowledge Base
+
+At startup the app reads the file specified by `knowledgeBasePath` and injects its content into the system prompt. The model answers questions based solely on that data.
+
+To use a different knowledge base, point `knowledgeBasePath` in `config.json` to any plain-text file (relative to the project root).
 
 ## Logs
 
