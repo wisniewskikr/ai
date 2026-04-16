@@ -157,6 +157,130 @@ wektorowe     pełnotekstowe
 
 ---
 
+## Chunking i Embeddingi — fundamenty bazy wektorowej
+
+Zanim dokument trafi do bazy wiedzy, przechodzi przez dwa kroki. Bez nich baza wektorowa nie istnieje.
+
+### Krok 1 — Chunking (cięcie na kawałki)
+
+Wyobraź sobie, że masz grubą książkę. Nie wrzucasz jej do bazy w całości — tną ją na **małe karteczki**, bo:
+- model AI ma ograniczoną pamięć (okno kontekstu)
+- łatwiej znaleźć konkretny fragment niż przeszukiwać całą książkę
+
+```
+[Cały dokument PDF]
+        ↓
+  [fragment 1]  [fragment 2]  [fragment 3]  [fragment 4] ...
+  (ok. 200-500 słów każdy)
+```
+
+| Strategia cięcia | Jak działa | Kiedy używać |
+|---|---|---|
+| **Stały rozmiar** | Co N znaków/słów | Proste, szybkie w implementacji |
+| **Po zdaniach/akapitach** | Respektuje strukturę tekstu | Dokumenty narracyjne |
+| **Rekurencyjna** | Próbuje ciąć po nagłówkach, potem akapitach, potem zdaniach | Dokumentacja techniczna |
+| **Semantyczna** | Tnie tam, gdzie zmienia się temat | Najlepsza jakość, najdroższa |
+
+> Zły chunking = złe wyniki RAG, nawet jeśli reszta systemu jest idealna.
+
+---
+
+### Krok 2 — Embeddingi (zamiana tekstu na liczby)
+
+Każdy fragment tekstu jest zamieniany na **listę liczb** (wektor). Te liczby kodują **znaczenie** tekstu.
+
+```
+"Jak zresetować hasło?"     → [0.12, 0.87, 0.34, 0.56, ...]
+"Procedura odzyskiwania hasła" → [0.11, 0.85, 0.36, 0.54, ...]  ← podobne liczby!
+"Przepis na pizzę"           → [0.91, 0.02, 0.78, 0.11, ...]  ← zupełnie inne
+```
+
+Dwa teksty o **podobnym znaczeniu** mają **podobne wektory** — nawet jeśli używają innych słów. Dlatego wyszukiwanie semantyczne działa lepiej niż zwykłe `CTRL+F`.
+
+| | Wyszukiwanie klasyczne | Wyszukiwanie wektorowe |
+|---|---|---|
+| Szuka | Dokładnych słów | Podobnego znaczenia |
+| Przykład zapytania | "reset password" | "nie mogę się zalogować" |
+| Znajdzie | Tylko jeśli jest słowo "reset password" | Artykuł o odzyskiwaniu dostępu |
+
+---
+
+## Pełny pipeline — od dokumentu do odpowiedzi
+
+### Faza 1: Indeksowanie (jednorazowo, przy dodawaniu danych)
+
+```
+Dokumenty (PDF, Word, strony www)
+        ↓
+    Chunking
+    (cięcie na fragmenty)
+        ↓
+    Embeddingi
+    (każdy fragment → wektor liczb)
+        ↓
+    Zapis do bazy wektorowej
+    (fragment + jego wektor)
+```
+
+### Faza 2: Wyszukiwanie (przy każdym pytaniu użytkownika)
+
+```
+Pytanie użytkownika: "Jak zresetować hasło?"
+        ↓
+    Embedding pytania
+    (pytanie → wektor liczb)
+        ↓
+    Wyszukiwanie w bazie
+    (znajdź wektory najbardziej podobne do pytania)
+        ↓
+    Top 3-5 najbardziej trafnych fragmentów
+        ↓
+    Wysłanie do modelu AI:
+    [kontekst z fragmentów] + [pytanie użytkownika]
+        ↓
+    Odpowiedź AI
+```
+
+---
+
+## Kiedy co wybrać?
+
+| Sytuacja | Najlepsze podejście | Dlaczego |
+|---|---|---|
+| Mała baza (< 50 stron) | Pełny kontekst | Prosto, bez infrastruktury |
+| Duża baza, pytania ogólne | RAG | Skalowalne, ekonomiczne |
+| Pytania o konkretne rekordy | Narzędzia + SQL | Precyzja ważniejsza niż semantyka |
+| Wiedza stała, specjalistyczna | Fine-tuning | Model "wie" bez szukania |
+| Pytania wymagające relacji | Baza grafowa | Łączy fakty z różnych miejsc |
+| Produkcja, wysoka jakość | RAG hybrydowy | Łączy semantykę z dokładnością |
+
+---
+
+## Przykłady zastosowań
+
+| Zastosowanie | Jak działa |
+|---|---|
+| **Chatbot obsługi klienta** | Baza = FAQ + dokumentacja produktu, RAG wyszukuje odpowiedź |
+| **Asystent prawny** | Baza = umowy i przepisy, model analizuje konkretny dokument |
+| **Wyszukiwarka wewnętrzna** | Baza = dokumenty firmowe, pracownicy pytają jak Google |
+| **Asystent medyczny** | Baza = literatura medyczna, odpowiada na pytania kliniczne |
+| **Analiza kodu** | Baza = cały kod projektu, model odpowiada na pytania o architekturę |
+
+---
+
+## Ograniczenia i pułapki
+
+| Problem | Na czym polega | Jak uniknąć |
+|---|---|---|
+| **Nieaktualne dane** | Baza nie aktualizuje się automatycznie | Zaplanować regularny re-indeksing |
+| **Zły chunking** | Ważna informacja rozbita na dwa fragmenty | Testować różne strategie cięcia |
+| **Halucynacje mimo bazy** | Model "dopowiada" gdy fragment jest niewystarczający | Dodać instrukcję: "odpowiedz tylko na podstawie kontekstu" |
+| **Za dużo wyników** | Model dostaje 20 fragmentów i gubi się | Ograniczyć do 3-5 najlepszych |
+| **Limit kontekstu** | Fragmenty nie mieszczą się w oknie kontekstu modelu | Mniejsze chunki lub mocniejszy model |
+| **Brak odpowiedzi w bazie** | Użytkownik pyta o coś czego w bazie nie ma | Model powinien powiedzieć "nie wiem", nie zgadywać |
+
+---
+
 ## Podsumowanie
 
 | Temat | Skrót myślowy |
