@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-type Level = 'INFO' | 'ERROR' | 'USER' | 'ASSISTANT';
+type Level = 'INFO' | 'ERROR' | 'USER' | 'ASSISTANT' | 'RAG';
 
 function getLogPath(): string {
   const date = new Date().toISOString().slice(0, 10); // YYYY-MM-DD

@@ -5,6 +5,10 @@ import { stdin as input, stdout as output } from 'node:process';
 import { Config } from './config';
 import { Message, sendMessage } from './api';
 import { log } from './logger';
+import { splitIntoChunks } from './chunker';
+import { embedText, embedBatch } from './embeddings';
+import { buildIndex, searchIndex } from './vectorStore';
+import { LocalIndex } from 'vectra';
 
 function loadKnowledgeBase(knowledgeBasePath: string): string {
   const filePath = path.join(process.cwd(), knowledgeBasePath);
@@ -28,11 +32,26 @@ function printHistory(history: Message[]): void {
 export async function runChat(config: Config): Promise<void> {
   const rl = readline.createInterface({ input, output });
 
+  // --- Initialization: build RAG index ---
+  console.log('Loading knowledge base...');
   const knowledgeBase = loadKnowledgeBase(config.knowledgeBasePath);
+
+  console.log('Splitting into chunks...');
+  const chunks = await splitIntoChunks(knowledgeBase, config.chunkSize, config.chunkOverlap);
+  log('INFO', `Indexed ${chunks.length} chunks`);
+  console.log(`Indexed ${chunks.length} chunks.`);
+
+  console.log('Generating embeddings...');
+  const embeddings = await embedBatch(chunks, config);
+
+  console.log('Building vector index...');
+  const index: LocalIndex = await buildIndex(chunks, embeddings, config);
+  console.log('Vector index ready.\n');
+
   const history: Message[] = [
     {
       role: 'system',
-      content: `You are a helpful assistant. Answer questions based on the following knowledge base:\n\n${knowledgeBase}\n\nIf the answer cannot be found in the knowledge base, say so clearly.`,
+      content: 'You are a helpful assistant. Answer questions based only on the provided context. If the answer is not in the context, say so clearly.',
     },
   ];
 
@@ -52,7 +71,6 @@ export async function runChat(config: Config): Promise<void> {
     try {
       userInput = await rl.question('You: ');
     } catch {
-      // stdin closed (EOF or Ctrl+D)
       log('INFO', 'Session ended (stdin closed)');
       console.log('\nGoodbye!');
       rl.close();
@@ -81,19 +99,35 @@ export async function runChat(config: Config): Promise<void> {
     }
 
     log('USER', trimmed);
-    history.push({ role: 'user', content: trimmed });
 
     try {
-      const reply = await sendMessage(history, config);
+      // RAG: embed question, retrieve top-K chunks, build context
+      const queryEmbedding = await embedText(trimmed, config);
+      const relevantChunks = await searchIndex(index, queryEmbedding, config.topK);
+      log('INFO', `Retrieved ${relevantChunks.length} chunks for query`);
+
+      const context = relevantChunks
+        .map((chunk, i) => `[${i + 1}] ${chunk}`)
+        .join('\n\n');
+
+      const ragMessage: Message = {
+        role: 'user',
+        content: `Context:\n${context}\n\nQuestion: ${trimmed}`,
+      };
+
+      const messagesForApi = [...history, ragMessage];
+      const reply = await sendMessage(messagesForApi, config);
+
+      // Store only the original question in history (not RAG context)
+      history.push({ role: 'user', content: trimmed });
       history.push({ role: 'assistant', content: reply });
+
       log('ASSISTANT', reply);
       console.log(`\nAssistant: ${reply}\n`);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       log('ERROR', message);
       console.error(`Error: ${message}`);
-      // remove the failed user message so history stays consistent
-      history.pop();
     }
   }
 }

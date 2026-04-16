@@ -7,6 +7,11 @@ export interface Config {
   temperature: number;
   baseUrl: string;
   knowledgeBasePath: string;
+  // RAG
+  embeddingModel: string;
+  chunkSize: number;
+  chunkOverlap: number;
+  topK: number;
 }
 
 export function loadConfig(): Config {

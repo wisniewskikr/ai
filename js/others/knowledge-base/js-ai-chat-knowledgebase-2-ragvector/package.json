@@ -9,7 +9,9 @@
     "dev": "ts-node -r dotenv/config src/index.ts"
   },
   "dependencies": {
-    "dotenv": "^16.4.5"
+    "@langchain/textsplitters": "^1.0.1",
+    "dotenv": "^16.4.5",
+    "vectra": "^0.14.0"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
