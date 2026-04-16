@@ -281,6 +281,27 @@ Pytanie użytkownika: "Jak zresetować hasło?"
 
 ---
 
+## Projekty edukacyjne
+
+Projekty od najbardziej do najmniej użytecznego. Każdy reprezentuje inną architekturę.
+
+| # | Projekt | Architektura | Cel |
+|---|---|---|---|
+| 1 | **Chat z dokumentem (pełny kontekst)** | Pełny kontekst | Najprostszy start — zero infrastruktury, rozumiesz baseline przed RAG |
+| 2 | **RAG z in-memory vector store** | Wektorowa + RAG | Najważniejszy pattern w produkcji — chunking + embeddingi + wyszukiwanie |
+| 3 | **Asystent z narzędziami (Tools + JSON/SQLite)** | Strukturalna + Tools | Inny paradygmat niż RAG — model sam decyduje co i kiedy zapytać |
+| 4 | **RAG hybrydowy** | Hybrydowa | Rozszerzenie projektu 2 o wyszukiwanie pełnotekstowe — widać różnicę w jakości |
+| 5 | **Knowledge Graph** | Grafowa | Najtrudniejszy, najbardziej niszowy — relacje między pojęciami |
+
+Kolejność ma sens bo:
+- Projekt 1 → rozumiesz **problem**
+- Projekt 2 → rozumiesz **rozwiązanie** (RAG)
+- Projekt 3 → rozumiesz **alternatywę** (Tools)
+- Projekt 4 → rozumiesz **optymalizację**
+- Projekt 5 → rozumiesz **specjalne przypadki**
+
+---
+
 ## Podsumowanie
 
 | Temat | Skrót myślowy |
