@@ -6,12 +6,15 @@
   "scripts": {
     "build": "tsc",
     "start": "node -r dotenv/config dist/index.js",
-    "dev": "ts-node -r dotenv/config src/index.ts"
+    "dev": "ts-node -r dotenv/config src/index.ts",
+    "seed": "ts-node -r dotenv/config src/seed.ts"
   },
   "dependencies": {
+    "better-sqlite3": "^12.9.0",
     "dotenv": "^16.4.5"
   },
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20.14.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
