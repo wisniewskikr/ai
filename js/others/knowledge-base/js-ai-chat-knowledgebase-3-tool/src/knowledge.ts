@@ -15,8 +15,8 @@ export function searchKnowledge(query: string): { id: number; topic: string; con
   const database = getDb();
   const words = query.trim().split(/\s+/).filter(w => w.length > 0);
 
-  // Each word must appear in content (AND logic) — supports multi-word queries
-  const conditions = words.map(() => 'content LIKE ?').join(' AND ');
+  // Any word triggers a match (OR logic) — handles multi-word queries like "Joe children"
+  const conditions = words.map(() => 'content LIKE ?').join(' OR ');
   const params = words.map(w => `%${w}%`);
 
   const stmt = database.prepare(`
