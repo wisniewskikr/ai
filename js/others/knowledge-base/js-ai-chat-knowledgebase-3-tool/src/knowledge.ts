@@ -15,17 +15,20 @@ export function searchKnowledge(query: string): { id: number; topic: string; con
   const database = getDb();
   const words = query.trim().split(/\s+/).filter(w => w.length > 0);
 
-  // Any word triggers a match (OR logic) — handles multi-word queries like "Joe children"
-  const conditions = words.map(() => 'content LIKE ?').join(' OR ');
-  const params = words.map(w => `%${w}%`);
+  // OR match with relevance score — entries matching more keywords rank higher
+  const whereClause = words.map(() => 'content LIKE ?').join(' OR ');
+  const scoreClause = words.map(() => 'CASE WHEN content LIKE ? THEN 1 ELSE 0 END').join(' + ');
+  const whereParams = words.map(w => `%${w}%`);
+  const scoreParams = words.map(w => `%${w}%`);
 
   const stmt = database.prepare(`
     SELECT id, topic, content
     FROM entries
-    WHERE ${conditions}
+    WHERE ${whereClause}
+    ORDER BY (${scoreClause}) DESC
     LIMIT 5
   `);
-  return stmt.all(...params) as { id: number; topic: string; content: string }[];
+  return stmt.all(...whereParams, ...scoreParams) as { id: number; topic: string; content: string }[];
 }
 
 export function getEntryById(id: number): { id: number; topic: string; content: string } | undefined {
