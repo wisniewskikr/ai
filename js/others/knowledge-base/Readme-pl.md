@@ -285,13 +285,24 @@ Pytanie użytkownika: "Jak zresetować hasło?"
 
 Projekty od najbardziej do najmniej użytecznego. Każdy reprezentuje inną architekturę.
 
-| # | Projekt | Architektura | Cel |
-|---|---|---|---|
-| 1 | **Chat z dokumentem (pełny kontekst)** | Pełny kontekst | Najprostszy start — zero infrastruktury, rozumiesz baseline przed RAG |
-| 2 | **RAG z in-memory vector store** | Wektorowa + RAG | Najważniejszy pattern w produkcji — chunking + embeddingi + wyszukiwanie |
-| 3 | **Asystent z narzędziami (Tools + JSON/SQLite)** | Strukturalna + Tools | Inny paradygmat niż RAG — model sam decyduje co i kiedy zapytać |
-| 4 | **RAG hybrydowy** | Hybrydowa | Rozszerzenie projektu 2 o wyszukiwanie pełnotekstowe — widać różnicę w jakości |
-| 5 | **Knowledge Graph** | Grafowa | Najtrudniejszy, najbardziej niszowy — relacje między pojęciami |
+| # | Projekt | Architektura | Narzędzia | Cel |
+|---|---|---|---|---|
+| 1 | **Chat z dokumentem (pełny kontekst)** | Pełny kontekst | `fs` (Node.js), `pdf-parse` | Najprostszy start — zero infrastruktury, rozumiesz baseline przed RAG |
+| 2 | **RAG z in-memory vector store** | Wektorowa + RAG | `Vectra` (in-memory), `LangChain.js` (chunking) | Najważniejszy pattern w produkcji — chunking + embeddingi + wyszukiwanie |
+| 3 | **Asystent z narzędziami (Tools + SQLite)** | Strukturalna + Tools | `better-sqlite3` | Inny paradygmat niż RAG — model sam decyduje co i kiedy zapytać |
+| 4 | **RAG hybrydowy** | Hybrydowa | `ChromaDB` (wektory) + `MiniSearch` (pełnotekstowe) | Rozszerzenie projektu 2 — widać różnicę w jakości wyników |
+| 5 | **Knowledge Graph** | Grafowa | `JSON` + ręczny traversal (nauka) lub `Neo4j Community` | Najtrudniejszy — relacje między pojęciami |
+
+### Dlaczego te narzędzia?
+
+| Narzędzie | Typ | Dlaczego warte uwagi |
+|---|---|---|
+| `Vectra` | In-memory vector store | Czyste TypeScript, zero serwera, idealne do nauki RAG |
+| `LangChain.js` | Framework | Gotowe chunking + pipeline RAG, duża społeczność |
+| `better-sqlite3` | Baza SQL | Lokalna, synchroniczna, prosta API, zero konfiguracji |
+| `ChromaDB` | Vector store | Darmowy, lokalny serwer, prosty klient TS |
+| `MiniSearch` | Wyszukiwarka pełnotekstowa | Pure JS, in-memory, działa od razu bez serwera |
+| `Neo4j Community` | Graf DB | Darmowa edycja, wizualny interfejs, język Cypher |
 
 Kolejność ma sens bo:
 - Projekt 1 → rozumiesz **problem**
