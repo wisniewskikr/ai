@@ -1,16 +1,24 @@
 import * as readline from 'node:readline/promises';
+import * as fs from 'fs';
+import * as path from 'path';
 import { stdin as input, stdout as output } from 'node:process';
 import { Config } from './config';
 import { Message, sendMessage } from './api';
 import { log } from './logger';
 
+function loadKnowledgeBase(): string {
+  const filePath = path.join(process.cwd(), 'data', 'data.txt');
+  return fs.readFileSync(filePath, 'utf-8');
+}
+
 function printHistory(history: Message[]): void {
-  if (history.length === 0) {
+  const visible = history.filter(m => m.role !== 'system');
+  if (visible.length === 0) {
     console.log('(no messages yet)');
     return;
   }
   console.log('\n--- conversation history ---');
-  for (const msg of history) {
+  for (const msg of visible) {
     const label = msg.role.toUpperCase().padEnd(9);
     console.log(`${label} ${msg.content}`);
   }
@@ -19,7 +27,14 @@ function printHistory(history: Message[]): void {
 
 export async function runChat(config: Config): Promise<void> {
   const rl = readline.createInterface({ input, output });
-  const history: Message[] = [];
+
+  const knowledgeBase = loadKnowledgeBase();
+  const history: Message[] = [
+    {
+      role: 'system',
+      content: `You are a helpful assistant. Answer questions based on the following knowledge base:\n\n${knowledgeBase}\n\nIf the answer cannot be found in the knowledge base, say so clearly.`,
+    },
+  ];
 
   function printHelp(): void {
     console.log('Available commands:');
