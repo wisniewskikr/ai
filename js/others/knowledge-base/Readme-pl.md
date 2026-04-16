@@ -14,12 +14,38 @@ Wyobraź sobie, że masz **zeszyt z notatkami**. Zapisujesz w nim wszystko, co w
 
 | | Baza wiedzy | RAG (Retrieval-Augmented Generation) |
 |---|---|---|
-| **Co to jest?** | Miejsce przechowywania informacji | Sposób na pobieranie informacji z bazy |
+| **Co to jest?** | Miejsce przechowywania informacji | Jeden ze sposobów pobierania informacji z bazy |
 | **Analogia** | Biblioteka z książkami | Bibliotekarz, który szuka i przynosi Ci właściwą książkę |
-| **Rola** | Magazyn danych | Mechanizm wyszukiwania + generowania odpowiedzi |
-| **Bez drugiego?** | Baza może istnieć bez RAG | RAG potrzebuje bazy, żeby działać |
+| **Rola** | Magazyn danych | Semantyczne wyszukiwanie + generowanie odpowiedzi |
+| **Zależność** | Może istnieć bez RAG | Potrzebuje bazy, żeby działać |
 
-**Krótko:** Baza wiedzy to **szafa z ubraniami**, a RAG to **ty, który otwierasz szafę i wybierasz strój** pasujący do okazji.
+**Krótko:** Baza wiedzy to **biblioteka**, a RAG to **jeden ze sposobów szukania w niej książek** — ale nie jedyny.
+
+---
+
+## Jak AI może dostać się do bazy wiedzy?
+
+RAG to tylko jedna z opcji. Są cztery sposoby:
+
+| Sposób | Jak działa | Kiedy używać |
+|---|---|---|
+| **RAG** | System automatycznie szuka semantycznie podobnych fragmentów przed każdą odpowiedzią | Duże bazy, pytania ogólne |
+| **Narzędzia (Tools)** | Model sam decyduje kiedy i co zapytać — wywołuje funkcję/API (`search_db(...)`, `SELECT ...`) | Gdy potrzebna precyzyjna odpowiedź na konkretne pytanie |
+| **Pełny kontekst** | Cała baza wrzucona do okna kontekstu modelu (tzw. system prompt) | Małe bazy, do kilkudziesięciu stron tekstu |
+| **Fine-tuning** | Wiedza "wgrana" na stałe w wagi modelu podczas dodatkowego treningu | Stała, rzadko zmieniająca się wiedza dziedzinowa |
+
+### Kluczowa różnica: RAG vs Narzędzia
+
+```
+RAG:
+  każde zapytanie → automatyczne wyszukiwanie → trafne fragmenty → odpowiedź
+
+Narzędzia:
+  zapytanie → model myśli → sam decyduje czy i co wyszukać → wywołuje funkcję → odpowiedź
+```
+
+- **RAG** — zawsze szuka, zanim odpowie (automatycznie)
+- **Narzędzia** — model sam ocenia, czy w ogóle trzeba szukać, i pyta o konkret
 
 ---
 
