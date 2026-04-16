@@ -13,10 +13,5 @@ export function loadConfig(): Config {
   const raw = fs.readFileSync(configPath, 'utf-8');
   const config = JSON.parse(raw) as Config;
 
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) {
-    throw new Error('OPENROUTER_API_KEY is not set. Copy .env.example to .env and fill it in.');
-  }
-
   return config;
 }

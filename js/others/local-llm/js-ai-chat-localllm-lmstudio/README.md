@@ -1,14 +1,20 @@
 # js-ai-chat
 
-Simple AI chat app using OpenRouter API.
+Simple AI chat app using a local LLM via [LM Studio](https://lmstudio.ai).
+
+## Prerequisites
+
+1. Install and open LM Studio
+2. Download any model (e.g. Llama 3, Mistral, Phi)
+3. Go to **Local Server** tab and click **Start Server** (default port: 1234)
 
 ## Setup
 
 ```bash
 npm install
-cp .env.example .env
-# Fill in your OPENROUTER_API_KEY in .env
 ```
+
+No API key required — LM Studio runs entirely locally.
 
 ## Run
 
@@ -25,22 +31,24 @@ npm start
 
 Type a message and press Enter to chat. Available commands:
 
-| Command     | Description                        |
-|-------------|------------------------------------|
-| `/history`  | Show conversation history          |
-| `/clear`    | Clear the console                  |
-| `/exit`     | Quit the chatbot                   |
+| Command     | Description               |
+|-------------|---------------------------|
+| `/history`  | Show conversation history |
+| `/clear`    | Clear the console         |
+| `/exit`     | Quit the chatbot          |
 
 ## Configuration
 
 Edit `config.json` to change model, tokens, or temperature.
 
-| Field         | Default                          | Description             |
-|---------------|----------------------------------|-------------------------|
-| `model`       | `openai/gpt-4o`                  | OpenRouter model ID     |
-| `maxTokens`   | `1024`                           | Max tokens per response |
-| `temperature` | `0.7`                            | Sampling temperature    |
-| `baseUrl`     | `https://openrouter.ai/api/v1`   | API base URL            |
+| Field         | Default                    | Description                     |
+|---------------|----------------------------|---------------------------------|
+| `model`       | `local-model`              | Model identifier from LM Studio |
+| `maxTokens`   | `1024`                     | Max tokens per response         |
+| `temperature` | `0.7`                      | Sampling temperature            |
+| `baseUrl`     | `http://localhost:1234/v1` | LM Studio server URL            |
+
+> **Tip:** The exact model identifier can be found in LM Studio under the loaded model's info panel. Use it as the `model` value in `config.json`.
 
 ## Logs
 

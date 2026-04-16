@@ -6,12 +6,9 @@ export interface Message {
 }
 
 export async function sendMessage(history: Message[], config: Config): Promise<string> {
-  const apiKey = process.env.OPENROUTER_API_KEY!;
-
   const response = await fetch(`${config.baseUrl}/chat/completions`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
