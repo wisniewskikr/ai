@@ -6,8 +6,8 @@ import { Config } from './config';
 import { Message, sendMessage } from './api';
 import { log } from './logger';
 
-function loadKnowledgeBase(): string {
-  const filePath = path.join(process.cwd(), 'data', 'data.txt');
+function loadKnowledgeBase(knowledgeBasePath: string): string {
+  const filePath = path.join(process.cwd(), knowledgeBasePath);
   return fs.readFileSync(filePath, 'utf-8');
 }
 
@@ -28,7 +28,7 @@ function printHistory(history: Message[]): void {
 export async function runChat(config: Config): Promise<void> {
   const rl = readline.createInterface({ input, output });
 
-  const knowledgeBase = loadKnowledgeBase();
+  const knowledgeBase = loadKnowledgeBase(config.knowledgeBasePath);
   const history: Message[] = [
     {
       role: 'system',
