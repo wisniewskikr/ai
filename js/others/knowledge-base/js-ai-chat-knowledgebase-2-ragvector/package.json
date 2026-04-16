@@ -1,0 +1,19 @@
+{
+  "name": "js-ai-chat-knowledgebase-2-ragvector",
+  "version": "1.0.0",
+  "description": "Simple AI chat app using OpenRouter and knowledge base type rag with vector search",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node -r dotenv/config dist/index.js",
+    "dev": "ts-node -r dotenv/config src/index.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}
