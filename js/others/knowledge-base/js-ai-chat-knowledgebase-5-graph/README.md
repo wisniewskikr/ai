@@ -54,6 +54,20 @@ At startup the app loads the file specified by `knowledgeBasePath`. For each use
 
 Only relevant data reaches the model — the full graph is never sent at once.
 
+### Example — multi-hop traversal
+
+Query: `What is the breed of Joe's dog?`
+
+```
+searchNodes("Joe's dog")  →  [joe_doe, biscuit]
+getNeighbors(depth=2)     →  joe_doe --owns_pet--> biscuit --breed: golden retriever
+buildContext              →  "Biscuit (Animal): breed: golden retriever
+                              joe_doe --owns_pet--> Biscuit"
+API response              →  "Joe's dog Biscuit is a golden retriever."
+```
+
+This query requires following two hops: `joe_doe → biscuit → breed`. In a flat-text approach the whole knowledge base would be sent; here only the two relevant nodes and their relation are passed to the model.
+
 ### Graph format (`data/knowledge-graph.json`)
 
 ```json
