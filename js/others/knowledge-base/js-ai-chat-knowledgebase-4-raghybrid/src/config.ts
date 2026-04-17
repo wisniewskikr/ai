@@ -13,6 +13,8 @@ export interface Config {
   chunkSize: number;
   chunkOverlap: number;
   topK: number;
+  similarity: number;
+  threshold: number;
 }
 
 export function loadConfig(): Config {

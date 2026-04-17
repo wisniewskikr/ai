@@ -8,5 +8,7 @@
   "embeddingDimension": 1536,
   "chunkSize": 500,
   "chunkOverlap": 50,
-  "topK": 4
+  "topK": 4,
+  "similarity": 0.1,
+  "threshold": 0
 }

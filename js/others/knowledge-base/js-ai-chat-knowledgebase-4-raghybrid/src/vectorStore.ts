@@ -29,7 +29,7 @@ export async function searchIndex(
   db: OramaDB,
   queryEmbedding: number[],
   query: string,
-  topK: number
+  config: { topK: number; similarity: number; threshold: number }
 ): Promise<string[]> {
   const results = await search(db, {
     mode: 'hybrid',
@@ -38,7 +38,9 @@ export async function searchIndex(
       value: queryEmbedding,
       property: 'embedding',
     },
-    limit: topK,
+    limit: config.topK,
+    similarity: config.similarity,
+    threshold: config.threshold,
   } as any);
 
   return results.hits.map((hit: any) => hit.document.text as string);

@@ -102,7 +102,7 @@ export async function runChat(config: Config): Promise<void> {
     try {
       // RAG: embed question, hybrid search, build context
       const queryEmbedding = await embedText(trimmed, config);
-      const relevantChunks = await searchIndex(db, queryEmbedding, trimmed, config.topK);
+      const relevantChunks = await searchIndex(db, queryEmbedding, trimmed, config);
       log('INFO', `Retrieved ${relevantChunks.length} chunks (hybrid search)`);
 
       const context = relevantChunks
