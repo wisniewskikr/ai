@@ -9,10 +9,10 @@ export interface Config {
   knowledgeBasePath: string;
   // RAG
   embeddingModel: string;
+  embeddingDimension: number;
   chunkSize: number;
   chunkOverlap: number;
   topK: number;
-  chromaUrl?: string;
 }
 
 export function loadConfig(): Config {

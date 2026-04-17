@@ -10,9 +10,8 @@
   },
   "dependencies": {
     "@langchain/textsplitters": "^1.0.1",
-    "chromadb": "^1.9.2",
-    "dotenv": "^16.4.5",
-    "minisearch": "^7.1.0"
+    "@orama/orama": "^2.0.0",
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",

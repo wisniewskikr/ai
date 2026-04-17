@@ -3,9 +3,11 @@
 ## Cel
 
 Przekształcić obecną implementację RAG z in-memory vector store (Vectra) na architekturę **hybrydową**,
-która łączy wyszukiwanie wektorowe (ChromaDB) z wyszukiwaniem pełnotekstowym (MiniSearch).
+która łączy wyszukiwanie wektorowe z wyszukiwaniem pełnotekstowym w jednej bibliotece — **Orama**.
 
-Aktualny projekt (#2) używa tylko wyszukiwania semantycznego (Vectra). Docelowy projekt #4 dodaje równoległe wyszukiwanie pełnotekstowe (MiniSearch), łączy wyniki z obu źródeł i dostarcza bogatszy kontekst do LLM.
+Aktualny projekt (#2) używa tylko wyszukiwania semantycznego (Vectra). Docelowy projekt #4 dodaje
+hybrydowe wyszukiwanie (wektorowe + pełnotekstowe) przez bibliotekę `@orama/orama`, która obsługuje
+oba tryby natywnie bez żadnego serwera HTTP ani Dockera.
 
 ---
 
@@ -51,19 +53,26 @@ Pytanie → embedding → Vectra search (top-K) → kontekst → LLM → odpowie
 ## Stan docelowy — Projekt #4
 
 ### Architektura
-- Wyszukiwanie: **hybrydowe** = wektorowe (ChromaDB) + pełnotekstowe (MiniSearch)
-- Wyniki z obu źródeł są łączone i deduplikowane przed wysłaniem do LLM
+- Wyszukiwanie: **hybrydowe** = wektorowe + pełnotekstowe w jednej bibliotece (**Orama**)
+- Orama obsługuje oba tryby natywnie — brak ręcznego merge/dedup w kodzie aplikacji
+- Zero serwera, zero Dockera — wszystko in-process w `node_modules`
+
+### Dlaczego Orama zamiast ChromaDB + MiniSearch
+| | ChromaDB + MiniSearch | Orama |
+|---|---|---|
+| Liczba bibliotek | 2 | 1 |
+| Wymaga serwera HTTP | tak (ChromaDB) | nie |
+| Wymaga Dockera | tak | nie |
+| Hybrid search | ręczna implementacja | natywna, wbudowana |
+| Kod orkiestracji | merge + dedup w chat.ts | brak — jedna funkcja |
 
 ### Przepływ danych (docelowy)
 ```
-Tekst → chunking → embeddingi → ChromaDB + MiniSearch (równoległa indeksacja)
+Tekst → chunking → embeddingi → Orama (in-process)
 
 Pytanie
    ↓
-   ├── ChromaDB vector search (top-K semantyczne)
-   └── MiniSearch full-text search (top-K słowne)
-        ↓
-   Połączone wyniki (merge + deduplikacja)
+   Orama hybrid search (wektorowe + pełnotekstowe jednocześnie)
         ↓
    Kontekst → LLM → odpowiedź
 ```
@@ -73,14 +82,13 @@ Pytanie
 ## Krok 1 — Aktualizacja zależności
 
 ```bash
-npm uninstall vectra
-npm install chromadb minisearch
+npm uninstall vectra chromadb minisearch
+npm install @orama/orama
 ```
 
 **Wyjaśnienie:**
-- `vectra` — usunąć, zastąpione przez ChromaDB
-- `chromadb` — klient TypeScript dla ChromaDB (wyszukiwanie wektorowe)
-- `minisearch` — in-memory full-text search, pure JS, zero konfiguracji serwera
+- `vectra`, `chromadb`, `minisearch` — usunąć
+- `@orama/orama` — in-process hybrid search (wektorowe + pełnotekstowe), pure JS, zero konfiguracji serwera
 
 `@langchain/textsplitters` i `dotenv` pozostają bez zmian.
 
@@ -88,145 +96,104 @@ Zaktualizowany `package.json`:
 ```json
 "dependencies": {
   "@langchain/textsplitters": "^1.0.1",
-  "chromadb": "^1.9.2",
-  "dotenv": "^16.4.5",
-  "minisearch": "^7.1.0"
+  "@orama/orama": "^2.0.0",
+  "dotenv": "^16.4.5"
 }
 ```
 
 ---
 
-## Krok 2 — Modyfikacja `src/vectorStore.ts` — Vectra → ChromaDB
+## Krok 2 — Modyfikacja `src/config.ts`
 
-Przepisać cały plik. Usunąć `vectra`, zastąpić `chromadb`.
-
-**Interfejs publiczny (zachować te same sygnatury funkcji):**
-```typescript
-export async function buildIndex(chunks: string[], embeddings: number[][], config: Config): Promise<Collection>
-export async function searchIndex(collection: Collection, queryEmbedding: number[], topK: number): Promise<string[]>
-```
-
-**Kluczowe szczegóły ChromaDB API:**
-```typescript
-import { ChromaClient } from 'chromadb';
-
-// Klient ephemeral (in-memory, bez serwera) — preferowane podejście
-const client = new ChromaClient({ path: 'http://localhost:8000' });
-// Uwaga: sprawdź aktualną dokumentację chromadb npm — może istnieć EphemeralClient lub tryb in-memory
-
-// Tworzenie kolekcji z unikalną nazwą
-const collection = await client.createCollection({
-  name: `rag-${Date.now()}`,
-  embeddingFunction: undefined,  // embeddingi dostarczamy sami
-});
-
-// Dodawanie dokumentów
-await collection.add({
-  ids: chunks.map((_, i) => `chunk-${i}`),
-  embeddings: embeddings,
-  documents: chunks,
-});
-
-// Wyszukiwanie
-const results = await collection.query({
-  queryEmbeddings: [queryEmbedding],
-  nResults: topK,
-});
-// Wyniki: results.documents[0] — tablica stringów (dokumentów)
-```
-
-> **Uwaga dotycząca ChromaDB in-memory:**
-> Wersja `chromadb` npm 1.x wymaga działającego serwera HTTP. Sprawdź czy dostępny jest `EphemeralClient`
-> (tryb bez serwera). Jeśli nie — uruchom serwer przez Docker:
-> ```bash
-> docker run -p 8000:8000 chromadb/chroma
-> ```
-
----
-
-## Krok 3 — Nowy plik `src/fullTextSearch.ts`
-
-Stworzyć nowy moduł odpowiedzialny za full-text search z MiniSearch.
+Dodać `embeddingDimension` do interfejsu `Config` — Orama musi znać wymiarowość wektora przy tworzeniu schematu:
 
 ```typescript
-import MiniSearch from 'minisearch';
-
-export function buildFullTextIndex(chunks: string[]): MiniSearch {
-  const index = new MiniSearch({ fields: ['text'], storeFields: ['text'] });
-  const docs = chunks.map((text, id) => ({ id, text }));
-  index.addAll(docs);
-  return index;
-}
-
-export function searchFullText(index: MiniSearch, query: string, topK: number): string[] {
-  const results = index.search(query, { limit: topK });
-  return results.map(r => r.text as string);
+export interface Config {
+  // ...istniejące pola...
+  embeddingDimension: number;  // np. 1536 dla text-embedding-ada-002
 }
 ```
 
-**Kluczowe szczegóły MiniSearch:**
-- Import: `import MiniSearch from 'minisearch'` (lub `import { MiniSearch } from 'minisearch'` — sprawdź wersję)
-- Dokumenty muszą mieć pole `id` + co najmniej jedno pole tekstowe
-- `fields` — pola do indeksowania
-- `storeFields` — pola do zwracania w wynikach
-- Działa w pełni in-memory, zero konfiguracji serwera
+Oraz w `config.json`:
+```json
+"embeddingDimension": 1536
+```
+
+Wartość musi odpowiadać modelowi embeddings (`config.embeddingModel`).
 
 ---
 
-## Krok 4 — Modyfikacja `src/chat.ts` — hybrydowe wyszukiwanie
+## Krok 3 — Modyfikacja `src/vectorStore.ts` — Vectra/ChromaDB → Orama
+
+Przepisać cały plik. Orama zastępuje zarówno Vectra, jak i MiniSearch.
+
+**Interfejs publiczny:**
+```typescript
+export async function buildIndex(chunks: string[], embeddings: number[][], config: Config): Promise<OramaDB>
+export async function searchIndex(db: OramaDB, queryEmbedding: number[], query: string, topK: number): Promise<string[]>
+```
+
+> Uwaga: `searchIndex` teraz przyjmuje dodatkowy parametr `query: string` (tekst pytania) potrzebny do trybu hybrydowego.
+
+**Kluczowe szczegóły Orama API:**
+```typescript
+import { create, insertMultiple, search, Orama } from '@orama/orama';
+
+type OramaDB = Orama<any>;
+
+// Tworzenie bazy — schema musi zawierać wymiar wektora
+const db = await create({
+  schema: {
+    id: 'string',
+    text: 'string',
+    embedding: `vector[${config.embeddingDimension}]`,
+  } as any,
+});
+
+// Wstawianie dokumentów
+await insertMultiple(db, chunks.map((text, i) => ({ id: `chunk-${i}`, text, embedding: embeddings[i] })));
+
+// Hybrid search — wektorowe + pełnotekstowe jednocześnie
+const results = await search(db, {
+  mode: 'hybrid',
+  term: query,
+  vector: { value: queryEmbedding, property: 'embedding' },
+  limit: topK,
+} as any);
+
+// Wyniki: results.hits[i].document.text
+```
+
+---
+
+## Krok 4 — Usunięcie `src/fullTextSearch.ts`
+
+Plik nie jest już potrzebny — Orama obsługuje full-text search natywnie.
+Usunąć plik lub pozostawić z komentarzem.
+
+---
+
+## Krok 5 — Modyfikacja `src/chat.ts`
 
 ### Zmiany w imporcie
-Dodać import `buildFullTextIndex`, `searchFullText` z `./fullTextSearch`.
-Usunąć import `LocalIndex` z `vectra`.
-Zaktualizować typ `index` z `LocalIndex` na `Collection` (z `chromadb`).
+- Usunąć: `import { Collection } from 'chromadb'`
+- Usunąć: `import { buildFullTextIndex, searchFullText } from './fullTextSearch'`
+- `buildIndex` i `searchIndex` importowane z `./vectorStore` — bez zmian
 
-### Faza inicjalizacji — dodać budowanie indeksu full-text
-
-Po zbudowaniu indeksu wektorowego dodać:
+### Faza inicjalizacji — uproszczenie
+Zastąpić dwa osobne bloki (vector index + full-text index):
 ```typescript
-console.log('Building full-text index...');
-const fullTextIndex = buildFullTextIndex(chunks);
-console.log('Full-text index ready.\n');
+console.log('Building hybrid index...');
+const db = await buildIndex(chunks, embeddings, config);
+console.log('Hybrid index ready.\n');
 ```
 
-### Faza odpowiedzi — hybrydowe wyszukiwanie
-
-Zastąpić obecne:
+### Faza odpowiedzi — uproszczenie
+Zastąpić cały blok `Promise.all` + merge + dedup:
 ```typescript
-const relevantChunks = await searchIndex(index, queryEmbedding, config.topK);
+const relevantChunks = await searchIndex(db, queryEmbedding, trimmed, config.topK);
+log('INFO', `Retrieved ${relevantChunks.length} chunks (hybrid search)`);
 ```
-
-Nowym kodem:
-```typescript
-const [vectorChunks, textChunks] = await Promise.all([
-  searchIndex(collection, queryEmbedding, config.topK),
-  Promise.resolve(searchFullText(fullTextIndex, trimmed, config.topK)),
-]);
-
-// Deduplikacja — zachowaj kolejność, usuń duplikaty
-const seen = new Set<string>();
-const combined: string[] = [];
-for (const chunk of [...vectorChunks, ...textChunks]) {
-  if (!seen.has(chunk)) {
-    seen.add(chunk);
-    combined.push(chunk);
-  }
-}
-const relevantChunks = combined.slice(0, config.topK);
-
-log('INFO', `Retrieved ${vectorChunks.length} vector + ${textChunks.length} text chunks (${relevantChunks.length} after dedup)`);
-```
-
----
-
-## Krok 5 — Opcjonalnie: rozszerzenie `src/config.ts`
-
-Można dodać do interfejsu `Config`:
-```typescript
-chromaUrl?: string;   // domyślnie 'http://localhost:8000'
-```
-
-Oraz uzupełnić `config.json` o to pole.
 
 ---
 
@@ -234,11 +201,11 @@ Oraz uzupełnić `config.json` o to pole.
 
 | Plik | Akcja | Co zmienić |
 |---|---|---|
-| `package.json` | Modyfikacja | Usunąć `vectra`, dodać `chromadb` + `minisearch` |
-| `src/vectorStore.ts` | Przepisać | Vectra LocalIndex → ChromaDB Collection |
-| `src/fullTextSearch.ts` | Stworzyć nowy | MiniSearch index + search |
-| `src/chat.ts` | Modyfikacja | Dodać full-text index, hybrydowe wyszukiwanie |
-| `src/config.ts` | Opcjonalnie | Dodać `chromaUrl?: string` do interfejsu Config |
+| `package.json` | Modyfikacja | Usunąć `vectra`/`chromadb`/`minisearch`, dodać `@orama/orama` |
+| `src/config.ts` | Modyfikacja | Dodać `embeddingDimension: number` |
+| `src/vectorStore.ts` | Przepisać | Orama hybrid store |
+| `src/fullTextSearch.ts` | Usunąć / zostawić pusty | Nie jest już potrzebny |
+| `src/chat.ts` | Uprościć | Usunąć ręczny merge/dedup, jedno wywołanie searchIndex |
 
 ## Pliki bez zmian
 
@@ -254,19 +221,20 @@ Oraz uzupełnić `config.json` o to pole.
 
 | | Projekt #2 (RAG wektorowy) | Projekt #4 (RAG hybrydowy) |
 |---|---|---|
-| Vector search | Vectra (in-memory) | ChromaDB |
-| Full-text search | brak | MiniSearch |
+| Vector search | Vectra (in-memory) | Orama (in-process) |
+| Full-text search | brak | Orama (natywny) |
+| Serwer/Docker | nie | nie |
 | Wyniki | tylko semantyczne | semantyczne + słowne |
 | Trafność słów kluczowych | słaba | dobra |
 | Trafność znaczenia | dobra | dobra |
-| Złożoność | prosta | umiarkowana |
+| Złożoność kodu | prosta | prosta (Orama ukrywa złożoność) |
 
 ---
 
 ## Weryfikacja po implementacji
 
 1. Uruchomić `npm run dev`
-2. Sprawdzić czy oba indeksy budują się (logi w konsoli)
-3. Zadać pytanie z dokładnym fragmentem tekstu z bazy → MiniSearch powinno znaleźć
-4. Zadać pytanie semantyczne (inne słowa, to samo znaczenie) → ChromaDB powinno znaleźć
-5. Sprawdzić że deduplikacja działa (ten sam chunk nie pojawia się dwa razy w kontekście)
+2. Sprawdzić czy indeks buduje się (log: "Hybrid index ready.")
+3. Zadać pytanie z dokładnym fragmentem tekstu z bazy → full-text search powinno znaleźć
+4. Zadać pytanie semantyczne (inne słowa, to samo znaczenie) → vector search powinno znaleźć
+5. Sprawdzić logi: `Retrieved N chunks (hybrid search)`

@@ -1,35 +1,45 @@
-import { ChromaClient, Collection } from 'chromadb';
+import { create, insertMultiple, search, Orama } from '@orama/orama';
 import { Config } from './config';
+
+export type OramaDB = Orama<any>;
 
 export async function buildIndex(
   chunks: string[],
   embeddings: number[][],
   config: Config
-): Promise<Collection> {
-  const client = new ChromaClient({ path: config.chromaUrl ?? 'http://localhost:8000' });
-
-  const collection = await client.createCollection({
-    name: `rag-${Date.now()}`,
-    embeddingFunction: undefined,
+): Promise<OramaDB> {
+  const db = await create({
+    schema: {
+      id: 'string',
+      text: 'string',
+      embedding: `vector[${config.embeddingDimension}]`,
+    } as any,
   });
 
-  await collection.add({
-    ids: chunks.map((_, i) => `chunk-${i}`),
-    embeddings: embeddings,
-    documents: chunks,
-  });
+  await insertMultiple(db, chunks.map((text, i) => ({
+    id: `chunk-${i}`,
+    text,
+    embedding: embeddings[i],
+  })));
 
-  return collection;
+  return db;
 }
 
 export async function searchIndex(
-  collection: Collection,
+  db: OramaDB,
   queryEmbedding: number[],
+  query: string,
   topK: number
 ): Promise<string[]> {
-  const results = await collection.query({
-    queryEmbeddings: [queryEmbedding],
-    nResults: topK,
-  });
-  return (results.documents[0] ?? []).filter((d): d is string => d !== null);
+  const results = await search(db, {
+    mode: 'hybrid',
+    term: query,
+    vector: {
+      value: queryEmbedding,
+      property: 'embedding',
+    },
+    limit: topK,
+  } as any);
+
+  return results.hits.map((hit: any) => hit.document.text as string);
 }

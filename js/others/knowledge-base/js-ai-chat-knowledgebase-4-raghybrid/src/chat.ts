@@ -8,8 +8,6 @@ import { log } from './logger';
 import { splitIntoChunks } from './chunker';
 import { embedText, embedBatch } from './embeddings';
 import { buildIndex, searchIndex } from './vectorStore';
-import { Collection } from 'chromadb';
-import { buildFullTextIndex, searchFullText } from './fullTextSearch';
 
 function loadKnowledgeBase(knowledgeBasePath: string): string {
   const filePath = path.join(process.cwd(), knowledgeBasePath);
@@ -45,13 +43,9 @@ export async function runChat(config: Config): Promise<void> {
   console.log('Generating embeddings...');
   const embeddings = await embedBatch(chunks, config);
 
-  console.log('Building vector index...');
-  const collection: Collection = await buildIndex(chunks, embeddings, config);
-  console.log('Vector index ready.\n');
-
-  console.log('Building full-text index...');
-  const fullTextIndex = buildFullTextIndex(chunks);
-  console.log('Full-text index ready.\n');
+  console.log('Building hybrid index...');
+  const db = await buildIndex(chunks, embeddings, config);
+  console.log('Hybrid index ready.\n');
 
   const history: Message[] = [
     {
@@ -106,25 +100,10 @@ export async function runChat(config: Config): Promise<void> {
     log('USER', trimmed);
 
     try {
-      // RAG: embed question, retrieve top-K chunks, build context
+      // RAG: embed question, hybrid search, build context
       const queryEmbedding = await embedText(trimmed, config);
-
-      const [vectorChunks, textChunks] = await Promise.all([
-        searchIndex(collection, queryEmbedding, config.topK),
-        Promise.resolve(searchFullText(fullTextIndex, trimmed, config.topK)),
-      ]);
-
-      const seen = new Set<string>();
-      const combined: string[] = [];
-      for (const chunk of [...vectorChunks, ...textChunks]) {
-        if (!seen.has(chunk)) {
-          seen.add(chunk);
-          combined.push(chunk);
-        }
-      }
-      const relevantChunks = combined.slice(0, config.topK);
-
-      log('INFO', `Retrieved ${vectorChunks.length} vector + ${textChunks.length} text chunks (${relevantChunks.length} after dedup)`);
+      const relevantChunks = await searchIndex(db, queryEmbedding, trimmed, config.topK);
+      log('INFO', `Retrieved ${relevantChunks.length} chunks (hybrid search)`);
 
       const context = relevantChunks
         .map((chunk, i) => `[${i + 1}] ${chunk}`)
