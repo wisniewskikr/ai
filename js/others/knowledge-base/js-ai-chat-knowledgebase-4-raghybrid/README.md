@@ -47,8 +47,14 @@ Edit `config.json` to change model, tokens, temperature, or RAG parameters.
 | `chunkSize`          | `500`                            | Max characters per chunk                               |
 | `chunkOverlap`       | `50`                             | Overlap between adjacent chunks                        |
 | `topK`               | `4`                              | Number of chunks retrieved per question                |
+| `similarity`         | `0.1`                            | Minimum cosine similarity for vector search (0–1)      |
+| `threshold`          | `0`                              | Minimum fraction of query terms that must match in full-text search (0–1) |
 
 `embeddingDimension` by model: `text-embedding-3-small` → 1536, `text-embedding-3-large` → 3072, `text-embedding-ada-002` → 1536.
+
+**`similarity`** — Orama's default is 0.8, which is too strict for small knowledge bases and causes relevant chunks to be filtered out. Lower values (e.g. 0.1) return more candidates and let the ranking decide.
+
+**`threshold`** — Orama's default is 1, meaning all query tokens must be present in a chunk (AND logic). Setting it to 0 switches to OR logic — a chunk matches if it contains any query token. Use values between 0 and 1 to require a fraction of terms (e.g. 0.5 = at least half).
 
 ## How It Works
 
