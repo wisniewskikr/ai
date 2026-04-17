@@ -1,6 +1,6 @@
-# js-ai-chat — Knowledge Base (Full Context)
+# js-ai-chat — Knowledge Graph
 
-AI chat app using OpenRouter API with a knowledge base loaded into the model's context window (Project 1 from the knowledge base series).
+AI chat app using OpenRouter API with a knowledge base stored as a graph (Project 5 from the knowledge base series). Instead of loading all data into the context window, the app traverses the graph to retrieve only the nodes and relations relevant to each query.
 
 ## Setup
 
@@ -26,28 +26,46 @@ npm start
 Type a message and press Enter to chat. Available commands:
 
 | Command     | Description                        |
-|-------------|------------------------------------|
-| `/history`  | Show conversation history          |
-| `/clear`    | Clear the console                  |
-| `/exit`     | Quit the chatbot                   |
+|-------------|-------------------------------------|
+| `/history`  | Show conversation history           |
+| `/clear`    | Clear the console                   |
+| `/exit`     | Quit the chatbot                    |
 
 ## Configuration
 
-Edit `config.json` to change model, tokens, or temperature.
+Edit `config.json` to change model, tokens, temperature, or knowledge graph path.
 
-| Field         | Default                          | Description             |
-|---------------|----------------------------------|-------------------------|
-| `model`             | `openai/gpt-4o`                  | OpenRouter model ID               |
-| `maxTokens`         | `1024`                           | Max tokens per response           |
-| `temperature`       | `0.7`                            | Sampling temperature              |
-| `baseUrl`           | `https://openrouter.ai/api/v1`   | API base URL                      |
-| `knowledgeBasePath` | `data/data.txt`                  | Path to knowledge base file (relative to project root) |
+| Field               | Description                                                      |
+|---------------------|------------------------------------------------------------------|
+| `model`             | OpenRouter model ID                                              |
+| `maxTokens`         | Max tokens per response                                          |
+| `temperature`       | Sampling temperature                                             |
+| `baseUrl`           | API base URL                                                     |
+| `knowledgeBasePath` | Path to knowledge graph JSON file (relative to project root)     |
 
-## Knowledge Base
+## Knowledge Graph
 
-At startup the app reads the file specified by `knowledgeBasePath` and injects its content into the system prompt. The model answers questions based solely on that data.
+At startup the app loads the file specified by `knowledgeBasePath`. For each user query the app:
 
-To use a different knowledge base, point `knowledgeBasePath` in `config.json` to any plain-text file (relative to the project root).
+1. **Searches** — finds graph nodes matching keywords from the query (`id`, `label`, `properties`)
+2. **Traverses** — BFS to depth 2 to collect connected nodes and relations
+3. **Builds context** — serializes matching nodes and edges into text
+4. **Sends** — injects that context as the system prompt for the current request
+
+Only relevant data reaches the model — the full graph is never sent at once.
+
+### Graph format (`data/knowledge-graph.json`)
+
+```json
+{
+  "nodes": [
+    { "id": "joe_doe", "label": "Person", "properties": { "name": "Joe Doe", "role": "software engineer" } }
+  ],
+  "edges": [
+    { "from": "joe_doe", "to": "clara", "relation": "married_to" }
+  ]
+}
+```
 
 ## Logs
 
