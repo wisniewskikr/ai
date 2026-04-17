@@ -12,6 +12,7 @@ export interface Config {
   chunkSize: number;
   chunkOverlap: number;
   topK: number;
+  chromaUrl?: string;
 }
 
 export function loadConfig(): Config {

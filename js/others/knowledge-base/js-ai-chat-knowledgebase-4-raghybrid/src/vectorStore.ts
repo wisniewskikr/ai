@@ -1,35 +1,35 @@
-import * as os from 'os';
-import * as path from 'path';
-import { LocalIndex } from 'vectra';
+import { ChromaClient, Collection } from 'chromadb';
 import { Config } from './config';
 
 export async function buildIndex(
   chunks: string[],
   embeddings: number[][],
   config: Config
-): Promise<LocalIndex> {
-  const indexPath = path.join(os.tmpdir(), `rag-index-${Date.now()}`);
-  const index = new LocalIndex(indexPath);
+): Promise<Collection> {
+  const client = new ChromaClient({ path: config.chromaUrl ?? 'http://localhost:8000' });
 
-  if (!await index.isIndexCreated()) {
-    await index.createIndex();
-  }
+  const collection = await client.createCollection({
+    name: `rag-${Date.now()}`,
+    embeddingFunction: undefined,
+  });
 
-  for (let i = 0; i < chunks.length; i++) {
-    await index.insertItem({
-      vector: embeddings[i],
-      metadata: { text: chunks[i] },
-    });
-  }
+  await collection.add({
+    ids: chunks.map((_, i) => `chunk-${i}`),
+    embeddings: embeddings,
+    documents: chunks,
+  });
 
-  return index;
+  return collection;
 }
 
 export async function searchIndex(
-  index: LocalIndex,
+  collection: Collection,
   queryEmbedding: number[],
   topK: number
 ): Promise<string[]> {
-  const results = await index.queryItems(queryEmbedding, '', topK);
-  return results.map(r => (r.item.metadata as { text: string }).text);
+  const results = await collection.query({
+    queryEmbeddings: [queryEmbedding],
+    nResults: topK,
+  });
+  return (results.documents[0] ?? []).filter((d): d is string => d !== null);
 }

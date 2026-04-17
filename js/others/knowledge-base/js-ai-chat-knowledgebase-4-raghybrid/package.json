@@ -10,8 +10,9 @@
   },
   "dependencies": {
     "@langchain/textsplitters": "^1.0.1",
+    "chromadb": "^1.9.2",
     "dotenv": "^16.4.5",
-    "vectra": "^0.14.0"
+    "minisearch": "^7.1.0"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
