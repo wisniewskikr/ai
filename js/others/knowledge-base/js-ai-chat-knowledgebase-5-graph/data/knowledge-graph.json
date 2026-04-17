@@ -1,0 +1,39 @@
+{
+  "nodes": [
+    { "id": "joe_doe", "label": "Person", "properties": { "name": "Joe Doe", "role": "software engineer" } },
+    { "id": "clara", "label": "Person", "properties": { "name": "Clara", "relation": "wife" } },
+    { "id": "lily", "label": "Person", "properties": { "name": "Lily", "age": 7 } },
+    { "id": "max", "label": "Person", "properties": { "name": "Max", "age": 4 } },
+    { "id": "biscuit", "label": "Animal", "properties": { "name": "Biscuit", "breed": "golden retriever" } },
+    { "id": "austin_company", "label": "Organization", "properties": { "description": "mid-sized tech company", "location": "Austin, Texas" } },
+    { "id": "hiking", "label": "Hobby", "properties": { "name": "hiking", "description": "hiking in the mountains and exploring nature trails" } },
+    { "id": "reading", "label": "Hobby", "properties": { "name": "reading", "genres": "science fiction and historical novels" } },
+    { "id": "guitar", "label": "Hobby", "properties": { "name": "acoustic guitar", "description": "plays and occasionally performs at local open mic nights" } },
+    { "id": "cooking", "label": "Hobby", "properties": { "name": "cooking", "description": "elaborate meals for family, experimenting with new recipes on weekends" } },
+    { "id": "cycling", "label": "Hobby", "properties": { "name": "cycling", "description": "passionate cyclist, participates in charity bike races every summer" } },
+    { "id": "volunteering", "label": "Activity", "properties": { "name": "volunteering", "description": "teaches basic coding skills to teenagers at a local community center" } },
+    { "id": "football", "label": "Interest", "properties": { "name": "football", "team": "Dallas Cowboys" } },
+    { "id": "board_games", "label": "Hobby", "properties": { "name": "board games", "description": "hosts a monthly game night with friends and neighbors" } },
+    { "id": "garden", "label": "Hobby", "properties": { "name": "vegetable garden", "description": "small backyard garden with tomatoes, peppers, and herbs" } },
+    { "id": "road_trip_dream", "label": "Dream", "properties": { "name": "road trip", "description": "take family on a road trip across all 50 states of the USA" } }
+  ],
+  "edges": [
+    { "from": "joe_doe", "to": "clara", "relation": "married_to" },
+    { "from": "joe_doe", "to": "lily", "relation": "parent_of" },
+    { "from": "joe_doe", "to": "max", "relation": "parent_of" },
+    { "from": "joe_doe", "to": "biscuit", "relation": "owns_pet" },
+    { "from": "joe_doe", "to": "austin_company", "relation": "works_at" },
+    { "from": "joe_doe", "to": "hiking", "relation": "enjoys" },
+    { "from": "joe_doe", "to": "reading", "relation": "enjoys" },
+    { "from": "joe_doe", "to": "guitar", "relation": "plays" },
+    { "from": "joe_doe", "to": "cooking", "relation": "enjoys" },
+    { "from": "joe_doe", "to": "cycling", "relation": "enjoys" },
+    { "from": "joe_doe", "to": "volunteering", "relation": "does" },
+    { "from": "joe_doe", "to": "football", "relation": "follows" },
+    { "from": "joe_doe", "to": "board_games", "relation": "enjoys" },
+    { "from": "joe_doe", "to": "garden", "relation": "tends" },
+    { "from": "joe_doe", "to": "road_trip_dream", "relation": "dreams_of" },
+    { "from": "clara", "to": "lily", "relation": "parent_of" },
+    { "from": "clara", "to": "max", "relation": "parent_of" }
+  ]
+}

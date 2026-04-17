@@ -1,15 +1,9 @@
 import * as readline from 'node:readline/promises';
-import * as fs from 'fs';
-import * as path from 'path';
 import { stdin as input, stdout as output } from 'node:process';
 import { Config } from './config';
 import { Message, sendMessage } from './api';
 import { log } from './logger';
-
-function loadKnowledgeBase(knowledgeBasePath: string): string {
-  const filePath = path.join(process.cwd(), knowledgeBasePath);
-  return fs.readFileSync(filePath, 'utf-8');
-}
+import { loadGraph, buildContext, KnowledgeGraph } from './graph';
 
 function printHistory(history: Message[]): void {
   const visible = history.filter(m => m.role !== 'system');
@@ -28,13 +22,8 @@ function printHistory(history: Message[]): void {
 export async function runChat(config: Config): Promise<void> {
   const rl = readline.createInterface({ input, output });
 
-  const knowledgeBase = loadKnowledgeBase(config.knowledgeBasePath);
-  const history: Message[] = [
-    {
-      role: 'system',
-      content: `You are a helpful assistant. Answer questions based on the following knowledge base:\n\n${knowledgeBase}\n\nIf the answer cannot be found in the knowledge base, say so clearly.`,
-    },
-  ];
+  const graph: KnowledgeGraph = loadGraph(config.knowledgeBasePath);
+  const history: Message[] = [];
 
   function printHelp(): void {
     console.log('Available commands:');
@@ -81,10 +70,17 @@ export async function runChat(config: Config): Promise<void> {
     }
 
     log('USER', trimmed);
+
+    const context = buildContext(graph, trimmed);
+    const systemMessage: Message = {
+      role: 'system',
+      content: `You are a helpful assistant. Answer questions based on the following knowledge graph context:\n\n${context}\n\nIf the answer cannot be found in the context, say so clearly.`,
+    };
+    const messagesWithContext = [systemMessage, ...history, { role: 'user' as const, content: trimmed }];
     history.push({ role: 'user', content: trimmed });
 
     try {
-      const reply = await sendMessage(history, config);
+      const reply = await sendMessage(messagesWithContext, config);
       history.push({ role: 'assistant', content: reply });
       log('ASSISTANT', reply);
       console.log(`\nAssistant: ${reply}\n`);
