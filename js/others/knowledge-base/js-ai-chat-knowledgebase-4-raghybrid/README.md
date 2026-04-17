@@ -1,6 +1,6 @@
-# js-ai-chat — Knowledge Base (RAG + Vector Search)
+# js-ai-chat — Knowledge Base (RAG Hybrid)
 
-AI chat app using OpenRouter API with a RAG (Retrieval-Augmented Generation) pipeline. Instead of loading the entire knowledge base into context, the app splits it into chunks, indexes them as embeddings in an in-memory vector store (Vectra), and retrieves only the most relevant fragments per question (Project 2 from the knowledge base series).
+AI chat app using OpenRouter API with a hybrid RAG (Retrieval-Augmented Generation) pipeline. The app splits the knowledge base into chunks, indexes them in an in-memory hybrid store (Orama), and retrieves the most relevant fragments per question using both semantic vector search and full-text search simultaneously (Project 4 from the knowledge base series).
 
 ## Setup
 
@@ -35,21 +35,24 @@ Type a message and press Enter to chat. Available commands:
 
 Edit `config.json` to change model, tokens, temperature, or RAG parameters.
 
-| Field               | Default                          | Description                                            |
-|---------------------|----------------------------------|--------------------------------------------------------|
-| `model`             | `openai/gpt-4o`                  | OpenRouter model ID for chat                           |
-| `maxTokens`         | `1024`                           | Max tokens per response                                |
-| `temperature`       | `0.7`                            | Sampling temperature                                   |
-| `baseUrl`           | `https://openrouter.ai/api/v1`   | API base URL                                           |
-| `knowledgeBasePath` | `data/data.txt`                  | Path to knowledge base file (relative to project root) |
-| `embeddingModel`    | `openai/text-embedding-3-small`  | OpenRouter model ID for embeddings                     |
-| `chunkSize`         | `500`                            | Max characters per chunk                               |
-| `chunkOverlap`      | `50`                             | Overlap between adjacent chunks                        |
-| `topK`              | `4`                              | Number of chunks retrieved per question                |
+| Field                | Default                          | Description                                            |
+|----------------------|----------------------------------|--------------------------------------------------------|
+| `model`              | `openai/gpt-4o`                  | OpenRouter model ID for chat                           |
+| `maxTokens`          | `1024`                           | Max tokens per response                                |
+| `temperature`        | `0.7`                            | Sampling temperature                                   |
+| `baseUrl`            | `https://openrouter.ai/api/v1`   | API base URL                                           |
+| `knowledgeBasePath`  | `data/data.txt`                  | Path to knowledge base file (relative to project root) |
+| `embeddingModel`     | `openai/text-embedding-3-small`  | OpenRouter model ID for embeddings                     |
+| `embeddingDimension` | `1536`                           | Vector dimension — must match the embedding model      |
+| `chunkSize`          | `500`                            | Max characters per chunk                               |
+| `chunkOverlap`       | `50`                             | Overlap between adjacent chunks                        |
+| `topK`               | `4`                              | Number of chunks retrieved per question                |
+
+`embeddingDimension` by model: `text-embedding-3-small` → 1536, `text-embedding-3-large` → 3072, `text-embedding-ada-002` → 1536.
 
 ## How It Works
 
-At startup the app builds a RAG index from the knowledge base file:
+At startup the app builds a hybrid RAG index from the knowledge base file:
 
 ```
 Knowledge base file
@@ -58,7 +61,7 @@ Knowledge base file
       ↓
   Embeddings (OpenRouter — text-embedding-3-small)
       ↓
-  Vectra LocalIndex (in-memory vector store)
+  Orama hybrid index (in-memory, no server required)
 ```
 
 For each user question:
@@ -68,23 +71,27 @@ Question
       ↓
   Embedding of question
       ↓
-  Top-K semantic search in Vectra
+  Orama hybrid search:
+    ├── vector search   (semantic similarity)
+    └── full-text search (keyword matching)
       ↓
-  Context built from retrieved chunks + question → API → answer
+  Top-K results (merged natively by Orama)
+      ↓
+  Context + question → API → answer
 ```
 
 Only original questions and answers are kept in conversation history. RAG context is generated fresh for every question.
 
 ### How the model receives context
 
-The model does not use any tool to query the vector store — all retrieval happens in your code **before** the API call. The model simply receives a regular user message with the context already injected:
+The model does not use any tool to query the index — all retrieval happens in your code **before** the API call. The model simply receives a regular user message with the context already injected:
 
 ```
 User question: "What are Joe's hobbies?"
          ↓
 1. Embed the question → vector [0.023, -0.441, 0.891, ...]
          ↓
-2. Search Vectra → top-4 most similar chunks
+2. Orama hybrid search → top-4 most relevant chunks
          ↓
 3. Build a user message:
 
@@ -97,9 +104,20 @@ User question: "What are Joe's hobbies?"
 4. Send to API → answer
 ```
 
-The model has no awareness of RAG. From its perspective the user simply sent a message that happens to contain a relevant text excerpt followed by a question.
+## Why Hybrid Search
 
-Chunk matching uses **cosine similarity** between the question embedding and all chunk embeddings in Vectra. This means semantically related chunks are retrieved even when they share no exact words (e.g. "pastime" will match a chunk containing "hobbies").
+Pure vector search finds semantically similar chunks even when they share no exact words — but it can miss chunks that contain the exact term from the question. Pure keyword search finds exact matches — but fails on paraphrasing or synonyms. Hybrid search combines both:
+
+| Scenario | Vector only | Keyword only | Hybrid |
+|---|---|---|---|
+| Question uses different words than the text ("pastime" vs "hobby") | found | missed | found |
+| Question quotes the exact phrase from the text | found | found | found |
+| Rare proper noun (name, acronym, code) | may miss | found | found |
+| Vague or conceptual question | found | missed | found |
+
+In practice, hybrid search consistently retrieves more relevant context, which leads to more accurate answers — especially in knowledge bases that mix narrative text with structured data, names, or technical terms.
+
+Orama handles both search modes in a single library with no HTTP server or Docker required. All data stays in-process in `node_modules`.
 
 ## Knowledge Base
 
@@ -107,4 +125,4 @@ Point `knowledgeBasePath` in `config.json` to any plain-text file (relative to t
 
 ## Logs
 
-Session logs are written to `logs/YYYY-MM-DD.log`. Each entry has a timestamp and level (`INFO`, `ERROR`, `USER`, `ASSISTANT`, `RAG`).
+Session logs are written to `logs/YYYY-MM-DD.log`. Each entry has a timestamp and level (`INFO`, `ERROR`, `USER`, `ASSISTANT`).

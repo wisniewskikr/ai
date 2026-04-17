@@ -5,6 +5,7 @@
   "baseUrl": "https://openrouter.ai/api/v1",
   "knowledgeBasePath": "data/data.txt",
   "embeddingModel": "openai/text-embedding-3-small",
+  "embeddingDimension": 1536,
   "chunkSize": 500,
   "chunkOverlap": 50,
   "topK": 4
