@@ -1,219 +1,272 @@
-# AGENTS.md — Transformacja projektu do architektury RAG z in-memory vector store
+# AGENTS.md — Upgrade z Projektu #2 do Projektu #4 (RAG Hybrydowy)
 
 ## Cel
 
-Przekształć aktualny projekt z architektury **pełnego kontekstu** na architekturę **RAG z wektorową bazą danych in-memory**.
+Przekształcić obecną implementację RAG z in-memory vector store (Vectra) na architekturę **hybrydową**,
+która łączy wyszukiwanie wektorowe (ChromaDB) z wyszukiwaniem pełnotekstowym (MiniSearch).
 
-Aktualny projekt (projekt #1) ładuje całą bazę wiedzy jako system prompt. Docelowy projekt #2 dzieli bazę wiedzy na fragmenty (chunking), zamienia je na embeddingi, przechowuje w Vectra (in-memory vector store) i przy każdym pytaniu wyszukuje semantycznie trafne fragmenty.
-
----
-
-## Stan aktualny
-
-- `src/chat.ts` — funkcja `loadKnowledgeBase()` wczytuje cały plik i wstawia go do system message
-- Baza wiedzy trafia w całości do okna kontekstu przy każdej rozmowie
-- Brak jakiegokolwiek mechanizmu wyszukiwania — model widzi wszystko naraz
-- Zależności: tylko `dotenv`
+Aktualny projekt (#2) używa tylko wyszukiwania semantycznego (Vectra). Docelowy projekt #4 dodaje równoległe wyszukiwanie pełnotekstowe (MiniSearch), łączy wyniki z obu źródeł i dostarcza bogatszy kontekst do LLM.
 
 ---
 
-## Stan docelowy
+## Stan obecny — Projekt #2
 
+### Architektura
+- Wyszukiwanie: **tylko wektorowe** (Vectra in-memory)
+- Chunking: `@langchain/textsplitters` (RecursiveCharacterTextSplitter)
+- Embeddingi: OpenRouter API (`config.embeddingModel`)
+- Chat: OpenRouter API (`config.model`)
+- Storage: tymczasowy katalog na dysku (`os.tmpdir()`)
+
+### Pliki źródłowe
 ```
-Plik bazy wiedzy
-      ↓
-  Chunking (LangChain.js RecursiveCharacterTextSplitter)
-      ↓
-  Embeddingi (OpenRouter API / text-embedding-3-small)
-      ↓
-  Vectra LocalIndex (in-memory vector store)
-      ↓
-[przy każdym pytaniu użytkownika]
-      ↓
-  Embedding pytania
-      ↓
-  Wyszukiwanie top-K fragmentów w Vectra
-      ↓
-  Zbudowanie kontekstu z fragmentów + pytanie → API → odpowiedź
+src/
+  index.ts        — punkt wejścia, wywołuje runChat()
+  config.ts       — ładuje config.json + OPENROUTER_API_KEY z .env
+  api.ts          — sendMessage() do OpenRouter /chat/completions
+  embeddings.ts   — embedText() i embedBatch() przez OpenRouter /embeddings
+  chunker.ts      — splitIntoChunks() za pomocą LangChain RecursiveCharacterTextSplitter
+  vectorStore.ts  — buildIndex() i searchIndex() za pomocą Vectra LocalIndex
+  chat.ts         — główna pętla REPL, orkiestruje RAG pipeline
+  logger.ts       — logowanie do pliku logs/YYYY-MM-DD.log
 ```
 
----
-
-## Krok 1 — Instalacja zależności
-
-```bash
-npm install vectra @langchain/textsplitters
-```
-
-**Wyjaśnienie:**
-- `vectra` — czysto TypeScriptowa in-memory baza wektorów, zero konfiguracji serwera
-- `@langchain/textsplitters` — gotowy `RecursiveCharacterTextSplitter` do chunkingu
-
-Embeddingi generuj przez istniejący OpenRouter API (endpoint `/api/v1/embeddings`, model `openai/text-embedding-3-small`) — nie potrzeba nowego klucza API.
-
----
-
-## Krok 2 — Aktualizacja `config.ts`
-
-Dodaj do interfejsu `Config` pola RAG:
-
-```typescript
-export interface Config {
-  model: string;
-  maxTokens: number;
-  temperature: number;
-  baseUrl: string;
-  knowledgeBasePath: string;
-  // RAG
-  embeddingModel: string;   // np. "openai/text-embedding-3-small"
-  chunkSize: number;        // np. 500
-  chunkOverlap: number;     // np. 50
-  topK: number;             // np. 4
+### Zależności (package.json)
+```json
+"dependencies": {
+  "@langchain/textsplitters": "^1.0.1",
+  "dotenv": "^16.4.5",
+  "vectra": "^0.14.0"
 }
 ```
 
-Zaktualizuj też `config.json` dodając te cztery pola z sensownymi wartościami domyślnymi.
+### Przepływ danych (obecny)
+```
+Tekst → chunking → embeddingi → Vectra (in-memory)
+Pytanie → embedding → Vectra search (top-K) → kontekst → LLM → odpowiedź
+```
 
 ---
 
-## Krok 3 — Nowy plik `src/chunker.ts`
+## Stan docelowy — Projekt #4
 
-Utwórz moduł odpowiedzialny za cięcie tekstu na fragmenty.
+### Architektura
+- Wyszukiwanie: **hybrydowe** = wektorowe (ChromaDB) + pełnotekstowe (MiniSearch)
+- Wyniki z obu źródeł są łączone i deduplikowane przed wysłaniem do LLM
 
-Użyj `RecursiveCharacterTextSplitter` z `@langchain/textsplitters`.
+### Przepływ danych (docelowy)
+```
+Tekst → chunking → embeddingi → ChromaDB + MiniSearch (równoległa indeksacja)
 
-Eksportuj funkcję:
+Pytanie
+   ↓
+   ├── ChromaDB vector search (top-K semantyczne)
+   └── MiniSearch full-text search (top-K słowne)
+        ↓
+   Połączone wyniki (merge + deduplikacja)
+        ↓
+   Kontekst → LLM → odpowiedź
+```
+
+---
+
+## Krok 1 — Aktualizacja zależności
+
+```bash
+npm uninstall vectra
+npm install chromadb minisearch
+```
+
+**Wyjaśnienie:**
+- `vectra` — usunąć, zastąpione przez ChromaDB
+- `chromadb` — klient TypeScript dla ChromaDB (wyszukiwanie wektorowe)
+- `minisearch` — in-memory full-text search, pure JS, zero konfiguracji serwera
+
+`@langchain/textsplitters` i `dotenv` pozostają bez zmian.
+
+Zaktualizowany `package.json`:
+```json
+"dependencies": {
+  "@langchain/textsplitters": "^1.0.1",
+  "chromadb": "^1.9.2",
+  "dotenv": "^16.4.5",
+  "minisearch": "^7.1.0"
+}
+```
+
+---
+
+## Krok 2 — Modyfikacja `src/vectorStore.ts` — Vectra → ChromaDB
+
+Przepisać cały plik. Usunąć `vectra`, zastąpić `chromadb`.
+
+**Interfejs publiczny (zachować te same sygnatury funkcji):**
+```typescript
+export async function buildIndex(chunks: string[], embeddings: number[][], config: Config): Promise<Collection>
+export async function searchIndex(collection: Collection, queryEmbedding: number[], topK: number): Promise<string[]>
+```
+
+**Kluczowe szczegóły ChromaDB API:**
+```typescript
+import { ChromaClient } from 'chromadb';
+
+// Klient ephemeral (in-memory, bez serwera) — preferowane podejście
+const client = new ChromaClient({ path: 'http://localhost:8000' });
+// Uwaga: sprawdź aktualną dokumentację chromadb npm — może istnieć EphemeralClient lub tryb in-memory
+
+// Tworzenie kolekcji z unikalną nazwą
+const collection = await client.createCollection({
+  name: `rag-${Date.now()}`,
+  embeddingFunction: undefined,  // embeddingi dostarczamy sami
+});
+
+// Dodawanie dokumentów
+await collection.add({
+  ids: chunks.map((_, i) => `chunk-${i}`),
+  embeddings: embeddings,
+  documents: chunks,
+});
+
+// Wyszukiwanie
+const results = await collection.query({
+  queryEmbeddings: [queryEmbedding],
+  nResults: topK,
+});
+// Wyniki: results.documents[0] — tablica stringów (dokumentów)
+```
+
+> **Uwaga dotycząca ChromaDB in-memory:**
+> Wersja `chromadb` npm 1.x wymaga działającego serwera HTTP. Sprawdź czy dostępny jest `EphemeralClient`
+> (tryb bez serwera). Jeśli nie — uruchom serwer przez Docker:
+> ```bash
+> docker run -p 8000:8000 chromadb/chroma
+> ```
+
+---
+
+## Krok 3 — Nowy plik `src/fullTextSearch.ts`
+
+Stworzyć nowy moduł odpowiedzialny za full-text search z MiniSearch.
 
 ```typescript
-export async function splitIntoChunks(text: string, chunkSize: number, chunkOverlap: number): Promise<string[]>
+import MiniSearch from 'minisearch';
+
+export function buildFullTextIndex(chunks: string[]): MiniSearch {
+  const index = new MiniSearch({ fields: ['text'], storeFields: ['text'] });
+  const docs = chunks.map((text, id) => ({ id, text }));
+  index.addAll(docs);
+  return index;
+}
+
+export function searchFullText(index: MiniSearch, query: string, topK: number): string[] {
+  const results = index.search(query, { limit: topK });
+  return results.map(r => r.text as string);
+}
 ```
 
-Powinna zwracać tablicę stringów (fragmentów).
+**Kluczowe szczegóły MiniSearch:**
+- Import: `import MiniSearch from 'minisearch'` (lub `import { MiniSearch } from 'minisearch'` — sprawdź wersję)
+- Dokumenty muszą mieć pole `id` + co najmniej jedno pole tekstowe
+- `fields` — pola do indeksowania
+- `storeFields` — pola do zwracania w wynikach
+- Działa w pełni in-memory, zero konfiguracji serwera
 
 ---
 
-## Krok 4 — Nowy plik `src/embeddings.ts`
+## Krok 4 — Modyfikacja `src/chat.ts` — hybrydowe wyszukiwanie
 
-Utwórz moduł do generowania embeddingów przez OpenRouter API.
+### Zmiany w imporcie
+Dodać import `buildFullTextIndex`, `searchFullText` z `./fullTextSearch`.
+Usunąć import `LocalIndex` z `vectra`.
+Zaktualizować typ `index` z `LocalIndex` na `Collection` (z `chromadb`).
 
-OpenRouter obsługuje endpoint zgodny z OpenAI:
-- URL: `${config.baseUrl}/embeddings`
-- Body: `{ model: config.embeddingModel, input: string | string[] }`
-- Odpowiedź: `{ data: [{ embedding: number[] }] }`
+### Faza inicjalizacji — dodać budowanie indeksu full-text
 
-Eksportuj funkcje:
-
+Po zbudowaniu indeksu wektorowego dodać:
 ```typescript
-export async function embedText(text: string, config: Config): Promise<number[]>
-export async function embedBatch(texts: string[], config: Config): Promise<number[][]>
+console.log('Building full-text index...');
+const fullTextIndex = buildFullTextIndex(chunks);
+console.log('Full-text index ready.\n');
 ```
 
-`embedBatch` powinien wysyłać żądania partiami (po 100 tekstów) żeby nie przekroczyć limitów API.
+### Faza odpowiedzi — hybrydowe wyszukiwanie
 
----
-
-## Krok 5 — Nowy plik `src/vectorStore.ts`
-
-Utwórz moduł opakowujący Vectra `LocalIndex`.
-
+Zastąpić obecne:
 ```typescript
-import { LocalIndex } from 'vectra';
+const relevantChunks = await searchIndex(index, queryEmbedding, config.topK);
 ```
 
-Vectra `LocalIndex` może działać w trybie in-memory jeśli jako ścieżkę podasz tymczasowy lub nieistniejący katalog (albo użyj folderu tymczasowego systemu). Przy starcie aplikacji indeks jest zawsze budowany od zera z pliku bazy wiedzy.
-
-Eksportuj funkcje:
-
+Nowym kodem:
 ```typescript
-export async function buildIndex(chunks: string[], embeddings: number[][], config: Config): Promise<LocalIndex>
-export async function searchIndex(index: LocalIndex, queryEmbedding: number[], topK: number): Promise<string[]>
+const [vectorChunks, textChunks] = await Promise.all([
+  searchIndex(collection, queryEmbedding, config.topK),
+  Promise.resolve(searchFullText(fullTextIndex, trimmed, config.topK)),
+]);
+
+// Deduplikacja — zachowaj kolejność, usuń duplikaty
+const seen = new Set<string>();
+const combined: string[] = [];
+for (const chunk of [...vectorChunks, ...textChunks]) {
+  if (!seen.has(chunk)) {
+    seen.add(chunk);
+    combined.push(chunk);
+  }
+}
+const relevantChunks = combined.slice(0, config.topK);
+
+log('INFO', `Retrieved ${vectorChunks.length} vector + ${textChunks.length} text chunks (${relevantChunks.length} after dedup)`);
 ```
-
-`buildIndex` powinien:
-1. Stworzyć nowy `LocalIndex` w katalogu tymczasowym
-2. Dodać każdy chunk z jego embeddingiem: `index.insertItem({ vector: embeddings[i], metadata: { text: chunks[i] } })`
-
-`searchIndex` powinien:
-1. Wywołać `index.queryItems(queryEmbedding, topK)`
-2. Zwrócić tablicę stringów `item.item.metadata.text`
 
 ---
 
-## Krok 6 — Modyfikacja `src/chat.ts`
+## Krok 5 — Opcjonalnie: rozszerzenie `src/config.ts`
 
-To jest najważniejsza zmiana. Usuń podejście pełnego kontekstu i zastąp je RAG pipeline.
-
-### Faza inicjalizacji (przed pętlą czatu)
-
-Zastąp `loadKnowledgeBase` + system prompt blokiem:
-
-```
-1. Wczytaj plik bazy wiedzy (tak samo jak teraz — fs.readFileSync)
-2. Podziel na fragmenty (chunker.splitIntoChunks)
-3. Wygeneruj embeddingi dla wszystkich fragmentów (embeddings.embedBatch)
-4. Zbuduj indeks wektorowy (vectorStore.buildIndex)
-5. Wyświetl info ile fragmentów zaindeksowano
+Można dodać do interfejsu `Config`:
+```typescript
+chromaUrl?: string;   // domyślnie 'http://localhost:8000'
 ```
 
-Usuń stały system message z treścią bazy wiedzy. Zamiast tego użyj krótkiego system message bez kontekstu, np.:
-```
-"You are a helpful assistant. Answer questions based only on the provided context. If the answer is not in the context, say so clearly."
-```
-
-### Faza odpowiedzi (wewnątrz pętli, po otrzymaniu pytania)
-
-Przed dodaniem pytania użytkownika do historii:
-
-```
-1. Wygeneruj embedding pytania (embeddings.embedText)
-2. Wyszukaj top-K fragmentów w indeksie (vectorStore.searchIndex)
-3. Zbuduj string kontekstu z fragmentów (np. ponumerowane sekcje)
-4. Stwórz tymczasową wiadomość user z kontekstem:
-   "Context:\n{fragmenty}\n\nQuestion: {pytanie użytkownika}"
-5. Wyślij tę wiadomość do API (nie oryginalne pytanie)
-6. Do historii dodaj oryginalne pytanie (dla czytelności /history)
-```
-
-Nie przechowuj kontekstu RAG w historii — tylko oryginalne pytania i odpowiedzi. Kontekst jest generowany świeżo przy każdym pytaniu.
+Oraz uzupełnić `config.json` o to pole.
 
 ---
 
-## Krok 7 — Aktualizacja `src/logger.ts` (opcjonalne)
+## Pliki do zmiany — podsumowanie
 
-Dodaj logowanie zdarzeń RAG:
-- ile fragmentów zaindeksowano przy starcie
-- ile fragmentów znaleziono dla danego pytania
-- czas wyszukiwania (opcjonalnie)
-
----
-
-## Weryfikacja poprawności implementacji
-
-Po wdrożeniu sprawdź:
-
-1. **Chunking działa** — dodaj tymczasowy `console.log` pokazujący liczbę fragmentów i przykładowy fragment
-2. **Embeddingi działają** — sprawdź czy `embedText` zwraca tablicę liczb (np. 1536 wymiarów dla text-embedding-3-small)
-3. **Wyszukiwanie działa** — dla pytania o temat z bazy wiedzy top-K powinien zawierać trafne fragmenty
-4. **Odpowiedź jest lepsza** — model powinien odpowiadać precyzyjnie na podstawie fragmentów, a nie halucynować
-
----
-
-## Kluczowe różnice względem projektu #1
-
-| | Projekt #1 (pełny kontekst) | Projekt #2 (RAG) |
+| Plik | Akcja | Co zmienić |
 |---|---|---|
-| Baza w prompcie | Cała naraz | Tylko trafne fragmenty (top-K) |
-| Zużycie tokenów | Wysokie (stały koszt) | Niskie (proporcjonalne do K) |
-| Skalowanie | Nie skaluje się (limit kontekstu) | Skaluje się na duże bazy |
-| Trafność | Model może się "zgubić" w dużym tekście | Tylko istotne fragmenty |
-| Złożoność | Prosta | Wymaga chunking + embeddingi + vector store |
+| `package.json` | Modyfikacja | Usunąć `vectra`, dodać `chromadb` + `minisearch` |
+| `src/vectorStore.ts` | Przepisać | Vectra LocalIndex → ChromaDB Collection |
+| `src/fullTextSearch.ts` | Stworzyć nowy | MiniSearch index + search |
+| `src/chat.ts` | Modyfikacja | Dodać full-text index, hybrydowe wyszukiwanie |
+| `src/config.ts` | Opcjonalnie | Dodać `chromaUrl?: string` do interfejsu Config |
+
+## Pliki bez zmian
+
+- `src/index.ts`
+- `src/api.ts`
+- `src/embeddings.ts`
+- `src/chunker.ts`
+- `src/logger.ts`
 
 ---
 
-## Uwagi implementacyjne
+## Kluczowa różnica Projekt #2 vs Projekt #4
 
-- Indeks buduj **jednorazowo przy starcie** aplikacji, nie przy każdym pytaniu
-- `LocalIndex` z Vectra wymaga podania ścieżki do katalogu — użyj `os.tmpdir()` + unikalnej nazwy podkatalogu
-- Przy `embedBatch` uważaj na limity rate-limitingu OpenRouter — dodaj opóźnienie między partiami jeśli baza jest duża
-- Wartości domyślne `chunkSize: 500, chunkOverlap: 50, topK: 4` są dobrym punktem startowym
-- `RecursiveCharacterTextSplitter` dzieli po `\n\n`, `\n`, ` ` — respektuje strukturę dokumentu
+| | Projekt #2 (RAG wektorowy) | Projekt #4 (RAG hybrydowy) |
+|---|---|---|
+| Vector search | Vectra (in-memory) | ChromaDB |
+| Full-text search | brak | MiniSearch |
+| Wyniki | tylko semantyczne | semantyczne + słowne |
+| Trafność słów kluczowych | słaba | dobra |
+| Trafność znaczenia | dobra | dobra |
+| Złożoność | prosta | umiarkowana |
+
+---
+
+## Weryfikacja po implementacji
+
+1. Uruchomić `npm run dev`
+2. Sprawdzić czy oba indeksy budują się (logi w konsoli)
+3. Zadać pytanie z dokładnym fragmentem tekstu z bazy → MiniSearch powinno znaleźć
+4. Zadać pytanie semantyczne (inne słowa, to samo znaczenie) → ChromaDB powinno znaleźć
+5. Sprawdzić że deduplikacja działa (ten sam chunk nie pojawia się dwa razy w kontekście)
