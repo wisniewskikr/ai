@@ -81,6 +81,58 @@ This query requires following two hops: `joe_doe → biscuit → breed`. In a fl
 }
 ```
 
+## Hybrid RAG vs Knowledge Graph
+
+Project 4 (hybrid RAG) and Project 5 (knowledge graph) both retrieve only relevant data instead of sending everything to the model — but they solve different problems.
+
+### How each approach retrieves data
+
+**Hybrid RAG (Project 4)** — finds chunks of text that resemble the query:
+
+```
+Query: "What breed is Joe's dog?"
+        ↓
+  Vector search (semantic similarity)
+  + Full-text search (keyword match)
+        ↓
+  Top matching text chunks:
+  "Joe does have a dog — a golden retriever named Biscuit..."
+        ↓
+  Model reads the chunk and extracts the answer
+```
+
+**Knowledge Graph (Project 5)** — follows named relationships between entities:
+
+```
+Query: "What breed is Joe's dog?"
+        ↓
+  searchNodes → [joe_doe, biscuit]
+        ↓
+  getNeighbors(depth=2):
+    joe_doe --owns_pet--> biscuit
+    biscuit --breed: golden retriever
+        ↓
+  Model receives structured nodes + relations, not raw text
+```
+
+### When each wins
+
+| Scenario | Hybrid RAG | Knowledge Graph |
+|---|---|---|
+| "What does the manual say about X?" | ✅ Finds the relevant passage | ✗ Needs the data modelled as nodes |
+| "Who is Joe's wife's daughter?" | ✗ May miss if no single chunk links all three | ✅ Follows: joe→married_to→clara→parent_of→lily |
+| "Summarize the onboarding docs" | ✅ Retrieves and combines multiple chunks | ✗ Graphs don't store free-form text well |
+| "What team does the Dallas Cowboys fan support?" | ✗ Requires connecting two separate chunks | ✅ Follows: joe→follows→football→team:Dallas Cowboys |
+| Large unstructured document collections | ✅ Scales with embeddings | ✗ Every fact needs to be manually modelled |
+| Structured entity data with clear relations | ✗ Relations are implicit, buried in text | ✅ Relations are explicit edges |
+
+### Core difference
+
+RAG finds text **similar to the query**. A knowledge graph follows **named relationships** between entities.
+
+- RAG works best when the answer lives inside a chunk of text that looks like the question.
+- A knowledge graph works best when the answer requires connecting two or more entities that are never mentioned together in a single document.
+
 ## Logs
 
 Session logs are written to `logs/YYYY-MM-DD.log`. Each entry has a timestamp and level (`INFO`, `ERROR`, `USER`, `ASSISTANT`).
