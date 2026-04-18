@@ -5,7 +5,7 @@ export interface Message {
   content: string;
 }
 
-export async function sendMessage(history: Message[], config: Config): Promise<string> {
+export async function sendMessage(messages: Message[], config: Config): Promise<string> {
   const apiKey = process.env.OPENROUTER_API_KEY!;
 
   const response = await fetch(`${config.baseUrl}/chat/completions`, {
@@ -16,7 +16,7 @@ export async function sendMessage(history: Message[], config: Config): Promise<s
     },
     body: JSON.stringify({
       model: config.model,
-      messages: history,
+      messages,
       max_tokens: config.maxTokens,
       temperature: config.temperature,
     }),
