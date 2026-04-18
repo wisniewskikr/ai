@@ -142,6 +142,51 @@ Tworząc dokumentację, zawsze stosuj poniższe zasady:
 
 ---
 
+## Skille we własnym agencie
+
+Skille Claude Code działają tylko w CLI. We własnym agencie (np. z OpenRouter) musisz zaimplementować podobny wzorzec samodzielnie — to jednak prosta operacja.
+
+### Skill vs System Prompt w agencie
+
+| | System Prompt | Skill |
+|---|---|---|
+| **Kiedy aktywny?** | Każde zapytanie | Tylko gdy potrzebny |
+| **Co tam wrzucasz?** | Stała persona, język, ograniczenia | Zadanie-specyficzne instrukcje |
+| **Koszt tokenów?** | Zawsze płacisz | Tylko gdy wywołany |
+| **Analogia** | Regulamin firmy | Instrukcja do konkretnego zadania |
+
+### Jak to zaimplementować? (TypeScript)
+
+Trzymaj skille jako pliki w `src/prompts/` i wczytuj je dynamicznie:
+
+```typescript
+// src/services/skillLoader.ts
+import fs from 'fs/promises'
+import path from 'path'
+
+async function loadSkill(name: string): Promise<string> {
+  const filePath = path.join('src', 'prompts', `${name}.md`)
+  return fs.readFile(filePath, 'utf-8')
+}
+
+// Użycie
+const skill = await loadSkill('app-rules')
+
+const response = await openrouter.chat({
+  messages: [
+    { role: 'system', content: systemPrompt },              // zawsze
+    { role: 'user',   content: skill + '\n\n' + userInput } // na żądanie
+  ]
+})
+```
+
+### Kiedy co używać?
+
+- **System prompt** → persona, język, format, stałe zasady
+- **Skill** → zasady dokumentacji, zasady kodu, szablony zadań
+
+---
+
 ## Podsumowanie w 3 zdaniach
 
 1. **Prompt systemowy** = ciągłe tło — jak charakter człowieka.
