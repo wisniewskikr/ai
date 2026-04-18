@@ -66,7 +66,7 @@ Edit `config.json` to change model or parameters.
 
 | Field         | Default                        | Description             |
 |---------------|--------------------------------|-------------------------|
-| `model`       | `google/gemini-flash-1.5`      | OpenRouter model ID     |
+| `model`       | `google/gemini-1.5-flash`      | OpenRouter model ID     |
 | `maxTokens`   | `1024`                         | Max tokens per response |
 | `temperature` | `0.7`                          | Sampling temperature    |
 | `baseUrl`     | `https://openrouter.ai/api/v1` | API base URL            |
