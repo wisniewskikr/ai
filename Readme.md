@@ -1,7 +1,5 @@
 ﻿TODO:
-- baza wiedzy
 - skille
-- lokalne
 - Grounding
 
 ## Description
