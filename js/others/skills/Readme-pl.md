@@ -74,8 +74,76 @@ Stwórz commit z wiadomością zaczynającą się od czasownika...
 
 ---
 
+## Czy skille są częścią modelu AI?
+
+**Nie.** Model (np. Claude Sonnet) nic o skillach nie wie.
+
+Analogia: model to **silnik samochodu** — nie wie, dokąd jedziesz. Agent (Claude Code) to **nawigacja** — ona decyduje, jaką trasę wybrać i kiedy użyć skilla.
+
+```
+Ty → /commit → Claude Code (czyta skill) → gotowy prompt → Model AI
+                     ↑
+              skill działa tutaj
+              model widzi tylko tekst
+```
+
+### Skille to funkcja agenta, nie modelu
+
+| | Model AI | Agent (np. Claude Code) |
+|---|---|---|
+| **Przykład** | Claude Sonnet, GPT-4 | Claude Code, Cursor, Copilot |
+| **Zna skille?** | Nie | Tak |
+| **Analogia** | Silnik | Kierowca z nawigacją |
+
+### Inne agenty mają podobne mechanizmy
+
+| Agent | Odpowiednik skilla |
+|---|---|
+| **Claude Code** | Skills (`.claude/skills/`) |
+| **Cursor** | Rules (`.cursorrules`) |
+| **GitHub Copilot** | Custom Instructions |
+| **OpenAI GPTs** | System prompt + Actions |
+
+---
+
+## Zasady pisania jako skill
+
+Zestaw zasad pisania dokumentacji (np. "pisz jak dla 5-latka") to **idealny kandydat na skill** — używasz ich wielokrotnie, w różnych projektach.
+
+### Przykładowy plik skilla
+
+```markdown
+---
+name: wisniewk-doc-rules
+description: Zasady tworzenia dokumentacji — używaj przy pisaniu każdego pliku .md
+---
+
+Tworząc dokumentację, zawsze stosuj poniższe zasady:
+
+- Pisz jak dla 5-latka — prosto i przyjaźnie
+- Mniej znaczy lepiej — unikaj zbędnych słów
+- Używaj tabel i punktów wszędzie tam, gdzie to możliwe
+- Stosuj analogie, gdzie tylko możliwe
+```
+
+### Lokalnie czy globalnie?
+
+| | Lokalnie | Globalnie |
+|---|---|---|
+| **Ścieżka** | `.claude/skills/wisniewk-doc-rules.md` | `~/.claude/skills/wisniewk-doc-rules.md` |
+| **Działa w** | Tylko ten projekt | Każdy projekt na tym komputerze |
+| **Kiedy użyć** | Zasady specyficzne dla repo | Twój osobisty styl pisania |
+
+### Jak wywołać?
+
+```
+/wisniewk-doc-rules Stwórz Readme.md dla tego projektu
+```
+
+---
+
 ## Podsumowanie w 3 zdaniach
 
 1. **Prompt systemowy** = ciągłe tło — jak charakter człowieka.
 2. **Skill** = konkretna umiejętność — jak przepis wyciągnięty z szuflady na żądanie.
-3. Razem dają AI zarówno **osobowość**, jak i **specjalistyczne zdolności**.
+3. **Model AI** to tylko silnik — to agent decyduje, kiedy i jaki skill uruchomić.
