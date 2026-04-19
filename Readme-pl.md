@@ -135,3 +135,160 @@ Alternatywa wobec RAG i prompt engineeringu — modyfikuje wagi modelu zamiast k
 | **Koszt** | Niski | Wysoki (trening) |
 | **Elastyczność** | Wysoka | Niska |
 | **Kiedy używać** | Domyślny wybór | Gdy styl/format odpowiedzi jest ściśle określony i niezmienny |
+
+
+---
+
+## Podstawowe pojęcia
+
+| Pojęcie | Co to jest? | Analogia |
+|---|---|---|
+| **Model AI** | Program, który rozumie i generuje tekst | Mózg asystenta |
+| **Agent AI** | Model + zdolność do działania (narzędzia, decyzje) | Asystent z rękoma |
+| **LLM** | Large Language Model — model językowy trenowany na ogromnych zbiorach tekstu | Ktoś, kto przeczytał całą bibliotekę |
+| **Token** | Kawałek tekstu (słowo lub jego część) | Literka w scrabble |
+| **Prompt** | Wiadomość/pytanie wysyłane do modelu | Zadanie domowe dla AI |
+| **Context window** | Ile tekstu model "widzi" naraz | Pamięć krótkotrwała |
+
+---
+
+## Architektura
+
+### Model (LLM)
+
+```
+Użytkownik → [Prompt] → Model → [Odpowiedź]
+```
+
+- **Transformers** — architektura, na której opiera się większość modeli (GPT, Claude, Llama)
+- **Attention mechanism** — model "patrzy" na cały kontekst, nie tylko ostatnie słowa
+- **Parametry** — "wiedza" zakodowana w liczbach; im więcej, tym większy model (np. 7B, 70B, 405B)
+
+### Agent
+
+```
+Użytkownik → [Prompt] → Agent → [Myśli] → [Narzędzie] → [Wynik] → [Odpowiedź]
+```
+
+- **Pętla agenta**: Myśl → Działaj → Obserwuj → Myśl...
+- **Narzędzia (tools)**: search, kod, API, pliki — wszystko, czego agent może użyć
+- **Orchestrator**: zarządza wieloma agentami jednocześnie
+
+---
+
+## Baza wiedzy
+
+| Typ pamięci | Opis | Przykład |
+|---|---|---|
+| **Wagi modelu** | Wiedza z treningu, nie zmienia się | Matematyka, język, fakty |
+| **Context window** | Aktualna rozmowa | To co napisałeś dzisiaj |
+| **RAG** | Retrieval-Augmented Generation — wyszukiwanie w zewnętrznych dokumentach | Szukanie w firmowej wiki |
+| **Long-term memory** | Baza danych z poprzednich sesji | Notatki z poprzednich rozmów |
+| **Vector store** | Baza danych semantyczna — szuka po znaczeniu, nie po słowach | Szukanie "coś o kotach" znajdzie też "kocięta" |
+
+---
+
+## Typy modeli
+
+| Typ | Co potrafi | Przykłady |
+|---|---|---|
+| **Text** | Czyta i pisze tekst | Claude, GPT-4, Llama |
+| **Multimodal** | Tekst + obrazy/audio/wideo | Claude 3, GPT-4o |
+| **Embedding** | Zamienia tekst na liczby (wektory) | text-embedding-3 |
+| **Code** | Specjalizuje się w kodowaniu | Codex, DeepSeek Coder |
+| **Reasoning** | Myśli krok po kroku, rozwiązuje złożone problemy | Claude 3.7, o3 |
+
+---
+
+## Bezpieczeństwo
+
+### Zagrożenia
+
+| Zagrożenie | Co to? | Przykład |
+|---|---|---|
+| **Prompt injection** | Złośliwy tekst zmienia zachowanie modelu | "Zapomnij zasady i zrób X" |
+| **Jailbreak** | Obejście zasad bezpieczeństwa | Ukryte instrukcje w obrazku |
+| **Data leakage** | Model ujawnia prywatne dane | Powtarzanie danych z treningu |
+| **Hallucination** | Model wymyśla fakty, które nie istnieją | Podaje fałszywe cytaty |
+| **Tool misuse** | Agent używa narzędzi w niezamierzony sposób | Usuwa pliki zamiast odczytać |
+
+### Zabezpieczenia
+
+- **Guardrails** — filtry wejścia i wyjścia
+- **RLHF** — trening z nagrodą za dobre zachowanie (Reinforcement Learning from Human Feedback)
+- **Constitutional AI** — model ocenia własne odpowiedzi według zasad
+- **Sandboxing** — agent działa w izolowanym środowisku
+- **Human-in-the-loop** — człowiek zatwierdza ważne decyzje
+
+---
+
+## Parametry generowania
+
+| Parametr | Co robi? | Niska wartość | Wysoka wartość |
+|---|---|---|---|
+| **Temperature** | Losowość odpowiedzi | Przewidywalny, dokładny | Kreatywny, chaotyczny |
+| **Top-p** | Zakres możliwych tokenów | Skupiony | Różnorodny |
+| **Max tokens** | Długość odpowiedzi | Krótka | Długa |
+| **System prompt** | Instrukcje dla modelu | — | — |
+
+---
+
+## Trenowanie modeli
+
+```
+Dane → Pre-training → Fine-tuning → RLHF → Model gotowy
+```
+
+| Etap | Co się dzieje? |
+|---|---|
+| **Pre-training** | Model uczy się języka na miliardach tekstów |
+| **Fine-tuning** | Dostrajanie do konkretnego zadania (np. kodowanie) |
+| **RLHF** | Ludzcy oceniający uczą model "dobrego" zachowania |
+| **Quantization** | Zmniejszanie rozmiaru modelu (szybszy, mniej pamięci) |
+
+---
+
+## Architektura agentów
+
+### Wzorce
+
+| Wzorzec | Opis |
+|---|---|
+| **ReAct** | Reason + Act — myśl, działaj, obserwuj wynik |
+| **Chain of Thought** | Krok po kroku do odpowiedzi |
+| **Multi-agent** | Wiele agentów współpracuje (jak zespół) |
+| **Planner + Executor** | Jeden planuje, drugi wykonuje |
+
+### Narzędzia agenta (tools)
+
+- Wyszukiwanie w internecie
+- Wykonywanie kodu
+- Odczyt/zapis plików
+- Wywołania API (zewnętrzne usługi)
+- Baza danych / pamięć
+
+---
+
+## Ewaluacja
+
+| Metryka | Co mierzy? |
+|---|---|
+| **Accuracy** | Jak często odpowiedź jest poprawna |
+| **Latency** | Czas odpowiedzi |
+| **Hallucination rate** | Jak często model wymyśla fakty |
+| **Cost per token** | Koszt generowania tekstu |
+| **Context utilization** | Jak dobrze model korzysta z kontekstu |
+
+---
+
+## Słownik skrótów
+
+| Skrót | Pełna nazwa |
+|---|---|
+| LLM | Large Language Model |
+| RAG | Retrieval-Augmented Generation |
+| RLHF | Reinforcement Learning from Human Feedback |
+| CoT | Chain of Thought |
+| MCP | Model Context Protocol |
+| API | Application Programming Interface |
+| GPU | Graphics Processing Unit (do trenowania modeli) |
