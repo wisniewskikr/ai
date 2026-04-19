@@ -1822,3 +1822,159 @@ Większość systemów ma tylko pierwszą warstwę — i dlatego agent nie uczy 
 | 3 | **Ucz** | Czy system zbiera pamięć epizodyczną? |
 | 4 | **Zaufaj** | Czy przeszedł przez supervised zanim dostał autonomię? |
 | 5 | **Sprawdzaj** | Czy masz monitoring i fallbacki gotowe na edge case? |
+
+---
+
+## Przykłady edukacyjne
+
+> Każdy przykład to mały projekt, który można uruchomić w kilka minut. Cel: zobaczyć zagadnienie na żywo, nie tylko przeczytać o nim.
+
+---
+
+### s01e01 — Kontrola kosztów
+
+| Projekt | Co pokazuje | Stack |
+|---------|-------------|-------|
+| **Token Counter** | Policz tokeny dla tego samego tekstu po polsku i angielsku — zobaczysz różnicę na własne oczy | `tiktoken` (Python) lub `js-tiktoken` (Node.js) |
+| **Model Comparison CLI** | Wyślij to samo pytanie do 3 modeli (Haiku, Sonnet, GPT-4o mini) i porównaj koszt + jakość odpowiedzi | Anthropic SDK + OpenAI SDK |
+| **Prompt Caching Demo** | Wyślij 10 zapytań z tym samym długim system promptem — raz bez cachingu, raz z — porównaj koszt | Anthropic SDK z `cache_control` |
+| **Batch vs Realtime** | Przetwórz 100 faktur w trybie batch i realtime — pokaż różnicę na rachunku | Anthropic Batch API |
+
+---
+
+### s01e02 — Bezpieczeństwo agentów AI
+
+| Projekt | Co pokazuje | Stack |
+|---------|-------------|-------|
+| **Prompt Injection Playground** | Formularz HTML z polem tekstowym → agent przetwarza treść → wstrzyknij ukrytą instrukcję → obserwuj efekt | Node.js + dowolny LLM |
+| **Minimal Agent z narzędziami** | Agent z dostępem do `read_file` i `send_email` — pokaż, co się dzieje bez i z walidacją inputu | Python + LangChain lub Anthropic SDK |
+| **System Prompt Leakage Test** | Stwórz chatbota z tajnym systemowym promptem → spróbuj go wyciągnąć scenariuszem hipotetycznym | Dowolny LLM API |
+| **5 Warstw obrony — demo** | Step-by-step: dodaj każdą warstwę (walidacja, uprawnienia, sandbox) i pokaż jak każda zatrzymuje inny atak | Python + FastAPI |
+
+---
+
+### s01e03 — Warunki dostępu agentów AI
+
+| Projekt | Co pokazuje | Stack |
+|---------|-------------|-------|
+| **Read-Only Agent** | Agent do bazy danych z kontem `SELECT only` — próba zapisu powoduje błąd | Python + SQLite |
+| **Dry Run Mode** | Agent do przenoszenia plików, który zawsze najpierw wypisuje plan i czeka na `[tak/nie]` | Python + `os` / `shutil` |
+| **Token Hygiene Demo** | Pokaż różnicę między jednym tokenem do wszystkiego a osobnymi tokenami z ograniczonym scope | Przykład z `.env` i `python-dotenv` |
+| **Audit Log Viewer** | Każda akcja agenta zapisana do SQLite z timestampem — prosta przeglądarka logów w terminalu | Python + SQLite + `rich` |
+
+---
+
+### s02e01 — Kontekst inżyniering
+
+| Projekt | Co pokazuje | Stack |
+|---------|-------------|-------|
+| **File Organizer — bez kontekstu** | Agent przenosi pliki bez żadnych wskazówek — pokaż chaos (folder `inne` z 80% plików) | Python + Anthropic SDK |
+| **File Organizer — z kontekstem** | Ten sam agent, ale z system promptem opisującym kim jesteś i czym są pliki — pokaż różnicę | Python + Anthropic SDK |
+| **Dry Run File Agent** | Agent pokazuje plan operacji, zanim ją wykona — Ty klikasz `tak` lub `nie` | Python + `typer` CLI |
+| **Context Overflow Demo** | Długa rozmowa z agentem — pokaż, kiedy informacje zaczyna „wypadać" z kontekstu i jak to naprawić plikiem stanu | Python + JSON state file |
+
+---
+
+### s02e03 — Nagrania głosowe
+
+| Projekt | Co pokazuje | Stack |
+|---------|-------------|-------|
+| **Local Whisper STT** | Nagraj 30 sekund głosu → transkrybuj lokalnie (bez internetu) → porównaj z Whisper API | Python + `whisper` (local) |
+| **Privacy Router** | Prosty skrypt: wczytuje plik audio → klasyfikuje temat → decyduje: chmura czy lokalna transkrypcja | Python + `faster-whisper` |
+| **Voice Clone Warning Demo** | Pokaż jak mała próbka głosu (30s) wystarczy do stworzenia klonu — tylko w celach edukacyjnych | ElevenLabs API (demo tier) |
+
+---
+
+### s02e05 — Monitoring użytkowników
+
+| Projekt | Co pokazuje | Stack |
+|---------|-------------|-------|
+| **Window Title Tracker** | Czyta tytuł aktywnego okna co 5 sekund — klasyfikuje lokalnie przez Ollama → zapisuje tylko kategorię, nie treść | Python + `pygetwindow` + Ollama |
+| **Aggregate vs Raw Logger** | Dwa logi obok siebie: jeden z pełnymi tytułami okien, drugi tylko z kategoriami i czasem — pokaż co jest OK, a co to inwigilacja | Python + SQLite |
+| **ActivityWatch Plugin** | Prosty watcher plugin do ActivityWatch, który klasyfikuje lokalnie | ActivityWatch SDK + Python |
+
+---
+
+### s03e01 — Boty
+
+| Projekt | Co pokazuje | Stack |
+|---------|-------------|-------|
+| **Playbook Socjotechniczny Detektor** | Wklej wiadomość → AI ocenia: czy zawiera autorytet / pilność / izolację? | Python + Anthropic SDK |
+| **AI z nadzorem vs bez** | Ten sam bot do wysyłania maili: wersja A wysyła automatycznie, wersja B czeka na Twoje `tak` — pokaż różnicę | Python + `smtplib` |
+| **Deepfake Awareness Quiz** | Interaktywny quiz: pokaż kilka nagrań głosowych — które są prawdziwe, które są sklonowane? | HTML + JS + sample audio |
+
+---
+
+### s03e03 — Scraping
+
+| Projekt | Co pokazuje | Stack |
+|---------|-------------|-------|
+| **Robots.txt Checker** | Wpisz URL → skrypt pobiera `robots.txt` → sprawdza czy dana ścieżka jest dozwolona | Python + `requests` + `robotparser` |
+| **Etyczny Scraper Hello World** | Pobierz dane z jednej strony: sprawdź `robots.txt`, dodaj `User-Agent` z kontaktem, odczekaj 5s między zapytaniami | Python + `requests` + `BeautifulSoup` |
+| **Rate Limiting Demo** | Wyślij 100 zapytań bez limitu vs z limitem — pokaż różnicę w odpowiedziach serwera (429) | Python + `time.sleep` |
+| **PII Detector w scraperze** | Scraper, który zatrzymuje się gdy znajdzie wzorzec e-mail / telefon w danych | Python + `re` (regex) |
+
+---
+
+### s04e01 — Pamięć AI
+
+| Projekt | Co pokazuje | Stack |
+|---------|-------------|-------|
+| **Vector Search vs Keyword** | Baza 100 zdań → szukaj tego samego pytania embeddingami i BM25 → porównaj wyniki | Python + `qdrant-client` + `rank_bm25` |
+| **pgvector Hello World** | Dodaj wektor do PostgreSQL → wyszukaj 5 najbliższych sąsiadów → porównaj z dedykowaną bazą wektorową | Python + `psycopg2` + `pgvector` |
+| **Vec2Text Demo (defensive)** | Pokaż, że z wektora można odtworzyć zbliżony tekst — motywacja do szyfrowania embeddingów | Python + `vec2text` library |
+| **Knowledge Graph vs Vector** | To samo pytanie o relacje (`kto raportuje do X?`) — raz przez vector search, raz przez graf — pokaż wyniki | Python + `networkx` + `sentence-transformers` |
+
+---
+
+### s04e03 — Cicha degradacja workflows AI
+
+| Projekt | Co pokazuje | Stack |
+|---------|-------------|-------|
+| **Retry + Jitter Demo** | Symuluj 429 od API → pokaż różnicę między naiwnym retry a exponential backoff z jitterem | Python + `tenacity` |
+| **Circuit Breaker Hello World** | Prosta implementacja 3 stanów (zamknięty / otwarty / półotwarty) na wywołaniu LLM | Python + `pybreaker` |
+| **Dead Letter Queue — prosta tabela** | Workflow, który po 3 nieudanych próbach wrzuca zadanie do tabeli SQLite `dead_letter` | Python + SQLite |
+| **Output Validator** | Agent zwraca JSON → sprawdź schema, długość, czy dane są świeże → alert gdy coś nie gra | Python + `pydantic` |
+| **Canary Check** | Co 15 minut wysyłaj znane pytanie testowe do agenta → porównaj odpowiedź z oczekiwaną → alert na drift | Python + `schedule` |
+
+---
+
+### s04e04 — Automatyzacja
+
+| Projekt | Co pokazuje | Stack |
+|---------|-------------|-------|
+| **Heartbeat z healthchecks.io** | Prosty cronjob z `curl` na końcu — przestań wysyłać ping → dostaniesz alert e-mailem | Bash + `curl` + healthchecks.io (free tier) |
+| **Output Verifier** | Po każdym raporcie: czy plik istnieje? Czy ma > 1KB? Czy JSON jest poprawny? | Python + `pathlib` |
+| **Lock File Demo** | Uruchom dwie instancje tego samego skryptu jednocześnie → druga grzecznie poczeka lub odpuści | Python + `filelock` |
+| **Timezone-aware Cron** | Pokaż różnicę między `cron` bez strefy a `APScheduler` z jawnym `Europe/Warsaw` | Python + `APScheduler` |
+
+---
+
+### s05e02 — Lekcje z porzuconych projektów AI
+
+| Projekt | Co pokazuje | Stack |
+|---------|-------------|-------|
+| **HITL Chatbot** | Chatbot obsługi klienta: AI proponuje odpowiedź, człowiek klika `wyślij` lub `edytuj` → brak pełnej autonomii | Python + Streamlit + Anthropic SDK |
+| **RAG z grounding** | Chatbot o polityce firmy: odpowiada tylko na podstawie dokumentów, nigdy nie generuje wolno — pokaż porównanie | Python + `chromadb` + Anthropic SDK |
+| **Hybrid Support Bot** | Bot klasyfikuje: proste pytanie → auto-odpowiedź, złożone → przekaż do człowieka (Slack/e-mail) | Python + Anthropic SDK + `slack_sdk` |
+
+---
+
+### s05e04 — Grounding (weryfikacja)
+
+| Projekt | Co pokazuje | Stack |
+|---------|-------------|-------|
+| **Fact Checker CLI** | Wpisz twierdzenie → model szuka źródeł → zwraca: źródło istnieje? ✅/❌ treść się zgadza? ✅/❌ confidence score 🟢/🟡/🔴 | Python + Anthropic SDK + Google Search API |
+| **Multi-Model Verifier** | Zadaj to samo pytanie faktyczne Claude + GPT + Gemini → porównaj odpowiedzi → różnią się? flaga do sprawdzenia | Python + multi-SDK |
+| **Hallucination Benchmark** | Zestaw 20 pytań ze znanymi odpowiedziami → przetestuj model → policz % halucynacji w tym konkretnym przypadku | Python + JSON test cases |
+
+---
+
+### s05e05 — Master Controller
+
+| Projekt | Co pokazuje | Stack |
+|---------|-------------|-------|
+| **Tool Registry Hello World** | Słownik narzędzi z opisem, kosztem i limitami → agent wybiera właściwe na podstawie pytania | Python + Anthropic SDK (tool use) |
+| **Graduated Autonomy Demo** | Ten sam agent w 4 trybach: read-only → supervised → trusted → full auto — pokaż zachowanie każdego | Python + Anthropic SDK + `typer` |
+| **Memory Triad** | Agent z trzema warstwami pamięci: sesja (in-memory), długoterminowa (SQLite), epizodyczna (co zrobił + wynik) | Python + SQLite + Anthropic SDK |
+| **Intent Router** | Agent wykrywa typ pytania (podobieństwo / relacja / globalne) → kieruje do vector search / grafu / GraphRAG | Python + `qdrant-client` + `networkx` |
