@@ -1,5 +1,69 @@
 # Praca z modelami AI
 
+## Spis treści
+
+- [Podstawowe pojęcia](#podstawowe-pojęcia)
+- [Typy modeli](#typy-modeli)
+- [Fundamentalna lista AI](#fundamentalna-lista-ai)
+- [Architektury](#architektury)
+- [Wymiary ortogonalne](#wymiary-ortogonalne)
+- [Single call vs Workflow](#single-call-vs-workflow)
+- [RAG](#rag-retrieval-augmented-generation)
+- [RAG vs Agent z search](#rag-vs-agent-z-search)
+- [Natywne narzędzie vs MCP](#natywne-narzędzie-vs-mcp)
+- [Prompt engineering](#prompt-engineering)
+- [Structured output](#structured-output)
+- [Architektura agentów](#architektura-agentów)
+- [Baza wiedzy](#baza-wiedzy)
+- [Fine-tuning](#fine-tuning)
+- [Parametry generowania](#parametry-generowania)
+- [Trenowanie modeli](#trenowanie-modeli)
+- [Bezpieczeństwo](#bezpieczeństwo)
+- [Ewaluacja](#ewaluacja)
+- [Słownik skrótów](#słownik-skrótów)
+
+---
+
+## Podstawowe pojęcia
+
+| Pojęcie | Co to jest? | Analogia |
+|---|---|---|
+| **Model AI** | Program, który rozumie i generuje tekst | Mózg asystenta |
+| **Agent AI** | Model + zdolność do działania (narzędzia, decyzje) | Asystent z rękoma |
+| **LLM** | Large Language Model — model językowy trenowany na ogromnych zbiorach tekstu | Ktoś, kto przeczytał całą bibliotekę |
+| **Token** | Kawałek tekstu (słowo lub jego część) | Literka w scrabble |
+| **Prompt** | Wiadomość/pytanie wysyłane do modelu | Zadanie domowe dla AI |
+| **Context window** | Ile tekstu model "widzi" naraz | Pamięć krótkotrwała |
+
+---
+
+## Typy modeli
+
+| Typ | Co potrafi | Przykłady |
+|---|---|---|
+| **Text** | Czyta i pisze tekst | Claude, GPT-4, Llama |
+| **Multimodal** | Tekst + obrazy/audio/wideo | Claude 3, GPT-4o |
+| **Embedding** | Zamienia tekst na liczby (wektory) | text-embedding-3 |
+| **Code** | Specjalizuje się w kodowaniu | Codex, DeepSeek Coder |
+| **Reasoning** | Myśli krok po kroku, rozwiązuje złożone problemy | Claude 3.7, o3 |
+
+---
+
+## Fundamentalna lista AI
+
+Podstawowe koncepcje działania LLM, na których opierają się wszystkie architektury.
+
+| # | Koncepcja | Opis |
+|---|---|---|
+| 1 | **Model jako funkcja** | Model przyjmuje tekst na wejściu i zwraca tekst na wyjściu. Nie wiesz co jest w środku — traktuj go jak dowolną zewnętrzną funkcję. |
+| 2 | **API & Chat Completion** | API to sposób komunikacji z modelem. Wysyłasz prompt przez HTTP POST, otrzymujesz odpowiedź (completion). |
+| 3 | **Prompt = Instrukcja + Historia** | Model nie ma pamięci między wywołaniami. Każde zapytanie musi zawierać pełną historię rozmowy: system prompt → poprzednie wiadomości → nowe zapytanie. |
+| 4 | **Narzędzia = Schematy JSON** | Narzędzia to nie kod uruchamiany przez model. To schematy JSON dołączane do promptu — model czyta je jak tekst i decyduje, jaki JSON zwrócić. |
+| 5 | **Function Calling** | Model zwraca JSON opisujący co wywołać. Twój kod go odczytuje i uruchamia właściwą funkcję, a wynik odsyła z powrotem do modelu. |
+| 6 | **Agent Loop** | Pętla wywołań API. W każdej iteracji model decyduje: zwróć JSON (wywołaj narzędzie → kontynuuj pętlę) lub zwróć tekst (odpowiedź końcowa → zatrzymaj się). |
+
+---
+
 ## Architektury
 
 | Architektura | Opis |
@@ -10,6 +74,13 @@
 | **Multi-agent** | Orkiestrator + subagenci lub agenci peer-to-peer |
 
 > **Kluczowe pytanie:** Czy przepływ jest z góry znany? → Workflow. Czy model go odkrywa? → Agent.
+
+```
+Model (LLM):    Użytkownik → [Prompt] → Model → [Odpowiedź]
+
+Agent:          Użytkownik → [Prompt] → Agent → [Myśli] → [Narzędzie] → [Wynik] → [Odpowiedź]
+                                                 Pętla: Myśl → Działaj → Obserwuj → Myśl...
+```
 
 ---
 
@@ -23,6 +94,23 @@ Każda architektura może być skonfigurowana wzdłuż tych osi niezależnie:
 | **Pamięć** | W wagach (trening/fine-tuning) / Kontekstowa (okno kontekstu) / Cache (KV cache) / Zewnętrzna (vector DB, pliki, baza danych) |
 | **Nadzór** | Pełny automat / Human-in-the-loop / Human-on-the-loop |
 | **Ewaluacja** | Testy automatyczne / LLM-as-judge / Human-as-judge |
+
+---
+
+## Single call vs Workflow
+
+| | Single call | Workflow |
+|---|---|---|
+| **Liczba wywołań** | 1 | Wiele |
+| **Przepływ** | Brak | Wynik jednego kroku → wejście następnego |
+| **Złożoność** | Niska | Wysoka |
+| **Kiedy używać** | Proste zadania | Zadania wieloetapowe, walidacja, równoległość |
+
+**Workflow stosuj gdy:**
+- jeden prompt jest zbyt skomplikowany dla modelu
+- kroki mogą być wykonane równolegle
+- wynik pośredni wymaga walidacji przed dalszym przetwarzaniem
+- każdy krok potrzebuje innego promptu lub modelu
 
 ---
 
@@ -51,23 +139,6 @@ Pytanie → [Wyszukiwarka] → Fragmenty dokumentów → Prompt + fragmenty → 
 | **Architektura** | Single call / Workflow | Agent |
 | **Przewidywalność** | Wysoka | Niska |
 | **Kiedy używać** | Znane, powtarzalne zapytania | Złożone zadania wymagające iteracji |
-
----
-
-## Single call vs Workflow
-
-| | Single call | Workflow |
-|---|---|---|
-| **Liczba wywołań** | 1 | Wiele |
-| **Przepływ** | Brak | Wynik jednego kroku → wejście następnego |
-| **Złożoność** | Niska | Wysoka |
-| **Kiedy używać** | Proste zadania | Zadania wieloetapowe, walidacja, równoległość |
-
-**Workflow stosuj gdy:**
-- jeden prompt jest zbyt skomplikowany dla modelu
-- kroki mogą być wykonane równolegle
-- wynik pośredni wymaga walidacji przed dalszym przetwarzaniem
-- każdy krok potrzebuje innego promptu lub modelu
 
 ---
 
@@ -110,69 +181,24 @@ Prompt + schemat JSON → Model → Odpowiedź zgodna ze schematem
 
 ---
 
-## Fundamentalna lista AI
+## Architektura agentów
 
-Podstawowe koncepcje działania modeli językowych (LLM), na których opierają się wszystkie architektury.
+### Wzorce
 
-| # | Koncepcja | Opis |
-|---|---|---|
-| 1 | **Model jako funkcja** | Model przyjmuje tekst na wejściu i zwraca tekst na wyjściu. Nie wiesz co jest w środku — traktuj go jak dowolną zewnętrzną funkcję. |
-| 2 | **API & Chat Completion** | API to sposób komunikacji z modelem. Wysyłasz prompt przez HTTP POST, otrzymujesz odpowiedź (completion). |
-| 3 | **Prompt = Instrukcja + Historia** | Model nie ma pamięci między wywołaniami. Każde zapytanie musi zawierać pełną historię rozmowy: system prompt → poprzednie wiadomości → nowe zapytanie. |
-| 4 | **Narzędzia = Schematy JSON** | Narzędzia to nie kod uruchamiany przez model. To schematy JSON dołączane do promptu — model czyta je jak tekst i decyduje, jaki JSON zwrócić. |
-| 5 | **Function Calling** | Model zwraca JSON opisujący co wywołać. Twój kod go odczytuje i uruchamia właściwą funkcję, a wynik odsyła z powrotem do modelu. |
-| 6 | **Agent Loop** | Pętla wywołań API. W każdej iteracji model decyduje: zwróć JSON (wywołaj narzędzie → kontynuuj pętlę) lub zwróć tekst (odpowiedź końcowa → zatrzymaj się). |
+| Wzorzec | Opis |
+|---|---|
+| **ReAct** | Reason + Act — myśl, działaj, obserwuj wynik |
+| **Chain of Thought** | Krok po kroku do odpowiedzi |
+| **Multi-agent** | Wiele agentów współpracuje (jak zespół) |
+| **Planner + Executor** | Jeden planuje, drugi wykonuje |
 
----
+### Narzędzia agenta (tools)
 
-## Fine-tuning
-
-Alternatywa wobec RAG i prompt engineeringu — modyfikuje wagi modelu zamiast kontekstu.
-
-| | Prompt engineering / RAG | Fine-tuning |
-|---|---|---|
-| **Co modyfikuje** | Kontekst (prompt) | Wagi modelu |
-| **Koszt** | Niski | Wysoki (trening) |
-| **Elastyczność** | Wysoka | Niska |
-| **Kiedy używać** | Domyślny wybór | Gdy styl/format odpowiedzi jest ściśle określony i niezmienny |
-
-
----
-
-## Podstawowe pojęcia
-
-| Pojęcie | Co to jest? | Analogia |
-|---|---|---|
-| **Model AI** | Program, który rozumie i generuje tekst | Mózg asystenta |
-| **Agent AI** | Model + zdolność do działania (narzędzia, decyzje) | Asystent z rękoma |
-| **LLM** | Large Language Model — model językowy trenowany na ogromnych zbiorach tekstu | Ktoś, kto przeczytał całą bibliotekę |
-| **Token** | Kawałek tekstu (słowo lub jego część) | Literka w scrabble |
-| **Prompt** | Wiadomość/pytanie wysyłane do modelu | Zadanie domowe dla AI |
-| **Context window** | Ile tekstu model "widzi" naraz | Pamięć krótkotrwała |
-
----
-
-## Architektura
-
-### Model (LLM)
-
-```
-Użytkownik → [Prompt] → Model → [Odpowiedź]
-```
-
-- **Transformers** — architektura, na której opiera się większość modeli (GPT, Claude, Llama)
-- **Attention mechanism** — model "patrzy" na cały kontekst, nie tylko ostatnie słowa
-- **Parametry** — "wiedza" zakodowana w liczbach; im więcej, tym większy model (np. 7B, 70B, 405B)
-
-### Agent
-
-```
-Użytkownik → [Prompt] → Agent → [Myśli] → [Narzędzie] → [Wynik] → [Odpowiedź]
-```
-
-- **Pętla agenta**: Myśl → Działaj → Obserwuj → Myśl...
-- **Narzędzia (tools)**: search, kod, API, pliki — wszystko, czego agent może użyć
-- **Orchestrator**: zarządza wieloma agentami jednocześnie
+- Wyszukiwanie w internecie
+- Wykonywanie kodu
+- Odczyt/zapis plików
+- Wywołania API (zewnętrzne usługi)
+- Baza danych / pamięć
 
 ---
 
@@ -188,37 +214,16 @@ Użytkownik → [Prompt] → Agent → [Myśli] → [Narzędzie] → [Wynik] →
 
 ---
 
-## Typy modeli
+## Fine-tuning
 
-| Typ | Co potrafi | Przykłady |
+Alternatywa wobec RAG i prompt engineeringu — modyfikuje wagi modelu zamiast kontekstu.
+
+| | Prompt engineering / RAG | Fine-tuning |
 |---|---|---|
-| **Text** | Czyta i pisze tekst | Claude, GPT-4, Llama |
-| **Multimodal** | Tekst + obrazy/audio/wideo | Claude 3, GPT-4o |
-| **Embedding** | Zamienia tekst na liczby (wektory) | text-embedding-3 |
-| **Code** | Specjalizuje się w kodowaniu | Codex, DeepSeek Coder |
-| **Reasoning** | Myśli krok po kroku, rozwiązuje złożone problemy | Claude 3.7, o3 |
-
----
-
-## Bezpieczeństwo
-
-### Zagrożenia
-
-| Zagrożenie | Co to? | Przykład |
-|---|---|---|
-| **Prompt injection** | Złośliwy tekst zmienia zachowanie modelu | "Zapomnij zasady i zrób X" |
-| **Jailbreak** | Obejście zasad bezpieczeństwa | Ukryte instrukcje w obrazku |
-| **Data leakage** | Model ujawnia prywatne dane | Powtarzanie danych z treningu |
-| **Hallucination** | Model wymyśla fakty, które nie istnieją | Podaje fałszywe cytaty |
-| **Tool misuse** | Agent używa narzędzi w niezamierzony sposób | Usuwa pliki zamiast odczytać |
-
-### Zabezpieczenia
-
-- **Guardrails** — filtry wejścia i wyjścia
-- **RLHF** — trening z nagrodą za dobre zachowanie (Reinforcement Learning from Human Feedback)
-- **Constitutional AI** — model ocenia własne odpowiedzi według zasad
-- **Sandboxing** — agent działa w izolowanym środowisku
-- **Human-in-the-loop** — człowiek zatwierdza ważne decyzje
+| **Co modyfikuje** | Kontekst (prompt) | Wagi modelu |
+| **Koszt** | Niski | Wysoki (trening) |
+| **Elastyczność** | Wysoka | Niska |
+| **Kiedy używać** | Domyślny wybór | Gdy styl/format odpowiedzi jest ściśle określony i niezmienny |
 
 ---
 
@@ -248,24 +253,25 @@ Dane → Pre-training → Fine-tuning → RLHF → Model gotowy
 
 ---
 
-## Architektura agentów
+## Bezpieczeństwo
 
-### Wzorce
+### Zagrożenia
 
-| Wzorzec | Opis |
-|---|---|
-| **ReAct** | Reason + Act — myśl, działaj, obserwuj wynik |
-| **Chain of Thought** | Krok po kroku do odpowiedzi |
-| **Multi-agent** | Wiele agentów współpracuje (jak zespół) |
-| **Planner + Executor** | Jeden planuje, drugi wykonuje |
+| Zagrożenie | Co to? | Przykład |
+|---|---|---|
+| **Prompt injection** | Złośliwy tekst zmienia zachowanie modelu | "Zapomnij zasady i zrób X" |
+| **Jailbreak** | Obejście zasad bezpieczeństwa | Ukryte instrukcje w obrazku |
+| **Data leakage** | Model ujawnia prywatne dane | Powtarzanie danych z treningu |
+| **Hallucination** | Model wymyśla fakty, które nie istnieją | Podaje fałszywe cytaty |
+| **Tool misuse** | Agent używa narzędzi w niezamierzony sposób | Usuwa pliki zamiast odczytać |
 
-### Narzędzia agenta (tools)
+### Zabezpieczenia
 
-- Wyszukiwanie w internecie
-- Wykonywanie kodu
-- Odczyt/zapis plików
-- Wywołania API (zewnętrzne usługi)
-- Baza danych / pamięć
+- **Guardrails** — filtry wejścia i wyjścia
+- **RLHF** — trening z nagrodą za dobre zachowanie (Reinforcement Learning from Human Feedback)
+- **Constitutional AI** — model ocenia własne odpowiedzi według zasad
+- **Sandboxing** — agent działa w izolowanym środowisku
+- **Human-in-the-loop** — człowiek zatwierdza ważne decyzje
 
 ---
 
