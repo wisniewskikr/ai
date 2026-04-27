@@ -7,7 +7,8 @@ The Standard API sends requests one by one (like individual taxi rides). The Bat
 ## Requirements
 
 - Node.js 18+
-- An [OpenRouter](https://openrouter.ai) API key
+- An [OpenRouter](https://openrouter.ai) API key — used for Standard API
+- An [OpenAI](https://platform.openai.com) API key — used for Batch API (OpenRouter does not support the OpenAI Batch endpoints)
 
 ## Installation
 
@@ -15,10 +16,15 @@ The Standard API sends requests one by one (like individual taxi rides). The Bat
 npm install
 ```
 
-Copy `.env.example` to `.env` and fill in your API key:
+Copy `.env.example` to `.env` and fill in both API keys:
 
 ```bash
 cp .env.example .env
+```
+
+```
+OPENROUTER_API_KEY=sk-or-...
+OPENAI_API_KEY=sk-...
 ```
 
 ## Running
@@ -73,7 +79,7 @@ js-ai-costs-batchapi/
 │   └── reviews.json         # 100 headphone reviews
 ├── logs/                    # timestamped log files (auto-created)
 ├── config.json              # model, pricing, poll interval, timeouts
-├── .env                     # OPENROUTER_API_KEY (never commit)
+├── .env                     # OPENROUTER_API_KEY + OPENAI_API_KEY (never commit)
 ├── .env.example             # template
 ├── package.json
 └── tsconfig.json
@@ -85,8 +91,11 @@ All tunable values live in `config.json`:
 
 | Key | Description |
 |-----|-------------|
-| `model` | OpenRouter model ID |
-| `batchPollIntervalMs` | How often to check batch status (default: 10s) |
+| `model` | Model ID for Standard API via OpenRouter (e.g. `openai/gpt-4o-mini`) |
+| `batchModel` | Model ID for Batch API via OpenAI directly (e.g. `gpt-4o-mini`) |
+| `openrouterBaseUrl` | OpenRouter base URL |
+| `openaiBaseUrl` | OpenAI base URL |
+| `batchPollIntervalMs` | How often to poll batch status (default: 10s) |
 | `batchMaxWaitMs` | Max wait before timeout (default: 10 min) |
 | `inputCostPer1MTokens` | Input token price per 1M tokens |
 | `outputCostPer1MTokens` | Output token price per 1M tokens |
