@@ -34,11 +34,11 @@ async function main() {
   const reviews: Review[] = JSON.parse(fs.readFileSync(config.reviewsFile, 'utf-8'));
   logger.info(`Loaded ${reviews.length} reviews from ${config.reviewsFile}`);
 
-  console.log('\nAnaliza recenzji slowuchawek');
-  console.log('============================\n');
+  console.log('\nHeadphone Review Analysis');
+  console.log('=========================\n');
 
   // --- Standard API ---
-  console.log('--- Standardowe API ---');
+  console.log('--- Standard API ---');
   const standardResult = await runStandardApi(
     reviews,
     client,

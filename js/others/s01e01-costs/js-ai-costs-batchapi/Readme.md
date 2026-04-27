@@ -35,10 +35,10 @@ The program will:
 ## Expected output
 
 ```
-Analiza recenzji slowuchawek
-============================
+Headphone Review Analysis
+=========================
 
---- Standardowe API ---
+--- Standard API ---
 [1/100] "Amazing sound quality, very comfortable to wear all day..." -> positive
 [2/100] "Best headphones I've ever owned..." -> positive
 ...
@@ -50,11 +50,11 @@ Batch created: batch_xxx. Waiting for results...
 [polling] Status: completed!
 Batch API done. Duration: ~120s, Cost: $0.000210
 
-=== Podsumowanie ===
-Standardowe API:  45.2s  |  koszt: $0.000420
-Batch API:        118.4s |  koszt: $0.000210
-Oszczednosc:      $0.000210  (50%)
-Wyniki zgodne:    100/100
+=== Summary ===
+Standard API:     45.2s  |  cost: $0.000420
+Batch API:        118.4s |  cost: $0.000210
+Savings:          $0.000210  (50%)
+Matching results: 100/100
 ```
 
 ## Project structure

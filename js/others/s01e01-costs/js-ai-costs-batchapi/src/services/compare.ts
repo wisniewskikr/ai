@@ -17,11 +17,11 @@ export function compareResults(standard: StandardResult, batch: BatchResult) {
 
   const lines = [
     '',
-    '=== Podsumowanie ===',
-    `Standardowe API:  ${(standard.durationMs / 1000).toFixed(1)}s  |  koszt: $${standard.totalCost.toFixed(6)}`,
-    `Batch API:        ${(batch.durationMs / 1000).toFixed(1)}s  |  koszt: $${batch.totalCost.toFixed(6)}`,
-    `Oszczednosc:      $${savings.toFixed(6)}  (${savingsPct}%)`,
-    `Wyniki zgodne:    ${matches}/${standard.results.length}`,
+    '=== Summary ===',
+    `Standard API:     ${(standard.durationMs / 1000).toFixed(1)}s  |  cost: $${standard.totalCost.toFixed(6)}`,
+    `Batch API:        ${(batch.durationMs / 1000).toFixed(1)}s  |  cost: $${batch.totalCost.toFixed(6)}`,
+    `Savings:          $${savings.toFixed(6)}  (${savingsPct}%)`,
+    `Matching results: ${matches}/${standard.results.length}`,
   ];
 
   const summary = lines.join('\n');
