@@ -8,8 +8,10 @@ import { compareResults } from './services/compare.js';
 
 interface Config {
   model: string;
+  batchModel: string;
   reviewsFile: string;
   openrouterBaseUrl: string;
+  openaiBaseUrl: string;
   batchPollIntervalMs: number;
   batchMaxWaitMs: number;
   inputCostPer1MTokens: number;
@@ -19,15 +21,26 @@ interface Config {
 
 const config: Config = JSON.parse(fs.readFileSync('config.json', 'utf-8'));
 
-const apiKey = process.env.OPENROUTER_API_KEY;
-if (!apiKey) {
+const openrouterKey = process.env.OPENROUTER_API_KEY;
+if (!openrouterKey) {
   console.error('ERROR: OPENROUTER_API_KEY is not set in .env');
   process.exit(1);
 }
 
-const client = new OpenAI({
-  apiKey,
+const openaiKey = process.env.OPENAI_API_KEY;
+if (!openaiKey) {
+  console.error('ERROR: OPENAI_API_KEY is not set in .env');
+  process.exit(1);
+}
+
+const openrouterClient = new OpenAI({
+  apiKey: openrouterKey,
   baseURL: config.openrouterBaseUrl,
+});
+
+const openaiClient = new OpenAI({
+  apiKey: openaiKey,
+  baseURL: config.openaiBaseUrl,
 });
 
 async function main() {
@@ -41,7 +54,7 @@ async function main() {
   console.log('--- Standard API ---');
   const standardResult = await runStandardApi(
     reviews,
-    client,
+    openrouterClient,
     config.model,
     config.inputCostPer1MTokens,
     config.outputCostPer1MTokens,
@@ -51,8 +64,8 @@ async function main() {
   console.log('\n--- Batch API ---');
   const batchResult = await runBatchApi(
     reviews,
-    client,
-    config.model,
+    openaiClient,
+    config.batchModel,
     config.batchPollIntervalMs,
     config.batchMaxWaitMs,
     config.inputCostPer1MTokens,

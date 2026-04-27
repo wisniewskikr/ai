@@ -1,7 +1,9 @@
 {
   "model": "openai/gpt-4o-mini",
+  "batchModel": "gpt-4o-mini",
   "reviewsFile": "data/reviews.json",
   "openrouterBaseUrl": "https://openrouter.ai/api/v1",
+  "openaiBaseUrl": "https://api.openai.com/v1",
   "batchPollIntervalMs": 10000,
   "batchMaxWaitMs": 600000,
   "inputCostPer1MTokens": 0.15,

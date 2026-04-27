@@ -62,7 +62,11 @@ export async function runBatchApi(
 
   // Poll until complete
   let current = batch;
-  while (current.status === 'validating' || current.status === 'in_progress' || current.status === 'finalizing') {
+  while (
+    current.status === 'validating' ||
+    current.status === 'in_progress' ||
+    current.status === 'finalizing'
+  ) {
     const elapsed = Date.now() - start;
     if (elapsed > maxWaitMs) {
       throw new Error(`Batch timed out after ${(maxWaitMs / 1000).toFixed(0)}s`);
@@ -94,15 +98,20 @@ export async function runBatchApi(
   for (const line of lines) {
     const parsed = JSON.parse(line) as {
       custom_id: string;
-      response: { body: { choices: { message: { content: string } }[]; usage: { prompt_tokens: number; completion_tokens: number } } };
+      response: {
+        body: {
+          choices: { message: { content: string } }[];
+          usage: { prompt_tokens: number; completion_tokens: number };
+        };
+      };
     };
     const id = parseInt(parsed.custom_id.replace('review-', ''), 10);
-    const sentiment = parsed.response.body.choices[0].message.content?.trim().toLowerCase() ?? 'unknown';
+    const sentiment =
+      parsed.response.body.choices[0].message.content?.trim().toLowerCase() ?? 'unknown';
     const usage = parsed.response.body.usage;
     totalInputTokens += usage?.prompt_tokens ?? 0;
     totalOutputTokens += usage?.completion_tokens ?? 0;
 
-    // Find original text from reviews
     const original = reviews.find((r) => r.id === id);
     results.push({ id, text: original?.text ?? '', sentiment });
   }
