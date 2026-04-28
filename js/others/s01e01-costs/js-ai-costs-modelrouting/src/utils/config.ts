@@ -1,0 +1,31 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
+export interface ModelPricing {
+  inputPerM: number;
+  outputPerM: number;
+}
+
+export interface Config {
+  baseUrl: string;
+  classifierModel: string;
+  simpleModel: string;
+  complexModel: string;
+  maxTokens: number;
+  temperature: number;
+  pricing: Record<string, ModelPricing>;
+  exampleQueries: string[];
+}
+
+export function loadConfig(): Config {
+  const configPath = path.join(process.cwd(), 'config.json');
+  const raw = fs.readFileSync(configPath, 'utf-8');
+  const config = JSON.parse(raw) as Config;
+
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) {
+    throw new Error('OPENROUTER_API_KEY is not set. Copy .env.example to .env and fill it in.');
+  }
+
+  return config;
+}
