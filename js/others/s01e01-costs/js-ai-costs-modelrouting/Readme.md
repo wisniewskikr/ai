@@ -22,8 +22,8 @@ Simple Agent          Complex Agent
 | Agent | Model | Role |
 |---|---|---|
 | Classifier | `meta-llama/llama-3.1-8b-instruct` | Classifies query as simple or complex |
-| Simple Agent | `google/gemini-flash-2.0` | Handles simple queries — fast and cheap |
-| Complex Agent | `anthropic/claude-sonnet-4-5` | Handles complex queries — detailed and accurate |
+| Simple Agent | `google/gemini-2.5-flash-lite` | Handles simple queries — fast and cheap |
+| Complex Agent | `anthropic/claude-sonnet-4.5` | Handles complex queries — detailed and accurate |
 
 ## Requirements
 
