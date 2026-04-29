@@ -15,7 +15,7 @@ export function printBanner(): void {
   console.log("Choose an attack scenario:");
   console.log("");
   PREDEFINED_ATTACKS.forEach((a) => console.log(`  ${a.label}`));
-  console.log("  [3] Enter your own custom attack prompt");
+  console.log("  [5] Enter your own custom attack prompt");
   console.log("  [q] Quit");
   console.log("");
 }

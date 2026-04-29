@@ -12,9 +12,9 @@ dotenv.config();
 const logger = createLogger(config.logFile);
 
 async function resolveAttackPrompt(choice: string): Promise<string | null> {
-  if (choice === "1") return PREDEFINED_ATTACKS[0].prompt;
-  if (choice === "2") return PREDEFINED_ATTACKS[1].prompt;
-  if (choice === "3") return await ask("Enter your attack prompt: ");
+  const idx = parseInt(choice) - 1;
+  if (idx >= 0 && idx < PREDEFINED_ATTACKS.length) return PREDEFINED_ATTACKS[idx].prompt;
+  if (choice === "5") return await ask("Enter your attack prompt: ");
   return null;
 }
 
@@ -56,7 +56,7 @@ async function main(): Promise<void> {
 
   while (true) {
     printBanner();
-    const choice = await ask("Your choice [1/2/3/q]: ");
+    const choice = await ask("Your choice [1-5/q]: ");
 
     if (choice === "q") {
       console.log("\nExiting. Remember: always protect your system prompts!\n");
@@ -64,8 +64,8 @@ async function main(): Promise<void> {
       break;
     }
 
-    if (!["1", "2", "3"].includes(choice)) {
-      console.log("Invalid choice. Please enter 1, 2, 3, or q.\n");
+    if (!["1", "2", "3", "4", "5"].includes(choice)) {
+      console.log("Invalid choice. Please enter 1–5 or q.\n");
       continue;
     }
 
@@ -75,9 +75,9 @@ async function main(): Promise<void> {
       continue;
     }
 
-    if (choice === "1" || choice === "2") {
-      const idx = parseInt(choice) - 1;
-      console.log(`\nTechnique: ${PREDEFINED_ATTACKS[idx].technique}`);
+    const attackIdx = parseInt(choice) - 1;
+    if (attackIdx >= 0 && attackIdx < PREDEFINED_ATTACKS.length) {
+      console.log(`\nTechnique: ${PREDEFINED_ATTACKS[attackIdx].technique}`);
       console.log(`\nPrompt: "${attackPrompt}"\n`);
     }
 
