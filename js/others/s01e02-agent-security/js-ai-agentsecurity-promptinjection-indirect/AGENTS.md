@@ -38,14 +38,14 @@ Przykład dokumentu z atakiem:
 
 ## Model AI
 
-**Zalecany:** `mistralai/mistral-7b-instruct:free`
+**Zalecany:** `mistralai/mixtral-8x7b-instruct`
 
 | Cecha | Dlaczego pasuje |
 |---|---|
-| Darmowy tier w OpenRouter | Zero kosztów na demo |
-| Mniejszy RLHF | Ataki działają — demo ma sens |
+| Płatny model na OpenRouter | Realistyczne środowisko produkcyjne |
+| Mniejszy RLHF niż GPT-4/Claude | Ataki działają — demo ma sens |
 | Doskonały angielski | Działa lepiej w EN niż PL |
-| Wystarczająco mądry | Bot brzmi realistycznie |
+| Duży i wiarygodny | Bot brzmi realistycznie |
 
 ---
 
