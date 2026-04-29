@@ -1,0 +1,19 @@
+{
+  "name": "js-ai-agentsecurity-promptinjection-direct",
+  "version": "1.0.0",
+  "description": "Direct prompt injection demo — SafeBank AI chatbot",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts",
+    "build": "tsc",
+    "start:compiled": "node dist/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}
