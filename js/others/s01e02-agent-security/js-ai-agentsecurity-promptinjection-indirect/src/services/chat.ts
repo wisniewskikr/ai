@@ -44,7 +44,7 @@ Commands:
   /docs           List available documents
   /clear          Clear conversation history (keeps system prompt)
   /help           Show this help
-  exit / quit     Exit
+  /exit           Exit
 `);
 }
 
@@ -62,8 +62,8 @@ export async function startChat(initialMode: Mode, apiKey: string): Promise<void
   });
 
   console.log(`\nSafeBank Assistant — mode: \x1b[33m${mode.toUpperCase()}\x1b[0m`);
-  console.log('Type /help for available commands.\n');
   logger.info(`Chat started in ${mode} mode`);
+  printHelp();
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
@@ -72,7 +72,7 @@ export async function startChat(initialMode: Mode, apiKey: string): Promise<void
 
     const input = resolveShortcut(raw);
 
-    if (input === 'exit' || input === 'quit') {
+    if (input === '/exit') {
       console.log('Goodbye.');
       logger.info('Chat ended by user');
       rl.close();
