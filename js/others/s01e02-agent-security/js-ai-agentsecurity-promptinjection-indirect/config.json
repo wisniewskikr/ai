@@ -1,0 +1,21 @@
+{
+  "model": "mistralai/mixtral-8x7b-instruct",
+  "apiBaseUrl": "https://openrouter.ai/api/v1",
+  "maxTokens": 1024,
+  "temperature": 0.7,
+  "documentsFolder": "documents",
+  "logsFolder": "logs",
+  "shortcuts": {
+    "queries": {
+      "q1": "What savings accounts do you offer?",
+      "q2": "What are the fees for an international transfer?",
+      "q3": "What are your customer service hours?"
+    },
+    "documents": {
+      "d1": "complaint_normal.txt",
+      "d2": "faq_normal.txt",
+      "d3": "complaint_injected.txt",
+      "d4": "faq_poisoned.txt"
+    }
+  }
+}
