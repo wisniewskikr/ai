@@ -52,6 +52,9 @@ export async function runPipeline(message: string): Promise<PipelineResult> {
 
   const architectural = validateArchitectural(message);
   steps.push({ name: 'Architectural', result: architectural });
+  if (architectural.status === 'BLOCK') {
+    return { passed: false, steps, blockReason: architectural.reason };
+  }
 
   return {
     passed: true,
