@@ -1,10 +1,10 @@
 import "dotenv/config";
-import { SYSTEM_PROMPT } from "./prompts/systemPrompt.js";
-import { ATTACK_VARIANTS } from "./prompts/attackVariants.js";
-import { sendMessage } from "./services/chat.js";
-import { analyzeResponse } from "./services/attackAnalyzer.js";
-import { createLogger, Logger } from "./utils/logger.js";
-import { printMenu, promptUser } from "./utils/menu.js";
+import { SYSTEM_PROMPT } from "./prompts/systemPrompt";
+import { ATTACK_VARIANTS } from "./prompts/attackVariants";
+import { sendMessage } from "./services/chat";
+import { analyzeResponse } from "./services/attackAnalyzer";
+import { createLogger, Logger } from "./utils/logger";
+import { printMenu, promptUser } from "./utils/menu";
 import config from "../config.json";
 
 function getApiKey(): string {

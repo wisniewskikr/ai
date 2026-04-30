@@ -1,5 +1,5 @@
 import readline from "readline";
-import { ATTACK_VARIANTS } from "../prompts/attackVariants.js";
+import { ATTACK_VARIANTS } from "../prompts/attackVariants";
 
 export function printMenu(): void {
   console.log("\n========================================");
