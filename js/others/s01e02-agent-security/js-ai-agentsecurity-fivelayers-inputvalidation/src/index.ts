@@ -72,9 +72,9 @@ async function processMessage(
   const result = await runPipeline(message);
 
   result.steps.forEach((step, i) => {
-    const label = `[${i + 1}] ${step.name.padEnd(14)}`;
+    const label = `Layer ${i + 1} - ${step.name.padEnd(14)}`;
     console.log(`${label} ${colorStatus(step.result.status)}  ${step.result.reason}`);
-    logger.info(`Layer ${i + 1} ${step.name}: ${step.result.status} — ${step.result.reason}`);
+    logger.info(`Layer ${i + 1} - ${step.name}: ${step.result.status} — ${step.result.reason}`);
   });
 
   if (!result.passed) {
