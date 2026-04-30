@@ -1,0 +1,16 @@
+{
+  "models": {
+    "main": "anthropic/claude-haiku-4-5",
+    "judge": "anthropic/claude-haiku-4-5"
+  },
+  "validation": {
+    "maxLength": 500,
+    "minLength": 2,
+    "nonAsciiRatioThreshold": 0.30,
+    "rateLimitPerMinute": 10
+  },
+  "openrouter": {
+    "baseUrl": "https://openrouter.ai/api/v1",
+    "timeoutMs": 30000
+  }
+}
