@@ -5,7 +5,10 @@ export function wrapUntrusted(message: string): string {
   return `[UNTRUSTED] ${message} [/UNTRUSTED]`;
 }
 
-// This layer always passes — its purpose is tagging and signaling to the pipeline
-export function validateArchitectural(_message: string): ValidationResult {
+// Detects attempts to escape the [UNTRUSTED] wrapper by injecting the closing tag
+export function validateArchitectural(message: string): ValidationResult {
+  if (/\[\/UNTRUSTED\]/i.test(message)) {
+    return { status: 'BLOCK', reason: 'untrusted tag escape attempt detected' };
+  }
   return { status: 'SAFE', reason: 'tagged [UNTRUSTED], prompt hardening active' };
 }
