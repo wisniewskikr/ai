@@ -1,0 +1,10 @@
+{
+  "model": "openai/gpt-4o-mini",
+  "apiBaseUrl": "https://openrouter.ai/api/v1/chat/completions",
+  "temperature": 0.7,
+  "maxTokens": 1024,
+  "logFile": "logs/session.log",
+  "secretKeyword": "OMEGA-7",
+  "secretEscalationCode": "ESC-4492-DELTA",
+  "secretProjectCodename": "Project NIGHTFALL"
+}
