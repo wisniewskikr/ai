@@ -21,6 +21,7 @@
 - [Bezpieczeństwo](#bezpieczeństwo)
 - [Ewaluacja](#ewaluacja)
 - [Słownik skrótów](#słownik-skrótów)
+- [12 marca - #1 Sesja live](#12-marca---1-sesja-live)
 
 ---
 
@@ -298,3 +299,38 @@ Dane → Pre-training → Fine-tuning → RLHF → Model gotowy
 | MCP | Model Context Protocol |
 | API | Application Programming Interface |
 | GPU | Graphics Processing Unit (do trenowania modeli) |
+
+---
+
+## 12 marca - #1 Sesja live
+
+### Agenci
+
+- Cursor
+- Claude Code
+- Codex
+- OpenCode
+
+### Modele
+
+- **ZAI** — tani dostawca modeli. Ponieważ chiński, pojawia się pytanie o bezpieczeństwo.
+- **Kimi** — model open source; używany produkcyjnie przez Adama do generowania UI ze względu na jakość i szybkość.
+
+### Narzędzia
+
+- **Kiro** — plugin do Claude Code; narzędzie prowadzące przez tworzenie PRD i milestones w podejściu Spec Driven Development; rekomendowane przez Mateusza.
+
+### Dobre praktyki
+
+- Długa historia błędnych prób negatywnie wpływa na kolejne odpowiedzi modelu (kontekst "zatruwający" kierunek rozwiązania).
+- Zaleca się rozpoczynanie nowego wątku często — nawet co kilka wiadomości.
+- Modele mało dodają od siebie. Zrobią głównie to, co ty im powiesz — trzeba zadawać pytania pogłębiające.
+
+### Pytania pogłębiające
+
+- Chciałbym podejść do tego tematu. Wymień zagadnienia, które Ci się z tym kojarzą.
+- Dane zagadnienie jest dla mnie niejasne. Wyjaśnij mi to w 3–5 zdaniach.
+- Czy to jest właściwe podejście?
+- Czy jest lepsza ścieżka do osiągnięcia tego resultatu?
+- Czy to co robimy ma sens?
+- Gdybyś był mną, to jakie pytanie byś sobie zadał, żeby zrealizować cel?
