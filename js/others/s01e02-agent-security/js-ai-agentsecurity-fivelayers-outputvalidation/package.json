@@ -1,0 +1,19 @@
+{
+  "name": "bank-assistant-output-validation",
+  "version": "1.0.0",
+  "description": "CLI chat demo: 5-layer output validation pipeline for AI bank assistant",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "build": "tsc",
+    "dev": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "tsx": "^4.15.0",
+    "typescript": "^5.4.0"
+  }
+}

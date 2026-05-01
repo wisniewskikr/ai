@@ -1,0 +1,12 @@
+{
+  "mainModel": "anthropic/claude-haiku-4-5",
+  "judgeModel": "anthropic/claude-haiku-4-5",
+  "maxResponseLength": 2000,
+  "minResponseLength": 2,
+  "allowedDomains": ["bank.pl"],
+  "openrouterBaseUrl": "https://openrouter.ai/api/v1",
+  "maxTokens": {
+    "main": 500,
+    "judge": 20
+  }
+}
