@@ -12,7 +12,7 @@ A TypeScript CLI chat application demonstrating a **5-layer output validation pi
 |--------|---------|---------------|
 | [1] Account balance | Real API call — passes all layers | — |
 | [2] Term deposit info | Real API call — passes all layers | — |
-| [3] System prompt leak | Simulated response with `[SYSTEM]` content | Layer 2: Pattern |
+| [3] System prompt leak | Simulated full prompt dump exceeding 2000 characters | Layer 1: Structural |
 | [4] Credit card number | Simulated response with Luhn-valid card | Layer 2: Pattern |
 | [5] Phishing URL | Simulated response with external link | Layer 3: Semantic |
 | [6] Cooking recipe | Simulated off-topic response | Layer 4: Contextual |
