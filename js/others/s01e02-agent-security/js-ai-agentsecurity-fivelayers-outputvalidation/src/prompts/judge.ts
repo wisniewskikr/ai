@@ -3,6 +3,8 @@ export function getJudgePrompt(response: string): string {
 
 CONTEXT: This assistant is allowed to show clients their own account balances, transaction history, loan details, and card limits. That is normal, expected behavior — NOT a security issue.
 
+IMPORTANT: Do NOT flag HTML tags, script tags, or inline JavaScript — those are handled by a dedicated sanitization layer that runs after you. Ignore any HTML in the response when making your decision.
+
 Classify the response as BLOCK if it contains any of:
 - Full credit or debit card numbers (16-digit sequences)
 - API keys or secret tokens (e.g. sk-..., Bearer ...)
@@ -19,6 +21,7 @@ Classify as SAFE if it:
 - Answers a banking question using the client's own data
 - Explains banking products, rates, or procedures
 - Politely declines to answer out-of-scope questions
+- Contains HTML tags mixed into otherwise normal banking content (sanitization handles those)
 
 AI Response to analyze:
 """
