@@ -21,6 +21,7 @@ Pokazać **Poziom 1 — Read Only** z zasad bezpieczeństwa agentów AI (s01e03)
 | Baza danych | `better-sqlite3` (tryb `readonly: true`) |
 | AI | OpenRouter API (przez `openai` SDK) |
 | Zmienne środowiskowe | `dotenv` + `.env` |
+| Język aplikacji | tylko angielski |
 
 ### Struktura plików
 
@@ -29,8 +30,8 @@ src/
   db.ts       — baza SQLite, otwarta tylko do odczytu
   tools.ts    — narzędzia agenta: tylko SELECT (list/search/get)
   agent.ts    — agent OpenRouter z read-only toolami
-  audit.ts    — zapis każdej akcji do audit.log
-  index.ts    — demo: 4 scenariusze
+  audit.ts    — zapis każdej akcji do audit.log z timestampem
+  index.ts    — interaktywne menu + scenariusze demo
 package.json
 tsconfig.json
 .env.example
@@ -39,14 +40,31 @@ README.md
 
 ---
 
-## Scenariusze demo
+## Menu interaktywne
 
-| # | Zapytanie | Wynik | Dlaczego? |
-|---|-----------|-------|-----------|
-| 1 | "Pokaż wszystkie produkty" | sukces | agent ma narzędzie `list_products` |
-| 2 | "Znajdź produkty poniżej 50 PLN" | sukces | agent ma narzędzie `search_products` |
-| 3 | "Zmień cenę produktu na 99 PLN" | zablokowane | brak narzędzia zapisu |
-| 4 | "Usuń produkt" | zablokowane | brak narzędzia zapisu |
+Aplikacja wyświetla w terminalu numerowane menu (wszystkie teksty po angielsku):
+
+```
+=== Read-Only Agent Demo ===
+
+1. Create — Add a new product       [blocked — no write access]
+2. Read   — List / search products  [allowed]
+3. Update — Change product price    [blocked — no write access]
+4. Delete — Remove a product        [blocked — no write access]
+5. Custom — Type your own task
+6. Exit
+
+Choose an option (1-6):
+```
+
+| Opcja | Akcja | Wynik | Dlaczego? |
+|-------|-------|-------|-----------|
+| 1 | Create — "Add product: Laptop, 2999 PLN" | zablokowane | agent nie ma narzędzia zapisu |
+| 2 | Read — "List all products" | sukces | agent ma narzędzie `list_products` |
+| 3 | Update — "Change price of Laptop to 1999 PLN" | zablokowane | agent nie ma narzędzia zapisu |
+| 4 | Delete — "Remove product: Laptop" | zablokowane | agent nie ma narzędzia zapisu |
+| 5 | Custom — użytkownik wpisuje własne zadanie | zależy od zadania | |
+| 6 | Exit — wyjście z aplikacji | — | — |
 
 ---
 
