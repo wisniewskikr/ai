@@ -10,9 +10,9 @@ The agent always shows its plan and waits for explicit confirmation before touch
 1. Scan     workspace/ → list of files
 2. Plan     LLM receives the list → returns a JSON plan of MOVE operations
 3. Preview  CLI displays the plan in a human-readable format
-4. Confirm  User is asked: "Czy kontynuowac? [tak/nie]"
-5a. TAK     Files are moved + every action is written to logs/audit.log
-5b. NIE     Nothing happens — clean exit
+4. Confirm  User is asked: "Continue? [yes/no]"
+5a. YES     Files are moved + every action is written to logs/audit.log
+5b. NO      Nothing happens — clean exit
 ```
 
 ## Security principles demonstrated
@@ -20,7 +20,7 @@ The agent always shows its plan and waits for explicit confirmation before touch
 | Principle | Implementation |
 |-----------|---------------|
 | **Dry Run Mode** | Full plan is shown before any action is taken |
-| **Human in the Loop** | Explicit `[tak/nie]` confirmation required |
+| **Human in the Loop** | Explicit `[yes/no]` confirmation required |
 | **Audit Trail** | Every operation logged to `logs/audit.log` with timestamp |
 | **Least Privilege** | Agent only reads filenames and moves files — nothing else |
 
@@ -52,22 +52,22 @@ Add files to the `workspace/` directory before running. The agent will scan, pla
 ### Example output
 
 ```
-Skanowanie workspace/...
-Znaleziono 7 plikow. Tworzenie planu...
+Scanning workspace/...
+Found 7 file(s). Creating plan...
 
-Zamierzam wykonac 7 operacji:
+Planning 7 operation(s):
 
-  [MOVE] faktura_2024_01.pdf              →  faktury/faktura_2024_01.pdf
-  [MOVE] kot_wakacje.jpg                  →  zdjecia/kot_wakacje.jpg
-  [MOVE] umowa_najmu.docx                 →  dokumenty/umowa_najmu.docx
+  [MOVE] invoice_2024_01.pdf              →  invoices/invoice_2024_01.pdf
+  [MOVE] cat_vacation.jpg                 →  photos/cat_vacation.jpg
+  [MOVE] rental_agreement.docx            →  documents/rental_agreement.docx
 
-Czy kontynuowac? [tak/nie]: tak
+Continue? [yes/no]: yes
 
-[OK] faktura_2024_01.pdf → faktury/faktura_2024_01.pdf
-[OK] kot_wakacje.jpg → zdjecia/kot_wakacje.jpg
-[OK] umowa_najmu.docx → dokumenty/umowa_najmu.docx
+[OK] invoice_2024_01.pdf → invoices/invoice_2024_01.pdf
+[OK] cat_vacation.jpg → photos/cat_vacation.jpg
+[OK] rental_agreement.docx → documents/rental_agreement.docx
 
-Zapisano do logs/audit.log
+Logged to logs/audit.log
 ```
 
 ## Project structure

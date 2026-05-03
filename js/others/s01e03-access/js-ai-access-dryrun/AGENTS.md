@@ -59,9 +59,9 @@ js-ai-access-dryrun/
 1. Scan        workspace/ → lista plików
 2. Plan        LLM dostaje listę → zwraca JSON z planem przeniesień
 3. Preview     CLI wyświetla plan czytelnie dla użytkownika
-4. Confirm     Pytanie: "Czy kontynuować? [tak/nie]"
-5a. TAK        Pliki są przenoszone + wpis do logs/audit.log
-5b. NIE        Nic się nie dzieje — czyste wyjście
+4. Confirm     Pytanie: "Continue? [yes/no]"
+5a. YES        Pliki są przenoszone + wpis do logs/audit.log
+5b. NO         Nic się nie dzieje — czyste wyjście
 ```
 
 ---
@@ -69,17 +69,18 @@ js-ai-access-dryrun/
 ## Przykład działania
 
 ```
-Zamierzam wykonać 3 operacje:
-  [MOVE] faktura_2024_01.pdf  →  faktury/
-  [MOVE] kot_wakacje.jpg      →  zdjecia/
-  [MOVE] umowa_najmu.docx     →  dokumenty/
+Planning 3 operation(s):
+  [MOVE] invoice_2024_01.pdf   →  invoices/invoice_2024_01.pdf
+  [MOVE] cat_vacation.jpg      →  photos/cat_vacation.jpg
+  [MOVE] rental_agreement.docx →  documents/rental_agreement.docx
 
-Czy kontynuować? [tak/nie]: tak
+Continue? [yes/no]: yes
 
-[OK] faktura_2024_01.pdf przeniesiony
-[OK] kot_wakacje.jpg przeniesiony
-[OK] umowa_najmu.docx przeniesiony
-Zapisano do logs/audit.log
+[OK] invoice_2024_01.pdf → invoices/invoice_2024_01.pdf
+[OK] cat_vacation.jpg → photos/cat_vacation.jpg
+[OK] rental_agreement.docx → documents/rental_agreement.docx
+
+Logged to logs/audit.log
 ```
 
 ---
