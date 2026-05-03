@@ -1,0 +1,8 @@
+{
+  "model": "openai/gpt-4o-mini",
+  "openRouterBaseUrl": "https://openrouter.ai/api/v1",
+  "workspaceDir": "workspace",
+  "logsDir": "logs",
+  "auditLogFile": "logs/audit.log",
+  "maxFilesPerPlan": 50
+}

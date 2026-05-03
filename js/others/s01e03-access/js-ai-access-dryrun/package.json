@@ -1,0 +1,19 @@
+{
+  "name": "js-ai-access-dryrun",
+  "version": "1.0.0",
+  "description": "AI file organizer with Dry Run Mode and Human-in-the-Loop confirmation",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "openai": "^4.67.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3"
+  }
+}
