@@ -1,0 +1,13 @@
+{
+  "model": "openai/gpt-4o-mini",
+  "database": {
+    "path": "./products.db"
+  },
+  "audit": {
+    "logPath": "./logs/audit.log"
+  },
+  "agent": {
+    "maxTokens": 1000,
+    "temperature": 0
+  }
+}
