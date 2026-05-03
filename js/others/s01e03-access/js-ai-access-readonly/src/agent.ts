@@ -4,10 +4,18 @@ import { logAudit } from './audit';
 import { SYSTEM_PROMPT } from './prompts/system';
 import config from '../config.json';
 
-const client = new OpenAI({
-  baseURL: 'https://openrouter.ai/api/v1',
-  apiKey: process.env.OPENROUTER_API_KEY,
-});
+// Client is created lazily so dotenv.config() in index.ts runs first
+let _client: OpenAI | null = null;
+
+function getClient(): OpenAI {
+  if (!_client) {
+    _client = new OpenAI({
+      baseURL: 'https://openrouter.ai/api/v1',
+      apiKey: process.env.OPENROUTER_API_KEY,
+    });
+  }
+  return _client;
+}
 
 export async function runAgent(userMessage: string): Promise<string> {
   const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
@@ -18,7 +26,7 @@ export async function runAgent(userMessage: string): Promise<string> {
   logAudit('INFO', `User task: "${userMessage}"`);
 
   for (let step = 0; step < 10; step++) {
-    const response = await client.chat.completions.create({
+    const response = await getClient().chat.completions.create({
       model: config.model,
       messages,
       tools: toolDefinitions,
