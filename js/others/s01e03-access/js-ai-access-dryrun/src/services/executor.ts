@@ -24,5 +24,5 @@ export function executeOperations(operations: MoveOperation[]): void {
     }
   }
 
-  console.log(`\nZapisano do ${config.auditLogFile}`);
+  console.log(`\nLogged to ${config.auditLogFile}`);
 }

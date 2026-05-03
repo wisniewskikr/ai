@@ -7,56 +7,56 @@ import { logger } from './utils/logger';
 
 async function main() {
   if (!process.env.OPENROUTER_API_KEY) {
-    console.error('Brakuje OPENROUTER_API_KEY w pliku .env');
+    console.error('Missing OPENROUTER_API_KEY in .env file');
     process.exit(1);
   }
 
-  console.log('Skanowanie workspace/...');
+  console.log('Scanning workspace/...');
   const files = scanWorkspace();
 
   if (files.length === 0) {
-    console.log('Brak plikow w workspace/ do zorganizowania.');
+    console.log('No files found in workspace/ to organize.');
     return;
   }
 
-  console.log(`Znaleziono ${files.length} plik(ow). Tworzenie planu...\n`);
-  logger.info(`Scan: znaleziono ${files.length} plikow`);
+  console.log(`Found ${files.length} file(s). Creating plan...\n`);
+  logger.info(`Scan: found ${files.length} file(s)`);
 
   let plan;
   try {
     plan = await createPlan(files);
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    console.error(`Blad tworzenia planu: ${message}`);
+    console.error(`Failed to create plan: ${message}`);
     logger.error(`Plan failed: ${message}`);
     process.exit(1);
   }
 
   if (!plan.operations || plan.operations.length === 0) {
-    console.log('LLM nie zaproponowal zadnych operacji.');
+    console.log('LLM returned no operations.');
     return;
   }
 
-  console.log(`Zamierzam wykonac ${plan.operations.length} operacji:\n`);
+  console.log(`Planning ${plan.operations.length} operation(s):\n`);
   for (const op of plan.operations) {
     console.log(`  [${op.action}] ${op.source.padEnd(35)} →  ${op.destination}`);
   }
 
   console.log();
-  const confirmed = await askConfirmation('Czy kontynuowac? [tak/nie]: ');
+  const confirmed = await askConfirmation('Continue? [yes/no]: ');
 
   if (!confirmed) {
-    console.log('\nAnulowano. Zadne pliki nie zostaly zmienione.');
-    logger.info('Plan odrzucony przez uzytkownika');
+    console.log('\nAborted. No files were changed.');
+    logger.info('Plan rejected by user');
     return;
   }
 
   console.log();
-  logger.info(`Uzytkownik zatwierdził plan (${plan.operations.length} operacji)`);
+  logger.info(`User approved plan (${plan.operations.length} operation(s))`);
   executeOperations(plan.operations);
 }
 
 main().catch((err) => {
-  console.error('Nieoczekiwany blad:', err);
+  console.error('Unexpected error:', err);
   process.exit(1);
 });
