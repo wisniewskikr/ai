@@ -8,7 +8,7 @@ The agent receives only 3 read-only tools (`list_products`, `search_products`, `
 
 ## Requirements
 
-- Node.js 18+
+- Node.js 22+
 - OpenRouter API key
 
 ## Installation

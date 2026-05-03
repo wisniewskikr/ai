@@ -18,7 +18,7 @@ Pokazać **Poziom 1 — Read Only** z zasad bezpieczeństwa agentów AI (s01e03)
 |----|------|
 | Język | TypeScript |
 | Uruchomienie | `tsx` |
-| Baza danych | `better-sqlite3` (tryb `readonly: true`) |
+| Baza danych | `node:sqlite` (wbudowany w Node.js 22+, tryb `readonly: true`) |
 | AI | OpenRouter API (przez `openai` SDK) |
 | Zmienne środowiskowe | `dotenv` + `.env` |
 | Język aplikacji | tylko angielski |
@@ -27,11 +27,16 @@ Pokazać **Poziom 1 — Read Only** z zasad bezpieczeństwa agentów AI (s01e03)
 
 ```
 src/
+  prompts/
+    system.ts — prompt systemowy agenta (edytowalny bez zmiany logiki)
   db.ts       — baza SQLite, otwarta tylko do odczytu
   tools.ts    — narzędzia agenta: tylko SELECT (list/search/get)
   agent.ts    — agent OpenRouter z read-only toolami
-  audit.ts    — zapis każdej akcji do audit.log z timestampem
+  audit.ts    — zapis każdej akcji do logs/audit.log z timestampem
   index.ts    — interaktywne menu + scenariusze demo
+logs/
+  audit.log   — tworzony automatycznie przy pierwszym uruchomieniu
+config.json   — model, ścieżki, ustawienia agenta
 package.json
 tsconfig.json
 .env.example
@@ -79,7 +84,7 @@ Choose an option (1-6):
 
 ---
 
-## Uruchomienie (plan)
+## Uruchomienie
 
 ```bash
 npm install
