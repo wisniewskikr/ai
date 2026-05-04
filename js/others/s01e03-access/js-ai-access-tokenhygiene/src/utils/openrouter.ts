@@ -21,7 +21,7 @@ export async function complete(apiKey: string, model: string, prompt: string): P
 
   if (!res.ok) {
     const err = await res.text();
-    throw new Error(`LiteLLM proxy ${res.status}: ${err}`);
+    throw new Error(`Local proxy ${res.status}: ${err}`);
   }
 
   const data = (await res.json()) as {

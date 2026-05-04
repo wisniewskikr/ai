@@ -34,7 +34,7 @@ function buildVault(): TokenVault {
   const vault = new TokenVault();
   const { chat, analyzer, writer } = config.services;
 
-  // Każdy serwis dostaje osobny wirtualny klucz LiteLLM —
+  // Każdy serwis dostaje osobny wirtualny klucz lokalnego proxy —
   // scope jest egzekwowany server-side przez proxy, nie tylko w kodzie.
   vault.register(chat.tokenName,     CHAT_KEY,     [chat.model],     chat.ttlMinutes);
   vault.register(analyzer.tokenName, ANALYZER_KEY, [analyzer.model], analyzer.ttlMinutes);
@@ -44,7 +44,7 @@ function buildVault(): TokenVault {
 }
 
 async function demoGoodPattern(vault: TokenVault): Promise<void> {
-  logger.info("=== GOOD PATTERN (via LiteLLM proxy) ===");
+  logger.info("=== GOOD PATTERN (via local proxy) ===");
 
   const { chat, analyzer, writer } = config.services;
   logger.info(`[chat]     Token: ${chat.tokenName}     | scope: ${chat.model.split("/")[1]}  | TTL: ${vault.getTtlMinutes(chat.tokenName)}min`);

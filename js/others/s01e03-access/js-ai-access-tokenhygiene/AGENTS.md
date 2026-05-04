@@ -21,6 +21,8 @@ Porównanie dwóch podejść do zarządzania tokenami API w agencie AI:
 ## Struktura projektu
 
 ```
+proxy/
+  server.ts          — lokalny proxy: klucze, scope, audit log w SQLite
 src/
   prompts/           — prompt builders (edytowalne bez zmiany logiki)
   services/
@@ -31,11 +33,10 @@ src/
   utils/
     config.ts        — loader config.json
     logger.ts        — zapis logów do pliku i konsoli
-    openrouter.ts    — wywołanie LiteLLM proxy
+    openrouter.ts    — wywołanie lokalnego proxy
   index.ts           — demo: bad pattern vs good pattern
-  setup-keys.ts      — tworzy wirtualne klucze przez LiteLLM API
-litellm/
-  config.yaml        — konfiguracja LiteLLM proxy
+  setup-keys.ts      — tworzy wirtualne klucze przez proxy API
+proxy.db             — SQLite: wirtualne klucze + audit log (git-ignored)
 config.json          — wszystkie zmienne konfiguracyjne
 ```
 
@@ -106,92 +107,20 @@ ERROR: TokenExpiredError — token 'ANALYZER_TOKEN' wygasł 3 minuty temu
 
 ---
 
-## LiteLLM Proxy — prawdziwa separacja kluczy
+## Lokalny proxy — prawdziwa separacja kluczy
 
-LiteLLM proxy siedzi między serwisami a OpenRouter. Serwisy nigdy nie widzą klucza OpenRouter — dostają tylko wirtualne klucze wystawione przez proxy.
+Proxy siedzi między serwisami a OpenRouter. Serwisy nigdy nie widzą klucza OpenRouter — dostają tylko wirtualne klucze wystawione przez proxy.
 
 ```
 ChatAgent    → CHAT_API_KEY     ──┐
-Analyzer     → ANALYZER_API_KEY ──┤──► LiteLLM Proxy ──► OpenRouter
-Writer       → WRITER_API_KEY   ──┘         ↑
-                                    OPENROUTER_API_KEY (tylko tu)
+Analyzer     → ANALYZER_API_KEY ──┤──► Local Proxy ──► OpenRouter
+Writer       → WRITER_API_KEY   ──┘        ↑
+                                   OPENROUTER_API_KEY (tylko tu)
 ```
 
-Scope jest teraz egzekwowany **server-side** — wirtualny klucz ChatAgenta nie wywoła `claude-sonnet`, bo proxy odrzuci żądanie zanim dotrze do OpenRouter.
-
-### Wymagania proxy
-
-**Wirtualne klucze wymagają PostgreSQL.** LiteLLM używa Prisma ORM ze schematem hardcodowanym dla PostgreSQL — SQLite nie jest obsługiwany. Bez bazy proxy startuje, ale endpoint `/key/generate` zwraca `DB not connected`.
-
-Najszybszy sposób — PostgreSQL przez Docker:
-
-```bash
-docker run -d --name litellm-db \
-  -e POSTGRES_PASSWORD=litellm \
-  -e POSTGRES_USER=litellm \
-  -e POSTGRES_DB=litellm \
-  -p 5432:5432 postgres:15
-```
-
-Dodaj do `.env`:
-```
-DATABASE_URL=postgresql://litellm:litellm@localhost:5432/litellm
-```
-
-Dodaj do `litellm/config.yaml`:
-```yaml
-general_settings:
-  database_url: os.environ/DATABASE_URL
-```
-
-**Windows — problem z kodowaniem UTF-8.** LiteLLM wyświetla baner z Unicode. Na systemach z kodowaniem cp1250 proxy crashuje przy starcie z `UnicodeEncodeError`. Wymagany pakiet `prisma`:
-
-```bash
-pip install litellm[proxy] prisma
-```
-
-I ustawienie zmiennej środowiskowej przed startem:
-```
-PYTHONUTF8=1
-```
-
-### Uruchomienie proxy
-
-```bash
-pip install litellm[proxy] prisma
-npm run proxy          # startuje LiteLLM na localhost:4000
-npm run setup-keys     # tworzy wirtualne klucze, wypisuje je do wklejenia w .env
-npm run dev            # uruchamia demo
-```
-
-### Zmienne środowiskowe po migracji
-
-| Zmienna | Kto jej używa |
-|---------|--------------|
-| `OPENROUTER_API_KEY` | tylko LiteLLM proxy |
-| `LITELLM_MASTER_KEY` | `npm run setup-keys` (admin) |
-| `CHAT_API_KEY` | ChatAgent (scope: claude-haiku-4-5) |
-| `ANALYZER_API_KEY` | Analyzer (scope: claude-haiku-4-5) |
-| `WRITER_API_KEY` | Writer (scope: claude-sonnet-4-6) |
-
----
-
-## Własny proxy w Node.js + SQLite
-
-LiteLLM wymaga Pythona, PostgreSQL i Dockera. Można zbudować lżejszy proxy w Node.js — bez żadnych zewnętrznych zależności systemowych.
-
-### Analogia
-
-LiteLLM to bank z pełną infrastrukturą. Własny proxy to sejf w szafie — mniejszy, ale robi dokładnie to, czego potrzebujesz.
+Scope jest egzekwowany **server-side** — wirtualny klucz ChatAgenta nie wywoła `claude-sonnet`, bo proxy odrzuci żądanie zanim dotrze do OpenRouter.
 
 ### Jak działa
-
-```
-ChatAgent    → CHAT_VIRTUAL_KEY  ──┐
-Analyzer     → ANALYZER_VIRTUAL_KEY─┤──► [Twój proxy] ──► OpenRouter
-Writer       → WRITER_VIRTUAL_KEY ──┘         ↑
-                                    OPENROUTER_API_KEY (tylko tu)
-```
 
 Proxy przy każdym żądaniu:
 
@@ -201,10 +130,9 @@ Proxy przy każdym żądaniu:
 4. Podmienia klucz na prawdziwy i przekazuje do OpenRouter
 5. Zapisuje audit log do SQLite
 
-### Schemat bazy (SQLite)
+### Schemat bazy (SQLite, plik `proxy.db`)
 
 ```sql
--- Wirtualne klucze
 CREATE TABLE virtual_keys (
   key        TEXT PRIMARY KEY,
   service    TEXT NOT NULL,
@@ -213,7 +141,6 @@ CREATE TABLE virtual_keys (
   created_at INTEGER NOT NULL
 );
 
--- Audit log
 CREATE TABLE audit_log (
   id         INTEGER PRIMARY KEY AUTOINCREMENT,
   key        TEXT NOT NULL,
@@ -226,31 +153,30 @@ CREATE TABLE audit_log (
 
 ### Stack
 
-| Pakiet | Do czego |
-|--------|----------|
+| | |
+|---|---|
 | `express` | serwer HTTP |
-| `better-sqlite3` | SQLite (synchroniczny, zero konfiguracji) |
+| `node:sqlite` | SQLite wbudowany w Node.js 22.5+ (zero kompilacji natywnej) |
 | `node:crypto` | generowanie wirtualnych kluczy |
-| `dotenv` | sekrety w `.env` |
-
-### Porównanie z LiteLLM
-
-| | LiteLLM | Własny proxy |
-|---|---|---|
-| Wymagania | Python + PostgreSQL + Docker | Node.js (już masz) |
-| Baza danych | PostgreSQL | SQLite (plik lokalny) |
-| Konfiguracja | ~30 minut | ~5 minut |
-| Kontrola kodu | Brak | Pełna |
-| Produkcja | Gotowy | Wymaga pracy |
 
 ### Uruchomienie
 
 ```bash
-npm install express better-sqlite3 dotenv
-npm run proxy:local   # startuje własny proxy na localhost:4000
-npm run setup-keys    # tworzy wirtualne klucze w SQLite
-npm run dev           # uruchamia demo
+npm install
+npm run proxy          # startuje proxy na localhost:4000
+npm run setup-keys     # tworzy wirtualne klucze, wypisuje je do wklejenia w .env
+npm run dev            # uruchamia demo
 ```
+
+### Zmienne środowiskowe
+
+| Zmienna | Kto jej używa |
+|---------|--------------|
+| `OPENROUTER_API_KEY` | tylko lokalny proxy |
+| `LITELLM_MASTER_KEY` | `npm run setup-keys` (admin) |
+| `CHAT_API_KEY` | ChatAgent (scope: claude-haiku-4-5) |
+| `ANALYZER_API_KEY` | Analyzer (scope: claude-haiku-4-5) |
+| `WRITER_API_KEY` | Writer (scope: claude-sonnet-4-6) |
 
 ---
 
@@ -261,7 +187,7 @@ npm run dev           # uruchamia demo
 Wszystkie trzy "tokeny" w `TokenVault` to aliasy tego samego `OPENROUTER_API_KEY`. Zabezpieczenia są egzekwowane wyłącznie po stronie klienta, w pamięci procesu:
 
 | Mechanizm | Gdzie egzekwowany | Co daje atakującemu klucz |
-|-----------|-------------------|---------------------------|
+|-----------|-------------------|--------------------------|
 | Scope (model) | tylko w aplikacji | może wywołać dowolny model przez curl |
 | TTL | tylko w tej samej sesji | resetuje się przy restarcie procesu |
 | Audit log | tylko lokalnie | złodziej klucza nie pozostawi śladu |
@@ -291,7 +217,7 @@ Tak działają **HashiCorp Vault**, **AWS Secrets Manager** czy **GCP Secret Man
 ## Stack
 
 - **Runtime**: Node.js + TypeScript
-- **AI API**: OpenRouter (przez LiteLLM proxy)
-- **Proxy**: LiteLLM — wirtualne klucze z scope egzekwowanym server-side
+- **AI API**: OpenRouter (przez lokalny proxy)
+- **Proxy**: Express + `node:sqlite` — bez Pythona, bez Dockera, bez zewnętrznej bazy
 - **Konfiguracja**: `config.json` — wszystkie zmienne w jednym miejscu
 - **Sekrety**: `.env` — klucze API, nigdy w kodzie

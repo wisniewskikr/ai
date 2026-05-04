@@ -7,12 +7,13 @@
     "build": "tsc",
     "dev": "tsx --env-file=.env src/index.ts",
     "setup-keys": "tsx --env-file=.env src/setup-keys.ts",
-    "proxy": "\"%APPDATA%\\Python\\Python313\\Scripts\\litellm\" --config litellm/config.yaml"
+    "proxy": "tsx --env-file=.env proxy/server.ts"
   },
   "dependencies": {
-    "dotenv": "^16.4.5"
+    "express": "^4.21.2"
   },
   "devDependencies": {
+    "@types/express": "^4.17.21",
     "@types/node": "^25.6.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3"

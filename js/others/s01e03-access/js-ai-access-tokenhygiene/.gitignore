@@ -4,3 +4,4 @@ logs/
 dist/
 workspace/
 .claude
+proxy.db
