@@ -2,7 +2,7 @@ import { config } from "./utils/config.js";
 import { logger } from "./utils/logger.js";
 
 const MASTER_KEY = process.env.LITELLM_MASTER_KEY;
-if (!MASTER_KEY) throw new Error("Brak LITELLM_MASTER_KEY w .env");
+if (!MASTER_KEY) throw new Error("Missing LITELLM_MASTER_KEY in .env");
 
 const PROXY_URL = config.proxy.baseUrl;
 
@@ -17,7 +17,7 @@ async function createVirtualKey(alias: string, models: string[]): Promise<string
   });
 
   if (!res.ok) {
-    throw new Error(`Nie udało się utworzyć klucza '${alias}': ${await res.text()}`);
+    throw new Error(`Failed to create key '${alias}': ${await res.text()}`);
   }
 
   const data = (await res.json()) as { key: string };
@@ -25,7 +25,7 @@ async function createVirtualKey(alias: string, models: string[]): Promise<string
 }
 
 async function setup(): Promise<void> {
-  logger.info("Tworzenie wirtualnych kluczy przez LiteLLM proxy...");
+  logger.info("Creating virtual keys via local proxy...");
 
   const { chat, analyzer, writer } = config.services;
 
@@ -33,7 +33,7 @@ async function setup(): Promise<void> {
   const analyzerKey = await createVirtualKey("analyzer-key", [analyzer.model]);
   const writerKey   = await createVirtualKey("writer-key",   [writer.model]);
 
-  logger.info("Klucze utworzone. Dodaj do .env:");
+  logger.info("Keys created. Add to .env:");
   console.log(`\nCHAT_API_KEY=${chatKey}`);
   console.log(`ANALYZER_API_KEY=${analyzerKey}`);
   console.log(`WRITER_API_KEY=${writerKey}`);

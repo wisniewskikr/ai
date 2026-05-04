@@ -7,7 +7,7 @@ export class ScopeViolationError extends Error {
 
 export class TokenExpiredError extends Error {
   constructor(tokenName: string, minutesAgo: number) {
-    super(`token '${tokenName}' wygasł ${minutesAgo} minuty temu`);
+    super(`token '${tokenName}' expired ${minutesAgo} minutes ago`);
     this.name = "TokenExpiredError";
   }
 }
