@@ -8,9 +8,21 @@ import { config } from "./utils/config.js";
 const OPENROUTER_KEY = process.env.OPENROUTER_API_KEY;
 if (!OPENROUTER_KEY) throw new Error("Missing OPENROUTER_API_KEY in .env");
 
-const CHAT_KEY     = process.env.CHAT_API_KEY;
-const ANALYZER_KEY = process.env.ANALYZER_API_KEY;
-const WRITER_KEY   = process.env.WRITER_API_KEY;
+const MASTER_KEY = process.env.PROXY_ADMIN_KEY;
+const PROXY_URL  = config.proxy.baseUrl;
+
+async function fetchNewKey(alias: string, models: string[], ttlMinutes: number): Promise<string> {
+  if (!MASTER_KEY) throw new Error("Missing PROXY_ADMIN_KEY — cannot rotate token");
+  const res = await fetch(`${PROXY_URL}/key/generate`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${MASTER_KEY}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ key_alias: alias, models, ttl_minutes: ttlMinutes }),
+  });
+  if (!res.ok) throw new Error(`Key rotation failed for '${alias}': ${await res.text()}`);
+  const data = (await res.json()) as { key: string };
+  logger.info(`[vault] rotated token '${alias}'`);
+  return data.key;
+}
 
 // ─── BAD PATTERN ─────────────────────────────────────────────────────────────
 
@@ -24,21 +36,20 @@ function demoBadPattern(): void {
 
 // ─── GOOD PATTERN ────────────────────────────────────────────────────────────
 
-function buildVault(): TokenVault {
-  if (!CHAT_KEY || !ANALYZER_KEY || !WRITER_KEY) {
-    throw new Error(
-      "Missing virtual keys. Run: npm run setup-keys"
-    );
-  }
-
+async function buildVault(): Promise<TokenVault> {
   const vault = new TokenVault();
   const { chat, analyzer, writer } = config.services;
 
   // Each service gets its own virtual key from the local proxy —
   // scope is enforced server-side by the proxy, not just in code.
-  vault.register(chat.tokenName,     CHAT_KEY,     [chat.model],     chat.ttlMinutes);
-  vault.register(analyzer.tokenName, ANALYZER_KEY, [analyzer.model], analyzer.ttlMinutes);
-  vault.register(writer.tokenName,   WRITER_KEY,   [writer.model],   writer.ttlMinutes);
+  // If the env var is absent, a new key is fetched automatically.
+  const chatKey     = process.env.CHAT_API_KEY     ?? await fetchNewKey("chat-key",     [chat.model],     chat.ttlMinutes);
+  const analyzerKey = process.env.ANALYZER_API_KEY ?? await fetchNewKey("analyzer-key", [analyzer.model], analyzer.ttlMinutes);
+  const writerKey   = process.env.WRITER_API_KEY   ?? await fetchNewKey("writer-key",   [writer.model],   writer.ttlMinutes);
+
+  vault.register(chat.tokenName,     chatKey,     [chat.model],     chat.ttlMinutes,     () => fetchNewKey("chat-key",     [chat.model],     chat.ttlMinutes));
+  vault.register(analyzer.tokenName, analyzerKey, [analyzer.model], analyzer.ttlMinutes, () => fetchNewKey("analyzer-key", [analyzer.model], analyzer.ttlMinutes));
+  vault.register(writer.tokenName,   writerKey,   [writer.model],   writer.ttlMinutes,   () => fetchNewKey("writer-key",   [writer.model],   writer.ttlMinutes));
 
   return vault;
 }
@@ -87,14 +98,14 @@ function demoScopeViolation(vault: TokenVault): void {
 
 // ─── TOKEN EXPIRY TEST ────────────────────────────────────────────────────────
 
-function demoTokenExpiry(): void {
+async function demoTokenExpiry(): Promise<void> {
   const vault = new TokenVault();
-  vault.register("ANALYZER_TOKEN", ANALYZER_KEY ?? "", ["anthropic/claude-haiku-4-5"], -3);
+  vault.register("ANALYZER_TOKEN", "expired-key-placeholder", ["anthropic/claude-haiku-4-5"], -3);
 
   logger.info("=== TOKEN EXPIRY TEST ===");
   logger.info("[analyzer] attempting to use after TTL expired...");
   try {
-    vault.getApiKey("ANALYZER_TOKEN", "anthropic/claude-haiku-4-5");
+    await vault.getApiKey("ANALYZER_TOKEN", "anthropic/claude-haiku-4-5");
   } catch (e) {
     if (e instanceof TokenExpiredError) {
       logger.error(`TokenExpiredError — ${e.message}`);
@@ -106,8 +117,8 @@ function demoTokenExpiry(): void {
 
 demoBadPattern();
 
-const vault = buildVault();
+const vault = await buildVault();
 await demoGoodPattern(vault);
 printAuditLog(vault);
 demoScopeViolation(vault);
-demoTokenExpiry();
+await demoTokenExpiry();

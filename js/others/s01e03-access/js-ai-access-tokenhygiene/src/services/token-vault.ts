@@ -16,6 +16,8 @@ interface TokenConfig {
   apiKey: string;
   scope: string[];
   expiresAt: Date;
+  ttlMinutes: number;
+  refreshFn?: () => Promise<string>;
 }
 
 export interface AuditEntry {
@@ -29,22 +31,30 @@ export class TokenVault {
   private tokens = new Map<string, TokenConfig>();
   private log: AuditEntry[] = [];
 
-  register(name: string, apiKey: string, scope: string[], expiresInMinutes: number): void {
+  register(name: string, apiKey: string, scope: string[], expiresInMinutes: number, refreshFn?: () => Promise<string>): void {
     this.tokens.set(name, {
       apiKey,
       scope,
       expiresAt: new Date(Date.now() + expiresInMinutes * 60 * 1000),
+      ttlMinutes: expiresInMinutes,
+      refreshFn,
     });
   }
 
-  getApiKey(tokenName: string, model: string): string {
+  async getApiKey(tokenName: string, model: string): Promise<string> {
     const token = this.tokens.get(tokenName);
     if (!token) throw new Error(`Token '${tokenName}' not found`);
 
     const now = new Date();
     if (now > token.expiresAt) {
-      const minutesAgo = Math.round((now.getTime() - token.expiresAt.getTime()) / 60000);
-      throw new TokenExpiredError(tokenName, minutesAgo);
+      if (token.refreshFn) {
+        const newKey = await token.refreshFn();
+        token.apiKey = newKey;
+        token.expiresAt = new Date(Date.now() + token.ttlMinutes * 60 * 1000);
+      } else {
+        const minutesAgo = Math.round((now.getTime() - token.expiresAt.getTime()) / 60000);
+        throw new TokenExpiredError(tokenName, minutesAgo);
+      }
     }
 
     if (!token.scope.includes(model)) {

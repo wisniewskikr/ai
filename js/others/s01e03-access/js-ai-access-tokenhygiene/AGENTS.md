@@ -14,6 +14,7 @@ Porównanie dwóch podejść do zarządzania tokenami API w agencie AI:
 | Tokeny | Jeden do wszystkiego | Osobny na każdy serwis |
 | Zakres | Brak ograniczeń | Tylko dozwolone modele |
 | Ważność | Nie wygasa | TTL w minutach |
+| Rotacja | Ręczna (restart) | Automatyczna przy wygaśnięciu |
 | Logowanie | Brak | Audit log każdej akcji |
 
 ---
@@ -26,10 +27,10 @@ proxy/
 src/
   prompts/           — prompt builders (edytowalne bez zmiany logiki)
   services/
-    token-vault.ts   — TokenVault: in-process TTL, scope, audit log
-    chat-agent.ts    — serwis chat (CHAT_API_KEY)
-    analyzer.ts      — serwis analizy (ANALYZER_API_KEY)
-    writer.ts        — serwis pisania (WRITER_API_KEY)
+    token-vault.ts   — TokenVault: in-process TTL, scope, auto-rotacja, audit log
+    chat-agent.ts    — serwis chat
+    analyzer.ts      — serwis analizy
+    writer.ts        — serwis pisania
   utils/
     config.ts        — loader config.json
     logger.ts        — zapis logów do pliku i konsoli
@@ -54,7 +55,27 @@ Każdy token ma:
 |----------|------|---------|
 | `scope` | Lista dozwolonych modeli | `["claude-haiku-4-5"]` |
 | `expiresIn` | Czas życia tokenu | `5` (minut) |
+| `refreshFn` | Funkcja pobierająca nowy klucz z proxy | `() => fetchNewKey(...)` |
 | audit log | Zapis każdego użycia | `timestamp + model + tokeny` |
+
+### Automatyczna rotacja
+
+Gdy serwis wywołuje `vault.getApiKey()` i token jest przeterminowany, vault automatycznie:
+
+1. Wywołuje `refreshFn` — odpytuje proxy o nowy wirtualny klucz
+2. Aktualizuje klucz i `expiresAt` w miejscu (bez restartu)
+3. Zwraca nowy klucz do serwisu
+
+Serwis nie wie, że rotacja nastąpiła — otrzymuje gotowy klucz.
+
+```
+serwis → vault.getApiKey()
+              ↓ token wygasł?
+         tak → fetchNewKey() → proxy → nowy klucz zapisany w vault
+         nie → zwróć aktualny klucz
+```
+
+Klucze są również generowane automatycznie przy starcie — jeśli brakuje wartości w `.env`, vault pobiera je z proxy zanim zarejestruje token.
 
 ### 3 serwisy AI
 
@@ -164,8 +185,7 @@ CREATE TABLE audit_log (
 ```bash
 npm install
 npm run proxy          # startuje proxy na localhost:4000
-npm run setup-keys     # tworzy wirtualne klucze, wypisuje je do wklejenia w .env
-npm run dev            # uruchamia demo
+npm run dev            # uruchamia demo (wirtualne klucze generowane automatycznie)
 ```
 
 ### Zmienne środowiskowe
@@ -174,9 +194,6 @@ npm run dev            # uruchamia demo
 |---------|--------------|
 | `OPENROUTER_API_KEY` | tylko lokalny proxy |
 | `PROXY_ADMIN_KEY` | Hasło admina lokalnego proxy — chroni `POST /key/generate` (tworzenie/usuwanie wirtualnych kluczy) |
-| `CHAT_API_KEY` | ChatAgent (scope: claude-haiku-4-5) |
-| `ANALYZER_API_KEY` | Analyzer (scope: claude-haiku-4-5) |
-| `WRITER_API_KEY` | Writer (scope: claude-sonnet-4-6) |
 
 ---
 
@@ -198,8 +215,10 @@ Ograniczenie: jeśli atakujący zna `OPENROUTER_API_KEY` (przechowywany tylko w 
 
 - **Server-side TTL** — klucz wygasa w SQLite, restart procesu nie resetuje TTL
 - **Server-side scope** — proxy odrzuca nieautoryzowany model zanim dotrze do OpenRouter
+- **Automatyczna rotacja** — `TokenVault` odnawia wygasły klucz bez restartu i bez ingerencji użytkownika
+- **Auto-generowanie przy starcie** — brak kluczy w `.env` nie blokuje uruchomienia, vault pobiera je sam
 - **Audit log** — każde żądanie zapisane z timestampem, service, model i tokenami
-- **Separacja kluczy** — wyciek `CHAT_API_KEY` nie daje dostępu do modeli Writera
+- **Separacja kluczy** — wyciek jednego klucza nie daje dostępu do innych serwisów
 
 ### Kiedy wzorzec działa naprawdę
 

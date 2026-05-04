@@ -9,7 +9,7 @@ export class Writer {
   constructor(private vault: TokenVault) {}
 
   async write(topic: string): Promise<string> {
-    const apiKey = this.vault.getApiKey(tokenName, model);
+    const apiKey = await this.vault.getApiKey(tokenName, model);
     const { text, tokens } = await complete(apiKey, model, writerPrompt(topic));
     this.vault.recordUsage(tokenName, model, tokens);
     return text;

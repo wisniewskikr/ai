@@ -9,7 +9,7 @@ export class ChatAgent {
   constructor(private vault: TokenVault) {}
 
   async chat(userMessage: string): Promise<string> {
-    const apiKey = this.vault.getApiKey(tokenName, model);
+    const apiKey = await this.vault.getApiKey(tokenName, model);
     const { text, tokens } = await complete(apiKey, model, chatPrompt(userMessage));
     this.vault.recordUsage(tokenName, model, tokens);
     return text;

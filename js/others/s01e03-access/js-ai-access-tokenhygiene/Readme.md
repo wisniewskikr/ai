@@ -23,19 +23,13 @@ cp .env.example .env
 npm run proxy
 ```
 
-**Step 2** — generate scoped virtual keys for each service:
-
-```bash
-npm run setup-keys
-```
-
-Copy the printed keys into `.env`.
-
-**Step 3** — run the demo:
+**Step 2** — run the demo:
 
 ```bash
 npm run dev
 ```
+
+Virtual keys are generated automatically on startup — no manual `setup-keys` step needed.
 
 ## How it works
 
@@ -71,9 +65,6 @@ The demo runs four sections:
 |----------|---------|
 | `OPENROUTER_API_KEY` | Local proxy only |
 | `PROXY_ADMIN_KEY` | Local proxy admin — protects `POST /key/generate` (create/revoke virtual keys) |
-| `CHAT_API_KEY` | ChatAgent (scope: claude-haiku-4-5) |
-| `ANALYZER_API_KEY` | Analyzer (scope: claude-haiku-4-5) |
-| `WRITER_API_KEY` | Writer (scope: claude-sonnet-4-6) |
 
 ## File structure
 
