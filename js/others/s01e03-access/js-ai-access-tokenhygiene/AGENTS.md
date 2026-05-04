@@ -176,6 +176,84 @@ npm run dev            # uruchamia demo
 
 ---
 
+## Własny proxy w Node.js + SQLite
+
+LiteLLM wymaga Pythona, PostgreSQL i Dockera. Można zbudować lżejszy proxy w Node.js — bez żadnych zewnętrznych zależności systemowych.
+
+### Analogia
+
+LiteLLM to bank z pełną infrastrukturą. Własny proxy to sejf w szafie — mniejszy, ale robi dokładnie to, czego potrzebujesz.
+
+### Jak działa
+
+```
+ChatAgent    → CHAT_VIRTUAL_KEY  ──┐
+Analyzer     → ANALYZER_VIRTUAL_KEY─┤──► [Twój proxy] ──► OpenRouter
+Writer       → WRITER_VIRTUAL_KEY ──┘         ↑
+                                    OPENROUTER_API_KEY (tylko tu)
+```
+
+Proxy przy każdym żądaniu:
+
+1. Sprawdza czy wirtualny klucz istnieje w SQLite
+2. Sprawdza czy TTL nie wygasł
+3. Sprawdza czy model jest w `allowedModels`
+4. Podmienia klucz na prawdziwy i przekazuje do OpenRouter
+5. Zapisuje audit log do SQLite
+
+### Schemat bazy (SQLite)
+
+```sql
+-- Wirtualne klucze
+CREATE TABLE virtual_keys (
+  key        TEXT PRIMARY KEY,
+  service    TEXT NOT NULL,
+  models     TEXT NOT NULL,  -- JSON array, np. '["claude-haiku-4-5"]'
+  expires_at INTEGER,        -- Unix timestamp, NULL = nie wygasa
+  created_at INTEGER NOT NULL
+);
+
+-- Audit log
+CREATE TABLE audit_log (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  key        TEXT NOT NULL,
+  service    TEXT NOT NULL,
+  model      TEXT NOT NULL,
+  tokens     INTEGER,
+  ts         INTEGER NOT NULL
+);
+```
+
+### Stack
+
+| Pakiet | Do czego |
+|--------|----------|
+| `express` | serwer HTTP |
+| `better-sqlite3` | SQLite (synchroniczny, zero konfiguracji) |
+| `node:crypto` | generowanie wirtualnych kluczy |
+| `dotenv` | sekrety w `.env` |
+
+### Porównanie z LiteLLM
+
+| | LiteLLM | Własny proxy |
+|---|---|---|
+| Wymagania | Python + PostgreSQL + Docker | Node.js (już masz) |
+| Baza danych | PostgreSQL | SQLite (plik lokalny) |
+| Konfiguracja | ~30 minut | ~5 minut |
+| Kontrola kodu | Brak | Pełna |
+| Produkcja | Gotowy | Wymaga pracy |
+
+### Uruchomienie
+
+```bash
+npm install express better-sqlite3 dotenv
+npm run proxy:local   # startuje własny proxy na localhost:4000
+npm run setup-keys    # tworzy wirtualne klucze w SQLite
+npm run dev           # uruchamia demo
+```
+
+---
+
 ## Ograniczenia tej implementacji
 
 > Ten projekt demonstruje **wzorzec architektoniczny**, a nie prawdziwe zabezpieczenie.
