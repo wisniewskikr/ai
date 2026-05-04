@@ -119,10 +119,46 @@ Writer       → WRITER_API_KEY   ──┘         ↑
 
 Scope jest teraz egzekwowany **server-side** — wirtualny klucz ChatAgenta nie wywoła `claude-sonnet`, bo proxy odrzuci żądanie zanim dotrze do OpenRouter.
 
+### Wymagania proxy
+
+**Wirtualne klucze wymagają PostgreSQL.** LiteLLM używa Prisma ORM ze schematem hardcodowanym dla PostgreSQL — SQLite nie jest obsługiwany. Bez bazy proxy startuje, ale endpoint `/key/generate` zwraca `DB not connected`.
+
+Najszybszy sposób — PostgreSQL przez Docker:
+
+```bash
+docker run -d --name litellm-db \
+  -e POSTGRES_PASSWORD=litellm \
+  -e POSTGRES_USER=litellm \
+  -e POSTGRES_DB=litellm \
+  -p 5432:5432 postgres:15
+```
+
+Dodaj do `.env`:
+```
+DATABASE_URL=postgresql://litellm:litellm@localhost:5432/litellm
+```
+
+Dodaj do `litellm/config.yaml`:
+```yaml
+general_settings:
+  database_url: os.environ/DATABASE_URL
+```
+
+**Windows — problem z kodowaniem UTF-8.** LiteLLM wyświetla baner z Unicode. Na systemach z kodowaniem cp1250 proxy crashuje przy starcie z `UnicodeEncodeError`. Wymagany pakiet `prisma`:
+
+```bash
+pip install litellm[proxy] prisma
+```
+
+I ustawienie zmiennej środowiskowej przed startem:
+```
+PYTHONUTF8=1
+```
+
 ### Uruchomienie proxy
 
 ```bash
-pip install litellm[proxy]
+pip install litellm[proxy] prisma
 npm run proxy          # startuje LiteLLM na localhost:4000
 npm run setup-keys     # tworzy wirtualne klucze, wypisuje je do wklejenia w .env
 npm run dev            # uruchamia demo
