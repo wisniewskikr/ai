@@ -7,8 +7,8 @@ import { fileURLToPath } from "node:url";
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 if (!OPENROUTER_API_KEY) throw new Error("Missing OPENROUTER_API_KEY in .env");
 
-const MASTER_KEY = process.env.LITELLM_MASTER_KEY;
-if (!MASTER_KEY) throw new Error("Missing LITELLM_MASTER_KEY in .env");
+const MASTER_KEY = process.env.PROXY_ADMIN_KEY;
+if (!MASTER_KEY) throw new Error("Missing PROXY_ADMIN_KEY in .env");
 
 const PORT = 4000;
 const OPENROUTER_BASE = "https://openrouter.ai/api/v1";

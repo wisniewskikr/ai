@@ -1,8 +1,8 @@
 import { config } from "./utils/config.js";
 import { logger } from "./utils/logger.js";
 
-const MASTER_KEY = process.env.LITELLM_MASTER_KEY;
-if (!MASTER_KEY) throw new Error("Missing LITELLM_MASTER_KEY in .env");
+const MASTER_KEY = process.env.PROXY_ADMIN_KEY;
+if (!MASTER_KEY) throw new Error("Missing PROXY_ADMIN_KEY in .env");
 
 const PROXY_URL = config.proxy.baseUrl;
 

@@ -10,4 +10,4 @@ model_list:
       api_key: os.environ/OPENROUTER_API_KEY
 
 litellm_settings:
-  master_key: os.environ/LITELLM_MASTER_KEY
+  master_key: os.environ/PROXY_ADMIN_KEY

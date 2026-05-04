@@ -12,7 +12,7 @@ Demonstrates how to manage API tokens securely in AI agents using a **local Node
 ```bash
 npm install
 cp .env.example .env
-# fill in OPENROUTER_API_KEY and LITELLM_MASTER_KEY
+# fill in OPENROUTER_API_KEY and PROXY_ADMIN_KEY
 ```
 
 ## Usage
@@ -70,7 +70,7 @@ The demo runs four sections:
 | Variable | Used by |
 |----------|---------|
 | `OPENROUTER_API_KEY` | Local proxy only |
-| `LITELLM_MASTER_KEY` | `npm run setup-keys` (admin) |
+| `PROXY_ADMIN_KEY` | Local proxy admin — protects `POST /key/generate` (create/revoke virtual keys) |
 | `CHAT_API_KEY` | ChatAgent (scope: claude-haiku-4-5) |
 | `ANALYZER_API_KEY` | Analyzer (scope: claude-haiku-4-5) |
 | `WRITER_API_KEY` | Writer (scope: claude-sonnet-4-6) |

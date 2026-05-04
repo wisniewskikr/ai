@@ -173,7 +173,7 @@ npm run dev            # uruchamia demo
 | Zmienna | Kto jej używa |
 |---------|--------------|
 | `OPENROUTER_API_KEY` | tylko lokalny proxy |
-| `LITELLM_MASTER_KEY` | `npm run setup-keys` (admin) |
+| `PROXY_ADMIN_KEY` | Hasło admina lokalnego proxy — chroni `POST /key/generate` (tworzenie/usuwanie wirtualnych kluczy) |
 | `CHAT_API_KEY` | ChatAgent (scope: claude-haiku-4-5) |
 | `ANALYZER_API_KEY` | Analyzer (scope: claude-haiku-4-5) |
 | `WRITER_API_KEY` | Writer (scope: claude-sonnet-4-6) |
