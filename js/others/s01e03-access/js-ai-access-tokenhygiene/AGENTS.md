@@ -182,23 +182,24 @@ npm run dev            # uruchamia demo
 
 ## Ograniczenia tej implementacji
 
-> Ten projekt demonstruje **wzorzec architektoniczny**, a nie prawdziwe zabezpieczenie.
+> Ten projekt demonstruje **wzorzec architektoniczny** z realnym server-side TTL i scope — ale egzekucja odbywa się w lokalnym proxy, nie po stronie OpenRouter.
 
-Wszystkie trzy "tokeny" w `TokenVault` to aliasy tego samego `OPENROUTER_API_KEY`. Zabezpieczenia są egzekwowane wyłącznie po stronie klienta, w pamięci procesu:
+Wirtualne klucze wydawane przez proxy są osobnymi tokenami — każdy serwis dostaje inny klucz. Lokalny proxy egzekwuje scope i TTL server-side przed przekazaniem żądania do OpenRouter:
 
-| Mechanizm | Gdzie egzekwowany | Co daje atakującemu klucz |
-|-----------|-------------------|--------------------------|
-| Scope (model) | tylko w aplikacji | może wywołać dowolny model przez curl |
-| TTL | tylko w tej samej sesji | resetuje się przy restarcie procesu |
-| Audit log | tylko lokalnie | złodziej klucza nie pozostawi śladu |
+| Mechanizm | Gdzie egzekwowany | Co daje atakującemu wirtualny klucz |
+|-----------|-------------------|--------------------------------------|
+| Scope (model) | **proxy server-side** | może wywołać tylko dozwolony model |
+| TTL | **proxy server-side (SQLite)** | klucz wygasa, proxy zwraca 401 |
+| Audit log | proxy (SQLite) | każde żądanie zapisane w bazie |
 
-OpenRouter nie zna naszych reguł — klucz daje pełen dostęp do konta niezależnie od nich.
+Ograniczenie: jeśli atakujący zna `OPENROUTER_API_KEY` (przechowywany tylko w proxy), omija wszystkie reguły. Wirtualne klucze serwisów nie dają dostępu do OpenRouter bezpośrednio.
 
 ### Co projekt realnie wnosi
 
-- **Audit log** — wiesz co i kiedy zostało wywołane
-- **Ochrona przed błędem w kodzie** — serwis nie wywoła nieautoryzowanego modelu przez przypadek
-- **Separacja odpowiedzialności** — każdy serwis operuje na nazwanym tokenie, nie na surowym kluczu
+- **Server-side TTL** — klucz wygasa w SQLite, restart procesu nie resetuje TTL
+- **Server-side scope** — proxy odrzuca nieautoryzowany model zanim dotrze do OpenRouter
+- **Audit log** — każde żądanie zapisane z timestampem, service, model i tokenami
+- **Separacja kluczy** — wyciek `CHAT_API_KEY` nie daje dostępu do modeli Writera
 
 ### Kiedy wzorzec działa naprawdę
 
@@ -210,7 +211,7 @@ ANALYZER_TOKEN → inny klucz, inne uprawnienia
 WRITER_TOKEN   → jeszcze inny klucz
 ```
 
-Tak działają **HashiCorp Vault**, **AWS Secrets Manager** czy **GCP Secret Manager** — vault wystawia krótkoterminowe, scoped credentials, a serwer egzekwuje ich granice. Dopóki OpenRouter nie wspiera tokenów scoped per model, ten projekt jest demonstracją wzorca, nie gwarancją bezpieczeństwa.
+Tak działają **HashiCorp Vault**, **AWS Secrets Manager** czy **GCP Secret Manager** — vault wystawia krótkoterminowe, scoped credentials, a serwer egzekwuje ich granice. Ten projekt implementuje ten sam wzorzec lokalnie — bez zewnętrznych zależności.
 
 ---
 

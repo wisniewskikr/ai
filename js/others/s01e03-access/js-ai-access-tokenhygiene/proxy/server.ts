@@ -50,7 +50,11 @@ app.post("/key/generate", (req, res) => {
     return;
   }
 
-  const { key_alias, models } = req.body as { key_alias: string; models: string[] };
+  const { key_alias, models, ttl_minutes } = req.body as {
+    key_alias: string;
+    models: string[];
+    ttl_minutes?: number;
+  };
 
   if (!key_alias || !Array.isArray(models)) {
     res.status(400).json({ error: "Missing key_alias or models" });
@@ -59,12 +63,13 @@ app.post("/key/generate", (req, res) => {
 
   const key = "sk-local-" + randomBytes(16).toString("hex");
   const now = Math.floor(Date.now() / 1000);
+  const expiresAt = ttl_minutes ? now + ttl_minutes * 60 : null;
 
   db.prepare(
     "INSERT OR REPLACE INTO virtual_keys (key, service, models, expires_at, created_at) VALUES (?, ?, ?, ?, ?)"
-  ).run(key, key_alias, JSON.stringify(models), null, now);
+  ).run(key, key_alias, JSON.stringify(models), expiresAt, now);
 
-  res.json({ key, key_alias, models });
+  res.json({ key, key_alias, models, expires_at: expiresAt });
 });
 
 // POST /chat/completions — validate key, enforce scope, forward to OpenRouter

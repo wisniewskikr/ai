@@ -56,7 +56,7 @@ Scope is enforced **server-side** — a virtual key for ChatAgent cannot call `c
 |---|---|---|
 | Tokens | One OpenRouter key for everything | Separate virtual key per service |
 | Scope | Unrestricted | Allowed models only (server-side) |
-| Expiry | Never | TTL in minutes |
+| Expiry | Never | TTL in minutes (server-side, persisted in SQLite) |
 | Logging | None | Audit log per call |
 
 The demo runs four sections:
@@ -102,9 +102,11 @@ config.json        ← all configuration (models, TTL, proxy URL)
 
 ## Limitations
 
-TokenVault still enforces TTL and scope in-process memory (client-side) as a second layer. The real security gain is that each service holds a **different** virtual key — if `CHAT_API_KEY` leaks, the attacker is limited to `claude-haiku-4-5` because the proxy enforces it at the network level.
+Virtual keys are separate tokens — each service holds a different key. The proxy enforces both scope and TTL **server-side** before forwarding requests to OpenRouter.
 
-TTL is not enforced server-side by the proxy (virtual keys in SQLite have no expiry by default). The `expiresAt` in TokenVault is client-side only.
+TTL is stored as a Unix timestamp in SQLite (`expires_at`). When a key expires, the proxy returns `401` regardless of process restarts — the expiry persists in the database. TokenVault still checks TTL in-process as a second layer (fast-fail before network).
+
+The remaining limitation: if an attacker obtains `OPENROUTER_API_KEY` directly (stored only in the proxy), they bypass all rules. Virtual keys alone do not grant access to OpenRouter.
 
 ## Stack
 

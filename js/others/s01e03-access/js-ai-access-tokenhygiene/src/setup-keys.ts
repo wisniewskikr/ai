@@ -6,14 +6,14 @@ if (!MASTER_KEY) throw new Error("Missing LITELLM_MASTER_KEY in .env");
 
 const PROXY_URL = config.proxy.baseUrl;
 
-async function createVirtualKey(alias: string, models: string[]): Promise<string> {
+async function createVirtualKey(alias: string, models: string[], ttlMinutes?: number): Promise<string> {
   const res = await fetch(`${PROXY_URL}/key/generate`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${MASTER_KEY}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ key_alias: alias, models }),
+    body: JSON.stringify({ key_alias: alias, models, ttl_minutes: ttlMinutes }),
   });
 
   if (!res.ok) {
@@ -29,9 +29,9 @@ async function setup(): Promise<void> {
 
   const { chat, analyzer, writer } = config.services;
 
-  const chatKey     = await createVirtualKey("chat-key",     [chat.model]);
-  const analyzerKey = await createVirtualKey("analyzer-key", [analyzer.model]);
-  const writerKey   = await createVirtualKey("writer-key",   [writer.model]);
+  const chatKey     = await createVirtualKey("chat-key",     [chat.model],     chat.ttlMinutes);
+  const analyzerKey = await createVirtualKey("analyzer-key", [analyzer.model], analyzer.ttlMinutes);
+  const writerKey   = await createVirtualKey("writer-key",   [writer.model],   writer.ttlMinutes);
 
   logger.info("Keys created. Add to .env:");
   console.log(`\nCHAT_API_KEY=${chatKey}`);
