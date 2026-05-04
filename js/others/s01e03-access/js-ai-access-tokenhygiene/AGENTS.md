@@ -94,6 +94,40 @@ ERROR: TokenExpiredError — token 'ANALYZER_TOKEN' wygasł 3 minuty temu
 
 ---
 
+## Ograniczenia tej implementacji
+
+> Ten projekt demonstruje **wzorzec architektoniczny**, a nie prawdziwe zabezpieczenie.
+
+Wszystkie trzy "tokeny" w `TokenVault` to aliasy tego samego `OPENROUTER_API_KEY`. Zabezpieczenia są egzekwowane wyłącznie po stronie klienta, w pamięci procesu:
+
+| Mechanizm | Gdzie egzekwowany | Co daje atakującemu klucz |
+|-----------|-------------------|---------------------------|
+| Scope (model) | tylko w aplikacji | może wywołać dowolny model przez curl |
+| TTL | tylko w tej samej sesji | resetuje się przy restarcie procesu |
+| Audit log | tylko lokalnie | złodziej klucza nie pozostawi śladu |
+
+OpenRouter nie zna naszych reguł — klucz daje pełen dostęp do konta niezależnie od nich.
+
+### Co projekt realnie wnosi
+
+- **Audit log** — wiesz co i kiedy zostało wywołane
+- **Ochrona przed błędem w kodzie** — serwis nie wywoła nieautoryzowanego modelu przez przypadek
+- **Separacja odpowiedzialności** — każdy serwis operuje na nazwanym tokenie, nie na surowym kluczu
+
+### Kiedy wzorzec działa naprawdę
+
+Gdy każdy serwis ma **oddzielny klucz z ograniczeniami egzekwowanymi przez dostawcę** (server-side):
+
+```
+CHAT_TOKEN     → klucz ograniczony do claude-haiku, wygasa za 5min po stronie serwera
+ANALYZER_TOKEN → inny klucz, inne uprawnienia
+WRITER_TOKEN   → jeszcze inny klucz
+```
+
+Tak działają **HashiCorp Vault**, **AWS Secrets Manager** czy **GCP Secret Manager** — vault wystawia krótkoterminowe, scoped credentials, a serwer egzekwuje ich granice. Dopóki OpenRouter nie wspiera tokenów scoped per model, ten projekt jest demonstracją wzorca, nie gwarancją bezpieczeństwa.
+
+---
+
 ## Stack
 
 - **Runtime**: Node.js + TypeScript
