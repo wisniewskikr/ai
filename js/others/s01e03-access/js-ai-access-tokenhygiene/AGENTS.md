@@ -22,9 +22,21 @@ Porównanie dwóch podejść do zarządzania tokenami API w agencie AI:
 
 ```
 src/
-  token-vault.ts   — TokenVault: klasa zarządzająca tokenami
-  services.ts      — 3 serwisy AI, każdy ze swoim tokenem
-  index.ts         — demo: bad pattern vs good pattern
+  prompts/           — prompt builders (edytowalne bez zmiany logiki)
+  services/
+    token-vault.ts   — TokenVault: in-process TTL, scope, audit log
+    chat-agent.ts    — serwis chat (CHAT_API_KEY)
+    analyzer.ts      — serwis analizy (ANALYZER_API_KEY)
+    writer.ts        — serwis pisania (WRITER_API_KEY)
+  utils/
+    config.ts        — loader config.json
+    logger.ts        — zapis logów do pliku i konsoli
+    openrouter.ts    — wywołanie LiteLLM proxy
+  index.ts           — demo: bad pattern vs good pattern
+  setup-keys.ts      — tworzy wirtualne klucze przez LiteLLM API
+litellm/
+  config.yaml        — konfiguracja LiteLLM proxy
+config.json          — wszystkie zmienne konfiguracyjne
 ```
 
 ---
@@ -94,6 +106,40 @@ ERROR: TokenExpiredError — token 'ANALYZER_TOKEN' wygasł 3 minuty temu
 
 ---
 
+## LiteLLM Proxy — prawdziwa separacja kluczy
+
+LiteLLM proxy siedzi między serwisami a OpenRouter. Serwisy nigdy nie widzą klucza OpenRouter — dostają tylko wirtualne klucze wystawione przez proxy.
+
+```
+ChatAgent    → CHAT_API_KEY     ──┐
+Analyzer     → ANALYZER_API_KEY ──┤──► LiteLLM Proxy ──► OpenRouter
+Writer       → WRITER_API_KEY   ──┘         ↑
+                                    OPENROUTER_API_KEY (tylko tu)
+```
+
+Scope jest teraz egzekwowany **server-side** — wirtualny klucz ChatAgenta nie wywoła `claude-sonnet`, bo proxy odrzuci żądanie zanim dotrze do OpenRouter.
+
+### Uruchomienie proxy
+
+```bash
+pip install litellm[proxy]
+npm run proxy          # startuje LiteLLM na localhost:4000
+npm run setup-keys     # tworzy wirtualne klucze, wypisuje je do wklejenia w .env
+npm run dev            # uruchamia demo
+```
+
+### Zmienne środowiskowe po migracji
+
+| Zmienna | Kto jej używa |
+|---------|--------------|
+| `OPENROUTER_API_KEY` | tylko LiteLLM proxy |
+| `LITELLM_MASTER_KEY` | `npm run setup-keys` (admin) |
+| `CHAT_API_KEY` | ChatAgent (scope: claude-haiku-4-5) |
+| `ANALYZER_API_KEY` | Analyzer (scope: claude-haiku-4-5) |
+| `WRITER_API_KEY` | Writer (scope: claude-sonnet-4-6) |
+
+---
+
 ## Ograniczenia tej implementacji
 
 > Ten projekt demonstruje **wzorzec architektoniczny**, a nie prawdziwe zabezpieczenie.
@@ -131,5 +177,7 @@ Tak działają **HashiCorp Vault**, **AWS Secrets Manager** czy **GCP Secret Man
 ## Stack
 
 - **Runtime**: Node.js + TypeScript
-- **AI API**: OpenRouter
-- **Zmienna środowiskowa**: `.env` z `OPENROUTER_API_KEY`
+- **AI API**: OpenRouter (przez LiteLLM proxy)
+- **Proxy**: LiteLLM — wirtualne klucze z scope egzekwowanym server-side
+- **Konfiguracja**: `config.json` — wszystkie zmienne w jednym miejscu
+- **Sekrety**: `.env` — klucze API, nigdy w kodzie

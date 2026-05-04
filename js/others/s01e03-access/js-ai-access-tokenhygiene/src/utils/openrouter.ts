@@ -6,7 +6,7 @@ interface CompletionResult {
 }
 
 export async function complete(apiKey: string, model: string, prompt: string): Promise<CompletionResult> {
-  const res = await fetch(`${config.openrouter.baseUrl}/chat/completions`, {
+  const res = await fetch(`${config.proxy.baseUrl}/chat/completions`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
@@ -15,13 +15,13 @@ export async function complete(apiKey: string, model: string, prompt: string): P
     body: JSON.stringify({
       model,
       messages: [{ role: "user", content: prompt }],
-      max_tokens: config.openrouter.maxTokens,
+      max_tokens: config.proxy.maxTokens,
     }),
   });
 
   if (!res.ok) {
     const err = await res.text();
-    throw new Error(`OpenRouter ${res.status}: ${err}`);
+    throw new Error(`LiteLLM proxy ${res.status}: ${err}`);
   }
 
   const data = (await res.json()) as {

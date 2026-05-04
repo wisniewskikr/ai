@@ -1,19 +1,23 @@
-import { TokenVault, ScopeViolationError, TokenExpiredError, AuditEntry } from "./services/token-vault.js";
+import { TokenVault, ScopeViolationError, TokenExpiredError } from "./services/token-vault.js";
 import { ChatAgent } from "./services/chat-agent.js";
 import { Analyzer } from "./services/analyzer.js";
 import { Writer } from "./services/writer.js";
 import { logger } from "./utils/logger.js";
 import { config } from "./utils/config.js";
 
-const API_KEY = process.env.OPENROUTER_API_KEY;
-if (!API_KEY) throw new Error("Brak OPENROUTER_API_KEY w .env");
+const OPENROUTER_KEY = process.env.OPENROUTER_API_KEY;
+if (!OPENROUTER_KEY) throw new Error("Brak OPENROUTER_API_KEY w .env");
+
+const CHAT_KEY     = process.env.CHAT_API_KEY;
+const ANALYZER_KEY = process.env.ANALYZER_API_KEY;
+const WRITER_KEY   = process.env.WRITER_API_KEY;
 
 // ─── BAD PATTERN ─────────────────────────────────────────────────────────────
 
 function demoBadPattern(): void {
-  const masked = API_KEY!.slice(0, 14) + "...";
+  const masked = OPENROUTER_KEY!.slice(0, 14) + "...";
   logger.warn("=== BAD PATTERN ===");
-  logger.warn(`[chat]     Używa: ${masked} (pełny klucz, bez ograniczeń)`);
+  logger.warn(`[chat]     Używa: ${masked} (pełny klucz OpenRouter, bez ograniczeń)`);
   logger.warn(`[analyzer] Używa: ${masked} (ten sam klucz, ten sam scope)`);
   logger.warn(`[writer]   Używa: ${masked} (brak audytu, brak expiry)`);
 }
@@ -21,25 +25,35 @@ function demoBadPattern(): void {
 // ─── GOOD PATTERN ────────────────────────────────────────────────────────────
 
 function buildVault(): TokenVault {
+  if (!CHAT_KEY || !ANALYZER_KEY || !WRITER_KEY) {
+    throw new Error(
+      "Brak wirtualnych kluczy. Uruchom: npm run setup-keys"
+    );
+  }
+
   const vault = new TokenVault();
   const { chat, analyzer, writer } = config.services;
-  vault.register(chat.tokenName,     API_KEY!, [chat.model],     chat.ttlMinutes);
-  vault.register(analyzer.tokenName, API_KEY!, [analyzer.model], analyzer.ttlMinutes);
-  vault.register(writer.tokenName,   API_KEY!, [writer.model],   writer.ttlMinutes);
+
+  // Każdy serwis dostaje osobny wirtualny klucz LiteLLM —
+  // scope jest egzekwowany server-side przez proxy, nie tylko w kodzie.
+  vault.register(chat.tokenName,     CHAT_KEY,     [chat.model],     chat.ttlMinutes);
+  vault.register(analyzer.tokenName, ANALYZER_KEY, [analyzer.model], analyzer.ttlMinutes);
+  vault.register(writer.tokenName,   WRITER_KEY,   [writer.model],   writer.ttlMinutes);
+
   return vault;
 }
 
 async function demoGoodPattern(vault: TokenVault): Promise<void> {
-  logger.info("=== GOOD PATTERN ===");
+  logger.info("=== GOOD PATTERN (via LiteLLM proxy) ===");
 
   const { chat, analyzer, writer } = config.services;
   logger.info(`[chat]     Token: ${chat.tokenName}     | scope: ${chat.model.split("/")[1]}  | TTL: ${vault.getTtlMinutes(chat.tokenName)}min`);
   logger.info(`[analyzer] Token: ${analyzer.tokenName} | scope: ${analyzer.model.split("/")[1]}  | TTL: ${vault.getTtlMinutes(analyzer.tokenName)}min`);
   logger.info(`[writer]   Token: ${writer.tokenName}   | scope: ${writer.model.split("/")[1]} | TTL: ${vault.getTtlMinutes(writer.tokenName)}min`);
 
-  const chatAgent  = new ChatAgent(vault);
+  const chatAgent   = new ChatAgent(vault);
   const analyzerSvc = new Analyzer(vault);
-  const writerSvc  = new Writer(vault);
+  const writerSvc   = new Writer(vault);
 
   await chatAgent.chat("Powiedz 'cześć' po polsku");
   await analyzerSvc.analyze("Token hygiene matters");
@@ -75,7 +89,7 @@ function demoScopeViolation(vault: TokenVault): void {
 
 function demoTokenExpiry(): void {
   const vault = new TokenVault();
-  vault.register("ANALYZER_TOKEN", API_KEY!, ["anthropic/claude-haiku-4-5"], -3);
+  vault.register("ANALYZER_TOKEN", ANALYZER_KEY ?? "", ["anthropic/claude-haiku-4-5"], -3);
 
   logger.info("=== TOKEN EXPIRY TEST ===");
   logger.info("[analyzer] próba użycia po wygaśnięciu TTL...");

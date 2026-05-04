@@ -8,6 +8,7 @@ const raw = readFileSync(join(root, "config.json"), "utf-8");
 
 interface ServiceConfig {
   tokenName: string;
+  apiKeyEnvVar: string;
   model: string;
   ttlMinutes: number;
 }
@@ -18,7 +19,7 @@ interface Config {
     analyzer: ServiceConfig;
     writer: ServiceConfig;
   };
-  openrouter: {
+  proxy: {
     baseUrl: string;
     maxTokens: number;
   };
