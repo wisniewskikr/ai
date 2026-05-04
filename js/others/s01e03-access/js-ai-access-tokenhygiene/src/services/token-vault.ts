@@ -62,10 +62,6 @@ export class TokenVault {
     return [...this.log];
   }
 
-  getScope(tokenName: string): string[] {
-    return this.tokens.get(tokenName)?.scope ?? [];
-  }
-
   getTtlMinutes(tokenName: string): number {
     const token = this.tokens.get(tokenName);
     if (!token) return 0;

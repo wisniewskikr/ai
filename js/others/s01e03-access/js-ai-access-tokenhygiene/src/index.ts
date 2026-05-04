@@ -1,90 +1,89 @@
-import { TokenVault, ScopeViolationError, TokenExpiredError } from "./token-vault.js";
-import { ChatAgent, Analyzer, Writer } from "./services.js";
+import { TokenVault, ScopeViolationError, TokenExpiredError, AuditEntry } from "./services/token-vault.js";
+import { ChatAgent } from "./services/chat-agent.js";
+import { Analyzer } from "./services/analyzer.js";
+import { Writer } from "./services/writer.js";
+import { logger } from "./utils/logger.js";
+import { config } from "./utils/config.js";
 
 const API_KEY = process.env.OPENROUTER_API_KEY;
 if (!API_KEY) throw new Error("Brak OPENROUTER_API_KEY w .env");
 
-// ─── BAD PATTERN ────────────────────────────────────────────────────────────
+// ─── BAD PATTERN ─────────────────────────────────────────────────────────────
 
-function demoBadPattern() {
+function demoBadPattern(): void {
   const masked = API_KEY!.slice(0, 14) + "...";
-  console.log("\n=== BAD PATTERN ===");
-  console.log(`[chat]     Używa: ${masked} (pełny klucz, bez ograniczeń)`);
-  console.log(`[analyzer] Używa: ${masked} (ten sam klucz, ten sam scope)`);
-  console.log(`[writer]   Używa: ${masked} (brak audytu, brak expiry)`);
+  logger.warn("=== BAD PATTERN ===");
+  logger.warn(`[chat]     Używa: ${masked} (pełny klucz, bez ograniczeń)`);
+  logger.warn(`[analyzer] Używa: ${masked} (ten sam klucz, ten sam scope)`);
+  logger.warn(`[writer]   Używa: ${masked} (brak audytu, brak expiry)`);
 }
 
-// ─── GOOD PATTERN ───────────────────────────────────────────────────────────
+// ─── GOOD PATTERN ────────────────────────────────────────────────────────────
 
 function buildVault(): TokenVault {
   const vault = new TokenVault();
-  vault.register("CHAT_TOKEN",     API_KEY!, ["anthropic/claude-haiku-4-5"],  5);
-  vault.register("ANALYZER_TOKEN", API_KEY!, ["anthropic/claude-haiku-4-5"],  2);
-  vault.register("WRITER_TOKEN",   API_KEY!, ["anthropic/claude-sonnet-4-6"], 10);
+  const { chat, analyzer, writer } = config.services;
+  vault.register(chat.tokenName,     API_KEY!, [chat.model],     chat.ttlMinutes);
+  vault.register(analyzer.tokenName, API_KEY!, [analyzer.model], analyzer.ttlMinutes);
+  vault.register(writer.tokenName,   API_KEY!, [writer.model],   writer.ttlMinutes);
   return vault;
 }
 
-async function demoGoodPattern(vault: TokenVault) {
-  console.log("\n=== GOOD PATTERN ===");
+async function demoGoodPattern(vault: TokenVault): Promise<void> {
+  logger.info("=== GOOD PATTERN ===");
 
-  console.log(
-    `[chat]     Token: CHAT_TOKEN     | scope: claude-haiku-4-5  | TTL: ${vault.getTtlMinutes("CHAT_TOKEN")}min`
-  );
-  console.log(
-    `[analyzer] Token: ANALYZER_TOKEN | scope: claude-haiku-4-5  | TTL: ${vault.getTtlMinutes("ANALYZER_TOKEN")}min`
-  );
-  console.log(
-    `[writer]   Token: WRITER_TOKEN   | scope: claude-sonnet-4-6 | TTL: ${vault.getTtlMinutes("WRITER_TOKEN")}min`
-  );
+  const { chat, analyzer, writer } = config.services;
+  logger.info(`[chat]     Token: ${chat.tokenName}     | scope: ${chat.model.split("/")[1]}  | TTL: ${vault.getTtlMinutes(chat.tokenName)}min`);
+  logger.info(`[analyzer] Token: ${analyzer.tokenName} | scope: ${analyzer.model.split("/")[1]}  | TTL: ${vault.getTtlMinutes(analyzer.tokenName)}min`);
+  logger.info(`[writer]   Token: ${writer.tokenName}   | scope: ${writer.model.split("/")[1]} | TTL: ${vault.getTtlMinutes(writer.tokenName)}min`);
 
-  const chat     = new ChatAgent(vault);
-  const analyzer = new Analyzer(vault);
-  const writer   = new Writer(vault);
+  const chatAgent  = new ChatAgent(vault);
+  const analyzerSvc = new Analyzer(vault);
+  const writerSvc  = new Writer(vault);
 
-  await chat.chat("Powiedz 'cześć' po polsku");
-  await analyzer.analyze("Token hygiene matters");
-  await writer.write("bezpieczeństwo API");
+  await chatAgent.chat("Powiedz 'cześć' po polsku");
+  await analyzerSvc.analyze("Token hygiene matters");
+  await writerSvc.write("bezpieczeństwo API");
 }
 
-function printAuditLog(vault: TokenVault) {
-  console.log("\nAUDIT LOG:");
+function printAuditLog(vault: TokenVault): void {
+  logger.info("AUDIT LOG:");
   for (const entry of vault.getAuditLog()) {
-    const ts = entry.timestamp.toISOString().replace("T", " ").slice(0, 19);
+    const ts    = entry.timestamp.toISOString().replace("T", " ").slice(0, 19);
     const name  = entry.tokenName.padEnd(16);
     const model = entry.model.split("/")[1]?.padEnd(22) ?? entry.model.padEnd(22);
     const tok   = String(entry.tokens).padStart(4);
-    console.log(`${ts} | ${name} | ${model} | ${tok} tokens`);
+    logger.info(`${ts} | ${name} | ${model} | ${tok} tokens`);
   }
 }
 
-// ─── SCOPE VIOLATION TEST ────────────────────────────────────────────────────
+// ─── SCOPE VIOLATION TEST ─────────────────────────────────────────────────────
 
-async function demoScopeViolation(vault: TokenVault) {
-  console.log("\n=== SCOPE VIOLATION TEST ===");
-  console.log("[analyzer] próba użycia claude-opus-4-6...");
+function demoScopeViolation(vault: TokenVault): void {
+  logger.info("=== SCOPE VIOLATION TEST ===");
+  logger.info("[analyzer] próba użycia claude-opus-4-6...");
   try {
-    vault.getApiKey("ANALYZER_TOKEN", "anthropic/claude-opus-4-6");
+    vault.getApiKey(config.services.analyzer.tokenName, "anthropic/claude-opus-4-6");
   } catch (e) {
     if (e instanceof ScopeViolationError) {
-      console.log(`ERROR: ScopeViolationError — ${e.message}`);
+      logger.error(`ScopeViolationError — ${e.message}`);
     }
   }
 }
 
-// ─── TOKEN EXPIRY TEST ───────────────────────────────────────────────────────
+// ─── TOKEN EXPIRY TEST ────────────────────────────────────────────────────────
 
-async function demoTokenExpiry() {
+function demoTokenExpiry(): void {
   const vault = new TokenVault();
-  // token wygasa natychmiast (0 minut = już wygasł)
   vault.register("ANALYZER_TOKEN", API_KEY!, ["anthropic/claude-haiku-4-5"], -3);
 
-  console.log("\n=== TOKEN EXPIRY TEST ===");
-  console.log("[analyzer] próba użycia po wygaśnięciu TTL...");
+  logger.info("=== TOKEN EXPIRY TEST ===");
+  logger.info("[analyzer] próba użycia po wygaśnięciu TTL...");
   try {
     vault.getApiKey("ANALYZER_TOKEN", "anthropic/claude-haiku-4-5");
   } catch (e) {
     if (e instanceof TokenExpiredError) {
-      console.log(`ERROR: TokenExpiredError — ${e.message}`);
+      logger.error(`TokenExpiredError — ${e.message}`);
     }
   }
 }
@@ -96,5 +95,5 @@ demoBadPattern();
 const vault = buildVault();
 await demoGoodPattern(vault);
 printAuditLog(vault);
-await demoScopeViolation(vault);
-await demoTokenExpiry();
+demoScopeViolation(vault);
+demoTokenExpiry();

@@ -1,0 +1,27 @@
+{
+  "services": {
+    "chat": {
+      "tokenName": "CHAT_TOKEN",
+      "model": "anthropic/claude-haiku-4-5",
+      "ttlMinutes": 5
+    },
+    "analyzer": {
+      "tokenName": "ANALYZER_TOKEN",
+      "model": "anthropic/claude-haiku-4-5",
+      "ttlMinutes": 2
+    },
+    "writer": {
+      "tokenName": "WRITER_TOKEN",
+      "model": "anthropic/claude-sonnet-4-6",
+      "ttlMinutes": 10
+    }
+  },
+  "openrouter": {
+    "baseUrl": "https://openrouter.ai/api/v1",
+    "maxTokens": 64
+  },
+  "logging": {
+    "dir": "logs",
+    "file": "app.log"
+  }
+}
