@@ -1,0 +1,20 @@
+{
+  "name": "js-ai-access-logviewer",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "agent": "tsx src/index.ts agent",
+    "viewer": "tsx src/index.ts viewer"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "cli-table3": "^0.6.3",
+    "dotenv": "^16.4.5",
+    "openai": "^4.47.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.18",
+    "tsx": "^4.7.3",
+    "typescript": "^5.4.5"
+  }
+}

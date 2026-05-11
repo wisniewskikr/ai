@@ -1,0 +1,14 @@
+{
+  "model": "openai/gpt-4o-mini",
+  "openrouterBaseUrl": "https://openrouter.ai/api/v1",
+  "db": {
+    "path": "./db/audit.db"
+  },
+  "agent": {
+    "maxTokens": 1024,
+    "temperature": 0
+  },
+  "viewer": {
+    "defaultLimit": 20
+  }
+}
