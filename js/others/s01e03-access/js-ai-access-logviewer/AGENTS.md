@@ -92,20 +92,22 @@ Po uruchomieniu `npm run agent` pojawia sie menu z opcjami — jak bankomat z pr
 
 ```
 Choose an option:
-  [1] Check user access to a report
-  [2] Get file metadata
-  [3] Show recent agent actions
-  [4] Enter your own question
-  [5] Exit
+  [1] Check user access to a report          (OK)
+  [2] Get file metadata                      (OK)
+  [3] Check user access to a restricted file (DENIED)
+  [4] Get metadata for a forbidden path      (ERROR)
+  [5] Enter your own question
+  [6] Exit
 ```
 
-| Opcja | Typ | Opis |
-|-------|-----|------|
-| `1` | Predefiniowane | Check if user:42 has access to /reports/q4.pdf |
-| `2` | Predefiniowane | Get metadata for file /data/customers.csv |
-| `3` | Predefiniowane | Show last 5 agent actions from the logs |
-| `4` | Dowolne | Uzytkownik wpisuje wlasne pytanie |
-| `5` | Wyjscie | Konczy sesje i pokazuje podsumowanie logow |
+| Opcja | Wynik | Opis |
+|-------|-------|------|
+| `1` | OK | Check if user:42 has access to /reports/q4.pdf |
+| `2` | OK | Get metadata for file /data/customers.csv |
+| `3` | DENIED | Check if user:99 has access to /admin/secrets.db |
+| `4` | ERROR | Get metadata for /system/root/.ssh/id_rsa |
+| `5` | - | Uzytkownik wpisuje wlasne pytanie |
+| `6` | - | Konczy sesje i pokazuje podsumowanie logow |
 
 ---
 
