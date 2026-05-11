@@ -8,9 +8,8 @@ An AI agent (via OpenRouter) answers questions by calling read-only tools. Every
 
 ## Requirements
 
-- Node.js 20+
+- Node.js 22.5+ (uses built-in `node:sqlite`)
 - An [OpenRouter](https://openrouter.ai) API key
-- Windows: `better-sqlite3` requires native build tools (`npm install --global windows-build-tools` or Visual Studio Build Tools)
 
 ---
 

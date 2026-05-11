@@ -29,7 +29,7 @@ Agent AI (przez OpenRouter) odpowiada na pytania, wywołując narzędzia. Każda
 | Język | TypeScript + `tsx` |
 | AI | OpenRouter API (`openai/gpt-4o-mini`) |
 | SDK | `openai` (compatible z OpenRouter) |
-| Baza logów | SQLite via `better-sqlite3` |
+| Baza logów | SQLite via `node:sqlite` (built-in, Node 22.5+) |
 | Terminal UI | `chalk` + `cli-table3` |
 
 ---
