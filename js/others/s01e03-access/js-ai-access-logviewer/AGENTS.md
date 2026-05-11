@@ -86,10 +86,33 @@ npm run viewer
 
 ---
 
+## Menu chata
+
+Po uruchomieniu `npm run agent` pojawia sie menu z opcjami — jak bankomat z przyciskami.
+
+```
+Choose an option:
+  [1] Check user access to a report
+  [2] Get file metadata
+  [3] Show recent agent actions
+  [4] Enter your own question
+  [5] Exit
+```
+
+| Opcja | Typ | Opis |
+|-------|-----|------|
+| `1` | Predefiniowane | Check if user:42 has access to /reports/q4.pdf |
+| `2` | Predefiniowane | Get metadata for file /data/customers.csv |
+| `3` | Predefiniowane | Show last 5 agent actions from the logs |
+| `4` | Dowolne | Uzytkownik wpisuje wlasne pytanie |
+| `5` | Wyjscie | Konczy sesje i pokazuje podsumowanie logow |
+
+---
+
 ## Przyklad dzialania
 
 ```
-[Uzytkownik]: Sprawdz czy user:42 ma dostep do /reports/q4.pdf
+[User]: Check if user:42 has access to /reports/q4.pdf
 
 [Agent]:  check_user_access("42", "/reports/q4.pdf")
 [Agent]:  get_file_metadata("/reports/q4.pdf")
