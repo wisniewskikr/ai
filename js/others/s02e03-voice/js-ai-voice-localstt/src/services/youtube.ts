@@ -5,6 +5,10 @@ import * as os from 'os';
 import * as fs from 'fs';
 import config from '../../config.json';
 
+if (config.ffmpegPath) {
+  ffmpeg.setFfmpegPath(config.ffmpegPath);
+}
+
 function trimAudio(input: string, output: string, seconds: number): Promise<void> {
   return new Promise((resolve, reject) => {
     ffmpeg(input)
@@ -21,11 +25,16 @@ export async function downloadAndTrim(url: string): Promise<string> {
   const id = Date.now();
   const outputTemplate = path.join(tmpDir, `yt-${id}.%(ext)s`);
 
-  await ytDlp(url, {
+  const ytDlpOptions: Record<string, unknown> = {
     extractAudio: true,
     audioFormat: 'mp3',
     output: outputTemplate,
-  });
+  };
+  if (config.ffmpegPath) {
+    ytDlpOptions.ffmpegLocation = path.dirname(config.ffmpegPath);
+  }
+
+  await ytDlp(url, ytDlpOptions as Parameters<typeof ytDlp>[1]);
 
   const files = fs.readdirSync(tmpDir).filter((f) => f.startsWith(`yt-${id}.`));
   if (files.length === 0) {

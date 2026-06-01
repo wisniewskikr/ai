@@ -14,17 +14,18 @@ Jak poczta: dostajesz paczkę (audio), otwierasz ją (transkrypcja), odkładasz 
 |---|---|
 | Język | TypeScript + `tsx` |
 | Pobieranie audio | `yt-dlp-exec` |
-| Przycinanie do 30s | `fluent-ffmpeg` |
+| Przycinanie do 30s | `fluent-ffmpeg` + `ffmpeg` (zewnętrzny) |
 | Lokalny STT | `faster-whisper` (Python) |
 | Wynik | plik `.txt` w `workspace/` |
+| Konfiguracja | `config.json` (m.in. `ffmpegPath`, `audioDurationSeconds`) |
 
 ---
 
 ## Wymagania wstępne
 
 - Python >= 3.8 z zainstalowanym `faster-whisper` (`pip install faster-whisper`)
-- Zainstalowane `ffmpeg` (dostępne w PATH)
-- Node.js >= 18
+- Zainstalowane `ffmpeg` — na Windows instalacja przez `winget install Gyan.FFmpeg`, następnie ścieżka do `ffmpeg.exe` w `config.json` pod kluczem `ffmpegPath`
+- Node.js >= 18 dostępny w PATH (na Windows może wymagać ręcznego uruchomienia: `node node_modules/tsx/dist/cli.mjs src/index.ts`)
 
 > **Uwaga:** LMStudio z modelami Whisper nie działa na Windows (MLX działa tylko na macOS/Apple Silicon).
 

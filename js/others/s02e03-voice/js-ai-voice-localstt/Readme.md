@@ -9,7 +9,7 @@ YouTube URL → first 30 seconds of audio → local transcription via faster-whi
   ```bash
   pip install faster-whisper
   ```
-- `ffmpeg` installed and available in PATH
+- `ffmpeg` installed (see [Windows note](#windows-notes))
 
 ## Installation
 
@@ -39,12 +39,23 @@ After completion:
 
 Edit `config.json` to change runtime settings:
 
+```json
+{
+  "whisperModel": "base",
+  "audioDurationSeconds": 30,
+  "workspaceDir": "workspace",
+  "logsDir": "logs",
+  "ffmpegPath": ""
+}
+```
+
 | Key | Default | Description |
 |---|---|---|
 | `whisperModel` | `base` | Whisper model size (`tiny`, `base`, `small`, `medium`, `large-v3`) |
 | `audioDurationSeconds` | `30` | How many seconds of audio to transcribe |
 | `workspaceDir` | `workspace` | Output directory for `.txt` transcriptions |
 | `logsDir` | `logs` | Directory for log files |
+| `ffmpegPath` | `""` | Absolute path to `ffmpeg.exe` — required on Windows if ffmpeg is not in system PATH |
 
 Override the Whisper model at runtime via `.env`:
 
@@ -67,6 +78,21 @@ config.json                 ← all configuration variables
 workspace/                  ← transcription output files
 logs/                       ← application logs
 ```
+
+## Windows Notes
+
+- Install ffmpeg via winget:
+  ```
+  winget install Gyan.FFmpeg
+  ```
+  Then set `ffmpegPath` in `config.json` to the full path of `ffmpeg.exe`, e.g.:
+  ```json
+  "ffmpegPath": "C:\\Users\\<user>\\AppData\\Local\\Microsoft\\WinGet\\Packages\\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\\ffmpeg-8.1.1-full_build\\bin\\ffmpeg.exe"
+  ```
+- If Node.js is not in the system PATH (e.g. installed to `C:\Development\nodejs`), run the app directly instead of `npm start`:
+  ```
+  node node_modules/tsx/dist/cli.mjs src/index.ts
+  ```
 
 ## Notes
 
