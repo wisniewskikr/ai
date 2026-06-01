@@ -1,0 +1,6 @@
+{
+  "whisperModel": "base",
+  "audioDurationSeconds": 30,
+  "workspaceDir": "workspace",
+  "logsDir": "logs"
+}

@@ -1,0 +1,19 @@
+{
+  "name": "js-ai-voice-localstt",
+  "version": "1.0.0",
+  "description": "YouTube URL → audio → local STT via faster-whisper",
+  "scripts": {
+    "start": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "fluent-ffmpeg": "^2.1.3",
+    "yt-dlp-exec": "^1.0.2"
+  },
+  "devDependencies": {
+    "@types/fluent-ffmpeg": "^2.1.24",
+    "@types/node": "^20.14.0",
+    "tsx": "^4.15.6",
+    "typescript": "^5.4.5"
+  }
+}
