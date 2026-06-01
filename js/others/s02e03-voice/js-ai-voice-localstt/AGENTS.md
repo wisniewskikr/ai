@@ -15,17 +15,18 @@ Jak poczta: dostajesz paczkę (audio), otwierasz ją (transkrypcja), odkładasz 
 | Język | TypeScript + `tsx` |
 | Pobieranie audio | `yt-dlp-exec` |
 | Przycinanie do 30s | `fluent-ffmpeg` |
-| Lokalny STT | LMStudio Whisper API |
+| Lokalny STT | `faster-whisper` (Python) |
 | Wynik | plik `.txt` w `workspace/` |
 
 ---
 
 ## Wymagania wstępne
 
-- LMStudio uruchomione lokalnie na `http://localhost:1234`
-- Załadowany model Whisper (np. `whisper-large-v3`)
+- Python >= 3.8 z zainstalowanym `faster-whisper` (`pip install faster-whisper`)
 - Zainstalowane `ffmpeg` (dostępne w PATH)
 - Node.js >= 18
+
+> **Uwaga:** LMStudio z modelami Whisper nie działa na Windows (MLX działa tylko na macOS/Apple Silicon).
 
 ---
 
@@ -35,7 +36,7 @@ Jak poczta: dostajesz paczkę (audio), otwierasz ją (transkrypcja), odkładasz 
 src/
   index.ts      ← start, pyta o URL, pokazuje wynik
   youtube.ts    ← pobiera audio z YouTube i przycina do 30s
-  stt.ts        ← wysyła audio do LMStudio, zwraca tekst
+  stt.ts        ← wywołuje faster-whisper (Python), zwraca tekst
 workspace/      ← tu lądują pliki z transkrypcjami
 package.json
 .env
@@ -49,7 +50,7 @@ package.json
 1. Użytkownik podaje URL YouTube (w konsoli)
 2. yt-dlp pobiera audio
 3. ffmpeg przycina do 30 sekund
-4. Audio trafia do LMStudio /v1/audio/transcriptions
+4. Audio trafia do faster-whisper (wywołanie Python przez child_process)
 5. Tekst zapisywany do workspace/<timestamp>.txt
 6. Konsola pokazuje ścieżkę do pliku
 ```
@@ -60,8 +61,7 @@ package.json
 
 | Zmienna | Domyślna wartość | Opis |
 |---|---|---|
-| `LMSTUDIO_BASE_URL` | `http://localhost:1234` | Adres lokalnego LMStudio |
-| `WHISPER_MODEL` | `whisper-large-v3` | Nazwa modelu Whisper w LMStudio |
+| `WHISPER_MODEL` | `base` | Rozmiar modelu Whisper (`tiny`, `base`, `small`, `medium`, `large-v3`) |
 
 ---
 
