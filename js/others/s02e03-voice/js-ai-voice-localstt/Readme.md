@@ -98,3 +98,11 @@ logs/                       ← application logs
 
 - LMStudio Whisper models (MLX) work only on macOS/Apple Silicon — this project uses `faster-whisper` which runs on CPU/Windows.
 - Audio is downloaded to the system temp directory and cleaned up after transcription.
+
+## Tools
+
+| Tool | Role |
+|---|---|
+| `yt-dlp` | Downloads audio from YouTube |
+| `ffmpeg` | Trims audio to the configured duration |
+| `faster-whisper` | Transcription — runs locally on CPU |

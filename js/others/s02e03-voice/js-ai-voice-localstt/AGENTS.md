@@ -58,6 +58,28 @@ package.json
 
 ---
 
+## Konfiguracja (config.json)
+
+```json
+{
+  "whisperModel": "base",
+  "audioDurationSeconds": 30,
+  "workspaceDir": "workspace",
+  "logsDir": "logs",
+  "ffmpegPath": ""
+}
+```
+
+| Klucz | Domyślna wartość | Opis |
+|---|---|---|
+| `whisperModel` | `base` | Rozmiar modelu Whisper (`tiny`, `base`, `small`, `medium`, `large-v3`) |
+| `audioDurationSeconds` | `30` | Ile sekund audio transkrybować |
+| `workspaceDir` | `workspace` | Folder na pliki `.txt` |
+| `logsDir` | `logs` | Folder na logi |
+| `ffmpegPath` | `""` | Pełna ścieżka do `ffmpeg.exe` — wymagane na Windows jeśli ffmpeg nie jest w PATH |
+
+---
+
 ## Zmienne środowiskowe (.env)
 
 | Zmienna | Domyślna wartość | Opis |
