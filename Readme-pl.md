@@ -334,3 +334,74 @@ Dane → Pre-training → Fine-tuning → RLHF → Model gotowy
 - Czy jest lepsza ścieżka do osiągnięcia tego resultatu?
 - Czy to co robimy ma sens?
 - Gdybyś był mną, to jakie pytanie byś sobie zadał, żeby zrealizować cel?
+
+---
+
+## 19 marca - #2 Sesja live
+
+### Metaprompt
+
+Lista instrukcji, jak stworzyć dobrego prompta dla modelu LLM — przepis na przepis.
+
+### Pytania do AI
+
+| Pytanie | Po co? |
+|---|---|
+| Jakie pytania zadałbyś sobie, gdybyś był na moim miejscu? | Odkrywa ślepe punkty |
+| Biorąc pod uwagę nasze funkcjonalności, jakie koncepcje/wzorce/techniki przychodzą ci do głowy? | Poszerza perspektywę |
+| Wypisz najczęściej popełniane błędy w danym języku. Które występują w naszym projekcie? | Audyt kodu |
+
+### Jak pracować z agentami AI
+
+- Nie mikromanaguj — daj ramy, nie instrukcje krok po kroku
+- Agent jak dziecko: za dużo kontroli = brak efektów
+- Agent jak Junior Developer: dajesz ogólne zadanie, on sam sobie radzi
+
+### System wieloagentowy
+
+| Rola | Narzędzia |
+|---|---|
+| Agent główny | `deleguj` |
+| Subagent | `zapytaj`, `wyślij` |
+
+> Dodatkowy agent to po prostu kolejne narzędzie dla agenta głównego.
+
+### Jailbreaking
+
+Omijanie zabezpieczeń modeli AI — techniki wymuszające zachowanie sprzeczne z wytrenowanymi ograniczeniami.
+
+### Praca z bazami danych
+
+- AI działa na dedykowanym koncie z ograniczonymi uprawnieniami
+- Bezpieczniej: dać dostęp tylko do widoków (nie do tabel)
+
+### Narzędzia i technologie
+
+| Narzędzie | Opis |
+|---|---|
+| **Claude Code** | Agentyczne narzędzie do kodowania od Anthropic (tryb lokalny) |
+| **Open Code** | Alternatywny agent do kodowania |
+| **Cursor** | Edytor z wbudowanym agentem do kodowania |
+| **NotebookLM** | Google — przetwarza materiały, generuje podcasty |
+| **Kiro Spec Framework** | Plan → specyfikacja → implementacja krok po kroku |
+| **Promptfoo** | Ewaluacja promptów i agentów |
+| **Langfuse** | Obserwowalność i ewaluacja agentów (online/offline) |
+| **Brain Trust** | Narzędzie do ewaluacji (wzmiankowane) |
+| **Langchain** | Framework agentowy; dokumentacja o agentach z bazami SQL |
+| **Transformers.js** | Uruchamianie modeli lokalnie w przeglądarce (JavaScript) |
+| **n8n** | No-code automatyzacja; Claude Code może generować scenariusze i commitować |
+| **Make / Zapier** | No-code automatyzacja (kontekst migracji do kodu) |
+| **Kafka** | Kolejka komunikatów (magistrala eventowa) w systemach wieloagentowych |
+
+### Modele
+
+| Model | Opis |
+|---|---|
+| **Claude Opus 4.6 / Sonnet** | Anthropic; Opus 4.6 polecany do kodowania i złożonych zadań |
+| **GPT-5.4 / GPT-5 mini** | OpenAI; GPT-5.4 jako domyślny do codziennej pracy i agentów |
+| **Gemini Flash** | Google; używany wcześniej jako domyślny |
+| **Minimax** | Lokalny model językowy do użytku lokalnego |
+| **Bielik** | Polski model językowy; nowa wersja z konferencji NVIDIA |
+| **QwQ (QNY)** | Modele uruchamiane lokalnie na telefonach (iPhone, Android) |
+| **Composer 2** | Narzędzie do kodowania (przy rekomendacjach modeli) |
+| **Pliny the Prompter** | Konto/zasób związany z prompt engineeringiem |
