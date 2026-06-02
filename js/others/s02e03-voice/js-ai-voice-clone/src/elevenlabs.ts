@@ -11,6 +11,19 @@ function getApiKey(): string {
   return key
 }
 
+export async function listVoices(): Promise<{ voice_id: string; name: string }[]> {
+  const apiKey = getApiKey()
+  const response = await fetch(`${API_BASE}/voices`, {
+    headers: { 'xi-api-key': apiKey },
+  })
+  if (!response.ok) {
+    const err = await response.text()
+    throw new Error(`Failed to list voices: ${response.status} ${err}`)
+  }
+  const data = (await response.json()) as { voices: { voice_id: string; name: string }[] }
+  return data.voices
+}
+
 export async function cloneVoice(audioPath: string): Promise<string> {
   const apiKey = getApiKey()
   const voiceName = `clone_${Date.now()}`

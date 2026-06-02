@@ -3,7 +3,7 @@ import path from 'path'
 import fs from 'fs'
 import readline from 'readline'
 import { logger } from './logger'
-import { synthesizeSpeech } from './elevenlabs'
+import { synthesizeSpeech, listVoices } from './elevenlabs'
 import config from '../config.json'
 
 const RESULTS_DIR = path.join(process.cwd(), 'results')
@@ -32,6 +32,12 @@ function generateOutputPath(): string {
 async function main() {
   ensureDirectories()
   logger.info('=== Voice Synthesis Demo ===')
+
+  logger.info('Fetching available voices...')
+  const voices = await listVoices()
+  console.log('\nAvailable voices:')
+  voices.forEach(v => console.log(`  ${v.voice_id}  ${v.name}`))
+  console.log(`\nCurrent voice_id in config.json: ${config.voice_id}\n`)
 
   const text = await promptText()
   if (!text) {
