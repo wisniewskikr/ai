@@ -9,7 +9,7 @@ async function getWhisperPipeline(model: string) {
     log.info(`Loading Whisper model: ${model} (first run downloads ~150 MB)`);
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const { pipeline: createPipeline } = await import('@xenova/transformers');
-    pipeline = (await createPipeline('automatic-speech-recognition', model)) as typeof pipeline;
+    pipeline = (await createPipeline('automatic-speech-recognition', model)) as NonNullable<typeof pipeline>;
     log.info('Whisper model ready');
   }
   return pipeline!;
