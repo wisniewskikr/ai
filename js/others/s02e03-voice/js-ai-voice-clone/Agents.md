@@ -14,6 +14,9 @@ Cel: edukacja o zagrożeniach związanych z klonowaniem głosu (s02e03).
 Twój plik audio (30s)
         │
         ▼
+Walidacja pliku (format, długość)
+        │
+        ▼
 ElevenLabs → tworzy klon głosu
         │
         ▼
@@ -24,6 +27,12 @@ ElevenLabs → syntezuje mowę Twoim głosem
         │
         ▼
 Plik .mp3 zapisany lokalnie
+        │
+        ▼
+ElevenLabs → usuwa klon głosu z konta (auto-cleanup)
+        │
+        ▼
+Raport: czas operacji + ostrzeżenie edukacyjne
 ```
 
 ---
@@ -35,7 +44,7 @@ Plik .mp3 zapisany lokalnie
 | Język | TypeScript (strict mode) |
 | Klonowanie głosu | ElevenLabs API |
 | Synteza mowy | ElevenLabs API |
-| Wejście tekstu | stdin (konsola) |
+| Wejście tekstu | stdin (readline — wbudowane w Node) |
 | Wyjście | plik `.mp3` |
 
 ---
@@ -45,18 +54,16 @@ Plik .mp3 zapisany lokalnie
 ```
 js-ai-voice-clone/
 ├── src/
-│   ├── services/
-│   │   └── elevenlabs.ts     ← klonowanie głosu + synteza
-│   └── utils/
-│       ├── logger.ts         ← logowanie do pliku
-│       └── input.ts          ← czytanie tekstu z konsoli
-├── logs/                     ← logi aplikacji
-├── workspace/                ← pliki audio wejściowe
-├── results/                  ← wygenerowane pliki .mp3
-├── config.json               ← konfiguracja (model, format, itp.)
-├── .env                      ← ELEVENLABS_API_KEY
-├── .env.example              ← szablon .env
-└── Readme.md                 ← dokumentacja (EN)
+│   ├── elevenlabs.ts     ← wszystkie wywołania API (clone, tts, delete)
+│   ├── logger.ts         ← logger z poziomami INFO/WARN/ERROR
+│   └── index.ts          ← CLI: wejście → klon → tekst → audio → cleanup
+├── logs/                 ← logi aplikacji
+├── workspace/            ← pliki audio wejściowe
+├── results/              ← wygenerowane pliki .mp3
+├── config.json           ← konfiguracja (model, format, itp.)
+├── .env                  ← ELEVENLABS_API_KEY
+├── .env.example          ← szablon .env
+└── Readme.md             ← dokumentacja (EN)
 ```
 
 ---
@@ -77,6 +84,8 @@ js-ai-voice-clone/
 | `output_format` | Format pliku wyjściowego | `"mp3_44100_128"` |
 | `stability` | Stabilność głosu (0–1) | `0.5` |
 | `similarity_boost` | Podobieństwo do oryginału (0–1) | `0.75` |
+| `min_audio_duration_sec` | Minimalna długość nagrania wejściowego | `30` |
+| `supported_formats` | Obsługiwane formaty audio | `["mp3", "wav", "m4a"]` |
 
 ---
 
@@ -84,11 +93,24 @@ js-ai-voice-clone/
 
 - [ ] Inicjalizacja projektu (`package.json`, `tsconfig.json`)
 - [ ] Konfiguracja `.env` i `config.json`
-- [ ] `src/utils/logger.ts` — logger z poziomami INFO/WARN/ERROR
-- [ ] `src/utils/input.ts` — czytanie tekstu z konsoli (stdin)
-- [ ] `src/services/elevenlabs.ts` — klonowanie głosu + TTS
-- [ ] `src/index.ts` — główny skrypt (CLI)
+- [ ] `src/logger.ts` — logger z poziomami INFO/WARN/ERROR
+- [ ] `src/elevenlabs.ts` — klonowanie głosu, TTS, usuwanie klonu
+- [ ] `src/index.ts` — główny skrypt CLI + walidacja audio + raport końcowy
 - [ ] `Readme.md` — dokumentacja w języku angielskim
+
+---
+
+## Raport końcowy (przykład)
+
+```
+✅ Gotowe. Plik zapisany: results/output_2026-06-02_143021.mp3
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️  OSTRZEŻENIE
+   Twój głos został sklonowany w 8.3 sekundy
+   Na podstawie tylko 30s nagrania
+   Klon usunięty z ElevenLabs ✓
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
 
 ---
 
