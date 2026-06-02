@@ -12,10 +12,10 @@ function ensureDirectories() {
   if (!fs.existsSync(RESULTS_DIR)) fs.mkdirSync(RESULTS_DIR, { recursive: true })
 }
 
-function promptText(): Promise<string> {
+function ask(question: string): Promise<string> {
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
   return new Promise(resolve => {
-    rl.question('\nEnter text to synthesize with your voice:\n> ', answer => {
+    rl.question(question, answer => {
       rl.close()
       resolve(answer.trim())
     })
@@ -29,26 +29,37 @@ function generateOutputPath(): string {
   return path.join(RESULTS_DIR, `output_${date}_${time}.mp3`)
 }
 
+async function selectVoice(voices: { voice_id: string; name: string }[]): Promise<string> {
+  console.log('\nAvailable voices:')
+  voices.forEach((v, i) => console.log(`  [${i + 1}] ${v.name}`))
+
+  while (true) {
+    const answer = await ask(`\nSelect voice (1-${voices.length}): `)
+    const index = parseInt(answer) - 1
+    if (index >= 0 && index < voices.length) {
+      return voices[index].voice_id
+    }
+    console.log('Invalid choice. Try again.')
+  }
+}
+
 async function main() {
   ensureDirectories()
   logger.info('=== Voice Synthesis Demo ===')
 
   logger.info('Fetching available voices...')
   const voices = await listVoices()
-  console.log('\nAvailable voices:')
-  voices.forEach(v => console.log(`  ${v.voice_id}  ${v.name}`))
-  console.log(`\nCurrent voice_id in config.json: ${config.voice_id}\n`)
 
-  const text = await promptText()
+  const voiceId = await selectVoice(voices)
+
+  const text = await ask('\nEnter text to synthesize:\n> ')
   if (!text) {
     logger.error('No text provided. Exiting.')
-    process.exit(1)
+    process.exitCode = 1
+    return
   }
 
   const startTime = Date.now()
-
-  const voiceId = config.voice_id
-  logger.info(`Using preset voice ID: ${voiceId}`)
 
   logger.info('Synthesizing speech...')
   const audioBuffer = await synthesizeSpeech(voiceId, text)
