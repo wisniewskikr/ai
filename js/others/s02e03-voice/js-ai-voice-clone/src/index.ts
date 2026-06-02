@@ -4,7 +4,7 @@ import fs from 'fs'
 import readline from 'readline'
 import { parseFile } from 'music-metadata'
 import { logger } from './logger'
-import { cloneVoice, synthesizeSpeech, deleteVoice } from './elevenlabs'
+import { synthesizeSpeech } from './elevenlabs'
 import config from '../config.json'
 
 const WORKSPACE_DIR = path.join(process.cwd(), 'workspace')
@@ -86,9 +86,8 @@ async function main() {
 
   const startTime = Date.now()
 
-  logger.info('Cloning voice via ElevenLabs...')
-  const voiceId = await cloneVoice(audioPath)
-  logger.info(`Voice cloned. ID: ${voiceId}`)
+  const voiceId = config.voice_id
+  logger.info(`Using preset voice ID: ${voiceId}`)
 
   logger.info('Synthesizing speech...')
   const audioBuffer = await synthesizeSpeech(voiceId, text)
@@ -97,23 +96,14 @@ async function main() {
   fs.writeFileSync(outputPath, audioBuffer)
   logger.info(`Audio saved: ${outputPath}`)
 
-  logger.info('Cleaning up: deleting voice clone...')
-  await deleteVoice(voiceId)
-  logger.info('Voice clone deleted from ElevenLabs.')
-
   const elapsed = ((Date.now() - startTime) / 1000).toFixed(1)
   const filename = path.basename(outputPath)
 
   console.log(`\nDone. File saved: results/${filename}`)
-  console.log('==========================================')
-  console.log('WARNING')
-  console.log(`   Your voice was cloned in ${elapsed} seconds`)
-  console.log(`   Based on just ${config.min_audio_duration_sec}s of audio`)
-  console.log('   Voice clone deleted from ElevenLabs [OK]')
-  console.log('==========================================')
+  console.log(`Elapsed: ${elapsed}s`)
 }
 
 main().catch(err => {
   logger.error(err.message)
-  process.exit(1)
+  process.exitCode = 1
 })

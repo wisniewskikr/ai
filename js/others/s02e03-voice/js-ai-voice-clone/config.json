@@ -4,5 +4,6 @@
   "stability": 0.5,
   "similarity_boost": 0.75,
   "min_audio_duration_sec": 30,
-  "supported_formats": ["mp3", "wav", "m4a"]
+  "supported_formats": ["mp3", "wav", "m4a"],
+  "voice_id": "21m00Tcm4TlvDq8ikWAM"
 }
