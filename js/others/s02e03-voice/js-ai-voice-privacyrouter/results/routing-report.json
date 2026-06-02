@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-06-02T10:45:56.692Z",
+  "files": [
+    {
+      "filename": "meeting-roche.mp3",
+      "transcript": "Meeting notes for client rush. There are annual revenue is $2 million and they want to expand to European markets.",
+      "topic": "Client Rush",
+      "sensitivity": "medium",
+      "decision": "cloud",
+      "reason": "The transcript contains financial details of a business meeting, which can be shared with a stranger."
+    },
+    {
+      "filename": "reaserach-results.mp3",
+      "transcript": "The patient blood test results. Glucose level is elevated at 180. Dr. recommends insulin adjustment.",
+      "topic": "Patient Blood Test Results",
+      "sensitivity": "high",
+      "decision": "local",
+      "reason": "Contains medical data that would not be sent by email to a stranger."
+    },
+    {
+      "filename": "shoppling-list.mp3",
+      "transcript": "I need to buy milk, bread, eggs, and some vegetables from the grocery store.",
+      "topic": "grocery shopping",
+      "sensitivity": "low",
+      "decision": "cloud",
+      "reason": "The transcript contains information about a routine grocery shopping list which is not sensitive"
+    }
+  ]
+}

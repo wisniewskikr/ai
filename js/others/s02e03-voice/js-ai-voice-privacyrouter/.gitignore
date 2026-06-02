@@ -2,8 +2,6 @@
 node_modules/
 logs/
 dist/
-workspace/
-results/
 .claude
 proxy.db
 db/
