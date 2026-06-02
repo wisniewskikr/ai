@@ -128,6 +128,7 @@ async function main(): Promise<void> {
 
   log.info(`Routing report saved to ${reportPath}`);
   console.log(`Privacy routing complete. Report: results/routing-report.json`);
+  process.exit(0);
 }
 
 main().catch((err) => {
