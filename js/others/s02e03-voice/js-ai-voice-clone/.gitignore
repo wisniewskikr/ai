@@ -6,3 +6,4 @@ workspace/
 .claude
 proxy.db
 db/
+results/
