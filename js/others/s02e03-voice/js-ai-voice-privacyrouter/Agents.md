@@ -24,13 +24,20 @@ plik audio → Whisper lokalny (transkrypt) → LM Studio (localhost:1234) → k
 
 | | Szczegol |
 |---|---|
-| **Transkrypcja** | `nodejs-whisper` (npm) + model Whisper (~150 MB) |
+| **Transkrypcja** | `@xenova/transformers` + model `whisper-tiny` (~150 MB) |
 | **Klasyfikacja** | LM Studio — `qwen3-4b-alpaca-chatwithme` |
 | **API** | `http://localhost:1234/v1` — kompatybilne z OpenAI |
 | **Prywatnosc** | Wysoka — nic nie opuszcza komputera |
 
+> **Dlaczego `@xenova/transformers`?** Czysty JavaScript — bez Pythona, dziala w Node.js od razu.
+> `nodejs-whisper` wymaga Pythona i jest bolesny w instalacji na Windows.
+
+> **Dlaczego `whisper-tiny`?** Do klasyfikacji tematu dokladnosc nie musi byc idealna.
+> Chodzi o rozroznienie "zakupy" od "dane pacjenta" — `tiny` jest 3x szybszy od `base`.
+
 > **Uwaga — Qwen3 i tryb myslenia:** Qwen3 domyslnie zwraca blok `<think>...</think>` przed odpowiedzia.
-> Przy parsowaniu JSON trzeba go odciac:
+> Wylacz go w system prompcie: `/no_think` — krotszy kod, pewniejszy JSON.
+> Alternatywa: odciecie w kodzie:
 > ```js
 > const clean = response.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
 > const result = JSON.parse(clean);
@@ -42,10 +49,12 @@ plik audio → Whisper lokalny (transkrypt) → LM Studio (localhost:1234) → k
 
 ```
 js-ai-voice-privacyrouter/
-├── .env              # OPENROUTER_API_KEY
+├── .env                        # OPENROUTER_API_KEY
 ├── package.json
-├── index.js          # glowny skrypt
-└── workspace/        # tu wrzucasz pliki audio (gitignored)
+├── index.js                    # glowny skrypt
+├── workspace/                  # tu wrzucasz pliki audio (gitignored)
+└── results/
+    └── routing-report.json     # wyniki klasyfikacji (gitignored)
 ```
 
 ---
@@ -100,7 +109,8 @@ Routing prywatnosci zakonczony.
 ## Czego NIE robi ten skrypt
 
 - Nie nagrywa dzwieku
-- Nie wysyla pliku audio do chmury w trybie LOCAL
+- Nie wysyla pliku audio do chmury
+- Nie transkrybuje na produkcyjna jakosc — `whisper-tiny` sluzy tylko do klasyfikacji tematu
 
 ---
 
@@ -118,4 +128,9 @@ node index.js
 
 Wymagania:
 - LM Studio uruchomione na `localhost:1234`
-- Zaladowany dowolny model tekstowy (np. `qwen3-4b-alpaca-chatwithme`)
+- Zaladowany model `qwen3-4b-alpaca-chatwithme`
+
+Instalacja zaleznosci:
+```bash
+npm install @xenova/transformers openai
+```
