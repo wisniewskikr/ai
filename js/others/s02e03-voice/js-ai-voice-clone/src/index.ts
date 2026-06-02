@@ -2,54 +2,14 @@ import 'dotenv/config'
 import path from 'path'
 import fs from 'fs'
 import readline from 'readline'
-import { parseFile } from 'music-metadata'
 import { logger } from './logger'
 import { synthesizeSpeech } from './elevenlabs'
 import config from '../config.json'
 
-const WORKSPACE_DIR = path.join(process.cwd(), 'workspace')
 const RESULTS_DIR = path.join(process.cwd(), 'results')
 
 function ensureDirectories() {
-  ;[WORKSPACE_DIR, RESULTS_DIR].forEach(dir => {
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
-  })
-}
-
-function getAudioFilePath(): string {
-  if (!fs.existsSync(WORKSPACE_DIR)) {
-    throw new Error('workspace/ directory not found. Create it and place your audio file inside.')
-  }
-
-  const files = fs.readdirSync(WORKSPACE_DIR).filter(f => {
-    const ext = path.extname(f).slice(1).toLowerCase()
-    return config.supported_formats.includes(ext)
-  })
-
-  if (files.length === 0) {
-    throw new Error(
-      `No audio files found in workspace/. Supported formats: ${config.supported_formats.join(', ')}`
-    )
-  }
-
-  if (files.length > 1) {
-    logger.warn(`Multiple audio files found. Using: ${files[0]}`)
-  }
-
-  return path.join(WORKSPACE_DIR, files[0])
-}
-
-async function validateAudio(filePath: string): Promise<void> {
-  const metadata = await parseFile(filePath)
-  const duration = metadata.format.duration ?? 0
-
-  logger.info(`Audio file: ${path.basename(filePath)}, duration: ${duration.toFixed(1)}s`)
-
-  if (duration < config.min_audio_duration_sec) {
-    throw new Error(
-      `Audio too short: ${duration.toFixed(1)}s (minimum: ${config.min_audio_duration_sec}s)`
-    )
-  }
+  if (!fs.existsSync(RESULTS_DIR)) fs.mkdirSync(RESULTS_DIR, { recursive: true })
 }
 
 function promptText(): Promise<string> {
@@ -71,12 +31,7 @@ function generateOutputPath(): string {
 
 async function main() {
   ensureDirectories()
-  logger.info('=== Voice Clone Demo ===')
-
-  const audioPath = getAudioFilePath()
-
-  logger.info('Validating audio file...')
-  await validateAudio(audioPath)
+  logger.info('=== Voice Synthesis Demo ===')
 
   const text = await promptText()
   if (!text) {
