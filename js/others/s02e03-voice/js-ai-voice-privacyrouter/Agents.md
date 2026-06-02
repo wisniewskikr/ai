@@ -7,20 +7,34 @@ Każdy plik audio przechodzi przez bramkę — strażnik decyduje: *"Wchodzisz d
 
 **Skrypt:**
 1. Skanuje folder `workspace/` — szuka plików audio
-2. Wysyła nazwę pliku do LLM — pyta: *"Czy to wrażliwe?"*
-3. Dostaje odpowiedź w JSON
-4. Wypisuje decyzję: **CLOUD** albo **LOCAL**
+2. Transkrybuje audio lokalnie (Whisper)
+3. Wysyla transkrypt do LLM — pyta: *"Czy to wrazliwe?"*
+4. Dostaje odpowiedz w JSON
+5. Wypisuje decyzje: **CLOUD** albo **LOCAL**
 
 ---
 
-## Model
+## Tryb LOCAL (Whisper + LM Studio)
 
-| | Szczegół |
+Jak sejf w domu — wszystko zostaje u Ciebie, nikt z zewnatrz nie ma dostepu.
+
+```
+plik audio → Whisper lokalny (transkrypt) → LM Studio (localhost:1234) → klasyfikacja
+```
+
+| | Szczegol |
 |---|---|
-| **Provider** | OpenRouter |
-| **Model** | `openai/gpt-4o-mini` |
-| **Dlaczego?** | Tani, szybki, świetny do klasyfikacji |
-| **Alternatywa (darmowa)** | `meta-llama/llama-3.1-8b-instruct:free` |
+| **Transkrypcja** | `nodejs-whisper` (npm) + model Whisper (~150 MB) |
+| **Klasyfikacja** | LM Studio — `qwen3-4b-alpaca-chatwithme` |
+| **API** | `http://localhost:1234/v1` — kompatybilne z OpenAI |
+| **Prywatnosc** | Wysoka — nic nie opuszcza komputera |
+
+> **Uwaga — Qwen3 i tryb myslenia:** Qwen3 domyslnie zwraca blok `<think>...</think>` przed odpowiedzia.
+> Przy parsowaniu JSON trzeba go odciac:
+> ```js
+> const clean = response.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+> const result = JSON.parse(clean);
+> ```
 
 ---
 
@@ -85,9 +99,8 @@ Routing prywatnosci zakonczony.
 
 ## Czego NIE robi ten skrypt
 
-- Nie transkrybuje audio (to zadanie dla Whisper)
 - Nie nagrywa dzwieku
-- Nie wysyla pliku audio do chmury — tylko nazwe pliku do klasyfikacji
+- Nie wysyla pliku audio do chmury w trybie LOCAL
 
 ---
 
@@ -97,3 +110,12 @@ Routing prywatnosci zakonczony.
 ```
 OPENROUTER_API_KEY=sk-or-...
 ```
+
+Uruchomienie:
+```bash
+node index.js
+```
+
+Wymagania:
+- LM Studio uruchomione na `localhost:1234`
+- Zaladowany dowolny model tekstowy (np. `qwen3-4b-alpaca-chatwithme`)
