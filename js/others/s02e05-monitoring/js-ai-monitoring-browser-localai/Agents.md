@@ -106,13 +106,49 @@ Wpisanie `q` w dowolnym momencie konczy aplikacje gracefully (sprząta temp plik
 
 ```
 js-ai-monitoring-browser-localai/
-├── .env                   # OPENROUTER_API_KEY (istnieje)
-├── .gitignore             # node_modules/, logs/, dist/ (istnieje)
-├── Agents.md              # ten plik — ustalenia projektowe
+├── src/
+│   ├── prompts/
+│   │   └── classify.ts        ← system prompt for window title classification
+│   ├── services/
+│   │   ├── classifier.ts      ← AI classification logic (OpenRouter call + keyword fallback)
+│   │   ├── monitor.ts         ← active window title reading (PowerShell / Win32)
+│   │   └── stats.ts           ← statistics display and JSON file saving
+│   ├── utils/
+│   │   └── cli.ts             ← readline helpers: ask(), sleep(), isYes(), isQuit()
+│   └── index.ts               ← main entry point, CLI flow, session loop
+├── logs/                      ← session output files (in .gitignore)
+├── config.json                ← all config variables (intervals, batch size, model, etc.)
+├── .env                       ← OPENROUTER_API_KEY (exists, never commit)
+├── .env.example               ← env variable template
+├── .gitignore                 ← node_modules/, logs/, dist/ (exists)
+├── Agents.md                  ← this file
 ├── package.json
 ├── tsconfig.json
-└── src/
-    └── index.ts           # cala logika w jednym pliku (~200 linii)
+└── Readme.md                  ← project documentation in English
+```
+
+#### config.json (przyklad zawartosci)
+
+```json
+{
+  "monitoringIntervalMs": 5000,
+  "batchSize": 6,
+  "model": "meta-llama/llama-3.2-3b-instruct:free",
+  "logsDir": "logs"
+}
+```
+
+Zadna wartosc konfiguracyjna nie jest hardcodowana w kodzie — wszystko pochodzi z `config.json`.
+
+#### Format logow (logs/)
+
+Kazda sesja zapisywana jako JSON. Komunikaty aplikacji na konsoli (poziomy INFO / WARN / ERROR) uzywaja formatu:
+
+```
+[YYYY-MM-DD HH:mm:ss] [INFO]  Monitoring started. Interval: 5s | Batch: 6 samples
+[YYYY-MM-DD HH:mm:ss] [INFO]  Sample 6 | Category: browsing | Top: coding | Elapsed: 0m 30s
+[YYYY-MM-DD HH:mm:ss] [INFO]  Session saved to logs/session-2026-06-03T10-30-00.json
+[YYYY-MM-DD HH:mm:ss] [ERROR] AI classification failed — using keyword fallback
 ```
 
 ---
