@@ -1,0 +1,8 @@
+{
+  "monitoringIntervalMs": 5000,
+  "batchSize": 6,
+  "ollamaBaseUrl": "http://localhost:11434/v1",
+  "model": "llama3.2:3b",
+  "logsDir": "logs",
+  "categories": ["work", "communication", "meetings", "browsing", "entertainment", "other"]
+}
