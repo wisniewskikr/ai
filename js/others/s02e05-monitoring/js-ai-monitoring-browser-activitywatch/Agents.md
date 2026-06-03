@@ -14,16 +14,16 @@ zgodnie z sekcja "Monitoring uzytkownikow" z Readme-security-pl.md.
 Tradycyjny tracker          Privacy First
 ────────────────────────    ────────────────────────
 Screenshot co 5s            Odczyt tytulu okna
-Analiza na serwerze         Klasyfikacja przez AI
+Analiza na serwerze         Klasyfikacja lokalna
 Surowy zapis z trescia      Tylko kategoria + czas
 Firma / serwer / haker      Tylko Ty
 ```
 
 **Przepływ danych:**
 ```
-Aktywne okno → tytuł → AI (Ollama, lokalnie) → kategoria → agregat (JSON)
-                ↑                                                ↑
-         NIE jest zapisywany                        jedyne co trafia do pliku
+ActivityWatch API → tytuł + app → klasyfikacja keyword → kategoria → agregat (JSON)
+        ↑                  ↑                                               ↑
+  lokalny serwer    NIE jest zapisywany                       jedyne co trafia do pliku
 ```
 
 ---
@@ -37,9 +37,9 @@ Aktywne okno → tytuł → AI (Ollama, lokalnie) → kategoria → agregat (JSO
 | `meetings`       | Zoom, Google Meet, Webex, Teams (call)               | zoom, meet, webex, whereby                  |
 | `browsing`       | Chrome, Firefox, Edge, Brave (ogólne przeglądanie)   | chrome, firefox, edge, brave, safari        |
 | `entertainment`  | YouTube, Netflix, Disney+, HBO Max, Prime Video, Spotify, Twitch, Steam, VLC | youtube, netflix, disney, hbo, prime video, spotify, twitch, steam, vimeo |
-| `other`          | wszystko pozostale — przekazywane do AI              | (brak dopasowania keyword → AI klasyfikuje) |
+| `other`          | wszystko pozostale — nie pasuje do zadnego keyword   | (brak dopasowania keyword → kategoria other) |
 
-Kategoria `other` to jedyna, ktora trafia do Ollamy — keyword-first pokrywa ~80% przypadkow.
+Klasyfikacja jest w 100% lokalna — keyword-first, bez zewnetrznych wywolan AI.
 
 ---
 
@@ -48,15 +48,14 @@ Kategoria `other` to jedyna, ktora trafia do Ollamy — keyword-first pokrywa ~8
 | Element              | Wybor                                        | Uwagi                                            |
 |----------------------|----------------------------------------------|--------------------------------------------------|
 | Jezyk                | TypeScript + tsx (runner)                    | bez kompilacji, bezposrednie uruchomienie .ts    |
-| AI klasyfikacja      | Ollama (lokalny serwer, OpenAI-compatible)   | dane nie opuszczaja komputera                    |
-| Model                | `llama3.2:3b`                                | ~2 GB RAM, szybki, structured JSON output        |
-| Odczyt okna          | `active-win` (npm)                           | natywne binaria, < 10ms, cross-platform          |
-| Klasyfikacja         | keyword-first → AI tylko dla `other`         | ~80% pomiarow bez wywolania Ollamy               |
+| Zrodlo danych        | ActivityWatch REST API (lokalny serwer)      | dane nie opuszczaja komputera                    |
+| Watcher              | `aw-watcher-window` (ActivityWatch)          | natywne sledzenie aktywnego okna, port 5600      |
+| Klasyfikacja         | keyword-first (lokalnie, bez AI)             | 100% pomiarow bez zewnetrznych wywolan           |
 | Zapis wynikow        | JSON w katalogu logs/                        | tylko kategorie + czas, bez surowych tytułow     |
 | CLI                  | Node.js readline (wbudowany)                 | bez zewnetrznych zaleznosci                      |
 
-**Ollama baseURL:** `http://localhost:11434/v1` (w `config.json`)
-**Brak klucza API** — Ollama nie wymaga autentykacji; `apiKey` ustawione na `"ollama"`
+**ActivityWatch baseURL:** `http://localhost:5600/api/0` (w `config.json`)
+**Brak autentykacji** — ActivityWatch nie wymaga klucza API
 
 ---
 
@@ -74,9 +73,8 @@ Start monitoring? (y = yes | q = quit)
   |
   v
 Loop: every 5 seconds
-  ├─ activeWin()                 → raw title (temporary, NOT saved)
-  ├─ classifyByKeyword(title)    → category instantly (~80% of cases)
-  ├─ classifyByAI(title)         → only if keyword returns `other` (~20%)
+  ├─ GET /api/0/buckets/{bucket}/events?limit=1   → pobierz najnowszy event (app + title)
+  ├─ classifyByKeyword(app, title)                → kategoria instant (100% przypadkow)
   └─ stats[category] += 5s
 
   Every 6 samples (= 30s):
@@ -105,24 +103,47 @@ Wpisanie `q` w dowolnym momencie konczy aplikacje gracefully (sprząta temp plik
 
 ---
 
+### ActivityWatch API — szczegoly
+
+ActivityWatch uruchamia lokalny serwer HTTP na porcie 5600. Watcher `aw-watcher-window` automatycznie tworzy bucket o nazwie `aw-watcher-window_<hostname>`.
+
+**Kluczowe endpointy:**
+```
+GET /api/0/buckets/                              → lista wszystkich bucketow
+GET /api/0/buckets/{bucket_id}/events?limit=1    → najnowszy event aktywnego okna
+```
+
+**Format eventu:**
+```json
+{
+  "id": 1234,
+  "timestamp": "2026-06-03T10:30:00.000Z",
+  "duration": 4.5,
+  "data": {
+    "app": "Code",
+    "title": "index.ts — js-ai-monitoring"
+  }
+}
+```
+
+**Inicjalizacja:** przy starcie aplikacja odpytuje `/api/0/buckets/` i automatycznie wykrywa bucket `aw-watcher-window_*`. Jesli ActivityWatch nie dziala lub brak bucketa — aplikacja wyswietla blad z instrukcja i konczy dzialanie.
+
+---
+
 ### Struktura plikow
 
 ```
-js-ai-monitoring-browser-localai/
+js-ai-monitoring-browser-activitywatch/
 ├── src/
-│   ├── prompts/
-│   │   └── classify.ts        ← system prompt for window title classification
 │   ├── services/
-│   │   ├── classifier.ts      ← keyword-first logic + Ollama call (JSON output) for `inne`
-│   │   ├── monitor.ts         ← active window title reading via active-win
+│   │   ├── activitywatch.ts   ← klient REST API ActivityWatch (pobieranie eventow, wykrycie bucketa)
+│   │   ├── classifier.ts      ← keyword-first logic dla wszystkich kategorii
 │   │   └── stats.ts           ← statistics display and JSON file saving
 │   ├── utils/
 │   │   └── cli.ts             ← readline helpers: ask(), sleep(), isYes(), isQuit()
 │   └── index.ts               ← main entry point, CLI flow, session loop
 ├── logs/                      ← session output files (in .gitignore)
-├── config.json                ← all config variables (intervals, batch size, model, etc.)
-├── .env                       ← (exists; Ollama nie wymaga klucza API)
-├── .env.example               ← env variable template
+├── config.json                ← all config variables (intervals, batch size, activityWatchUrl, etc.)
 ├── .gitignore                 ← node_modules/, logs/, dist/ (exists)
 ├── Agents.md                  ← this file
 ├── package.json
@@ -136,8 +157,7 @@ js-ai-monitoring-browser-localai/
 {
   "monitoringIntervalMs": 5000,
   "batchSize": 6,
-  "ollamaBaseUrl": "http://localhost:11434/v1",
-  "model": "llama3.2:3b",
+  "activityWatchUrl": "http://localhost:5600/api/0",
   "logsDir": "logs",
   "categories": ["work", "communication", "meetings", "browsing", "entertainment", "other"]
 }
@@ -151,24 +171,24 @@ Kazda sesja zapisywana jako JSON. Komunikaty aplikacji na konsoli (poziomy INFO 
 
 ```
 [YYYY-MM-DD HH:mm:ss] [INFO]  Monitoring started. Interval: 5s | Batch: 6 samples
+[YYYY-MM-DD HH:mm:ss] [INFO]  ActivityWatch bucket: aw-watcher-window_hostname
 [YYYY-MM-DD HH:mm:ss] [INFO]  Sample 6 | Category: browsing | Top: work | Elapsed: 0m 30s
 [YYYY-MM-DD HH:mm:ss] [INFO]  Session saved to logs/session-2026-06-03T10-30-00.json
-[YYYY-MM-DD HH:mm:ss] [ERROR] AI classification failed — using keyword fallback
+[YYYY-MM-DD HH:mm:ss] [ERROR] ActivityWatch unavailable — is aw-watcher-window running?
 ```
 
 ---
 
 ### Kluczowe decyzje implementacyjne
 
-1. **Struktura src/** — `prompts/`, `services/`, `utils/`, `index.ts` zgodnie z wisniewk-app-rules
-2. **config.json** — wszystkie zmienne konfiguracyjne (interval, batch, model, logsDir, categories); zero hardcodowania
-3. **`active-win` zamiast PowerShell** — natywne binaria, < 10ms, brak PS1 script i escaping hell
-4. **keyword-first, AI dla `other`** — ~80% pomiarow klasyfikowanych instant; Ollama tylko dla niejednoznacznych tytułow
-5. **Structured JSON output** — Ollama zwraca `{"category": "..."}`, zero problemow z parsowaniem odpowiedzi
-6. **Batch-based loop** — 6 pomiarow → pauza → pytanie; prostsze niz concurrent readline + loop
-7. **Brak dotenv package** — czytamy .env recznie (redukcja zaleznosci)
-8. **Zero external deps w runtime** — `openai` + `active-win` (kompatybilny z Ollama API)
+1. **Struktura src/** — `services/`, `utils/`, `index.ts` zgodnie z wisniewk-app-rules
+2. **config.json** — wszystkie zmienne konfiguracyjne (interval, batch, activityWatchUrl, logsDir, categories); zero hardcodowania
+3. **ActivityWatch zamiast active-win** — lokalny serwer HTTP, REST API, dane nigdy nie opuszczaja maszyny
+4. **ActivityWatch zamiast Ollama** — zero wywolan AI; klasyfikacja keyword-first pokrywa 100% przypadkow lokalnie
+5. **Keyword-first dla wszystkich kategorii** — brak zaleznosci od zewnetrznych modeli; `other` to po prostu brak dopasowania
+6. **Auto-wykrycie bucketa** — aplikacja sama znajduje `aw-watcher-window_*` bucket bez konfiguracji hostname
+7. **Batch-based loop** — 6 pomiarow → pauza → pytanie; prostsze niz concurrent readline + loop
+8. **Brak zewnetrznych zaleznosci runtime** — tylko wbudowane Node.js modules + `node-fetch` lub natywny `fetch` (Node 18+)
 9. **Quit option at every prompt** — kazde pytanie CLI przyjmuje `q` jako natychmiastowe wyjscie
 10. **English UI** — wszystkie komunikaty na konsoli w jezyku angielskim
 11. **Log format** — `[YYYY-MM-DD HH:mm:ss] [LEVEL] message` dla INFO / WARN / ERROR
-
