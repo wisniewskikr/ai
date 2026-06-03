@@ -36,7 +36,7 @@ Aktywne okno → tytuł → AI (Ollama, lokalnie) → kategoria → agregat (JSO
 | `communication`  | Gmail, Outlook, Slack, Discord, Teams (chat)         | gmail, outlook, slack, discord, teams       |
 | `meetings`       | Zoom, Google Meet, Webex, Teams (call)               | zoom, meet, webex, whereby                  |
 | `browsing`       | Chrome, Firefox, Edge, Brave (ogólne przeglądanie)   | chrome, firefox, edge, brave, safari        |
-| `entertainment`  | YouTube, Netflix, Spotify, Twitch, Steam, VLC        | youtube, netflix, spotify, twitch, steam    |
+| `entertainment`  | YouTube, Netflix, Disney+, HBO Max, Prime Video, Spotify, Twitch, Steam, VLC | youtube, netflix, disney, hbo, prime video, spotify, twitch, steam, vimeo |
 | `other`          | wszystko pozostale — przekazywane do AI              | (brak dopasowania keyword → AI klasyfikuje) |
 
 Kategoria `other` to jedyna, ktora trafia do Ollamy — keyword-first pokrywa ~80% przypadkow.
