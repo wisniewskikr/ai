@@ -21,9 +21,9 @@ Firma / serwer / haker      Tylko Ty
 
 **Przepływ danych:**
 ```
-Aktywne okno → tytuł → AI (OpenRouter) → kategoria → agregat (JSON)
-                ↑                                         ↑
-         NIE jest zapisywany                     jedyne co trafia do pliku
+Aktywne okno → tytuł → AI (Ollama, lokalnie) → kategoria → agregat (JSON)
+                ↑                                                ↑
+         NIE jest zapisywany                        jedyne co trafia do pliku
 ```
 
 ---
@@ -44,17 +44,17 @@ Aktywne okno → tytuł → AI (OpenRouter) → kategoria → agregat (JSON)
 
 ### Stack
 
-| Element              | Wybor                                      | Uwagi                                         |
-|----------------------|--------------------------------------------|-----------------------------------------------|
-| Jezyk                | TypeScript + tsx (runner)                  | bez kompilacji, bezposrednie uruchomienie .ts |
-| AI klasyfikacja      | OpenRouter (free model)                    | zamiast Ollama — latwiejszy setup             |
-| Model domyslny       | meta-llama/llama-3.2-3b-instruct:free      | darmowy, wystarczajacy do klasyfikacji        |
-| Odczyt okna (Win)    | PowerShell + Win32 API (GetForegroundWindow) | .ps1 zapisywany do tmpdir na starcie        |
-| Zapis wynikow        | JSON w katalogu logs/                      | tylko kategorie + czas, bez surowych tytułow |
-| CLI                  | Node.js readline (wbudowany)               | bez zewnetrznych zaleznosci                  |
+| Element              | Wybor                                        | Uwagi                                          |
+|----------------------|----------------------------------------------|------------------------------------------------|
+| Jezyk                | TypeScript + tsx (runner)                    | bez kompilacji, bezposrednie uruchomienie .ts  |
+| AI klasyfikacja      | Ollama (lokalny serwer, OpenAI-compatible)   | dane nie opuszczaja komputera                  |
+| Model                | `llama3.2:3b`                                | ~2 GB RAM, szybki, wystarczajacy do klasyfikacji |
+| Odczyt okna (Win)    | PowerShell + Win32 API (GetForegroundWindow) | .ps1 zapisywany do tmpdir na starcie           |
+| Zapis wynikow        | JSON w katalogu logs/                        | tylko kategorie + czas, bez surowych tytułow   |
+| CLI                  | Node.js readline (wbudowany)                 | bez zewnetrznych zaleznosci                    |
 
-**Zmienna srodowiskowa:** `OPENROUTER_API_KEY` (w `.env`)
-**Opcjonalnie:** `OPENROUTER_MODEL` — nadpisuje domyslny model
+**Ollama baseURL:** `http://localhost:11434/v1` (w `config.json`)
+**Brak klucza API** — Ollama nie wymaga autentykacji; `apiKey` ustawione na `"ollama"`
 
 ---
 
@@ -110,7 +110,7 @@ js-ai-monitoring-browser-localai/
 │   ├── prompts/
 │   │   └── classify.ts        ← system prompt for window title classification
 │   ├── services/
-│   │   ├── classifier.ts      ← AI classification logic (OpenRouter call + keyword fallback)
+│   │   ├── classifier.ts      ← AI classification logic (Ollama call + keyword fallback)
 │   │   ├── monitor.ts         ← active window title reading (PowerShell / Win32)
 │   │   └── stats.ts           ← statistics display and JSON file saving
 │   ├── utils/
@@ -118,7 +118,7 @@ js-ai-monitoring-browser-localai/
 │   └── index.ts               ← main entry point, CLI flow, session loop
 ├── logs/                      ← session output files (in .gitignore)
 ├── config.json                ← all config variables (intervals, batch size, model, etc.)
-├── .env                       ← OPENROUTER_API_KEY (exists, never commit)
+├── .env                       ← (exists; Ollama nie wymaga klucza API)
 ├── .env.example               ← env variable template
 ├── .gitignore                 ← node_modules/, logs/, dist/ (exists)
 ├── Agents.md                  ← this file
@@ -133,7 +133,8 @@ js-ai-monitoring-browser-localai/
 {
   "monitoringIntervalMs": 5000,
   "batchSize": 6,
-  "model": "meta-llama/llama-3.2-3b-instruct:free",
+  "ollamaBaseUrl": "http://localhost:11434/v1",
+  "model": "llama3.2:3b",
   "logsDir": "logs"
 }
 ```
@@ -161,7 +162,7 @@ Kazda sesja zapisywana jako JSON. Komunikaty aplikacji na konsoli (poziomy INFO 
 4. **Fallback bez AI** — classifyByKeyword() w classifier.ts działa gdy brak klucza/połączenia
 5. **Temp PS1 script** — zapisywany raz na starcie do `os.tmpdir()`, unika escaping hell
 6. **Brak dotenv package** — czytamy .env recznie (redukcja zaleznosci)
-7. **Zero external deps w runtime** — tylko `openai` package
+7. **Zero external deps w runtime** — tylko `openai` package (kompatybilny z Ollama API)
 8. **Quit option at every prompt** — kazde pytanie CLI przyjmuje `q` jako natychmiastowe wyjscie
 9. **English UI** — wszystkie komunikaty na konsoli w jezyku angielskim (naglowki, progress, pytania, statystyki)
 10. **Log format** — `[YYYY-MM-DD HH:mm:ss] [LEVEL] message` dla INFO / WARN / ERROR
@@ -170,8 +171,8 @@ Kazda sesja zapisywana jako JSON. Komunikaty aplikacji na konsoli (poziomy INFO 
 
 ### Uwagi edukacyjne do omowienia
 
-- **Dlaczego nie Ollama?** — OpenRouter jest latwiejs zy w setupie dla demo. Ollama byłaby
-  lepszym wyborem produkcyjnym (dane nie opuszczaja komputera).
+- **Dlaczego Ollama, nie OpenRouter?** — Dane w ogole nie opuszczaja komputera. To wzmacnia
+  argument Privacy First: nie tylko nie zapisujemy tresci okien, ale AI dziala w 100% lokalnie.
 - **Dlaczego nie screenshot?** — Screenshoty to inwigilacja (Amazon: kara 32M EUR).
   Tytuł okna to minimalny zbior danych zgodny z RODO.
 - **Agregat vs surowe dane** — pokazac roznice: `Gmail — negocjacje — 23 min` vs `komunikacja — 23 min`
