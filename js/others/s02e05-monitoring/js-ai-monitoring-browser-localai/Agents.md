@@ -30,16 +30,16 @@ Aktywne okno → tytuł → AI (Ollama, lokalnie) → kategoria → agregat (JSO
 
 ### Kategorie aktywnosci
 
-| Kategoria     | Przyklady tytułow okien                              | Slowa kluczowe (keyword-first)              |
-|---------------|------------------------------------------------------|---------------------------------------------|
-| `praca`       | VSCode, IntelliJ, Excel, Word, Cursor, Terminal      | vscode, intellij, excel, word, cursor, vim  |
-| `komunikacja` | Gmail, Outlook, Slack, Discord, Teams (chat)         | gmail, outlook, slack, discord, teams       |
-| `spotkania`   | Zoom, Google Meet, Webex, Teams (call)               | zoom, meet, webex, whereby                  |
-| `przegladanie`| Chrome, Firefox, Edge, Brave (ogólne przeglądanie)   | chrome, firefox, edge, brave, safari        |
-| `rozrywka`    | YouTube, Netflix, Spotify, Twitch, Steam, VLC        | youtube, netflix, spotify, twitch, steam    |
-| `inne`        | wszystko pozostale — przekazywane do AI              | (brak dopasowania keyword → AI klasyfikuje) |
+| Kategoria        | Przyklady tytułow okien                              | Slowa kluczowe (keyword-first)              |
+|------------------|------------------------------------------------------|---------------------------------------------|
+| `work`           | VSCode, IntelliJ, Excel, Word, Cursor, Terminal      | vscode, intellij, excel, word, cursor, vim  |
+| `communication`  | Gmail, Outlook, Slack, Discord, Teams (chat)         | gmail, outlook, slack, discord, teams       |
+| `meetings`       | Zoom, Google Meet, Webex, Teams (call)               | zoom, meet, webex, whereby                  |
+| `browsing`       | Chrome, Firefox, Edge, Brave (ogólne przeglądanie)   | chrome, firefox, edge, brave, safari        |
+| `entertainment`  | YouTube, Netflix, Spotify, Twitch, Steam, VLC        | youtube, netflix, spotify, twitch, steam    |
+| `other`          | wszystko pozostale — przekazywane do AI              | (brak dopasowania keyword → AI klasyfikuje) |
 
-Kategoria `inne` to jedyna, ktora trafia do Ollamy — keyword-first pokrywa ~80% przypadkow.
+Kategoria `other` to jedyna, ktora trafia do Ollamy — keyword-first pokrywa ~80% przypadkow.
 
 ---
 
@@ -51,7 +51,7 @@ Kategoria `inne` to jedyna, ktora trafia do Ollamy — keyword-first pokrywa ~80
 | AI klasyfikacja      | Ollama (lokalny serwer, OpenAI-compatible)   | dane nie opuszczaja komputera                    |
 | Model                | `llama3.2:3b`                                | ~2 GB RAM, szybki, structured JSON output        |
 | Odczyt okna          | `active-win` (npm)                           | natywne binaria, < 10ms, cross-platform          |
-| Klasyfikacja         | keyword-first → AI tylko dla `inne`          | ~80% pomiarow bez wywolania Ollamy               |
+| Klasyfikacja         | keyword-first → AI tylko dla `other`         | ~80% pomiarow bez wywolania Ollamy               |
 | Zapis wynikow        | JSON w katalogu logs/                        | tylko kategorie + czas, bez surowych tytułow     |
 | CLI                  | Node.js readline (wbudowany)                 | bez zewnetrznych zaleznosci                      |
 
@@ -76,10 +76,10 @@ Start monitoring? (y = yes | q = quit)
 Loop: every 5 seconds
   ├─ activeWin()                 → raw title (temporary, NOT saved)
   ├─ classifyByKeyword(title)    → category instantly (~80% of cases)
-  ├─ classifyByAI(title)         → only if keyword returns `inne` (~20%)
+  ├─ classifyByAI(title)         → only if keyword returns `other` (~20%)
   ├─ [EDU] print comparison:
   │    Raw title  : Gmail — Re: salary negotiation       ← what traditional trackers store
-  │    Stored     : komunikacja                          ← what WE store
+  │    Stored     : communication                        ← what WE store
   └─ stats[category] += 5s
 
   Every 6 samples (= 30s):
@@ -142,7 +142,7 @@ js-ai-monitoring-browser-localai/
   "ollamaBaseUrl": "http://localhost:11434/v1",
   "model": "llama3.2:3b",
   "logsDir": "logs",
-  "categories": ["praca", "komunikacja", "spotkania", "przegladanie", "rozrywka", "inne"]
+  "categories": ["work", "communication", "meetings", "browsing", "entertainment", "other"]
 }
 ```
 
@@ -154,7 +154,7 @@ Kazda sesja zapisywana jako JSON. Komunikaty aplikacji na konsoli (poziomy INFO 
 
 ```
 [YYYY-MM-DD HH:mm:ss] [INFO]  Monitoring started. Interval: 5s | Batch: 6 samples
-[YYYY-MM-DD HH:mm:ss] [INFO]  Sample 6 | Category: browsing | Top: coding | Elapsed: 0m 30s
+[YYYY-MM-DD HH:mm:ss] [INFO]  Sample 6 | Category: browsing | Top: work | Elapsed: 0m 30s
 [YYYY-MM-DD HH:mm:ss] [INFO]  Session saved to logs/session-2026-06-03T10-30-00.json
 [YYYY-MM-DD HH:mm:ss] [ERROR] AI classification failed — using keyword fallback
 ```
@@ -166,7 +166,7 @@ Kazda sesja zapisywana jako JSON. Komunikaty aplikacji na konsoli (poziomy INFO 
 1. **Struktura src/** — `prompts/`, `services/`, `utils/`, `index.ts` zgodnie z wisniewk-app-rules
 2. **config.json** — wszystkie zmienne konfiguracyjne (interval, batch, model, logsDir, categories); zero hardcodowania
 3. **`active-win` zamiast PowerShell** — natywne binaria, < 10ms, brak PS1 script i escaping hell
-4. **keyword-first, AI dla `inne`** — ~80% pomiarow klasyfikowanych instant; Ollama tylko dla niejednoznacznych tytułow
+4. **keyword-first, AI dla `other`** — ~80% pomiarow klasyfikowanych instant; Ollama tylko dla niejednoznacznych tytułow
 5. **Structured JSON output** — Ollama zwraca `{"category": "..."}`, zero problemow z parsowaniem odpowiedzi
 6. **Tryb edukacyjny** — kazdy pomiar wyswietla raw title vs stored category (kluczowy argument Privacy First)
 7. **Batch-based loop** — 6 pomiarow → pauza → pytanie; prostsze niz concurrent readline + loop
@@ -188,5 +188,5 @@ Kazda sesja zapisywana jako JSON. Komunikaty aplikacji na konsoli (poziomy INFO 
   AI ma sens tylko dla tytułow typu "Untitled - Notepad" albo "New Tab", gdzie keyword nie wystarczy.
 - **Dlaczego nie screenshot?** — Screenshoty to inwigilacja (Amazon: kara 32M EUR).
   Tytuł okna to minimalny zbior danych zgodny z RODO.
-- **Agregat vs surowe dane** — pokazac roznice: `Gmail — negocjacje — 23 min` vs `komunikacja — 23 min`
+- **Agregat vs surowe dane** — pokazac roznice: `Gmail — negocjacje — 23 min` vs `communication — 23 min`
 - **RODO** — pracodawca moze monitorowac kategorie, ale NIE treść.
