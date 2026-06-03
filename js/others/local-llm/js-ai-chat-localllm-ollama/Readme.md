@@ -7,7 +7,62 @@ A TypeScript chatbot that talks to an AI running **on your own computer**. No in
 ## Requirements
 
 - [Node.js](https://nodejs.org) 20+
-- [Ollama](https://ollama.com/download/windows) installed and running
+- Ollama installed and running (see below)
+
+---
+
+## Installing Ollama on Windows
+
+1. Download `OllamaSetup.exe` from **https://ollama.com/download/windows** and run it. Ollama installs as a system service.
+2. Verify:
+   ```bash
+   ollama --version
+   ```
+3. Pull a model:
+   ```bash
+   ollama pull llama3.2
+   ```
+4. Test the API:
+   ```bash
+   curl http://localhost:11434/api/tags
+   ```
+
+Ollama listens on `http://localhost:11434` by default. Model files are stored in `C:\Users\<YourUser>\.ollama\models`.
+
+### Recommended models
+
+| Model | Size | Good for |
+|-------|------|----------|
+| `llama3.2` | 2 GB | General use |
+| `mistral` | 4 GB | Great overall quality |
+| `phi3` | 2.3 GB | Fast, by Microsoft |
+| `qwen2.5-coder` | 4.7 GB | Code |
+
+### Hardware requirements
+
+| Model size | Example | RAM | GPU VRAM |
+|------------|---------|-----|----------|
+| 3B | llama3.2, phi3 | 4 GB | 3 GB |
+| 7B | mistral | 8 GB | 6 GB |
+| 13B | codellama:13b | 16 GB | 12 GB |
+| 70B | llama3:70b | 64 GB | 48 GB |
+
+> No GPU? It still works — just slower. Start with 3B models.
+
+---
+
+## Uninstalling Ollama from Windows
+
+1. Go to **Settings → Apps → Installed apps**, find **Ollama** and click **Uninstall**.
+2. Remove leftover model files:
+   ```bash
+   # CMD
+   rmdir /s /q "%USERPROFILE%\.ollama"
+   ```
+   ```powershell
+   # PowerShell
+   Remove-Item -Recurse -Force "$env:USERPROFILE\.ollama"
+   ```
 
 ---
 
