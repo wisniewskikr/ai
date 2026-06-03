@@ -43,6 +43,39 @@ ollama run llama3.2
 curl http://localhost:11434/api/tags
 ```
 
+### 6. Usuń model
+
+```bash
+# Usuń konkretny model
+ollama rm llama3.2
+
+# Sprawdź, co zostało
+ollama list
+```
+
+Pliki modeli są domyślnie przechowywane w:
+```
+C:\Users\<TwójUser>\.ollama\models
+```
+Możesz je usunąć ręcznie, jeśli chcesz zwolnić miejsce na dysku.
+
+### 7. Odinstaluj Ollama z Windows
+
+1. Otwórz **Ustawienia → Aplikacje → Zainstalowane aplikacje**
+2. Znajdź **Ollama** i kliknij **Odinstaluj**
+
+Następnie ręcznie usuń pozostałości:
+
+```bash
+# Usuń pliki modeli i konfigurację
+rmdir /s /q "%USERPROFILE%\.ollama"
+```
+
+Lub w PowerShell:
+```powershell
+Remove-Item -Recurse -Force "$env:USERPROFILE\.ollama"
+```
+
 ---
 
 ## Wymagania sprzętowe
