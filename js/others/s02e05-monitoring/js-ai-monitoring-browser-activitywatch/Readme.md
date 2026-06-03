@@ -1,14 +1,14 @@
-# Window Title Tracker — Privacy First
+# Browser Activity Tracker — Privacy First
 
 A demo project illustrating the difference between traditional user monitoring and a Privacy First approach.
 
 **Traditional tracker** — screenshots every 5s, analysis on a remote server, raw content stored, accessible to company/server/attacker.
-**This tracker** — reads only the active window title, classifies locally by keyword, records only a category + time. Only you see the data.
+**This tracker** — monitors browser windows only, classifies by tab title locally, records only a category + time. Non-browser windows are ignored entirely.
 
 ```
-ActivityWatch API → app + title → keyword classification → category → aggregated JSON
-       ↑                 ↑                                                  ↑
-  local server    NOT recorded                                  the only thing saved
+ActivityWatch API → app + title → browser gate → keyword classification → category → aggregated JSON
+       ↑                 ↑              ↑                                                  ↑
+  local server    NOT recorded   non-browser = skip                          the only thing saved
 ```
 
 ---
@@ -85,25 +85,28 @@ All settings are in `config.json` — no hardcoded values in code.
 
 | Key                  | Default                          | Description                              |
 |----------------------|----------------------------------|------------------------------------------|
-| `monitoringIntervalMs` | `5000`                         | Sampling interval in milliseconds        |
-| `batchSize`          | `6`                              | Samples per batch before asking to stop  |
-| `activityWatchUrl`   | `http://localhost:5600/api/0`    | ActivityWatch API base URL               |
-| `logsDir`            | `logs`                           | Directory for session JSON files         |
-| `categories`         | see config.json                  | Ordered list of activity categories      |
+| `monitoringIntervalMs` | `5000`                                              | Sampling interval in milliseconds                  |
+| `batchSize`          | `6`                                                   | Samples per batch before asking to stop            |
+| `activityWatchUrl`   | `http://localhost:5600/api/0`                         | ActivityWatch API base URL                         |
+| `logsDir`            | `logs`                                                | Directory for session JSON files                   |
+| `categories`         | `["idle","communication","meetings","entertainment","browsing"]` | Activity categories              |
+| `browserApps`        | `["chrome","firefox","msedge","edge","brave","safari"]` | Process names treated as browsers              |
 
 ---
 
 ## Activity Categories
 
-| Category        | Detected by app (examples)               | Detected by title (keywords)                         |
-|-----------------|------------------------------------------|------------------------------------------------------|
-| `idle`          | `aw-watcher-afk` status = "afk"          | (not keyword-based)                                  |
-| `work`          | Code, cursor, idea64, EXCEL, WINWORD     | vscode, code, intellij, excel, word, cursor, vim     |
-| `meetings`      | zoom, whereby, ms-teams                  | zoom, meet, webex, whereby                           |
-| `communication` | Slack, Discord, OUTLOOK, thunderbird     | gmail, outlook, slack, discord, teams, mail          |
-| `browsing`      | chrome, firefox, msedge, brave           | chrome, firefox, edge, brave, safari                 |
-| `entertainment` | Spotify, steam, vlc, Netflix             | youtube, netflix, disney, hbo, spotify, twitch, steam, vimeo |
-| `other`         | (anything else)                          | (no keyword match)                                   |
+Only browser windows are monitored. If the active window is not a browser (e.g. VSCode, Spotify, Terminal), the sample is silently skipped and does not appear in statistics.
+
+Classification is based solely on the browser tab title (keyword-first). The list of tracked browsers is configurable via `browserApps` in `config.json`.
+
+| Category        | How detected                             | Title keywords                                        |
+|-----------------|------------------------------------------|-------------------------------------------------------|
+| `idle`          | `aw-watcher-afk` status = "afk"          | (not keyword-based)                                   |
+| `communication` | browser tab title                        | gmail, outlook, slack, discord, teams, mail           |
+| `meetings`      | browser tab title                        | zoom, meet, webex, whereby                            |
+| `entertainment` | browser tab title                        | youtube, netflix, disney, hbo, spotify, twitch, steam, vimeo |
+| `browsing`      | fallback — no keyword matched            | (any other browser tab)                               |
 
 Classification is 100% local — keyword-first, no external AI calls.
 
@@ -117,18 +120,18 @@ Each session is saved as a JSON file in `logs/`:
 {
   "sessionStart": "2026-06-03T10:30:00.000Z",
   "sessionEnd": "2026-06-03T10:35:00.000Z",
-  "totalSeconds": 300,
+  "totalSeconds": 120,
   "categories": {
-    "work": 210,
-    "browsing": 60,
-    "idle": 30,
-    "communication": 0,
+    "idle": 0,
+    "communication": 60,
     "meetings": 0,
-    "entertainment": 0,
-    "other": 0
+    "entertainment": 30,
+    "browsing": 30
   }
 }
 ```
+
+Non-browser time (VSCode, Spotify, Terminal, etc.) does not appear in the log — those samples are skipped entirely.
 
 Raw window titles are never recorded — only categories and time.
 

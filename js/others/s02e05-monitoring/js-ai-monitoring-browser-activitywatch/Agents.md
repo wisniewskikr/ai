@@ -30,19 +30,19 @@ ActivityWatch API → tytuł + app → klasyfikacja keyword → kategoria → ag
 
 ### Kategorie aktywnosci
 
-Klasyfikator sprawdza najpierw pole `app` (nazwa procesu — stabilna, niezalezna od tresci okna), potem `title`. Dzieki temu `app: "Code"` zawsze → `work`, bez wzgledu na to co jest w tytule.
+Aplikacja monitoruje **wylacznie aktywne okna przegladarki**. Jesli aktywne okno nie jest przegladarka — sample jest pomijany (nie trafia do statystyk).
 
-| Kategoria        | Przyklady `app`                          | Przyklady `title`                                    | Slowa kluczowe (app lub title, lowercase)           |
-|------------------|------------------------------------------|------------------------------------------------------|-----------------------------------------------------|
-| `idle`           | *(AFK — brak aktywnosci)*                | *(nie sprawdzane gdy status == "afk")*               | *(wykrywane przez aw-watcher-afk, nie keyword)*     |
-| `work`           | Code, idea64, EXCEL, WINWORD, cursor     | VSCode, IntelliJ, Excel, Word, Cursor, Terminal      | vscode, code, intellij, excel, word, cursor, vim    |
-| `communication`  | Slack, Discord, OUTLOOK, thunderbird     | Gmail, Outlook, Slack, Discord, Teams (chat)         | gmail, outlook, slack, discord, teams               |
-| `meetings`       | Zoom, whereby, ms-teams                  | Zoom, Google Meet, Webex, Teams (call)               | zoom, meet, webex, whereby                          |
-| `browsing`       | chrome, firefox, msedge, brave           | Chrome, Firefox, Edge, Brave (ogólne przeglądanie)   | chrome, firefox, edge, brave, safari                |
-| `entertainment`  | Spotify, steam, vlc, Netflix             | YouTube, Netflix, Disney+, Spotify, Twitch, Steam    | youtube, netflix, disney, hbo, spotify, twitch, steam, vimeo |
-| `other`          | *(cokolwiek innego)*                     | *(cokolwiek innego)*                                 | *(brak dopasowania keyword → kategoria other)*      |
+Klasyfikacja odbywa sie wylacznie po polu `title` okna przegladarki (keyword-first). Lista przegladarek pochodzi z `config.json` (`browserApps`).
 
-Klasyfikacja jest w 100% lokalna — keyword-first, bez zewnetrznych wywolan AI.
+| Kategoria        | Wykrycie                                 | Slowa kluczowe w `title` (lowercase)                  |
+|------------------|------------------------------------------|-------------------------------------------------------|
+| `idle`           | `aw-watcher-afk` status == "afk"         | *(nie keyword — wykrywane przez AFK watcher)*         |
+| `communication`  | tytuł przegladarki                       | gmail, outlook, slack, discord, teams, mail           |
+| `meetings`       | tytuł przegladarki                       | zoom, meet, webex, whereby                            |
+| `entertainment`  | tytuł przegladarki                       | youtube, netflix, disney, hbo, spotify, twitch, steam, vimeo |
+| `browsing`       | *(fallback — brak dopasowania)*          | *(brak — kazde inne okno przegladarki)*               |
+
+Jesli aktywne okno **nie jest przegladarka** (np. VSCode, Spotify, Terminal) — sample jest ignorowany. Klasyfikacja jest w 100% lokalna — keyword-first, bez zewnetrznych wywolan AI.
 
 ---
 
@@ -70,7 +70,7 @@ Jesli `aw-server` nie odpowiada lub brak wymaganego bucketa — aplikacja wyswie
 | Zrodlo danych        | ActivityWatch REST API (lokalny serwer)      | dane nie opuszczaja komputera                    |
 | Watcher okna         | `aw-watcher-window` (ActivityWatch)          | natywne sledzenie aktywnego okna, port 5600      |
 | Watcher bezczynnosci | `aw-watcher-afk` (ActivityWatch)             | wykrywa AFK → kategoria `idle`                   |
-| Klasyfikacja         | keyword-first na `app` + `title` (lokalnie)  | 100% pomiarow bez zewnetrznych wywolan AI        |
+| Klasyfikacja         | keyword-first na `title` przegladarki (lokalnie) | tylko okna przegladarki, 100% lokalnie       |
 | Zapis wynikow        | JSON w katalogu logs/                        | tylko kategorie + czas, bez surowych tytułow     |
 | CLI                  | Node.js readline (wbudowany)                 | bez zewnetrznych zaleznosci                      |
 
@@ -98,7 +98,9 @@ Loop: every 5 seconds
   ├─ GET /api/0/buckets/aw-watcher-afk_*/events?limit=1
   │    └─ jesli status == "afk"  → stats["idle"] += 5s  (skip window check)
   ├─ GET /api/0/buckets/aw-watcher-window_*/events?limit=1  → app + title
-  ├─ classifyByKeyword(app, title)   → sprawdz app najpierw, potem title
+  ├─ czy app to przegladarka? (lista z config.browserApps)
+  │    └─ NIE → sample pomijany (nie trafia do statystyk)
+  ├─ classifyBrowserTitle(title)   → sprawdz title keywords
   └─ stats[category] += 5s
 
   Every 6 samples (= 30s):
@@ -203,7 +205,8 @@ js-ai-monitoring-browser-activitywatch/
   "batchSize": 6,
   "activityWatchUrl": "http://localhost:5600/api/0",
   "logsDir": "logs",
-  "categories": ["idle", "work", "communication", "meetings", "browsing", "entertainment", "other"]
+  "categories": ["idle", "communication", "meetings", "entertainment", "browsing"],
+  "browserApps": ["chrome", "firefox", "msedge", "edge", "brave", "safari"]
 }
 ```
 
@@ -231,7 +234,7 @@ Kazda sesja zapisywana jako JSON. Komunikaty aplikacji na konsoli (poziomy INFO 
 3. **ActivityWatch zamiast active-win** — lokalny serwer HTTP, REST API, dane nigdy nie opuszczaja maszyny
 4. **ActivityWatch zamiast Ollama** — zero wywolan AI; klasyfikacja keyword-first pokrywa 100% przypadkow lokalnie
 5. **AFK detection przez aw-watcher-afk** — kategoria `idle` zamiast nieprawidlowego liczenia bezczynnosci jako pracy
-6. **`app` przed `title` w klasyfikatorze** — nazwa procesu stabilniejsza niz tytuł okna; sprawdzamy najpierw `app`, potem `title`
+6. **Browser-only gate w index.ts** — jesli aktywne okno nie jest przegladarka (lista `browserApps` z config.json), sample jest pomijany; klasyfikacja odbywa sie wylacznie po `title` przegladarki
 7. **Auto-wykrycie bucketa** — aplikacja sama znajduje `aw-watcher-window_*` i `aw-watcher-afk_*`; przy wielu bucketach wybiera najnowszy (`last_updated`); dopasowanie case-insensitive (Windows hostname)
 8. **Fail-fast przy braku AW** — brak serwera lub bucketa = natychmiastowy blad z instrukcja, nie cichy fallback
 9. **Batch-based loop** — 6 pomiarow → pauza → pytanie; prostsze niz concurrent readline + loop

@@ -3,5 +3,6 @@
   "batchSize": 6,
   "activityWatchUrl": "http://localhost:5600/api/0",
   "logsDir": "logs",
-  "categories": ["idle", "work", "communication", "meetings", "browsing", "entertainment", "other"]
+  "categories": ["idle", "communication", "meetings", "entertainment", "browsing"],
+  "browserApps": ["chrome", "firefox", "msedge", "edge", "brave", "safari"]
 }

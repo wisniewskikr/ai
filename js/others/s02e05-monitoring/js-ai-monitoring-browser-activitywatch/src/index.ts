@@ -1,16 +1,22 @@
 import { discoverBuckets, getLatestEvent } from "./services/activitywatch.js";
-import { classifyByKeyword, type Category } from "./services/classifier.js";
+import { classifyBrowserTitle, type Category } from "./services/classifier.js";
 import { createEmptyStats, displayStats, saveStats } from "./services/stats.js";
 import { ask, sleep, isYes, isQuit, closeReadline, log } from "./utils/cli.js";
 import config from "../config.json";
 
-const { monitoringIntervalMs, batchSize, activityWatchUrl, logsDir, categories } = config;
+const { monitoringIntervalMs, batchSize, activityWatchUrl, logsDir, categories, browserApps } = config;
 const intervalSeconds = monitoringIntervalMs / 1000;
 
+function isBrowserApp(app: string): boolean {
+  const appLower = app.toLowerCase();
+  return browserApps.some((b) => appLower.includes(b));
+}
+
+// Returns null when active window is not a browser — those samples are skipped.
 async function collectSample(
   windowBucket: string,
   afkBucket: string
-): Promise<Category> {
+): Promise<Category | null> {
   const afkEvent = await getLatestEvent<{ status: string }>(
     activityWatchUrl,
     afkBucket
@@ -21,9 +27,9 @@ async function collectSample(
     activityWatchUrl,
     windowBucket
   );
-  if (!windowEvent) return "other";
+  if (!windowEvent || !isBrowserApp(windowEvent.data.app)) return null;
 
-  return classifyByKeyword(windowEvent.data.app, windowEvent.data.title);
+  return classifyBrowserTitle(windowEvent.data.title);
 }
 
 function getTopCategory(stats: Record<string, number>): string {
@@ -39,27 +45,30 @@ async function runSession(
   let totalSamples = 0;
   let lastCategory: Category = "other";
 
-  log("INFO", `Monitoring started. Interval: ${intervalSeconds}s | Batch: ${batchSize} samples`);
+  log("INFO", `Browser-only monitoring started. Interval: ${intervalSeconds}s | Batch: ${batchSize} samples`);
   log("INFO", `ActivityWatch buckets: ${windowBucket}, ${afkBucket}`);
+  log("INFO", `Tracked browsers: ${browserApps.join(", ")}`);
 
   while (true) {
     for (let i = 0; i < batchSize; i++) {
       await sleep(monitoringIntervalMs);
-      lastCategory = await collectSample(windowBucket, afkBucket);
-      stats[lastCategory] += intervalSeconds;
+      const category = await collectSample(windowBucket, afkBucket);
+      if (category === null) continue; // active window is not a browser — skip
+      stats[category] += intervalSeconds;
+      lastCategory = category;
       totalSamples++;
     }
 
-    const elapsedTotal = totalSamples * intervalSeconds;
+    const elapsedTotal = Math.floor((Date.now() - sessionStart.getTime()) / 1000);
     const elapsedMin = Math.floor(elapsedTotal / 60);
     const elapsedSec = elapsedTotal % 60;
     const top = getTopCategory(stats);
 
     log(
       "INFO",
-      `Sample ${totalSamples} | Category: ${lastCategory} | Top: ${top} | Elapsed: ${elapsedMin}m ${elapsedSec}s`
+      `Browser samples: ${totalSamples} | Last: ${lastCategory} | Top: ${top} | Elapsed: ${elapsedMin}m ${elapsedSec}s`
     );
-    console.log(`[Progress] ${totalSamples} samples | ${Math.floor(elapsedTotal / 60)}m ${elapsedTotal % 60}s | Top: ${top}`);
+    console.log(`[Progress] ${totalSamples} browser samples | ${elapsedMin}m ${elapsedSec}s elapsed | Top: ${top}`);
 
     const answer = await ask(
       "Stop and show statistics? (y = yes | c = continue | q = quit): "
@@ -88,7 +97,8 @@ async function runSession(
 }
 
 async function main(): Promise<void> {
-  console.log("\nWindow Title Tracker — Privacy First");
+  console.log("\nBrowser Activity Tracker — Privacy First");
+  console.log("Monitors browser windows only. Non-browser windows are ignored.");
   console.log("All data stays local. Only categories are recorded.\n");
 
   let windowBucket: string;
