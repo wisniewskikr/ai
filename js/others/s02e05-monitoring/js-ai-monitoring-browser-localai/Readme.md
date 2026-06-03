@@ -50,14 +50,21 @@ ollama --version
 ollama pull llama3.2:3b
 ```
 
-### 4. Check the model is ready
+### 4. Run the model (verify it works)
+
+```bash
+ollama run llama3.2:3b
+# Type a message to test, then type /bye to exit
+```
+
+### 5. Check the model is ready
 
 ```bash
 ollama list
 # llama3.2:3b   ...
 ```
 
-### 5. Check the API is running
+### 6. Check the API is running
 
 ```bash
 curl http://localhost:11434
