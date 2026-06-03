@@ -77,9 +77,6 @@ Loop: every 5 seconds
   ├─ activeWin()                 → raw title (temporary, NOT saved)
   ├─ classifyByKeyword(title)    → category instantly (~80% of cases)
   ├─ classifyByAI(title)         → only if keyword returns `other` (~20%)
-  ├─ [EDU] print comparison:
-  │    Raw title  : Gmail — Re: salary negotiation       ← what traditional trackers store
-  │    Stored     : communication                        ← what WE store
   └─ stats[category] += 5s
 
   Every 6 samples (= 30s):
@@ -168,25 +165,10 @@ Kazda sesja zapisywana jako JSON. Komunikaty aplikacji na konsoli (poziomy INFO 
 3. **`active-win` zamiast PowerShell** — natywne binaria, < 10ms, brak PS1 script i escaping hell
 4. **keyword-first, AI dla `other`** — ~80% pomiarow klasyfikowanych instant; Ollama tylko dla niejednoznacznych tytułow
 5. **Structured JSON output** — Ollama zwraca `{"category": "..."}`, zero problemow z parsowaniem odpowiedzi
-6. **Tryb edukacyjny** — kazdy pomiar wyswietla raw title vs stored category (kluczowy argument Privacy First)
-7. **Batch-based loop** — 6 pomiarow → pauza → pytanie; prostsze niz concurrent readline + loop
-8. **Brak dotenv package** — czytamy .env recznie (redukcja zaleznosci)
-9. **Zero external deps w runtime** — `openai` + `active-win` (kompatybilny z Ollama API)
-10. **Quit option at every prompt** — kazde pytanie CLI przyjmuje `q` jako natychmiastowe wyjscie
-11. **English UI** — wszystkie komunikaty na konsoli w jezyku angielskim
-12. **Log format** — `[YYYY-MM-DD HH:mm:ss] [LEVEL] message` dla INFO / WARN / ERROR
+6. **Batch-based loop** — 6 pomiarow → pauza → pytanie; prostsze niz concurrent readline + loop
+7. **Brak dotenv package** — czytamy .env recznie (redukcja zaleznosci)
+8. **Zero external deps w runtime** — `openai` + `active-win` (kompatybilny z Ollama API)
+9. **Quit option at every prompt** — kazde pytanie CLI przyjmuje `q` jako natychmiastowe wyjscie
+10. **English UI** — wszystkie komunikaty na konsoli w jezyku angielskim
+11. **Log format** — `[YYYY-MM-DD HH:mm:ss] [LEVEL] message` dla INFO / WARN / ERROR
 
----
-
-### Uwagi edukacyjne do omowienia
-
-- **Dlaczego Ollama, nie OpenRouter?** — Dane w ogole nie opuszczaja komputera. To wzmacnia
-  argument Privacy First: nie tylko nie zapisujemy tresci okien, ale AI dziala w 100% lokalnie.
-- **Dlaczego active-win, nie PowerShell?** — PS1 + Add-Type to ~1-2s overhead na kazde wywolanie
-  (nowy proces + kompilacja C#). active-win uzywa natywnych binarek: < 10ms, brak escaping hell.
-- **Dlaczego keyword-first?** — Dla VSCode, Chrome, Zoom keyword jest 100% trafny i natychmiastowy.
-  AI ma sens tylko dla tytułow typu "Untitled - Notepad" albo "New Tab", gdzie keyword nie wystarczy.
-- **Dlaczego nie screenshot?** — Screenshoty to inwigilacja (Amazon: kara 32M EUR).
-  Tytuł okna to minimalny zbior danych zgodny z RODO.
-- **Agregat vs surowe dane** — pokazac roznice: `Gmail — negocjacje — 23 min` vs `communication — 23 min`
-- **RODO** — pracodawca moze monitorowac kategorie, ale NIE treść.
