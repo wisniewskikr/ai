@@ -28,30 +28,32 @@ Aktywne okno → tytuł → AI (Ollama, lokalnie) → kategoria → agregat (JSO
 
 ---
 
-### Kategorie aktywnosci (z README)
+### Kategorie aktywnosci
 
-| Kategoria       | Przyklad tytulu okna            |
-|-----------------|---------------------------------|
-| programowanie   | VSCode — main.ts                |
-| komunikacja     | Gmail, Slack, Discord           |
-| spotkania       | Zoom, Google Meet               |
-| dokumentacja    | Notion, Word, Confluence        |
-| przegladanie    | Chrome, Firefox, Edge           |
-| multimedia      | Spotify, YouTube, VLC           |
-| inne            | wszystko pozostale              |
+| Kategoria     | Przyklady tytułow okien                              | Slowa kluczowe (keyword-first)              |
+|---------------|------------------------------------------------------|---------------------------------------------|
+| `praca`       | VSCode, IntelliJ, Excel, Word, Cursor, Terminal      | vscode, intellij, excel, word, cursor, vim  |
+| `komunikacja` | Gmail, Outlook, Slack, Discord, Teams (chat)         | gmail, outlook, slack, discord, teams       |
+| `spotkania`   | Zoom, Google Meet, Webex, Teams (call)               | zoom, meet, webex, whereby                  |
+| `przegladanie`| Chrome, Firefox, Edge, Brave (ogólne przeglądanie)   | chrome, firefox, edge, brave, safari        |
+| `rozrywka`    | YouTube, Netflix, Spotify, Twitch, Steam, VLC        | youtube, netflix, spotify, twitch, steam    |
+| `inne`        | wszystko pozostale — przekazywane do AI              | (brak dopasowania keyword → AI klasyfikuje) |
+
+Kategoria `inne` to jedyna, ktora trafia do Ollamy — keyword-first pokrywa ~80% przypadkow.
 
 ---
 
 ### Stack
 
-| Element              | Wybor                                        | Uwagi                                          |
-|----------------------|----------------------------------------------|------------------------------------------------|
-| Jezyk                | TypeScript + tsx (runner)                    | bez kompilacji, bezposrednie uruchomienie .ts  |
-| AI klasyfikacja      | Ollama (lokalny serwer, OpenAI-compatible)   | dane nie opuszczaja komputera                  |
-| Model                | `llama3.2:3b`                                | ~2 GB RAM, szybki, wystarczajacy do klasyfikacji |
-| Odczyt okna (Win)    | PowerShell + Win32 API (GetForegroundWindow) | .ps1 zapisywany do tmpdir na starcie           |
-| Zapis wynikow        | JSON w katalogu logs/                        | tylko kategorie + czas, bez surowych tytułow   |
-| CLI                  | Node.js readline (wbudowany)                 | bez zewnetrznych zaleznosci                    |
+| Element              | Wybor                                        | Uwagi                                            |
+|----------------------|----------------------------------------------|--------------------------------------------------|
+| Jezyk                | TypeScript + tsx (runner)                    | bez kompilacji, bezposrednie uruchomienie .ts    |
+| AI klasyfikacja      | Ollama (lokalny serwer, OpenAI-compatible)   | dane nie opuszczaja komputera                    |
+| Model                | `llama3.2:3b`                                | ~2 GB RAM, szybki, structured JSON output        |
+| Odczyt okna          | `active-win` (npm)                           | natywne binaria, < 10ms, cross-platform          |
+| Klasyfikacja         | keyword-first → AI tylko dla `inne`          | ~80% pomiarow bez wywolania Ollamy               |
+| Zapis wynikow        | JSON w katalogu logs/                        | tylko kategorie + czas, bez surowych tytułow     |
+| CLI                  | Node.js readline (wbudowany)                 | bez zewnetrznych zaleznosci                      |
 
 **Ollama baseURL:** `http://localhost:11434/v1` (w `config.json`)
 **Brak klucza API** — Ollama nie wymaga autentykacji; `apiKey` ustawione na `"ollama"`
@@ -72,8 +74,12 @@ Start monitoring? (y = yes | q = quit)
   |
   v
 Loop: every 5 seconds
-  ├─ getActiveWindowTitle()      → raw title (temporary, NOT saved)
-  ├─ classifyWindow(title)       → category (via AI or keyword fallback)
+  ├─ activeWin()                 → raw title (temporary, NOT saved)
+  ├─ classifyByKeyword(title)    → category instantly (~80% of cases)
+  ├─ classifyByAI(title)         → only if keyword returns `inne` (~20%)
+  ├─ [EDU] print comparison:
+  │    Raw title  : Gmail — Re: salary negotiation       ← what traditional trackers store
+  │    Stored     : komunikacja                          ← what WE store
   └─ stats[category] += 5s
 
   Every 6 samples (= 30s):
@@ -110,8 +116,8 @@ js-ai-monitoring-browser-localai/
 │   ├── prompts/
 │   │   └── classify.ts        ← system prompt for window title classification
 │   ├── services/
-│   │   ├── classifier.ts      ← AI classification logic (Ollama call + keyword fallback)
-│   │   ├── monitor.ts         ← active window title reading (PowerShell / Win32)
+│   │   ├── classifier.ts      ← keyword-first logic + Ollama call (JSON output) for `inne`
+│   │   ├── monitor.ts         ← active window title reading via active-win
 │   │   └── stats.ts           ← statistics display and JSON file saving
 │   ├── utils/
 │   │   └── cli.ts             ← readline helpers: ask(), sleep(), isYes(), isQuit()
@@ -135,7 +141,8 @@ js-ai-monitoring-browser-localai/
   "batchSize": 6,
   "ollamaBaseUrl": "http://localhost:11434/v1",
   "model": "llama3.2:3b",
-  "logsDir": "logs"
+  "logsDir": "logs",
+  "categories": ["praca", "komunikacja", "spotkania", "przegladanie", "rozrywka", "inne"]
 }
 ```
 
@@ -157,15 +164,17 @@ Kazda sesja zapisywana jako JSON. Komunikaty aplikacji na konsoli (poziomy INFO 
 ### Kluczowe decyzje implementacyjne
 
 1. **Struktura src/** — `prompts/`, `services/`, `utils/`, `index.ts` zgodnie z wisniewk-app-rules
-2. **config.json** — wszystkie zmienne konfiguracyjne (interval, batch, model, logsDir); zero hardcodowania
-3. **Batch-based loop** — 6 pomiarow → pauza → pytanie; prostsze niz concurrent readline + loop
-4. **Fallback bez AI** — classifyByKeyword() w classifier.ts działa gdy brak klucza/połączenia
-5. **Temp PS1 script** — zapisywany raz na starcie do `os.tmpdir()`, unika escaping hell
-6. **Brak dotenv package** — czytamy .env recznie (redukcja zaleznosci)
-7. **Zero external deps w runtime** — tylko `openai` package (kompatybilny z Ollama API)
-8. **Quit option at every prompt** — kazde pytanie CLI przyjmuje `q` jako natychmiastowe wyjscie
-9. **English UI** — wszystkie komunikaty na konsoli w jezyku angielskim (naglowki, progress, pytania, statystyki)
-10. **Log format** — `[YYYY-MM-DD HH:mm:ss] [LEVEL] message` dla INFO / WARN / ERROR
+2. **config.json** — wszystkie zmienne konfiguracyjne (interval, batch, model, logsDir, categories); zero hardcodowania
+3. **`active-win` zamiast PowerShell** — natywne binaria, < 10ms, brak PS1 script i escaping hell
+4. **keyword-first, AI dla `inne`** — ~80% pomiarow klasyfikowanych instant; Ollama tylko dla niejednoznacznych tytułow
+5. **Structured JSON output** — Ollama zwraca `{"category": "..."}`, zero problemow z parsowaniem odpowiedzi
+6. **Tryb edukacyjny** — kazdy pomiar wyswietla raw title vs stored category (kluczowy argument Privacy First)
+7. **Batch-based loop** — 6 pomiarow → pauza → pytanie; prostsze niz concurrent readline + loop
+8. **Brak dotenv package** — czytamy .env recznie (redukcja zaleznosci)
+9. **Zero external deps w runtime** — `openai` + `active-win` (kompatybilny z Ollama API)
+10. **Quit option at every prompt** — kazde pytanie CLI przyjmuje `q` jako natychmiastowe wyjscie
+11. **English UI** — wszystkie komunikaty na konsoli w jezyku angielskim
+12. **Log format** — `[YYYY-MM-DD HH:mm:ss] [LEVEL] message` dla INFO / WARN / ERROR
 
 ---
 
@@ -173,6 +182,10 @@ Kazda sesja zapisywana jako JSON. Komunikaty aplikacji na konsoli (poziomy INFO 
 
 - **Dlaczego Ollama, nie OpenRouter?** — Dane w ogole nie opuszczaja komputera. To wzmacnia
   argument Privacy First: nie tylko nie zapisujemy tresci okien, ale AI dziala w 100% lokalnie.
+- **Dlaczego active-win, nie PowerShell?** — PS1 + Add-Type to ~1-2s overhead na kazde wywolanie
+  (nowy proces + kompilacja C#). active-win uzywa natywnych binarek: < 10ms, brak escaping hell.
+- **Dlaczego keyword-first?** — Dla VSCode, Chrome, Zoom keyword jest 100% trafny i natychmiastowy.
+  AI ma sens tylko dla tytułow typu "Untitled - Notepad" albo "New Tab", gdzie keyword nie wystarczy.
 - **Dlaczego nie screenshot?** — Screenshoty to inwigilacja (Amazon: kara 32M EUR).
   Tytuł okna to minimalny zbior danych zgodny z RODO.
 - **Agregat vs surowe dane** — pokazac roznice: `Gmail — negocjacje — 23 min` vs `komunikacja — 23 min`
