@@ -60,33 +60,45 @@ Aktywne okno → tytuł → AI (OpenRouter) → kategoria → agregat (JSON)
 
 ### Flow aplikacji
 
+Kazde pytanie zawiera opcje wyjscia z aplikacji (`q = quit`).
+
 ```
 start
   |
   v
-Czy uruchomić monitoring? (t/n)
+Start monitoring? (y = yes | q = quit)
   |
-  t
+  y
   |
   v
-Loop: co 5 sekund
-  ├─ getActiveWindowTitle()      → surowy tytuł (tymczasowy, NIE zapisywany)
-  ├─ classifyWindow(title)       → kategoria (przez AI lub fallback słownikowy)
-  └─ stats[kategoria] += 5s
+Loop: every 5 seconds
+  ├─ getActiveWindowTitle()      → raw title (temporary, NOT saved)
+  ├─ classifyWindow(title)       → category (via AI or keyword fallback)
+  └─ stats[category] += 5s
 
-  Co 6 pomiarów (= 30s):
-  ├─ wyswietl: [Progress] X pomiarow | Y min | Dominuje: kategoria
-  └─ Czy zakonczyc i wyswietlic statystyki? (t/n)
+  Every 6 samples (= 30s):
+  ├─ print: [Progress] X samples | Y min | Top category: category
+  └─ Stop and show statistics? (y = yes | c = continue | q = quit)
          |
-         t
+         y
          |
          v
-  displayStats()   → tabela kategorii z procentami i paskami
+  displayStats()   → category table with percentages and bars
   saveStats()      → logs/session-YYYY-MM-DDTHH-MM-SS.json
          |
          v
-  Co dalej? (m = nowy monitoring | z = zakonczenie)
+  What next? (m = new monitoring session | q = quit)
 ```
+
+#### Pytania i opcje wyjscia
+
+| Moment w aplikacji              | Pytanie na konsoli                                          |
+|---------------------------------|-------------------------------------------------------------|
+| Start aplikacji                 | `Start monitoring? (y = yes \| q = quit)`                  |
+| Po kazdym batchu pomiarow       | `Stop and show statistics? (y = yes \| c = continue \| q = quit)` |
+| Po wyswietleniu statystyk       | `What next? (m = new monitoring session \| q = quit)`      |
+
+Wpisanie `q` w dowolnym momencie konczy aplikacje gracefully (sprząta temp pliki, zamyka readline).
 
 ---
 
@@ -114,6 +126,8 @@ js-ai-monitoring-browser-localai/
 5. **BATCH_SIZE = 6** — 30s dla demo; w komentarzu: "produkcja → 12 (1 minuta)"
 6. **Brak dotenv package** — czytamy .env recznie (redukcja zaleznosci)
 7. **Zero external deps w runtime** — tylko `openai` package
+8. **Quit option at every prompt** — kazde pytanie CLI przyjmuje `q` jako natychmiastowe wyjscie
+9. **English UI** — wszystkie komunikaty na konsoli w jezyku angielskim (naglowki, progress, pytania, statystyki)
 
 ---
 
