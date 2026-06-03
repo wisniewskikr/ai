@@ -4,6 +4,18 @@ Projekt to chatbot napisany w TypeScript, który używa lokalnego modelu AI prze
 
 ---
 
+## Szybki start
+
+Masz już Ollama? Trzy komendy i działa:
+
+```bash
+ollama pull llama3.2
+npm install
+npm run dev
+```
+
+---
+
 ## Instalacja Ollama na Windows
 
 ### 1. Pobierz instalator
@@ -80,19 +92,20 @@ Remove-Item -Recurse -Force "$env:USERPROFILE\.ollama"
 
 ## Wymagania sprzętowe
 
-| Rozmiar modelu | RAM | GPU VRAM |
-|----------------|-----|----------|
-| 7B | 8 GB | 6 GB |
-| 13B | 16 GB | 12 GB |
-| 70B | 64 GB | 48 GB |
+| Rozmiar modelu | Przykład | RAM | GPU VRAM |
+|----------------|----------|-----|----------|
+| 3B | llama3.2, phi3 | 4 GB | 3 GB |
+| 7B | mistral | 8 GB | 6 GB |
+| 13B | codellama:13b | 16 GB | 12 GB |
+| 70B | llama3:70b | 64 GB | 48 GB |
 
-> Bez GPU też działa — tylko wolniej.
+> Bez GPU też działa — tylko wolniej. Na start polecam modele 3B.
 
 ---
 
 ## Ollama vs LM Studio
 
-Dwa narzędzia do uruchamiania modeli AI na swoim komputerze. Jak wybór między samochodem z GPS a bez — oba dowozą, ale inaczej.
+Jak wybór między samochodem z GPS a bez — oba dowożą, ale inaczej.
 
 | Cecha | Ollama | LM Studio |
 |-------|--------|-----------|
@@ -112,6 +125,64 @@ Dwa narzędzia do uruchamiania modeli AI na swoim komputerze. Jak wybór między
 
 ---
 
+## Konfiguracja projektu
+
+### Struktura katalogów
+
+```
+projekt/
+  src/
+    index.ts      # pętla czatu (REPL)
+    chat.ts       # historia rozmowy + wywołanie modelu
+    config.ts     # zmienne środowiskowe
+  .env
+  package.json
+  tsconfig.json
+```
+
+### package.json
+
+```bash
+npm init -y
+npm install ollama dotenv
+npm install -D typescript tsx @types/node
+```
+
+```json
+{
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  }
+}
+```
+
+### tsconfig.json
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "dist",
+    "strict": true
+  },
+  "include": ["src"]
+}
+```
+
+### .env
+
+```env
+OLLAMA_HOST=http://localhost:11434
+MODEL_NAME=llama3.2
+SYSTEM_PROMPT=Jesteś pomocnym asystentem. Odpowiadaj krótko i zwięźle.
+```
+
+---
+
 ## Integracja z TypeScript
 
 Ollama ma oficjalną bibliotekę dla Node.js:
@@ -119,3 +190,97 @@ Ollama ma oficjalną bibliotekę dla Node.js:
 ```bash
 npm install ollama
 ```
+
+### config.ts
+
+```typescript
+import "dotenv/config";
+
+export const config = {
+  host: process.env.OLLAMA_HOST ?? "http://localhost:11434",
+  model: process.env.MODEL_NAME ?? "llama3.2",
+  systemPrompt: process.env.SYSTEM_PROMPT ?? "Jesteś pomocnym asystentem.",
+};
+```
+
+### chat.ts
+
+```typescript
+import { Ollama } from "ollama";
+import { config } from "./config.js";
+
+const ollama = new Ollama({ host: config.host });
+
+type Message = { role: "user" | "assistant" | "system"; content: string };
+
+const history: Message[] = [
+  { role: "system", content: config.systemPrompt },
+];
+
+export async function chat(userMessage: string): Promise<void> {
+  history.push({ role: "user", content: userMessage });
+
+  const stream = await ollama.chat({
+    model: config.model,
+    messages: history,
+    stream: true,
+  });
+
+  let response = "";
+  process.stdout.write("\nAsystent: ");
+
+  for await (const chunk of stream) {
+    process.stdout.write(chunk.message.content);
+    response += chunk.message.content;
+  }
+
+  history.push({ role: "assistant", content: response });
+  console.log("\n");
+}
+
+export function clearHistory(): void {
+  history.splice(1); // zostaw system prompt
+}
+```
+
+### index.ts
+
+```typescript
+import * as readline from "readline";
+import { chat, clearHistory } from "./chat.js";
+import { config } from "./config.js";
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
+
+console.log(`Chatbot gotowy. Model: ${config.model}`);
+console.log("Komendy: /exit — wyjście, /clear — nowa rozmowa\n");
+
+const prompt = () => {
+  rl.question("Ty: ", async (input) => {
+    const text = input.trim();
+    if (!text) return prompt();
+    if (text === "/exit") { rl.close(); return; }
+    if (text === "/clear") { clearHistory(); console.log("Historia wyczyszczona.\n"); return prompt(); }
+
+    await chat(text);
+    prompt();
+  });
+};
+
+prompt();
+```
+
+---
+
+## Troubleshooting
+
+| Problem | Przyczyna | Rozwiązanie |
+|---------|-----------|-------------|
+| `connection refused` na porcie 11434 | Ollama nie działa | `ollama serve` lub uruchom serwis w Ustawieniach Windows |
+| Model odpowiada bardzo wolno | Za mało RAM / brak GPU | Użyj mniejszego modelu (3B) |
+| `model not found` | Model nie pobrany | `ollama pull llama3.2` |
+| Terminal się zawiesza | Brak streamu | Upewnij się, że używasz `stream: true` |
+| Port 11434 zajęty | Inny proces | `netstat -ano \| findstr 11434` — znajdź i zamknij proces |
