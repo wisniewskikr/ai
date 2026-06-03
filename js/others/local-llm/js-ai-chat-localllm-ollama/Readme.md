@@ -68,8 +68,17 @@ Ollama listens on `http://localhost:11434` by default. Model files are stored in
 
 ## Quick Start
 
+### 1. Ollama
+
 ```bash
-ollama pull llama3.2
+ollama pull llama3.2       # download the model
+ollama run llama3.2        # test it in terminal
+ollama list                # confirm it's there
+```
+
+### 2. App
+
+```bash
 npm install
 npm run dev
 ```
