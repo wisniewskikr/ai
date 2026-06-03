@@ -134,8 +134,9 @@ projekt/
   src/
     index.ts      # pętla czatu (REPL)
     chat.ts       # historia rozmowy + wywołanie modelu
-    config.ts     # zmienne środowiskowe
-  .env
+    config.ts     # łączy config.json i .env
+  config.json     # ustawienia Ollamy
+  .env            # sekrety (klucze API)
   package.json
   tsconfig.json
 ```
@@ -173,12 +174,27 @@ npm install -D typescript tsx @types/node
 }
 ```
 
+### config.json
+
+Ustawienia Ollamy — możesz tu swobodnie zmieniać model czy adres serwera:
+
+```json
+{
+  "ollama": {
+    "host": "http://localhost:11434",
+    "model": "llama3.2",
+    "systemPrompt": "Jesteś pomocnym asystentem. Odpowiadaj krótko i zwięźle."
+  }
+}
+```
+
 ### .env
 
+Tylko sekrety — klucze API, których nie wrzucasz do repozytorium:
+
 ```env
-OLLAMA_HOST=http://localhost:11434
-MODEL_NAME=llama3.2
-SYSTEM_PROMPT=Jesteś pomocnym asystentem. Odpowiadaj krótko i zwięźle.
+# OpenRouter (opcjonalne — do przyszłej integracji z modelami chmurowymi)
+OPENROUTER_API_KEY=
 ```
 
 ---
@@ -193,13 +209,21 @@ npm install ollama
 
 ### config.ts
 
+Czyta ustawienia z `config.json`, a sekrety z `.env`:
+
 ```typescript
 import "dotenv/config";
+import configJson from "../config.json" assert { type: "json" };
 
 export const config = {
-  host: process.env.OLLAMA_HOST ?? "http://localhost:11434",
-  model: process.env.MODEL_NAME ?? "llama3.2",
-  systemPrompt: process.env.SYSTEM_PROMPT ?? "Jesteś pomocnym asystentem.",
+  ollama: {
+    host: configJson.ollama.host,
+    model: configJson.ollama.model,
+    systemPrompt: configJson.ollama.systemPrompt,
+  },
+  openRouter: {
+    apiKey: process.env.OPENROUTER_API_KEY ?? "",
+  },
 };
 ```
 
@@ -209,19 +233,19 @@ export const config = {
 import { Ollama } from "ollama";
 import { config } from "./config.js";
 
-const ollama = new Ollama({ host: config.host });
+const ollama = new Ollama({ host: config.ollama.host });
 
 type Message = { role: "user" | "assistant" | "system"; content: string };
 
 const history: Message[] = [
-  { role: "system", content: config.systemPrompt },
+  { role: "system", content: config.ollama.systemPrompt },
 ];
 
 export async function chat(userMessage: string): Promise<void> {
   history.push({ role: "user", content: userMessage });
 
   const stream = await ollama.chat({
-    model: config.model,
+    model: config.ollama.model,
     messages: history,
     stream: true,
   });
@@ -255,7 +279,7 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-console.log(`Chatbot gotowy. Model: ${config.model}`);
+console.log(`Chatbot gotowy. Model: ${config.ollama.model}`);
 console.log("Komendy: /exit — wyjście, /clear — nowa rozmowa\n");
 
 const prompt = () => {
