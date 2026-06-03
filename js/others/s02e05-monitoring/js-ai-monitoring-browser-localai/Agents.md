@@ -155,15 +155,16 @@ Kazda sesja zapisywana jako JSON. Komunikaty aplikacji na konsoli (poziomy INFO 
 
 ### Kluczowe decyzje implementacyjne
 
-1. **Jeden plik** (`src/index.ts`) — prostota edukacyjna, bez overengineeringu
-2. **Batch-based loop** — 6 pomiarow → pauza → pytanie; prostsze niz concurrent readline + loop
-3. **Fallback bez AI** — classifyByKeyword() działa gdy brak klucza/połączenia
-4. **Temp PS1 script** — zapisywany raz na starcie do `os.tmpdir()`, unika escaping hell
-5. **BATCH_SIZE = 6** — 30s dla demo; w komentarzu: "produkcja → 12 (1 minuta)"
+1. **Struktura src/** — `prompts/`, `services/`, `utils/`, `index.ts` zgodnie z wisniewk-app-rules
+2. **config.json** — wszystkie zmienne konfiguracyjne (interval, batch, model, logsDir); zero hardcodowania
+3. **Batch-based loop** — 6 pomiarow → pauza → pytanie; prostsze niz concurrent readline + loop
+4. **Fallback bez AI** — classifyByKeyword() w classifier.ts działa gdy brak klucza/połączenia
+5. **Temp PS1 script** — zapisywany raz na starcie do `os.tmpdir()`, unika escaping hell
 6. **Brak dotenv package** — czytamy .env recznie (redukcja zaleznosci)
 7. **Zero external deps w runtime** — tylko `openai` package
 8. **Quit option at every prompt** — kazde pytanie CLI przyjmuje `q` jako natychmiastowe wyjscie
 9. **English UI** — wszystkie komunikaty na konsoli w jezyku angielskim (naglowki, progress, pytania, statystyki)
+10. **Log format** — `[YYYY-MM-DD HH:mm:ss] [LEVEL] message` dla INFO / WARN / ERROR
 
 ---
 
