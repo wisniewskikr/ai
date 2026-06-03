@@ -1,150 +1,131 @@
 # Window Title Tracker — Privacy First
 
-A privacy-focused activity tracker that monitors which applications you use throughout your day, without storing raw window titles or sending data to external servers.
+> Like a diary that writes only "I worked" — never what you actually wrote.
+
+Tracks how you spend time on your computer. Saves **only the category** (e.g. `work`, `browsing`), never the window title itself. Everything runs locally — no data leaves your machine.
 
 ## How It Works
 
-Instead of taking screenshots or recording keystrokes, the tracker:
-1. Reads the active window title every 5 seconds
-2. Classifies it locally using keyword matching (~80% of cases)
-3. Sends only unrecognized titles to a local AI (Ollama) for classification
-4. Records only the **category** and **duration** — never the raw window title
+```
+Active window → title → keywords → category → stats (JSON)
+                              ↓ no match (~20%)
+                         Ollama (local AI, your machine only)
+```
 
-```
-Active window → title → keyword matching → category → aggregated stats (JSON)
-                              ↓ (~20% unrecognized)
-                         Ollama (local AI, stays on your machine)
-```
+| Step | What happens |
+|------|-------------|
+| Every 5s | Reads the active window title |
+| Keywords | Classifies ~80% of titles instantly, no AI needed |
+| Ollama | Called only for the remaining ~20% |
+| Saved | Only the category + duration, never the raw title |
 
 ## Requirements
 
-- Node.js 18+
-- npm
-- Ollama (local AI server)
+| Tool | Version |
+|------|---------|
+| Node.js | 18+ |
+| npm | any |
+| Ollama | latest |
 
 ---
 
-## Installing Ollama on Windows
+## Install Ollama on Windows
 
-### Step 1: Download the Installer
+### 1. Download
 
-Go to **https://ollama.com** and click **Download for Windows**.
-This downloads `OllamaSetup.exe`.
+Go to **https://ollama.com** → click **Download for Windows** → run `OllamaSetup.exe`.
 
-### Step 2: Run the Installer
+Ollama installs silently as a background service. It starts automatically with Windows.
 
-Double-click `OllamaSetup.exe` and follow the on-screen instructions.
-Ollama installs as a background service and starts automatically after installation.
+### 2. Verify installation
 
-### Step 3: Verify Ollama Is Running
-
-Open PowerShell or Command Prompt and run:
-
-```
+```bash
 ollama --version
+# ollama version 0.x.x
 ```
 
-Expected output: `ollama version 0.x.x`
+### 3. Download the AI model (~2 GB)
 
-### Step 4: Pull the AI Model
-
-Download the model used by this application (~2 GB):
-
-```
+```bash
 ollama pull llama3.2:3b
 ```
 
-Wait for the download to complete before running the app.
+### 4. Check the model is ready
 
-### Step 5: Verify the Model Was Downloaded
-
-```
+```bash
 ollama list
+# llama3.2:3b   ...
 ```
 
-You should see `llama3.2:3b` in the list.
+### 5. Check the API is running
 
-### Step 6: Verify the API Is Accessible
-
-```
+```bash
 curl http://localhost:11434
+# Ollama is running
 ```
-
-Expected response: `Ollama is running`
 
 ### Managing Ollama
 
-Ollama starts automatically with Windows. To control it manually:
+Ollama starts with Windows automatically. To start it manually:
 
-```
-ollama serve          # start the server manually
+```bash
+ollama serve
 ```
 
-You can also use the **Ollama tray icon** in the Windows system taskbar (bottom-right) to start, stop, or check its status.
+Or right-click the **Ollama tray icon** (system taskbar, bottom-right).
 
 ---
 
-## Project Installation
+## Install & Run
 
 ```bash
-cd js-ai-monitoring-browser-localai
 npm install
-```
-
-## Running the Application
-
-```bash
 npm start
 ```
 
 ## Usage
 
-The application uses a simple CLI. Every prompt accepts `q` to quit immediately.
+Every prompt accepts `q` to quit immediately.
 
-| Prompt | Options |
-|--------|---------|
-| `Start monitoring?` | `y` = start, `q` = quit |
-| `Stop and show statistics?` | `y` = stop & show stats, `c` = continue, `q` = quit |
-| `What next?` | `m` = new monitoring session, `q` = quit |
+| Prompt | Keys |
+|--------|------|
+| `Start monitoring?` | `y` start · `q` quit |
+| `Stop and show statistics?` | `y` stop · `c` continue · `q` quit |
+| `What next?` | `m` new session · `q` quit |
 
-## Activity Categories
+## Categories
 
-| Category | Examples |
-|----------|---------|
-| `work` | VS Code, IntelliJ, Excel, Word, Terminal |
-| `communication` | Gmail, Slack, Discord, Teams (chat) |
-| `meetings` | Zoom, Google Meet, Webex, Whereby |
-| `browsing` | Chrome, Firefox, Edge, Brave |
-| `entertainment` | YouTube, Netflix, Spotify, Steam, Twitch |
-| `other` | Anything not matched — classified by local AI |
-
-The `other` category is the only one that triggers an Ollama API call. Keywords cover ~80% of cases.
+| Category | Matched by | Examples |
+|----------|-----------|---------|
+| `work` | keyword | VS Code, IntelliJ, Excel, Terminal |
+| `communication` | keyword | Gmail, Slack, Discord, Teams |
+| `meetings` | keyword | Zoom, Google Meet, Webex |
+| `browsing` | keyword | Chrome, Firefox, Edge, Brave |
+| `entertainment` | keyword | YouTube, Netflix, Spotify, Steam |
+| `other` | **Ollama** | Anything not matched above |
 
 ## File Structure
 
 ```
 js-ai-monitoring-browser-localai/
 ├── src/
-│   ├── prompts/
-│   │   └── classify.ts        <- AI classification prompt
+│   ├── prompts/classify.ts      <- AI prompt
 │   ├── services/
-│   │   ├── classifier.ts      <- keyword-first + Ollama classification
-│   │   ├── monitor.ts         <- active window title reading (active-win)
-│   │   └── stats.ts           <- statistics display and JSON saving
+│   │   ├── classifier.ts        <- keyword + Ollama logic
+│   │   ├── monitor.ts           <- reads active window
+│   │   └── stats.ts             <- display + save JSON
 │   ├── utils/
-│   │   ├── cli.ts             <- readline helpers: ask, sleep, isYes, isQuit
-│   │   └── log.ts             <- log format: [YYYY-MM-DD HH:mm:ss] [LEVEL]
-│   └── index.ts               <- main entry point and CLI session loop
-├── logs/                      <- session output files (gitignored)
-├── config.json                <- all configuration variables
-├── .env                       <- environment variables (not committed)
-├── .env.example               <- environment variable template
-└── Readme.md                  <- this file
+│   │   ├── cli.ts               <- ask, sleep, isYes, isQuit
+│   │   └── log.ts               <- [YYYY-MM-DD HH:mm:ss] [LEVEL]
+│   └── index.ts                 <- main loop
+├── logs/                        <- session files (gitignored)
+├── config.json                  <- all settings
+└── .env                         <- secrets (not committed)
 ```
 
-## Session Output Format
+## Session Output
 
-Each session is saved to `logs/session-YYYY-MM-DDTHH-MM-SS.json`:
+Saved to `logs/session-YYYY-MM-DDTHH-MM-SS.json`:
 
 ```json
 {
@@ -159,17 +140,13 @@ Each session is saved to `logs/session-YYYY-MM-DDTHH-MM-SS.json`:
 }
 ```
 
-No window titles are ever saved — only categories and durations.
+## Configuration (`config.json`)
 
-## Configuration
-
-All settings are in `config.json`. No values are hardcoded in the source.
-
-| Key | Default | Description |
-|-----|---------|-------------|
-| `monitoringIntervalMs` | `5000` | How often to read the active window (ms) |
-| `batchSize` | `6` | Number of samples between progress reports |
-| `ollamaBaseUrl` | `http://localhost:11434/v1` | Ollama API endpoint |
-| `model` | `llama3.2:3b` | AI model for classification |
-| `logsDir` | `logs` | Directory for session JSON files |
-| `categories` | see file | List of valid activity categories |
+| Key | Default | What it controls |
+|-----|---------|-----------------|
+| `monitoringIntervalMs` | `5000` | How often to sample (ms) |
+| `batchSize` | `6` | Samples before asking to stop |
+| `ollamaBaseUrl` | `http://localhost:11434/v1` | Ollama API address |
+| `model` | `llama3.2:3b` | AI model |
+| `logsDir` | `logs` | Where to save sessions |
+| `categories` | see file | Valid category names |
