@@ -37,20 +37,17 @@ export function classifyByKeyword(app: string, title: string): Category {
 
   const isBrowser = BROWSER_APPS.some((b) => appLower.includes(b));
 
-  if (!isBrowser) {
-    // For non-browser apps: app name is the reliable signal — check it first.
-    for (const { category, keywords } of CATEGORY_RULES) {
-      if (keywords.some((kw) => appLower.includes(kw))) return category;
-    }
+  // Browser usage is always classified as browsing — no topic analysis.
+  if (isBrowser) return "browsing";
+
+  // For non-browser apps: check app name first, then title.
+  for (const { category, keywords } of CATEGORY_RULES) {
+    if (keywords.some((kw) => appLower.includes(kw))) return category;
   }
 
-  // For browsers (and unmatched apps): title reveals what the user is actually doing.
   for (const { category, keywords } of CATEGORY_RULES) {
     if (keywords.some((kw) => titleLower.includes(kw))) return category;
   }
-
-  // Browser with no specific title match → generic browsing.
-  if (isBrowser) return "browsing";
 
   return "other";
 }
