@@ -1,10 +1,12 @@
-# Window Title Tracker — Privacy First
+# Activity Tracker — Privacy First
 ## Demo edukacyjne: s02e05 — Monitoring Uzytkownikow
 
 ### Cel projektu
 
 Pokazac roznice miedzy tradycyjnym monitoringiem a podejsciem Privacy First,
 zgodnie z sekcja "Monitoring uzytkownikow" z Readme-security-pl.md.
+
+Aplikacja monitoruje **cala aktywnosc na komputerze** — programy, przegladarke i czas bezczynnosci — nie tylko aktywnosc przegladarkowa.
 
 ---
 
@@ -32,15 +34,17 @@ ActivityWatch API → tytuł + app → klasyfikacja keyword → kategoria → ag
 
 Klasyfikator sprawdza najpierw pole `app` (nazwa procesu — stabilna, niezalezna od tresci okna), potem `title`. Dzieki temu `app: "Code"` zawsze → `work`, bez wzgledu na to co jest w tytule.
 
-| Kategoria        | Przyklady `app`                          | Przyklady `title`                                    | Slowa kluczowe (app lub title, lowercase)           |
-|------------------|------------------------------------------|------------------------------------------------------|-----------------------------------------------------|
-| `idle`           | *(AFK — brak aktywnosci)*                | *(nie sprawdzane gdy status == "afk")*               | *(wykrywane przez aw-watcher-afk, nie keyword)*     |
-| `work`           | Code, idea64, EXCEL, WINWORD, cursor     | VSCode, IntelliJ, Excel, Word, Cursor, Terminal      | vscode, code, intellij, excel, word, cursor, vim    |
-| `communication`  | Slack, Discord, OUTLOOK, thunderbird     | Gmail, Outlook, Slack, Discord, Teams (chat)         | gmail, outlook, slack, discord, teams               |
-| `meetings`       | Zoom, whereby, ms-teams                  | Zoom, Google Meet, Webex, Teams (call)               | zoom, meet, webex, whereby                          |
-| `browsing`       | chrome, firefox, msedge, brave           | Chrome, Firefox, Edge, Brave (ogólne przeglądanie)   | chrome, firefox, edge, brave, safari                |
-| `entertainment`  | Spotify, steam, vlc, Netflix             | YouTube, Netflix, Disney+, Spotify, Twitch, Steam    | youtube, netflix, disney, hbo, spotify, twitch, steam, vimeo |
-| `other`          | *(cokolwiek innego)*                     | *(cokolwiek innego)*                                 | *(brak dopasowania keyword → kategoria other)*      |
+| Kategoria        | Wykrywane przez                          | Slowa kluczowe / sygnal                                              |
+|------------------|------------------------------------------|----------------------------------------------------------------------|
+| `idle`           | `aw-watcher-afk` status == "afk"         | *(nie keyword)*                                                      |
+| `work`           | nazwa procesu (`app`)                    | vscode, code, intellij, excel, word, cursor, vim, terminal, powershell |
+| `communication`  | nazwa procesu (`app`)                    | gmail, outlook, slack, discord, teams, thunderbird, mail             |
+| `meetings`       | nazwa procesu (`app`)                    | zoom, meet, webex, whereby, ms-teams                                 |
+| `browsing`       | nazwa procesu (`app`) — wykryty browser  | chrome, firefox, msedge, edge, brave, safari — **zawsze `browsing`, niezaleznie od otwartej strony** |
+| `entertainment`  | nazwa procesu (`app`)                    | spotify, steam, vlc, netflix, youtube, twitch, vimeo                 |
+| `other`          | *(cokolwiek innego)*                     | *(brak dopasowania keyword)*                                         |
+
+**Uwaga dot. przegladarki:** aktywnosc w przegladarce jest zawsze klasyfikowana jako `browsing`. Tytul strony nie jest sprawdzany — odwiedzane tematy nie sa kategoryzowane ani zapisywane.
 
 Klasyfikacja jest w 100% lokalna — keyword-first, bez zewnetrznych wywolan AI.
 
@@ -231,7 +235,7 @@ Kazda sesja zapisywana jako JSON. Komunikaty aplikacji na konsoli (poziomy INFO 
 3. **ActivityWatch zamiast active-win** — lokalny serwer HTTP, REST API, dane nigdy nie opuszczaja maszyny
 4. **ActivityWatch zamiast Ollama** — zero wywolan AI; klasyfikacja keyword-first pokrywa 100% przypadkow lokalnie
 5. **AFK detection przez aw-watcher-afk** — kategoria `idle` zamiast nieprawidlowego liczenia bezczynnosci jako pracy
-6. **`app` przed `title` w klasyfikatorze** — nazwa procesu stabilniejsza niz tytuł okna; sprawdzamy najpierw `app`, potem `title`
+6. **`app` jako jedyny sygnal dla przegladarek** — kazda aktywnosc w przegladarce = `browsing`; tytul strony nie jest sprawdzany (privacy); dla pozostalych aplikacji `app` sprawdzany przed `title`
 7. **Auto-wykrycie bucketa** — aplikacja sama znajduje `aw-watcher-window_*` i `aw-watcher-afk_*`; przy wielu bucketach wybiera najnowszy (`last_updated`); dopasowanie case-insensitive (Windows hostname)
 8. **Fail-fast przy braku AW** — brak serwera lub bucketa = natychmiastowy blad z instrukcja, nie cichy fallback
 9. **Batch-based loop** — 6 pomiarow → pauza → pytanie; prostsze niz concurrent readline + loop

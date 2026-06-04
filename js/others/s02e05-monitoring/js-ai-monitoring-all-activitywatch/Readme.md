@@ -1,9 +1,9 @@
-# Window Title Tracker — Privacy First
+# Activity Tracker — Privacy First
 
 A demo project illustrating the difference between traditional user monitoring and a Privacy First approach.
 
 **Traditional tracker** — screenshots every 5s, analysis on a remote server, raw content stored, accessible to company/server/attacker.
-**This tracker** — reads only the active window title, classifies locally by keyword, records only a category + time. Only you see the data.
+**This tracker** — monitors all activity on the computer (apps, browser, idle time), classifies locally by keyword, records only a category + time. Only you see the data.
 
 ```
 ActivityWatch API → app + title → keyword classification → category → aggregated JSON
@@ -95,15 +95,19 @@ All settings are in `config.json` — no hardcoded values in code.
 
 ## Activity Categories
 
-| Category        | Detected by app (examples)               | Detected by title (keywords)                         |
+The tracker monitors all computer activity and classifies every active window into one of the categories below.
+
+| Category        | Detected by                              | Keywords / signals                                   |
 |-----------------|------------------------------------------|------------------------------------------------------|
 | `idle`          | `aw-watcher-afk` status = "afk"          | (not keyword-based)                                  |
-| `work`          | Code, cursor, idea64, EXCEL, WINWORD     | vscode, code, intellij, excel, word, cursor, vim     |
-| `meetings`      | zoom, whereby, ms-teams                  | zoom, meet, webex, whereby                           |
-| `communication` | Slack, Discord, OUTLOOK, thunderbird     | gmail, outlook, slack, discord, teams, mail          |
-| `browsing`      | chrome, firefox, msedge, brave           | chrome, firefox, edge, brave, safari                 |
-| `entertainment` | Spotify, steam, vlc, Netflix             | youtube, netflix, disney, hbo, spotify, twitch, steam, vimeo |
+| `work`          | app name                                 | vscode, code, intellij, excel, word, cursor, vim, terminal, powershell |
+| `meetings`      | app name                                 | zoom, meet, webex, whereby, ms-teams                 |
+| `communication` | app name                                 | gmail, outlook, slack, discord, teams, thunderbird, mail |
+| `browsing`      | app name (browser detected)              | chrome, firefox, msedge, edge, brave, safari — **always `browsing`, regardless of the page open** |
+| `entertainment` | app name                                 | spotify, steam, vlc, netflix, youtube, twitch, vimeo |
 | `other`         | (anything else)                          | (no keyword match)                                   |
+
+**Browser privacy note:** any activity in a browser is recorded only as `browsing`. The page title is never inspected, so visited topics are never classified or stored.
 
 Classification is 100% local — keyword-first, no external AI calls.
 
