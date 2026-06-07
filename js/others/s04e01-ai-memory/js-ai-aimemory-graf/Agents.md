@@ -118,6 +118,21 @@ Pytanie: "Who reports to Bob?"
 
 ---
 
+## Readme.md — zasady dokumentacji
+
+Plik `Readme.md` pisany wedlug regul `wisniewk-doc-rules`:
+
+| Zasada | Co to znaczy |
+|---|---|
+| Pisz jak dla 5-latka | Prosto i przyjazanie, bez zargonu |
+| Mniej znaczy lepiej | Unikaj zbednych slow |
+| Tabele i punkty | Wszedzie tam, gdzie to mozliwe |
+| Analogie | Stosuj, gdy tylko mozliwe |
+
+Jezyk: **angielski**.
+
+---
+
 ## Zrodla
 
 - `Readme-security-pl.md` — sekcja `s04e01 PAMIEC AI`
