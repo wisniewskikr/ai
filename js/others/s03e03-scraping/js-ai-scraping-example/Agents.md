@@ -4,6 +4,8 @@
 
 Demo w TypeScript pokazujące, jak **scraper może zachowywać się grzecznie** — jak gość, który dzwoni przed wizytą, przedstawia się i nie niszczy mebli.
 
+> Cała komunikacja z uzytkownikiem (menu, komunikaty, logi) jest w **jezyku angielskim**.
+
 ---
 
 ## Zasady (z `Readme-security-pl.md` → sekcja Scraping)
@@ -90,10 +92,10 @@ Aplikacja startuje interaktywnym menu. Użytkownik wybiera opcję strzałkami / 
 === Etyczny Scraper Demo ===
 
 Wybierz przykład:
-  [1] robots.txt ZABLOKOWANY  — Wikipedia (blokuje niektóre boty)
-  [2] robots.txt DOZWOLONY    — example.com (otwarty dla wszystkich)
-  [3] PII Detection           — strona z danymi kontaktowymi
-  [4] Rate Limiting           — 3 kolejne requesty z 5s przerwą
+  [1] robots.txt ZABLOKOWANY  — https://en.wikipedia.org/wiki/Main_Page
+  [2] robots.txt DOZWOLONY    — https://example.com
+  [3] PII Detection           — https://www.iana.org/about/contacts
+  [4] Rate Limiting           — https://example.com, https://example.org, https://example.net
   [5] Wpisz własny URL
   [0] Wyjście
 ```
@@ -104,8 +106,8 @@ Wybierz przykład:
 |-------|-----|---------------|
 | 1 | `https://en.wikipedia.org/wiki/Main_Page` | robots.txt z regułami dla botów |
 | 2 | `https://example.com` | robots.txt dozwalający wszystko |
-| 3 | `https://www.iana.org/domains/reserved` | PII detection (e-mail na stronie) |
-| 4 | `https://example.com` × 3 | Rate limiting — 5s między każdym requestem |
+| 3 | `https://www.iana.org/about/contacts` | PII detection — strona zawiera adresy e-mail (`iana@iana.org` itp.) |
+| 4 | `https://example.com`, `https://example.org`, `https://example.net` | Rate limiting — 3 requesty z 5s przerwą między każdym |
 | 5 | dowolny URL wpisany przez użytkownika | pełny przepływ |
 
 ---
