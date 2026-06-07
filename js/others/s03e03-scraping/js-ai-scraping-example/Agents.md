@@ -46,7 +46,7 @@ js-ai-scraping-example/
 | Element | Technologia |
 |---------|-------------|
 | Język | TypeScript |
-| Runtime | `tsx` (Node.js) — `npx tsx src/scraper.ts <URL> <ścieżka>` |
+| Runtime | `tsx` (Node.js) |
 | robots.txt | `robots-parser` |
 | OpenRouter | `openai` SDK (kompatybilne) — proste pytanie: "czy strona jest bezpieczna do scrapowania?" |
 | Config | `dotenv` |
@@ -82,8 +82,36 @@ Wynik w konsoli
 
 ---
 
+## Interfejs — menu konsolowe
+
+Aplikacja startuje interaktywnym menu. Użytkownik wybiera opcję strzałkami / numerem.
+
+```
+=== Etyczny Scraper Demo ===
+
+Wybierz przykład:
+  [1] robots.txt ZABLOKOWANY  — Wikipedia (blokuje niektóre boty)
+  [2] robots.txt DOZWOLONY    — example.com (otwarty dla wszystkich)
+  [3] PII Detection           — strona z danymi kontaktowymi
+  [4] Rate Limiting           — 3 kolejne requesty z 5s przerwą
+  [5] Wpisz własny URL
+  [0] Wyjście
+```
+
+### Przykłady URL i co pokazują
+
+| Opcja | URL | Co demonstruje |
+|-------|-----|---------------|
+| 1 | `https://en.wikipedia.org/wiki/Main_Page` | robots.txt z regułami dla botów |
+| 2 | `https://example.com` | robots.txt dozwalający wszystko |
+| 3 | `https://www.iana.org/domains/reserved` | PII detection (e-mail na stronie) |
+| 4 | `https://example.com` × 3 | Rate limiting — 5s między każdym requestem |
+| 5 | dowolny URL wpisany przez użytkownika | pełny przepływ |
+
+---
+
 ## Uruchomienie
 
 ```bash
-npx tsx src/scraper.ts https://example.com /
+npx tsx src/scraper.ts
 ```
