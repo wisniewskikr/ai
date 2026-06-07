@@ -39,7 +39,7 @@ js-ai-scraping-example/
 ├── config.json                     # timeouty, rate limit, model AI, przykładowe URL-e
 ├── .env                            # OPENROUTER_API_KEY (nie commituj!)
 ├── .env.example                    # szablon zmiennych środowiskowych
-├── Readme.md                       # dokumentacja w języku angielskim
+├── Readme.md                       # dokumentacja w języku angielskim (zgodna z /wisniewk-doc-rules)
 └── Agents.md                       # ten plik
 ```
 
