@@ -5,7 +5,7 @@
   "requestTimeoutMs": 10000,
   "model": "google/gemini-2.0-flash-001",
   "exampleUrls": {
-    "robotsBlocked": "https://en.wikipedia.org/wiki/Main_Page",
+    "robotsBlocked": "https://www.google.com/search?q=ethical+scraping",
     "robotsAllowed": "https://example.com",
     "piiDetection": "https://www.iana.org/about/contacts",
     "rateLimiting": [

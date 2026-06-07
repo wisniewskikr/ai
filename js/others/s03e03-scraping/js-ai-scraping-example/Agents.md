@@ -122,7 +122,7 @@ Aplikacja startuje interaktywnym menu. Użytkownik wybiera opcję strzałkami / 
 === Ethical Scraper Demo ===
 
 Choose an example:
-  [1] robots.txt BLOCKED   — https://en.wikipedia.org/wiki/Main_Page
+  [1] robots.txt BLOCKED   — https://www.google.com/search?q=ethical+scraping
   [2] robots.txt ALLOWED   — https://example.com
   [3] PII Detection        — https://www.iana.org/about/contacts
   [4] Rate Limiting        — https://example.com, https://example.org, https://example.net
@@ -134,7 +134,7 @@ Choose an example:
 
 | Opcja | URL | Co demonstruje |
 |-------|-----|---------------|
-| 1 | `https://en.wikipedia.org/wiki/Main_Page` | robots.txt z regułami dla botów |
+| 1 | `https://www.google.com/search?q=ethical+scraping` | robots.txt blokuje `/search` dla wszystkich botów (`Disallow: /search`) |
 | 2 | `https://example.com` | robots.txt dozwalający wszystko |
 | 3 | `https://www.iana.org/about/contacts` | PII detection — strona zawiera adresy e-mail (`iana@iana.org` itp.) |
 | 4 | `https://example.com`, `https://example.org`, `https://example.net` | Rate limiting — 3 requesty z 5s przerwą między każdym |

@@ -47,7 +47,7 @@ npm start
 === Ethical Scraper Demo ===
 
 Choose an example:
-  [1] robots.txt BLOCKED   — Wikipedia (bots not allowed)
+  [1] robots.txt BLOCKED   — google.com/search?q=... (Disallow: /search for all bots)
   [2] robots.txt ALLOWED   — example.com (all clear)
   [3] PII Detection        — iana.org/contacts (has emails → stops)
   [4] Rate Limiting        — 3 URLs with 5s pause between each
