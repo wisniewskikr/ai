@@ -46,9 +46,9 @@ js-ai-scraping-example/
 | Element | Technologia |
 |---------|-------------|
 | Język | TypeScript |
-| Runtime | `tsx` (Node.js) |
+| Runtime | `tsx` (Node.js) — `npx tsx src/scraper.ts <URL> <ścieżka>` |
 | robots.txt | `robots-parser` |
-| OpenRouter | `openai` SDK (kompatybilne) |
+| OpenRouter | `openai` SDK (kompatybilne) — proste pytanie: "czy strona jest bezpieczna do scrapowania?" |
 | Config | `dotenv` |
 
 ---
@@ -82,8 +82,8 @@ Wynik w konsoli
 
 ---
 
-## Otwarte pytania
+## Uruchomienie
 
-- [ ] Runtime: `bun` czy `tsx`?
-- [ ] URL demo: argument CLI czy zahardkodowany `example.com`?
-- [ ] Głebokość AI feedback: proste pytanie czy pełna analiza treści?
+```bash
+npx tsx src/scraper.ts https://example.com /
+```
