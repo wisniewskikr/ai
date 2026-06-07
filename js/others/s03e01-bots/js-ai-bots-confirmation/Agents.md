@@ -47,7 +47,9 @@ Pytasz bota o temat, odbiorcę i ogólny pomysł. Bot pisze formalnego maila. Ty
 | Model AI | `openai/gpt-4o-mini` |
 | Konsola | Node.js `readline` |
 | Zapis maili | `fs` → `workspace/emails/` |
-| Konfiguracja | `.env` (OPENROUTER_API_KEY) |
+| Konfiguracja | `config.json` (model, podpis, limity) |
+| Sekrety | `.env` (OPENROUTER_API_KEY) |
+| Logi | `logs/` (format: `[YYYY-MM-DD HH:mm:ss] [LEVEL]`) |
 
 ---
 
@@ -71,10 +73,16 @@ Rekomendowany: **`openai/gpt-4o-mini`**
 ```
 js-ai-bots-confirmation/
 ├── src/
-│   └── index.ts          <- cala logika
+│   ├── prompts/           <- system prompt i prompt do generowania maila
+│   ├── services/          <- logika biznesowa (OpenRouter, zapis maili)
+│   └── utils/             <- pomocnicze funkcje (readline, logger)
 ├── workspace/
-│   └── emails/           <- zatwierdzone maile
-├── .env                  <- klucz API
+│   └── emails/            <- zatwierdzone maile
+├── logs/                  <- logi aplikacji
+├── config.json            <- zmienne konfiguracyjne (model, podpis, itp.)
+├── .env                   <- klucz API (nie commituj!)
+├── .env.example           <- szablon zmiennych srodowiskowych
+├── Readme.md              <- dokumentacja (po angielsku)
 ├── package.json
 └── tsconfig.json
 ```
