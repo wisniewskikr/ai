@@ -119,15 +119,15 @@ Wynik w konsoli → powrót do menu
 Aplikacja startuje interaktywnym menu. Użytkownik wybiera opcję strzałkami / numerem.
 
 ```
-=== Etyczny Scraper Demo ===
+=== Ethical Scraper Demo ===
 
-Wybierz przykład:
-  [1] robots.txt ZABLOKOWANY  — https://en.wikipedia.org/wiki/Main_Page
-  [2] robots.txt DOZWOLONY    — https://example.com
-  [3] PII Detection           — https://www.iana.org/about/contacts
-  [4] Rate Limiting           — https://example.com, https://example.org, https://example.net
-  [5] Wpisz własny URL
-  [0] Wyjście
+Choose an example:
+  [1] robots.txt BLOCKED   — https://en.wikipedia.org/wiki/Main_Page
+  [2] robots.txt ALLOWED   — https://example.com
+  [3] PII Detection        — https://www.iana.org/about/contacts
+  [4] Rate Limiting        — https://example.com, https://example.org, https://example.net
+  [5] Enter your own URL
+  [0] Exit
 ```
 
 ### Przykłady URL i co pokazują
