@@ -21,13 +21,12 @@ Gdy ktoś pyta *"jakie książki pasują do Władcy Pierścieni?"* — znajdzie 
 
 ## Co robi ta aplikacja?
 
-CLI, które zadaje to samo pytanie AI w trzech krokach:
+CLI, które zadaje to samo pytanie AI dwa razy:
 
 1. Odpytuje AI z **surowym** kontekstem — tylko opisy dokumentów
-2. **Pokazuje na ekranie** jakie dokumenty trafiły do każdego zapytania
-3. Dynamicznie **wzbogaca** dokumenty (dodaje zależności, tagi) i odpytuje ponownie
+2. Dynamicznie **wzbogaca** dokumenty (dodaje zależności, tagi) i odpytuje ponownie
 
-Pokazuje różnicę w odpowiedziach i ujawnia DLACZEGO ta różnica powstała.
+Na końcu wyświetla obie odpowiedzi obok siebie — widać różnicę jak na dłoni.
 
 ---
 
@@ -85,26 +84,20 @@ Select a question:
 ```
 Question: "Which projects use the Payment API?"
 
---- STEP 1: PLAIN CONTEXT SENT TO AI ---
-> Payment API: Module for online payments.
-> Project Alpha: E-commerce system.
-> Project Beta: Admin panel.
-> ... (10 documents, no dependency info)
+Working...
 
-Answer: "I don't have enough information about dependencies between projects."
+============================================================
 
---- STEP 2: ENRICHING DOCUMENTS... ---
-> Payment API: Module for online payments.
->   Dependencies: Database Core.
->   Used by: Alpha, Beta, Gamma.
->   Tags: Stripe, PayU, transactions, invoice.
-> ... (enrichment added to all 10 documents)
+WITHOUT context enrichment:
+"I don't have enough information about dependencies between projects."
 
---- STEP 3: ENRICHED CONTEXT SENT TO AI ---
-Answer: "According to the documentation, Payment API is used by
-         Project Alpha, Project Beta, and Project Gamma."
+WITH context enrichment:
+"According to the documentation, Payment API is used by
+ Project Alpha, Project Beta, and Project Gamma."
 
 Takeaway: context enrichment revealed dependencies invisible in plain text.
+
+============================================================
 ```
 
 ---
@@ -150,7 +143,7 @@ project/
 
 ```json
 {
-  "model": "google/gemma-3-27b-it:free",
+  "model": "openai/gpt-4o-mini",
   "timeout_ms": 30000,
   "retry_limit": 3,
   "retry_delay_ms": 2000

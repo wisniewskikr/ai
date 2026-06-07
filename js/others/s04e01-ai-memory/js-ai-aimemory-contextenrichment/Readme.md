@@ -6,13 +6,15 @@
 
 ## What it does
 
-Asks the same question to AI **twice** — once with plain document descriptions, once with enriched ones — and shows you the difference.
+Asks the same question to AI **twice** — once with plain docs, once with enriched ones — then shows both answers side by side.
 
 | Step | What happens |
 |------|-------------|
-| 1 | AI gets plain docs → answers poorly (no dependencies) |
-| 2 | Documents get enriched (tags, usedBy, dependencies added) |
+| 1 | AI gets plain docs → answers poorly (no dependency info) |
+| 2 | Docs get enriched silently (tags, usedBy, dependencies added) |
 | 3 | AI gets enriched docs → answers correctly and in detail |
+
+The intermediate steps run silently. You only see the final comparison.
 
 ---
 
@@ -41,7 +43,7 @@ cp .env.example .env   # then paste your OpenRouter API key into .env
 npm start
 ```
 
-Pick a question from the menu, watch AI struggle with plain context, then nail it with enriched context.
+Pick a question from the menu. The app queries AI twice silently, then shows both answers side by side.
 
 ---
 
