@@ -3,7 +3,7 @@
   "scraperEmail": "wisniewskikr@gmail.com",
   "rateLimitMs": 5000,
   "requestTimeoutMs": 10000,
-  "model": "google/gemini-2.0-flash-001",
+  "model": "google/gemini-2.5-flash",
   "exampleUrls": {
     "robotsBlocked": "https://www.google.com/search?q=ethical+scraping",
     "robotsAllowed": "https://example.com",

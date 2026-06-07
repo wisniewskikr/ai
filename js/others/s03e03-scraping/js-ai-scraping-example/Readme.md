@@ -67,7 +67,7 @@ Edit `config.json` to change behavior — no code changes needed.
 | `scraperEmail` | Your email in User-Agent | `wisniewskikr@gmail.com` |
 | `rateLimitMs` | Pause between requests (ms) | `5000` |
 | `requestTimeoutMs` | Max wait for response (ms) | `10000` |
-| `model` | AI model for ethical feedback | `google/gemini-2.0-flash-001` |
+| `model` | AI model for ethical feedback | `google/gemini-2.5-flash` |
 | `exampleUrls` | URLs used in menu options 1–4 | see file |
 | `piiPatterns` | Regex patterns for email/phone | see file |
 

@@ -63,7 +63,7 @@ js-ai-scraping-example/
 | `scraperName` | Imię i nazwisko operatora | `Krzysztof Wisniewski` |
 | `scraperEmail` | Kontakt do operatora | `wisniewskikr@gmail.com` |
 | `rateLimitMs` | Przerwa między requestami (ms) | `5000` |
-| `model` | Model AI w OpenRouter | `google/gemini-2.0-flash-001` |
+| `model` | Model AI w OpenRouter | `google/gemini-2.5-flash` |
 | `exampleUrls` | Zaszyte URL-e dla opcji 1–4 | `{ "robotsBlocked": "...", ... }` |
 | `piiPatterns` | Wzorce regex do wykrywania PII | `{ "email": "...", "phone": "..." }` |
 
@@ -79,7 +79,7 @@ js-ai-scraping-example/
 | robots.txt | `robots-parser` |
 | Menu konsolowe | `readline` (wbudowany w Node.js) |
 | OpenRouter | `openai` SDK (kompatybilne) — proste pytanie: "czy strona jest bezpieczna do scrapowania?" |
-| Model AI | `google/gemini-2.0-flash-001` — szybki, tani, wystarczający do prostej analizy tekstu |
+| Model AI | `google/gemini-2.5-flash` — szybki, tani, wystarczający do prostej analizy tekstu |
 | Config | `dotenv` |
 
 ---
