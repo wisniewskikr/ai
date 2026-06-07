@@ -1,0 +1,8 @@
+{
+  "model": "google/gemini-2.5-flash",
+  "maxTokens": 200,
+  "demoQuestions": {
+    "directReports": "Bob Johnson",
+    "manager": "Grace Wilson"
+  }
+}

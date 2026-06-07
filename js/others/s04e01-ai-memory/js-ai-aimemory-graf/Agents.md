@@ -33,7 +33,7 @@ Alice Smith (CEO)
 
 ---
 
-## Propozycja implementacji
+## Implementacja
 
 ### Technologie
 
@@ -41,17 +41,17 @@ Alice Smith (CEO)
 |---|---|
 | Jezyk | TypeScript (strict mode) |
 | API | OpenRouter |
-| Model AI | `google/gemini-2.0-flash-lite-001` |
+| Model AI | `google/gemini-2.5-flash` |
 | Graf | In-memory (wezly + krawedzie w TypeScript) |
 | CLI | Node.js `readline` (bez zewnetrznych bibliotek) |
 
 ### Dlaczego ten model?
 
-`google/gemini-2.0-flash-lite-001` — wybrany bo:
+`google/gemini-2.5-flash` — wybrany bo:
 
-- Tani: $0.10/M input, $0.40/M output
 - Szybki — idealny do demo
 - Wystarczajacy do ekstrakcji intencji z pytania uzytkownika
+- `google/gemini-2.0-flash-lite-001` (oryginalny wybor) niedostepny na OpenRouter (HTTP 404)
 
 ### Struktura projektu
 

@@ -1,0 +1,21 @@
+{
+  "nodes": [
+    { "id": "alice", "name": "Alice Smith", "title": "CEO" },
+    { "id": "bob", "name": "Bob Johnson", "title": "CTO" },
+    { "id": "carol", "name": "Carol White", "title": "CFO" },
+    { "id": "dave", "name": "Dave Brown", "title": "Lead Developer" },
+    { "id": "eve", "name": "Eve Davis", "title": "DevOps Engineer" },
+    { "id": "frank", "name": "Frank Miller", "title": "Senior Accountant" },
+    { "id": "grace", "name": "Grace Wilson", "title": "Developer" },
+    { "id": "henry", "name": "Henry Moore", "title": "Developer" }
+  ],
+  "edges": [
+    { "from": "alice", "to": "bob" },
+    { "from": "alice", "to": "carol" },
+    { "from": "bob", "to": "dave" },
+    { "from": "bob", "to": "eve" },
+    { "from": "dave", "to": "grace" },
+    { "from": "dave", "to": "henry" },
+    { "from": "carol", "to": "frank" }
+  ]
+}
