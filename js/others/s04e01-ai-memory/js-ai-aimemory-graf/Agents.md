@@ -1,31 +1,18 @@
-# AI Memory Demo: Graf vs Vector Search
+# AI Memory Demo: Graf wiedzy
 
-> Graf to jak filofax z zakładkami — wiesz dokładnie, gdzie co jest.
-> Vector Search to jak szukanie w stercie kartek — znajdziesz cos podobnego, ale nie konkretne polaczenia.
+> Graf to jak filofax z zakładkami — wiesz dokladnie, gdzie co jest.
 
 ---
 
 ## Co robi ten projekt?
 
-Pokazuje roznice miedzy dwoma rodzajami pamieci AI na prostym przykladzie firmy.
+Demo pamieci AI opartej na grafie wiedzy. Pokazuje, ze pytania o relacje maja zawsze precyzyjna odpowiedz — bez zgadywania.
 
-| Pytanie | Vector Search | Graf |
-|---|---|---|
-| "Kto pracuje w IT?" | tak, dziala | tak, dziala |
-| "Kto raportuje do Boba?" | moze sie mylic | zawsze trafne |
-| "Ile osob zarzadza Alice?" | zgaduje | precyzyjnie |
-
----
-
-## Kluczowy wniosek
-
-> Zacznij od pytania, nie od narzedzia.
-
-| Typ pytania | Narzedzie |
+| Pytanie | Graf |
 |---|---|
-| Podobienstwo ("znajdz podobne") | Vector Search |
-| Relacje ("kto zarzadza kim?") | Graf |
-| Globalny przeglad ("podsumuj wszystko") | GraphRAG |
+| "Kto raportuje do Boba?" | zawsze trafne |
+| "Kto jest managerem Grace?" | zawsze trafne |
+| "Ile osob zarzadza Alice?" | precyzyjnie |
 
 ---
 
@@ -73,10 +60,9 @@ src/
   index.ts                  <- glowna petla CLI
   prompts/
     extractPerson.ts        <- wyodrebnij imie z pytania (LLM)
-    detectQueryType.ts      <- typ zapytania: relacja / podobienstwo (LLM)
+    detectQueryType.ts      <- typ zapytania: direct reports / manager of (LLM)
   services/
-    graphMemory.ts          <- graf + traversal (bez AI, deterministyczny)
-    vectorSearch.ts         <- LLM z plaskim tekstem (symulacja RAG)
+    graphMemory.ts          <- graf + traversal (deterministyczny, bez AI)
     openRouter.ts           <- klient API
   utils/
     config.ts               <- laduje config.json
@@ -94,50 +80,39 @@ Readme.md
 
 | Opcja | Co robi | Uzywa AI? |
 |---|---|---|
-| `[1]` | Pokaz graf (wszystkie wezly i krawedzie) | Nie |
-| `[2]` | Zapytaj Graf — "Who reports to Bob?" | Nie |
-| `[3]` | Zapytaj przez Vector Search — to samo pytanie | Tak (LLM) |
-| `[4]` | Porownaj obie metody obok siebie | Tak (LLM) |
-| `[5]` | Wpisz wlasne pytanie (AI + Graf) | Tak (LLM) |
+| `[1]` | Pokaz caly graf (wezly i krawedzie) | Nie |
+| `[2]` | Kto raportuje do X? — predefiniowane pytanie | Nie |
+| `[3]` | Kto jest managerem X? — predefiniowane pytanie | Nie |
+| `[4]` | Wpisz wlasne pytanie (LLM wyodrebnia intencje + Graf odpowiada) | Tak (LLM) |
 | `[0]` | Wyjscie | Nie |
 
-### Jak dziala opcja [5]?
+### Jak dziala opcja [4]?
 
 ```
 Pytanie uzytkownika
         |
         v
-LLM wykrywa typ zapytania
-   |               |
-relacja         podobienstwo
-   |               |
-Graf             LLM z
-traversal     plaskim tekstem
-   |               |
-   +-------+-------+
-           |
-      Odpowiedz
+LLM wyodrebnia imie i typ zapytania
+        |
+        v
+Graf traversal (deterministyczny)
+        |
+        v
+Odpowiedz
 ```
-
-To jest **intent routing** — koncept z dokumentu s04e01.
 
 ---
 
-## Porownanie metod — kluczowa roznica
+## Przyklad odpowiedzi
 
 ```
 Pytanie: "Who reports to Bob?"
 
-[GRAPH]  Bob Johnson (CTO) manages 2 people:
-           - Dave Brown (Lead Developer)
-           - Eve Davis (DevOps Engineer)
-         Czas: < 1ms, zawsze poprawne
-
-[VECTOR] Bob Johnson manages Dave Brown and Eve Davis...
-         Czas: ~1s (API call), moze halucynowac
+[GRAPH] Bob Johnson (CTO) manages 2 people:
+          - Dave Brown (Lead Developer)
+          - Eve Davis (DevOps Engineer)
+        Czas: < 1ms, zawsze poprawne
 ```
-
-Graf jest deterministyczny. LLM zgaduje na podstawie tekstu.
 
 ---
 
