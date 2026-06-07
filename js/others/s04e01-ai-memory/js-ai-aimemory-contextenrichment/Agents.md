@@ -95,7 +95,7 @@ Wniosek: wzbogacenie kontekstu ujawnilo zaleznosci niewidoczne w surowym tekscie
 |---------|-------------|
 | Jezyk | TypeScript (Node.js ESM) |
 | AI | OpenRouter API |
-| Model | `google/gemma-3-4b-it:free` (darmowy) |
+| Model | `google/gemma-3-27b-it:free` (darmowy, lepszy reasoning) |
 | Menu CLI | Inquirer.js |
 | Baza danych | Brak — wszystko in-memory |
 
