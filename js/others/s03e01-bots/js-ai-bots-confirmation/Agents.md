@@ -112,6 +112,23 @@ js-ai-bots-confirmation/
 OPENROUTER_API_KEY=your-key-here
 ```
 
+### Readme.md
+
+Plik musi byc zgodny z zasadami **wisniewk-doc-rules**:
+
+| Zasada | Co to znaczy |
+|--------|-------------|
+| Pisz jak dla 5-latka | Prosto i przyjazinie — bez zbednego zargonu |
+| Mniej znaczy lepiej | Unikaj zbednych slow |
+| Tabele i punkty wszedzie | Gdzie mozna — zamiast dlugich akapitow |
+| Analogie | Tam gdzie to mozliwe — ulatwia zrozumienie |
+
+Wymagana zawartosc:
+- Opis projektu
+- Wymagania
+- Instalacja i uruchomienie
+- Struktura plikow
+
 ### src/prompts/
 
 | Plik | Zawartosc |
