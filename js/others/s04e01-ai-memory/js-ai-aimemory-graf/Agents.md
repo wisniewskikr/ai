@@ -56,19 +56,20 @@ Alice Smith (CEO)
 ### Struktura projektu
 
 ```
+data/
+  graph.json                <- wezly i krawedzie (edytowalne bez zmiany kodu)
 src/
   index.ts                  <- glowna petla CLI
   prompts/
-    extractPerson.ts        <- wyodrebnij imie z pytania (LLM)
-    detectQueryType.ts      <- typ zapytania: direct reports / manager of (LLM)
+    parseQuestion.ts        <- jeden prompt -> JSON z imieniem i typem zapytania
   services/
-    graphMemory.ts          <- graf + traversal (deterministyczny, bez AI)
+    graphMemory.ts          <- tylko funkcje traversal (bez danych, bez AI)
     openRouter.ts           <- klient API
   utils/
-    config.ts               <- laduje config.json
     logger.ts               <- logi do logs/app.log
 logs/
-config.json                 <- model, maxTokens, pytanie demo
+  .gitkeep                  <- folder musi istniec w repo, logi sa w .gitignore
+config.json                 <- model, maxTokens, demoQuestions[]
 .env                        <- OPENROUTER_API_KEY
 .env.example
 Readme.md
@@ -90,30 +91,39 @@ Cala komunikacja z uzytkownikiem w jezyku **angielskim**.
 
 ### Jak dziala opcja [4]?
 
+Jeden call LLM zwraca JSON z imieniem i typem zapytania:
+
 ```
-Pytanie uzytkownika
-        |
-        v
-LLM wyodrebnia imie i typ zapytania
-        |
-        v
-Graf traversal (deterministyczny)
-        |
-        v
-Odpowiedz
+Prompt: "Who reports to Bob?"
+LLM -> { "person": "Bob Johnson", "queryType": "direct_reports" }
+     -> Graf traversal
+     -> Odpowiedz
 ```
+
+Jeden API call zamiast dwoch — tansze i prostsze.
 
 ---
 
 ## Przyklad odpowiedzi
 
 ```
-Pytanie: "Who reports to Bob?"
+Question: "Who reports to Bob?"
 
 [GRAPH] Bob Johnson (CTO) manages 2 people:
           - Dave Brown (Lead Developer)
           - Eve Davis (DevOps Engineer)
-        Czas: < 1ms, zawsze poprawne
+        Time: < 1ms, always correct
+
+Question: "Who is Grace's manager?"
+[GRAPH] Grace Wilson (Developer) reports to Dave Brown (Lead Developer).
+        Time: < 1ms, always correct
+```
+
+Nieznana osoba:
+
+```
+Question: "Who reports to Maciej?"
+[GRAPH] Person not found: "Maciej"
 ```
 
 ---
