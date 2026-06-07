@@ -25,21 +25,43 @@ Demo w TypeScript pokazujące, jak **scraper może zachowywać się grzecznie** 
 ```
 js-ai-scraping-example/
 ├── src/
-│   └── scraper.ts        # cały kod w jednym miejscu
-├── .env.example          # klucz API + dane kontaktowe
-├── package.json
-└── Agents.md             # ten plik
+│   ├── prompts/
+│   │   └── scrape-feedback.md      # prompt do oceny etycznej przez AI
+│   ├── services/
+│   │   ├── robots.ts               # sprawdzanie robots.txt
+│   │   ├── scraper.ts              # pobieranie strony + rate limiting
+│   │   ├── pii-detector.ts         # wykrywanie danych osobowych
+│   │   └── ai-feedback.ts          # zapytanie do OpenRouter
+│   └── utils/
+│       ├── logger.ts               # zapis logów do logs/
+│       └── menu.ts                 # interaktywne menu konsolowe
+├── logs/                           # logi aplikacji (auto-generowane)
+├── config.json                     # timeouty, rate limit, model AI, przykładowe URL-e
+├── .env                            # OPENROUTER_API_KEY (nie commituj!)
+├── .env.example                    # szablon zmiennych środowiskowych
+├── Readme.md                       # dokumentacja w języku angielskim
+└── Agents.md                       # ten plik
 ```
 
 ---
 
-## Konfiguracja (`.env`)
+## Konfiguracja
+
+### `.env` — tylko sekrety
 
 | Zmienna | Opis | Przykład |
 |---------|------|---------|
 | `OPENROUTER_API_KEY` | Klucz do OpenRouter | `sk-or-...` |
-| `SCRAPER_NAME` | Imię i nazwisko operatora | `Krzysztof Wisniewski` |
-| `SCRAPER_EMAIL` | Kontakt do operatora | `wisniewskikr@gmail.com` |
+
+### `config.json` — wszystkie pozostałe ustawienia
+
+| Klucz | Opis | Przykład |
+|-------|------|---------|
+| `scraperName` | Imię i nazwisko operatora | `Krzysztof Wisniewski` |
+| `scraperEmail` | Kontakt do operatora | `wisniewskikr@gmail.com` |
+| `rateLimitMs` | Przerwa między requestami (ms) | `5000` |
+| `model` | Model AI w OpenRouter | `google/gemini-2.0-flash-001` |
+| `exampleUrls` | Zaszyte URL-e dla opcji 1–4 | `{ "robotsBlocked": "...", ... }` |
 
 ---
 
