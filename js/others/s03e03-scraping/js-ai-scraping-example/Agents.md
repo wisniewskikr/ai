@@ -145,5 +145,8 @@ Choose an example:
 ## Uruchomienie
 
 ```bash
-npx tsx src/index.ts
+npm install
+npm start
 ```
+
+`package.json` definiuje skrypt `start` jako `tsx src/index.ts`.
