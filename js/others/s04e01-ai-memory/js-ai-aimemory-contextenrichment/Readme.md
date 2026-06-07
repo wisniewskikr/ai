@@ -107,7 +107,7 @@ Edit `config.json` to change model or tweak timeouts:
 
 ```json
 {
-  "model": "google/gemma-3-27b-it:free",
+  "model": "openai/gpt-4o-mini",
   "timeout_ms": 30000,
   "retry_limit": 3,
   "retry_delay_ms": 2000

@@ -115,7 +115,7 @@ Takeaway: context enrichment revealed dependencies invisible in plain text.
 |---------|-------------|
 | Jezyk | TypeScript (Node.js ESM) |
 | AI | OpenRouter API |
-| Model | `google/gemma-3-27b-it:free` (darmowy, lepszy reasoning) |
+| Model | `openai/gpt-4o-mini` (płatny, niezawodny reasoning) |
 | Menu CLI | Inquirer.js |
 | Baza danych | Brak — wszystko in-memory |
 
