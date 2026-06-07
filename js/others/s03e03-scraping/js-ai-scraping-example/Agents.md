@@ -51,6 +51,7 @@ js-ai-scraping-example/
 | Runtime | `tsx` (Node.js) |
 | robots.txt | `robots-parser` |
 | OpenRouter | `openai` SDK (kompatybilne) — proste pytanie: "czy strona jest bezpieczna do scrapowania?" |
+| Model AI | `google/gemini-2.0-flash-001` — szybki, tani, wystarczający do prostej analizy tekstu |
 | Config | `dotenv` |
 
 ---
