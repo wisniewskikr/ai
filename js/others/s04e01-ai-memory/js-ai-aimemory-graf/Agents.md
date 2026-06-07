@@ -78,13 +78,15 @@ Readme.md
 
 ## CLI — opcje
 
+Cala komunikacja z uzytkownikiem w jezyku **angielskim**.
+
 | Opcja | Co robi | Uzywa AI? |
 |---|---|---|
-| `[1]` | Pokaz caly graf (wezly i krawedzie) | Nie |
-| `[2]` | Kto raportuje do X? — predefiniowane pytanie | Nie |
-| `[3]` | Kto jest managerem X? — predefiniowane pytanie | Nie |
-| `[4]` | Wpisz wlasne pytanie (LLM wyodrebnia intencje + Graf odpowiada) | Tak (LLM) |
-| `[0]` | Wyjscie | Nie |
+| `[1]` | Show full graph (nodes and edges) | Nie |
+| `[2]` | Who reports to X? — predefined question | Nie |
+| `[3]` | Who is X's manager? — predefined question | Nie |
+| `[4]` | Ask your own question (LLM extracts intent + Graph answers) | Tak (LLM) |
+| `[0]` | Exit | Nie |
 
 ### Jak dziala opcja [4]?
 
