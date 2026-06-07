@@ -28,15 +28,18 @@ js-ai-scraping-example/
 │   ├── prompts/
 │   │   └── scrape-feedback.md      # prompt do oceny etycznej przez AI
 │   ├── services/
-│   │   ├── robots.ts               # sprawdzanie robots.txt
-│   │   ├── scraper.ts              # pobieranie strony + rate limiting
+│   │   ├── robots.ts               # sprawdzanie robots.txt (brak pliku = dozwolone)
+│   │   ├── scraper.ts              # pobieranie strony + obsługa HTTP 429
 │   │   ├── pii-detector.ts         # wykrywanie danych osobowych
 │   │   └── ai-feedback.ts          # zapytanie do OpenRouter
-│   └── utils/
-│       ├── logger.ts               # zapis logów do logs/
-│       └── menu.ts                 # interaktywne menu konsolowe
+│   ├── utils/
+│   │   ├── logger.ts               # zapis logów do logs/
+│   │   └── menu.ts                 # interaktywne menu konsolowe (readline)
+│   └── index.ts                    # główny punkt wejścia — orchestrator
 ├── logs/                           # logi aplikacji (auto-generowane)
-├── config.json                     # timeouty, rate limit, model AI, przykładowe URL-e
+├── config.json                     # timeouty, rate limit, model AI, przykładowe URL-e, wzorce PII
+├── tsconfig.json
+├── package.json
 ├── .env                            # OPENROUTER_API_KEY (nie commituj!)
 ├── .env.example                    # szablon zmiennych środowiskowych
 ├── Readme.md                       # dokumentacja w języku angielskim (zgodna z /wisniewk-doc-rules)
@@ -62,6 +65,7 @@ js-ai-scraping-example/
 | `rateLimitMs` | Przerwa między requestami (ms) | `5000` |
 | `model` | Model AI w OpenRouter | `google/gemini-2.0-flash-001` |
 | `exampleUrls` | Zaszyte URL-e dla opcji 1–4 | `{ "robotsBlocked": "...", ... }` |
+| `piiPatterns` | Wzorce regex do wykrywania PII | `{ "email": "...", "phone": "..." }` |
 
 ---
 
@@ -69,9 +73,11 @@ js-ai-scraping-example/
 
 | Element | Technologia |
 |---------|-------------|
-| Język | TypeScript |
-| Runtime | `tsx` (Node.js) |
+| Język | TypeScript (strict mode) |
+| Runtime | `tsx` (Node.js 18+) |
+| HTTP | `fetch` (wbudowany w Node.js 18+) — zero dodatkowych zależności |
 | robots.txt | `robots-parser` |
+| Menu konsolowe | `readline` (wbudowany w Node.js) |
 | OpenRouter | `openai` SDK (kompatybilne) — proste pytanie: "czy strona jest bezpieczna do scrapowania?" |
 | Model AI | `google/gemini-2.0-flash-001` — szybki, tani, wystarczający do prostej analizy tekstu |
 | Config | `dotenv` |
@@ -85,24 +91,25 @@ URL wejściowy
     │
     ▼
 [1] robots.txt — czy mam pozwolenie?
+    │  brak pliku → domyślnie dozwolone
     │  NIE → stop
     │  TAK ↓
 [2] Ustaw User-Agent z imieniem i e-mailem
     │
     ▼
-[3] Czekaj 5s (rate limit)
+[3] Czekaj 5s z odliczaniem ("Waiting 5s... 4... 3...")
     │
     ▼
 [4] Pobierz stronę
-    │
-    ▼
+    │  HTTP 429 → zatrzymaj i ostrzeż ("Server says: slow down")
+    │  OK ↓
 [5] PII Detection — czy są e-maile / telefony?
     │  TAK → zatrzymaj i ostrzeż
     │  NIE ↓
 [6] Wyślij do OpenRouter → ocena etyczna
     │
     ▼
-Wynik w konsoli
+Wynik w konsoli → powrót do menu
 ```
 
 ---
@@ -138,5 +145,5 @@ Wybierz przykład:
 ## Uruchomienie
 
 ```bash
-npx tsx src/scraper.ts
+npx tsx src/index.ts
 ```
