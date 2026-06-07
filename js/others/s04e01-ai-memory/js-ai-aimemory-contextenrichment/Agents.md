@@ -21,25 +21,32 @@ Gdy ktoś pyta *"jakie książki pasują do Władcy Pierścieni?"* — znajdzie 
 
 ## Co robi ta aplikacja?
 
-CLI, które zadaje to samo pytanie AI dwa razy:
+CLI, które zadaje to samo pytanie AI w trzech krokach:
 
-1. Z **surowym** kontekstem — tylko opisy dokumentów
-2. Z **wzbogaconym** kontekstem — opisy + zależności, tagi, powiązania
+1. Odpytuje AI z **surowym** kontekstem — tylko opisy dokumentów
+2. **Pokazuje na ekranie** jakie dokumenty trafiły do każdego zapytania
+3. Dynamicznie **wzbogaca** dokumenty (dodaje zależności, tagi) i odpytuje ponownie
 
-Pokazuje różnicę w odpowiedziach na ekranie.
+Pokazuje różnicę w odpowiedziach i ujawnia DLACZEGO ta różnica powstała.
 
 ---
 
 ## Scenariusz
 
-Baza wiedzy małej firmy — 4 dokumenty:
+Baza wiedzy małej firmy — 10 dokumentów (wystarczająco dużo, żeby różnica była wyraźna):
 
 | Dokument | Opis |
 |----------|------|
 | Project Alpha | System e-commerce |
 | Project Beta | Panel administracyjny |
+| Project Gamma | Aplikacja mobilna |
+| Project Delta | System raportowania |
 | Payment API | Moduł obsługi płatności |
 | Auth Service | Logowanie i autoryzacja |
+| Notification Service | Powiadomienia email/SMS |
+| Database Core | Główna baza danych |
+| File Storage | Przechowywanie plików |
+| Audit Logger | Dziennik zdarzeń systemowych |
 
 ### Surowy dokument
 
@@ -78,11 +85,24 @@ Select a question:
 ```
 Question: "Which projects use the Payment API?"
 
---- PLAIN CONTEXT ---
-"I don't have enough information about dependencies between projects."
+--- STEP 1: PLAIN CONTEXT SENT TO AI ---
+> Payment API: Module for online payments.
+> Project Alpha: E-commerce system.
+> Project Beta: Admin panel.
+> ... (10 documents, no dependency info)
 
---- ENRICHED CONTEXT ---
-"According to the documentation, Payment API is used by Project Alpha and Project Beta."
+Answer: "I don't have enough information about dependencies between projects."
+
+--- STEP 2: ENRICHING DOCUMENTS... ---
+> Payment API: Module for online payments.
+>   Dependencies: Database Core.
+>   Used by: Alpha, Beta, Gamma.
+>   Tags: Stripe, PayU, transactions, invoice.
+> ... (enrichment added to all 10 documents)
+
+--- STEP 3: ENRICHED CONTEXT SENT TO AI ---
+Answer: "According to the documentation, Payment API is used by
+         Project Alpha, Project Beta, and Project Gamma."
 
 Takeaway: context enrichment revealed dependencies invisible in plain text.
 ```
@@ -107,20 +127,34 @@ Takeaway: context enrichment revealed dependencies invisible in plain text.
 project/
 ├── src/
 │   ├── prompts/
-│   │   ├── system.ts          # prompt systemowy dla AI
+│   │   ├── system.ts           # prompt systemowy dla AI
 │   │   └── question-context.ts # szablon pytania z kontekstem
 │   ├── services/
-│   │   ├── ai-client.ts       # klient OpenRouter
-│   │   └── compare.ts         # logika porownywania odpowiedzi
+│   │   ├── ai-client.ts        # klient OpenRouter (obsługa 429, timeout)
+│   │   ├── enricher.ts         # dynamiczne wzbogacanie dokumentów
+│   │   └── compare.ts          # logika porownywania odpowiedzi
 │   └── utils/
-│       ├── knowledge-base.ts  # dokumenty surowe i wzbogacone
-│       └── logger.ts          # zapis logow do /logs
-├── logs/                      # logi aplikacji (auto-generowane)
-├── config.json                # model, timeouty, limity
-├── index.ts                   # punkt wejscia, menu CLI
-├── .env                       # OPENROUTER_API_KEY (nie commituj!)
-├── .env.example               # szablon zmiennych
-└── Readme.md                  # dokumentacja (EN) — stworzona z /wisniewk-doc-rules
+│       ├── knowledge-base.ts   # 10 dokumentów (surowe)
+│       └── logger.ts           # zapis logow do /logs
+├── logs/                       # logi aplikacji (auto-generowane)
+├── config.json                 # model, timeouty, retry limit
+├── index.ts                    # punkt wejscia, menu CLI
+├── package.json
+├── tsconfig.json
+├── .env                        # OPENROUTER_API_KEY (nie commituj!)
+├── .env.example                # szablon zmiennych
+└── Readme.md                   # dokumentacja (EN) — stworzona z /wisniewk-doc-rules
+```
+
+### config.json — przykład zawartości
+
+```json
+{
+  "model": "google/gemma-3-27b-it:free",
+  "timeout_ms": 30000,
+  "retry_limit": 3,
+  "retry_delay_ms": 2000
+}
 ```
 
 ---
