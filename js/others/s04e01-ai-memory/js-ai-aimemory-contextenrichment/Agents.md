@@ -61,14 +61,14 @@ Tagi: Stripe, PayU, transakcje, faktura.
 ## Menu CLI
 
 ```
-=== BAZA WIEDZY FIRMY — Demo Pamięci AI ===
+=== COMPANY KNOWLEDGE BASE — AI Memory Demo ===
 
-Wybierz pytanie:
-  1. Które projekty używają API płatności?
-  2. Jakie komponenty zależą od Auth Service?
-  3. Co wiem o bazach danych w naszym systemie?
-  4. Własne pytanie...
-  5. Wyjście
+Select a question:
+  1. Which projects use the Payment API?
+  2. Which components depend on Auth Service?
+  3. What do I know about databases in our system?
+  4. Ask your own question...
+  5. Exit
 ```
 
 ---
@@ -76,15 +76,15 @@ Wybierz pytanie:
 ## Przykładowy wynik
 
 ```
-Pytanie: "Które projekty używają API płatności?"
+Question: "Which projects use the Payment API?"
 
---- KONTEKST SUROWY ---
-"Nie mam wystarczających informacji o zależnościach między projektami."
+--- PLAIN CONTEXT ---
+"I don't have enough information about dependencies between projects."
 
---- KONTEKST WZBOGACONY ---
-"Z dokumentacji wynika, że Payment API jest używane przez Project Alpha i Project Beta."
+--- ENRICHED CONTEXT ---
+"According to the documentation, Payment API is used by Project Alpha and Project Beta."
 
-Wniosek: wzbogacenie kontekstu ujawnilo zaleznosci niewidoczne w surowym tekscie.
+Takeaway: context enrichment revealed dependencies invisible in plain text.
 ```
 
 ---
@@ -120,7 +120,7 @@ project/
 ├── index.ts                   # punkt wejscia, menu CLI
 ├── .env                       # OPENROUTER_API_KEY (nie commituj!)
 ├── .env.example               # szablon zmiennych
-└── Readme.md                  # dokumentacja (EN)
+└── Readme.md                  # dokumentacja (EN) — stworzona z /wisniewk-doc-rules
 ```
 
 ---
