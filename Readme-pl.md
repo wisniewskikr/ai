@@ -1,3 +1,23 @@
+TODO:
+1. Virtual
+* Poprawić błędy
+* Dodać rozszerzalność
+* Tuning z AI
+* Dodać chata
+* Dodać raporty
+* Dodać front-end
+* Wrzucić jako docker-compose
+* Wrzucić jako kafka
+
+2. Real
+* Przerobić virtual
+
+3. Od Adama
+* Przeanalizować
+
+4. Blog
+* Przepisać z użyciem AI
+
 # Praca z modelami AI
 
 ## Spis treści
