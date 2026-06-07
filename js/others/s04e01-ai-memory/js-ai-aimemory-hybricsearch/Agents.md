@@ -28,14 +28,54 @@ Na końcu AI (przez OpenRouter) czyta top wyniki i daje ostateczną odpowiedź.
 ## Przepływ użytkownika
 
 ```
-> Co wiesz o politykach bezpieczeństwa?
+Select an option:
+  1. password policy          <- BM25 wins (exact keyword match)
+  2. who is allowed to login? <- Vector wins (no keyword overlap)
+  3. data security rules      <- Hybrid wins (keywords + meaning together)
+  4. Type your own query
+  0. Exit
 
-[Wyniki BM25]              [Wyniki Vector]           [Wyniki Hybrid]
-1. "Polityka bezp..."      1. "Kontrola dostępu..."  1. "Polityka bezp..."
-2. "Aktualizacja pol..."   2. "Ochrona danych..."    2. "Kontrola dostępu..."
-3. "Zasady dostępu..."     3. "Aktualizacja pol..."  3. "Ochrona danych..."
+--- Option 1: "password policy"  →  BM25 wins ---
+Query contains exact words from the database. BM25 scores them perfectly.
+Vector search drifts to loosely related topics.
 
-[Odpowiedź AI] Na podstawie znalezionych wyników: ...
+[BM25 results]                  [Vector results]             [Hybrid results]
+1. "Password policy updated"    1. "Encryption standards"    1. "Password policy updated"
+2. "Password must be 12 chars"  2. "Data retention rules"    2. "Password must be 12 chars"
+3. "Policy review schedule"     3. "User account lifecycle"  3. "Encryption standards"
+
+[AI Answer] Based on the top results: passwords must be at least 12 characters...
+
+---
+
+--- Option 2: "who is allowed to login?"  →  Vector wins ---
+No keyword overlap with the database. BM25 finds nothing useful.
+Vector understands the meaning: "login" = "authentication" = "access".
+
+[BM25 results]                  [Vector results]             [Hybrid results]
+1. "Login attempt logged"       1. "Only admins may access"  1. "Only admins may access"
+2. "Policy login section"       2. "Two-factor auth required" 2. "Two-factor auth required"
+3. "User login form"            3. "Role-based access control" 3. "Role-based access control"
+
+[AI Answer] Based on the top results: only admins with 2FA enabled may log in...
+
+---
+
+--- Option 3: "data security rules"  →  Hybrid wins ---
+Partial keyword match ("security", "rules") + semantic meaning ("data protection").
+BM25 misses semantic variants. Vector misses exact rule documents. Hybrid gets both.
+
+[BM25 results]                  [Vector results]             [Hybrid results]
+1. "Security rules v2"          1. "Data encryption policy"  1. "Security rules v2"
+2. "Access rules updated"       2. "GDPR compliance guide"   2. "Data encryption policy"
+3. "Network security policy"    3. "Backup retention policy" 3. "GDPR compliance guide"
+
+[AI Answer] Based on the top results: data must be encrypted at rest and comply with GDPR...
+
+---
+
+> 0
+Goodbye!
 ```
 
 ---
