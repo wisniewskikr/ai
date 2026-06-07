@@ -1,0 +1,9 @@
+{
+  "model": "openai/gpt-4o-mini",
+  "embeddingModel": "Xenova/all-MiniLM-L6-v2",
+  "topK": 3,
+  "hybridWeights": {
+    "bm25": 0.4,
+    "vector": 0.6
+  }
+}

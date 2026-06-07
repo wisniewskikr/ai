@@ -1,0 +1,18 @@
+{
+  "name": "js-ai-aimemory-hybricsearch",
+  "version": "1.0.0",
+  "description": "Hybrid Memory Search: BM25 + Vector Search + RAG via OpenRouter",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "dev": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@xenova/transformers": "^2.17.2",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "tsx": "^4.15.0",
+    "typescript": "^5.4.5"
+  }
+}
