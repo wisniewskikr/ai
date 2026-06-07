@@ -1,0 +1,18 @@
+{
+  "name": "js-ai-aimemory-contextenrichment",
+  "version": "1.0.0",
+  "description": "AI Memory Demo - Context Enrichment",
+  "type": "module",
+  "scripts": {
+    "start": "tsx index.ts"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "^7.0.0",
+    "dotenv": "^16.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}
