@@ -104,11 +104,23 @@ Wniosek: wzbogacenie kontekstu ujawnilo zaleznosci niewidoczne w surowym tekscie
 ## Struktura projektu
 
 ```
-src/
-  index.ts         # punkt wejscia, menu CLI
-  knowledge-base.ts # dokumenty surowe i wzbogacone
-  ai-client.ts     # klient OpenRouter
-  compare.ts       # logika porownan odpowiedzi
+project/
+├── src/
+│   ├── prompts/
+│   │   ├── system.ts          # prompt systemowy dla AI
+│   │   └── question-context.ts # szablon pytania z kontekstem
+│   ├── services/
+│   │   ├── ai-client.ts       # klient OpenRouter
+│   │   └── compare.ts         # logika porownywania odpowiedzi
+│   └── utils/
+│       ├── knowledge-base.ts  # dokumenty surowe i wzbogacone
+│       └── logger.ts          # zapis logow do /logs
+├── logs/                      # logi aplikacji (auto-generowane)
+├── config.json                # model, timeouty, limity
+├── index.ts                   # punkt wejscia, menu CLI
+├── .env                       # OPENROUTER_API_KEY (nie commituj!)
+├── .env.example               # szablon zmiennych
+└── Readme.md                  # dokumentacja (EN)
 ```
 
 ---
