@@ -1,0 +1,21 @@
+{
+  "scraperName": "Krzysztof Wisniewski",
+  "scraperEmail": "wisniewskikr@gmail.com",
+  "rateLimitMs": 5000,
+  "requestTimeoutMs": 10000,
+  "model": "google/gemini-2.0-flash-001",
+  "exampleUrls": {
+    "robotsBlocked": "https://en.wikipedia.org/wiki/Main_Page",
+    "robotsAllowed": "https://example.com",
+    "piiDetection": "https://www.iana.org/about/contacts",
+    "rateLimiting": [
+      "https://example.com",
+      "https://example.org",
+      "https://example.net"
+    ]
+  },
+  "piiPatterns": {
+    "email": "[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}",
+    "phone": "(?:\\+?\\d[\\s\\-.]?){7,15}\\d"
+  }
+}
