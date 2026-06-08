@@ -76,6 +76,8 @@ js-ai-aiworkflow-basic/
 │   │   ├── cli.ts              # commander, ora spinners, chalk colors
 │   │   └── mock-articles.ts    # fallback — lokalne dane testowe
 │   └── index.ts                # punkt wejścia, uruchamia workflow w pętli
+├── workflow/
+│   └── articles/                # pobrane artykuły — każdy w osobnym pliku JSON
 ├── logs/                        # logi aplikacji (tworzone automatycznie)
 ├── config.json                  # timeouty, limity, model, progi monitoringu
 ├── .env                         # klucze API (nie commituj!)
@@ -94,8 +96,24 @@ js-ai-aiworkflow-basic/
 | `src/services/monitor.ts` | Zbieranie i logowanie metryk (3 warstwy) |
 | `src/utils/cli.ts` | Commander flags, ora spinners, chalk colors |
 | `src/utils/mock-articles.ts` | Fallback — dane testowe gdy HN nie odpowiada |
+| `workflow/articles/` | Pobrane artykuły — każdy w osobnym pliku JSON |
 | `config.json` | Wszystkie zmienne konfiguracyjne (bez sekretów) |
 | `logs/app.log` | Logi z każdego uruchomienia |
+
+**Format nazwy pliku:** `workflow/articles/{timestamp}-{id}.json`
+
+Przykład: `workflow/articles/2026-06-08T10-01-00-43821.json`
+
+```json
+{
+  "id": 43821,
+  "fetchedAt": "2026-06-08T10:01:00Z",
+  "title": "OpenAI raises $40B at $300B valuation",
+  "text": "...",
+  "summary": "OpenAI secured $40B in funding...",
+  "topics": ["AI", "funding", "OpenAI"]
+}
+```
 
 ### Model AI
 
@@ -294,7 +312,9 @@ log.error({ layer: "quality", check: "canary" }, "canary failed");
   Warstwa 3: Jakość outputu
         |
         v
-[output: JSON] + [logs/app.log]
+[output: JSON]
+  ├── workflow/articles/{timestamp}-{id}.json   ← każdy artykuł osobno
+  └── logs/app.log                              ← metryki i zdarzenia
 ```
 
 ---
@@ -412,7 +432,7 @@ Next run in 60s. Press Ctrl+C to stop.
 ├─────────────────────────────────────────────────────┤
 │ Topics   │ AI, funding, OpenAI, SoftBank             │
 ├─────────────────────────────────────────────────────┤
-│ Saved to │ logs/app.log                              │
+│ Saved to │ workflow/articles/2026-06-08T10-01-00-43821.json │
 └─────────────────────────────────────────────────────┘
 ```
 
