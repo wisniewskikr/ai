@@ -442,8 +442,18 @@ Logi zapisywane do `logs/app.log` w formacie czytelnym dla człowieka:
 export const log = pino({
   transport: {
     targets: [
-      { target: "pino-pretty", options: { destination: "logs/app.log" } },
-      { target: "pino-pretty", options: { colorize: true } },  // konsola
+      {
+        // Konsola: tylko warn i error — unika mieszania z ora spinnerami
+        target: "pino-pretty",
+        level: "warn",
+        options: { colorize: true, translateTime: "HH:MM:ss", ignore: "pid,hostname" },
+      },
+      {
+        // Plik: pełne logi info+ do debugowania i metryk
+        target: "pino-pretty",
+        level: "info",
+        options: { colorize: false, translateTime: "yyyy-mm-dd HH:MM:ss", destination: "logs/app.log", append: true },
+      },
     ],
   },
 });
@@ -479,9 +489,9 @@ Options:
 Examples:
 
 ```bash
-npm run dev                        # loop, 3 articles/min
-npm run dev --articles 5 --once    # run once, 5 articles
-npm run dev --dry-run              # test fetcher without spending tokens
+npm run dev                            # loop, 3 articles/min
+npm run dev -- --articles 5 --once    # run once, 5 articles
+npm run dev -- --dry-run              # test fetcher without spending tokens
 ```
 
 ### 2. Process — what the user sees
