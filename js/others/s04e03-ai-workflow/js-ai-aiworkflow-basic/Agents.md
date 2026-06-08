@@ -489,6 +489,7 @@ npm run dev --dry-run              # test fetcher without spending tokens
 ```
 AI Workflow — Silent Degradation Demo
 ======================================
+Press Ctrl+C at any time to stop gracefully.
 
 Run #1 — 2026-06-08 10:01:00
 
