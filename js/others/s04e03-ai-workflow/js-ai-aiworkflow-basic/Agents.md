@@ -157,7 +157,8 @@ Haiku to najszybszy i najtańszy model Claude — idealny do powtarzalnych, pros
     "schemaErrorRateAlertThreshold": 0.05
   },
   "workflow": {
-    "intervalMs": 60000
+    "intervalMs": 60000,
+    "articles": 3
   }
 }
 ```
@@ -558,6 +559,7 @@ All settings live in `config.json` — no hardcoded values in code:
 | `retry.factor` | Backoff multiplier (2 = doubles each time) |
 | `monitor.minSummaryLength` | Alert if output shorter than N chars |
 | `workflow.intervalMs` | How often to run the workflow |
+| `workflow.articles` | How many articles to fetch per run |
 
 ---
 
