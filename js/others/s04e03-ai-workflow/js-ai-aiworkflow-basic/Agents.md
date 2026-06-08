@@ -73,6 +73,7 @@ js-ai-aiworkflow-basic/
 │   │   ├── llm-client.ts       # wywołanie OpenRouter z p-retry
 │   │   └── monitor.ts          # 3 warstwy monitoringu (pino)
 │   ├── utils/
+│   │   ├── cli.ts              # commander, ora spinners, chalk colors
 │   │   └── mock-articles.ts    # fallback — lokalne dane testowe
 │   └── index.ts                # punkt wejścia, uruchamia workflow w pętli
 ├── logs/                        # logi aplikacji (tworzone automatycznie)
@@ -91,6 +92,7 @@ js-ai-aiworkflow-basic/
 | `src/services/llm-client.ts` | Wywołanie OpenRouter z `p-retry` |
 | `src/services/news-fetcher.ts` | Pobieranie artykułów z HN API |
 | `src/services/monitor.ts` | Zbieranie i logowanie metryk (3 warstwy) |
+| `src/utils/cli.ts` | Commander flags, ora spinners, chalk colors |
 | `src/utils/mock-articles.ts` | Fallback — dane testowe gdy HN nie odpowiada |
 | `config.json` | Wszystkie zmienne konfiguracyjne (bez sekretów) |
 | `logs/app.log` | Logi z każdego uruchomienia |
@@ -326,6 +328,104 @@ export const log = pino({
 
 ---
 
+## CLI
+
+> All CLI communication is in **English**.
+
+### Libraries
+
+| Library | Role |
+|---------|------|
+| `commander` | Argument parsing — flags and options |
+| `ora` | Spinner — shows progress during fetch and LLM call |
+| `chalk` | Colors — green success, yellow warn, red error |
+
+### 1. Input — how to start
+
+```bash
+npm run dev [options]
+
+Options:
+  --articles <n>    Articles to process per run    (default: 3)
+  --interval <ms>   Milliseconds between runs       (default: 60000)
+  --once            Run once and exit (no loop)
+  --dry-run         Fetch articles, skip LLM call
+  --help            Show help
+```
+
+Examples:
+
+```bash
+npm run dev                        # loop, 3 articles/min
+npm run dev --articles 5 --once    # run once, 5 articles
+npm run dev --dry-run              # test fetcher without spending tokens
+```
+
+### 2. Process — what the user sees
+
+```
+AI Workflow — Silent Degradation Demo
+======================================
+
+Run #1 — 2026-06-08 10:01:00
+
+  Fetching top stories from Hacker News... done (312ms)
+
+  [1/3] Processing: "OpenAI raises $40B at $300B valuation"
+        ⠸ Calling LLM...
+        ✔ Done (891ms)
+
+  [2/3] Processing: "TypeScript 5.8 released"
+        ⠸ Calling LLM...
+        ⚠ Retry 2/4 — rate limit (429). Waiting 1847ms...
+        ⚠ Retry 3/4 — rate limit (429). Waiting 3214ms...
+        ✔ Done (6103ms)
+
+  [3/3] Processing: "Canary check"
+        ⠸ Calling LLM...
+        ✖ Canary failed — output drift detected!
+
+──────────────────────────────────────────
+Run #1 Summary
+  Processed : 3 articles
+  Retries   : 2
+  Failed    : 0
+  Avg latency: 2961ms
+
+  Monitoring
+  Layer 1 Infra    : error_rate=0%  avg_latency=891ms
+  Layer 2 Pipeline : retry_rate=33%  failed=0
+  Layer 3 Quality  : schema=ok  length=ok  canary=FAIL ⚠
+──────────────────────────────────────────
+
+Next run in 60s. Press Ctrl+C to stop.
+```
+
+### 3. Output — result per article
+
+```
+┌─────────────────────────────────────────────────────┐
+│ #1 OpenAI raises $40B at $300B valuation             │
+├─────────────────────────────────────────────────────┤
+│ Summary  │ OpenAI secured $40B in funding, pushing   │
+│          │ its valuation to $300B. SoftBank led...   │
+├─────────────────────────────────────────────────────┤
+│ Topics   │ AI, funding, OpenAI, SoftBank             │
+├─────────────────────────────────────────────────────┤
+│ Saved to │ logs/app.log                              │
+└─────────────────────────────────────────────────────┘
+```
+
+### CLI files in project structure
+
+```
+src/
+├── utils/
+│   └── cli.ts          ← commander setup, ora spinners, chalk colors
+```
+
+---
+
 ## Stack
 
 | Co | Technologia |
@@ -337,6 +437,7 @@ export const log = pino({
 | Logging | `pino` + `pino-pretty` — logi do konsoli i `logs/app.log` |
 | LLM SDK | `openai` (kompatybilne z OpenRouter) |
 | Konfiguracja | `config.json` — bez hardcodowania wartości w kodzie |
+| CLI | `commander` + `ora` + `chalk` |
 
 ---
 
@@ -344,10 +445,12 @@ export const log = pino({
 
 ```bash
 cp .env.example .env
-# Dodaj OPENROUTER_API_KEY do .env
+# Add your OPENROUTER_API_KEY to .env
 
 npm install
-npm run dev
+npm run dev               # default: loop, 3 articles/min
+npm run dev --once        # run once and exit
+npm run dev --dry-run     # no LLM calls, test fetcher only
 ```
 
 ---
