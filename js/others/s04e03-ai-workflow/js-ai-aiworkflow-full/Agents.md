@@ -778,11 +778,13 @@ AI Workflow — Silent Degradation Demo
 | Option | What it does |
 |--------|-------------|
 | `1` Run normally | Fetch articles, call LLM, save results — standard loop |
-| `2` Recover from DLQ | Process all `pending` items from `workspace/dlq.db` and exit |
-| `3` Simulate retry failure | Mock API returning HTTP 500 — shows exponential backoff + jitter in console (failed articles are pushed to DLQ) |
-| `4` Simulate canary failure | Mock LLM returning invalid canary response — shows monitoring alert |
-| `5` Simulate Circuit Breaker failure | Mock repeated failures until breaker opens — shows state transitions: closed → open → half-open (rejected articles are pushed to DLQ) |
+| `2` Recover from DLQ | Process all `pending` items from `workspace/dlq.db`, then return to menu |
+| `3` Simulate retry failure | Mock API returning HTTP 500 — shows exponential backoff + jitter in console (failed articles are pushed to DLQ), then return to menu |
+| `4` Simulate canary failure | Mock LLM returning invalid canary response — shows monitoring alert, then return to menu |
+| `5` Simulate Circuit Breaker failure | Mock repeated failures until breaker opens — shows state transitions: closed → open → half-open (rejected articles are pushed to DLQ), then return to menu |
 | `0` Exit | Graceful shutdown |
+
+After each task completes, the menu reappears automatically. Pressing Ctrl+C during a task stops the current work gracefully and returns to the menu. The only way to exit the application is option `0`.
 
 Options 3–5 are **simulations** — they mock API responses locally, no real LLM calls, no tokens spent. Their purpose is to show what failure looks like in the console and in `logs/app.log`.
 
