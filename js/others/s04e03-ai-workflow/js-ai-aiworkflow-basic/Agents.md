@@ -326,4 +326,94 @@ npm run dev
 
 ---
 
+## Readme.md — zawartość
+
+> Plik w języku angielskim. Pisany prosto — zrozumiały dla każdego, nie tylko programisty.
+
+---
+
+### # AI Workflow — Silent Degradation Demo
+
+> **Analogy:** A fridge stops cooling, but the light inside still works. Everything looks fine — until the food starts to smell.
+> This project shows how to prevent the same thing from happening in your AI workflow.
+
+---
+
+### ## What is it?
+
+A TypeScript demo that shows two techniques for preventing silent AI workflow failures:
+
+| Technique | What it does |
+|-----------|-------------|
+| **Retry (Exponential Backoff + Jitter)** | Retries failed API calls intelligently |
+| **Monitoring (3 layers)** | Watches if the workflow runs *and if the output makes sense* |
+
+---
+
+### ## Requirements
+
+| Tool | Version |
+|------|---------|
+| Node.js | >= 18 |
+| npm | >= 9 |
+| OpenRouter API key | free tier works |
+
+---
+
+### ## Installation
+
+```bash
+git clone <repo>
+cd js-ai-aiworkflow-basic
+
+cp .env.example .env
+# Add your OPENROUTER_API_KEY to .env
+
+npm install
+```
+
+---
+
+### ## Run
+
+```bash
+npm run dev
+```
+
+Logs appear in the console and in `logs/app.log`.
+
+---
+
+### ## File structure
+
+```
+src/
+├── prompts/          ← edit AI prompts here, no code changes needed
+├── services/         ← business logic (LLM, news fetcher, monitor)
+└── utils/            ← helpers (mock data for offline testing)
+logs/                 ← app logs (auto-created)
+config.json           ← all config values (timeouts, limits, model)
+.env                  ← API keys (never commit!)
+```
+
+---
+
+### ## Configuration
+
+All settings live in `config.json` — no hardcoded values in code:
+
+| Key | What it controls |
+|-----|-----------------|
+| `model` | LLM model used via OpenRouter |
+| `retry.attempts` | Max retry attempts |
+| `retry.factor` | Backoff multiplier (2 = doubles each time) |
+| `monitor.minSummaryLength` | Alert if output shorter than N chars |
+| `workflow.intervalMs` | How often to run the workflow |
+
+---
+
+> **One sentence:** Build workflows as if every external call can fail — because sooner or later, it will.
+
+---
+
 > **Podsumowanie jednym zdaniem:** Buduj workflow tak, jakby każde zewnętrzne wywołanie mogło zawieść — bo prędzej czy później zawiedzie.
