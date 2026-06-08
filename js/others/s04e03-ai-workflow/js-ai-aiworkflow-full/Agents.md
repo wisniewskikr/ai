@@ -193,6 +193,10 @@ Haiku to najszybszy i najtańszy model Claude — idealny do powtarzalnych, pros
     "minSummaryLength": 50,
     "schemaErrorRateAlertThreshold": 0.05
   },
+  "dlq": {
+    "reprocessBatchSize": 3,
+    "maxSize": 100
+  },
   "workflow": {
     "intervalMs": 60000,
     "articles": 3
@@ -225,6 +229,10 @@ const ConfigSchema = z.object({
   monitor: z.object({
     minSummaryLength: z.number().min(1),
     schemaErrorRateAlertThreshold: z.number().min(0).max(1),
+  }),
+  dlq: z.object({
+    reprocessBatchSize: z.number().min(1),
+    maxSize: z.number().min(1),
   }),
   workflow: z.object({
     intervalMs: z.number().min(1000),
@@ -272,6 +280,19 @@ Sam backoff nie wystarczy — bez jittera wszystkie instancje ruszają jednocze�
 | HTTP 400 (zły prompt) | Nie | Prompt się nie naprawi sam |
 
 `p-retry` rozróżnia błędy przez `AbortError` — rzucamy go dla błędów, których nie chcemy retryować (np. 400).
+
+### Uwaga: kolejność retry i circuit breaker
+
+**Retry musi być na zewnątrz circuit breakera — nie w środku.**
+
+```
+❌ źle:  breaker.fire() → [retry x4 wewnątrz] → wynik
+✅ dobrze: retry → breaker.fire() → API
+```
+
+Jeśli retry jest zagnieżdżony wewnątrz wywołania, które owija circuit breaker, breaker widzi jedno wywołanie trwające kilka minut — nieważne, że wewnątrz było 4 próby. Błędy przejściowe nie liczą się do progu otwarcia, bo breaker nie wie, że były ponawiane.
+
+Przy prawidłowej kolejności: każda próba retry wywołuje `breaker.fire()` osobno, więc wszystkie błędy rejestrują się w liczniku breakera.
 
 ### Implementacja w `llm-client.ts`
 
@@ -382,6 +403,31 @@ log.warn({ layer: "quality", check: "length", chars: 12 }, "output too short");
 log.error({ layer: "quality", check: "canary" }, "canary failed");
 ```
 
+#### Warstwa 3 — Zod dla outputu LLM
+
+Projekt używa Zod do walidacji `config.json`. Ten sam wzorzec powinien obowiązywać dla outputu LLM — zamiast ręcznego sprawdzania pól:
+
+```typescript
+// src/services/monitor.ts — zamiast ad-hoc if (!output.summary)
+import { z } from "zod";
+import { config } from "../config.js";
+
+export const SummarySchema = z.object({
+  summary: z.string().min(config.monitor.minSummaryLength),
+  topics: z.array(z.string()).min(1),
+});
+
+export type Summary = z.infer<typeof SummarySchema>;
+
+// w index.ts po otrzymaniu outputu z LLM:
+const result = SummarySchema.safeParse(JSON.parse(raw));
+if (!result.success) {
+  log.warn({ layer: "quality", check: "schema", errors: result.error.issues }, "schema error");
+}
+```
+
+Zod daje strukturalne błędy walidacji — wiadomo dokładnie, które pole jest nieprawidłowe i dlaczego.
+
 #### Canary check — jak to działa?
 
 > **Analogia:** Zegarek sprawdzasz przez porównanie z zegarem wzorcowym — nie z własną pamięcią. Canary to taki zegar wzorcowy dla LLM.
@@ -411,6 +457,17 @@ export async function runHealthCheck(): Promise<boolean> {
 | Osobna funkcja przed runem | Prosta, testowalna, niezależna od liczby artykułów |
 
 `runHealthCheck()` jest wywoływana w `index.ts` **przed** każdym runem. Jeśli zwróci `false` — run jest pomijany i logowany jako błąd.
+
+**Uwaga: canary kosztuje tokeny.** Wywołanie LLM co minutę tylko po to, żeby sprawdzić czy API działa, to realny overhead. Lepsze podejście: uruchamiać canary raz na N runów lub wyłącznie gdy poprzedni run miał błędy.
+
+```typescript
+// Canary co 10 runów lub po błędzie
+const shouldRunCanary = runCount % 10 === 0 || lastRunHadErrors;
+if (shouldRunCanary) {
+  const healthy = await runHealthCheck();
+  if (!healthy) { /* pomiń run */ }
+}
+```
 
 ---
 
@@ -467,7 +524,7 @@ export function createLLMBreaker(fn: (...args: unknown[]) => Promise<unknown>) {
 }
 ```
 
-Circuit breaker **opakowuje** wywołanie LLM w `llm-client.ts`. Gdy breaker jest otwarty — zadanie trafia bezpośrednio do DLQ bez czekania na timeout.
+Circuit breaker **opakowuje pojedyncze wywołanie HTTP** — nie całą funkcję `callLLM` z retry w środku. Retry jest odpowiedzialne za ponawianie prób, circuit breaker za liczenie ich wyników. Gdy breaker jest otwarty — zadanie trafia bezpośrednio do DLQ bez czekania na timeout.
 
 ### Który błąd otwiera breaker?
 
@@ -559,7 +616,7 @@ Limit 3 zadania z DLQ per run zapobiega blokowaniu przetwarzania nowych artykuł
 ```typescript
 // src/index.ts — przed fetchArticles()
 if (!cliOpts.dryRun && breakerState === "closed") {
-  const dlqItems = getDLQPending(3);
+  const dlqItems = getDLQPending(config.dlq.reprocessBatchSize); // nie hardcode 3
   for (const item of dlqItems) {
     try {
       await processArticle(item.payload);
@@ -587,6 +644,17 @@ pending → manual_review   (błąd przy ponownej próbie — wymaga ręcznego s
 | `manual_review` | Nie udało się ponownie — wymaga ręcznej interwencji |
 
 **Warunek reprocessingu:** circuit breaker musi być zamknięty. Gdy jest otwarty — DLQ rośnie, ale nie próbujemy ponownie (usługa i tak nie odpowiada). Gdy breaker się zamknie — następny run automatycznie zaczyna nadrabiać zaległości.
+
+**Uwaga: deduplikacja między DLQ a świeżą listą artykułów.** Jeśli artykuł jest w DLQ i jednocześnie wróci do top stories, zostanie przetworzony dwa razy. Normalny fetch pomija go przez `fs.existsSync` (plik już istnieje), ale reprocessing DLQ nie sprawdza tego warunku. Przed reprocessingiem należy sprawdzić, czy plik wyjściowy już istnieje.
+
+**Uwaga: backpressure.** Jeśli DLQ rośnie szybciej niż jest opróżniana, należy spowolnić pobieranie nowych artykułów:
+
+```typescript
+if (getDLQSize() > config.dlq.maxSize) {
+  log.warn({ layer: "pipeline", dlqSize: getDLQSize() }, "DLQ backpressure — skipping new articles");
+  continue;
+}
+```
 
 ---
 
@@ -640,7 +708,18 @@ Logi zapisywane do `logs/app.log` w formacie czytelnym dla człowieka:
 [2026-06-08 10:01:10] [ERROR] canary failed — sprawdz model!
 ```
 
-`pino` konfigurujemy z transportem plikowym i formatowaniem przez `pino-pretty`:
+`pino` konfigurujemy z transportem plikowym i formatowaniem przez `pino-pretty`.
+
+**Uwaga: `pino-pretty` w produkcji.** Pretty printing dodaje overhead serializacji. Docelowy setup:
+- dev: `pino-pretty` do konsoli
+- produkcja: surowy JSON do pliku, parsowany przez zewnętrzne narzędzie (Loki, CloudWatch, grep)
+
+```typescript
+// Wykrywanie środowiska przez zmienną
+const isDev = process.env.NODE_ENV !== "production";
+```
+
+
 
 ```typescript
 // src/services/monitor.ts
@@ -935,6 +1014,137 @@ All settings live in `config.json` — no hardcoded values in code:
 | `monitor.minSummaryLength` | Alert if output shorter than N chars |
 | `workflow.intervalMs` | How often to run the workflow |
 | `workflow.articles` | How many articles to fetch per run |
+
+---
+
+---
+
+## Rozszerzenia i znane pułapki
+
+### Architektura
+
+**`monitor.ts` — podział odpowiedzialności**
+
+`monitor.ts` pełni trzy role: konfiguruje logger (`pino`), uruchamia canary check i waliduje output. Logger powinien być osobnym modułem (`logger.ts`), żeby pozostałe serwisy mogły go importować bez ryzyka circular dependency:
+
+```
+src/services/
+├── logger.ts         ← tylko pino setup i export log
+├── monitor.ts        ← canary check + walidacja outputu (importuje logger.ts)
+├── llm-client.ts     ← importuje logger.ts bezpośrednio
+└── ...
+```
+
+**`simulate.ts` — dependency injection zamiast mocków w kodzie produkcyjnym**
+
+Obecne podejście wstrzykuje mock bezpośrednio do kodu produkcyjnego przez `simulate.ts`. Powoduje to, że kod produkcyjny zawiera logikę testową. Lepszy wzorzec: `callLLM` i `fetchArticles` przyjmują opcjonalny `httpClient` — w testach i symulacjach podajesz mock, w produkcji używasz domyślnego.
+
+```typescript
+// zamiast globalnego flaga w simulate.ts
+export async function callLLM(text: string, http = defaultHttpClient) { ... }
+```
+
+---
+
+### Obserwowalność
+
+**Health endpoint HTTP**
+
+Długo działający workflow powinien być monitorowalny bez czytania logów. Prosty endpoint na `localhost:3001/health` (bez żadnego frameworka — `http.createServer`):
+
+```typescript
+import http from "http";
+
+http.createServer((req, res) => {
+  if (req.url === "/health") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({
+      breakerState: breaker.status.stats,
+      dlqPending: getDLQSize(),
+      lastRunAt: lastRunTimestamp,
+      lastRunErrors: lastRunErrorCount,
+    }));
+  }
+}).listen(3001);
+```
+
+**Token cost alerting**
+
+Layer 1 loguje tokeny per wywołanie, ale nie ma sumy per run ani alertu gdy koszt skacze:
+
+```typescript
+// W monitor.ts — po każdym runie
+const tokensThisRun = runMetrics.totalTokens;
+const baseline = getBaselineTokens(); // ruchoma średnia z N ostatnich runów
+if (tokensThisRun > baseline * 1.5) {
+  log.warn({ layer: "infra", tokens: tokensThisRun, baseline }, "token usage spike");
+}
+```
+
+---
+
+### Utrzymanie danych
+
+**Data retention dla `workspace/articles/`**
+
+Artykuły akumulują się bez końca. Brakuje:
+- licznika plików w Layer 2 Pipeline (ile artykułów łącznie w workspace)
+- komendy CLI do czyszczenia: `npm run dev -- --cleanup-older-than 7`
+
+```typescript
+// Prosta rotacja: usuń pliki starsze niż N dni
+const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+fs.readdirSync("workspace/articles")
+  .filter(f => fs.statSync(`workspace/articles/${f}`).mtimeMs < cutoff)
+  .forEach(f => fs.unlinkSync(`workspace/articles/${f}`));
+```
+
+To samo dotyczy wpisów w DLQ ze statusem `reprocessed` lub `manual_review` — rosną bezterminowo.
+
+---
+
+### Odporność
+
+**Multi-model fallback**
+
+OpenRouter obsługuje fallback na inny model gdy primary jest niedostępny. Projekt tego nie wykorzystuje, a to darmowa odporność bez dodatkowej logiki retry:
+
+```json
+"model": "anthropic/claude-haiku-4-5",
+"modelFallback": "google/gemini-flash-2.0"
+```
+
+```typescript
+// W llm-client.ts — przy HTTP 503 lub timeout
+const model = errorCount > 2 ? config.modelFallback : config.model;
+```
+
+---
+
+### Testy
+
+Architektura jest dobrze testowalana — czyste funkcje, config injection, wyraźne granice modułów. Minimum warte pokrycia:
+
+| Test | Co sprawdza |
+|------|-------------|
+| Circuit breaker state machine | Closed → Open → Half-open → Closed po progach |
+| DLQ push/pop/status transitions | `pending → reprocessed`, `pending → manual_review` |
+| Canary check z mock LLM | Zwraca `false` gdy output nie pasuje do schematu |
+| Zod schema validation | Poprawny i niepoprawny output LLM |
+| Retry backoff | Liczba prób i typy błędów, które trafiają do `AbortError` |
+
+---
+
+### Prompt
+
+**`src/prompts/summarize.md` — treść ma znaczenie dla Layer 3**
+
+Dokument opisuje walidację outputu (schema, length, canary), ale nigdy nie pokazuje treści prompta. Prompt musi:
+1. Explicite żądać JSON z polami `summary` i `topics`
+2. Definiować minimalną długość `summary` (spójność z `config.monitor.minSummaryLength`)
+3. Opisywać format `topics` (tablica stringów, nie obiekt, nie string)
+
+Bez tych wymagań w prompcie Layer 3 będzie regularnie zgłaszać błędy schema, które nie są błędem modelu — tylko niedospecyfikowanym promptem.
 
 ---
 
