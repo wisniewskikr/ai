@@ -7,12 +7,14 @@
 
 ## What is it?
 
-A TypeScript demo that shows two techniques for preventing silent AI workflow failures:
+A TypeScript demo showing four techniques that keep AI workflows alive when things go wrong.
 
-| Technique | What it does |
-|-----------|-------------|
-| **Retry (Exponential Backoff + Jitter)** | Retries failed API calls intelligently |
-| **Monitoring (3 layers)** | Watches if the workflow runs *and if the output makes sense* |
+| Technique | Analogy | What it does |
+|-----------|---------|--------------|
+| **Retry + Backoff** | Miss a bus? Wait, then try again | Retries failed API calls with increasing delays |
+| **Monitoring (3 layers)** | Doctor checking pulse + blood test + X-ray | Watches infra, data flow, *and* output quality |
+| **Circuit Breaker** | Electrical fuse that trips automatically | Stops hammering a broken API. Tries again later |
+| **Dead Letter Queue** | Post office "undeliverable" shelf | Saves failed jobs so nothing is lost |
 
 The demo fetches Hacker News articles every minute, sends them to an LLM via OpenRouter, and saves structured JSON summaries.
 
@@ -45,23 +47,44 @@ npm install
 ## Run
 
 ```bash
-npm run dev                        # loop, 3 articles/min
-npm run dev -- --articles 5 --once # run once, 5 articles
-npm run dev -- --dry-run           # fetch articles, skip LLM calls
-npm run dev -- --help              # show all options
+npm run dev
 ```
 
-### Options
+On startup you'll see an interactive menu:
 
-| Flag | Default | Description |
-|------|---------|-------------|
-| `--articles <n>` | 3 | Articles to process per run |
-| `--interval <ms>` | 60000 | Milliseconds between runs |
-| `--once` | false | Run once and exit |
-| `--dry-run` | false | Fetch articles, skip LLM calls |
+```
+AI Workflow — Silent Degradation Demo
+======================================
 
-Logs appear in the console and in `logs/app.log`.
-Articles are saved to `workspace/articles/`.
+? What do you want to do?
+  1) Run normally
+  2) Recover articles from DLQ
+  3) Simulate retry failure
+  4) Simulate monitoring failure (canary check)
+  5) Simulate Circuit Breaker failure
+  0) Exit
+```
+
+| Option | What happens |
+|--------|-------------|
+| **1** Run normally | Fetch articles, call LLM, save results |
+| **2** Recover from DLQ | Reprocess all failed articles and exit |
+| **3** Simulate retry failure | Watch exponential backoff in action (no real API calls) |
+| **4** Simulate canary failure | Watch monitoring catch output drift |
+| **5** Simulate Circuit Breaker | Watch the breaker trip: closed → open → half-open |
+| **0** Exit | Graceful shutdown |
+
+Options 3–5 use mock responses — **no tokens spent**.
+
+### CLI flags (skip the menu)
+
+```bash
+npm run dev -- --once              # run once and exit
+npm run dev -- --articles 5        # process 5 articles per run
+npm run dev -- --dry-run           # fetch articles, skip LLM calls
+npm run dev -- --reprocess-dlq     # recover from DLQ and exit
+npm run dev -- --help              # show all options
+```
 
 ---
 
@@ -69,38 +92,63 @@ Articles are saved to `workspace/articles/`.
 
 ```
 src/
-├── prompts/summarize.md    ← edit AI prompts here, no code changes needed
+├── prompts/summarize.md        ← edit AI prompts here, no code changes needed
 ├── services/
-│   ├── llm-client.ts       ← OpenRouter calls with p-retry
-│   ├── news-fetcher.ts     ← Hacker News API with mock fallback
-│   └── monitor.ts          ← 3-layer monitoring (pino)
+│   ├── llm-client.ts           ← OpenRouter calls with p-retry + circuit breaker
+│   ├── news-fetcher.ts         ← Hacker News API with mock fallback
+│   ├── circuit-breaker.ts      ← opossum circuit breaker (3 states)
+│   ├── dlq.ts                  ← Dead Letter Queue — SQLite
+│   └── monitor.ts              ← 3-layer monitoring (pino)
 ├── utils/
-│   ├── cli.ts              ← commander, ora spinners, chalk colors
-│   └── mock-articles.ts    ← fallback data for offline testing
-├── config.ts               ← Zod validation of config.json
-└── index.ts                ← entry point, runs the workflow loop
-workspace/articles/          ← output JSON files (one per article)
-logs/app.log                ← structured logs (auto-created)
-config.json                 ← all config values (no secrets)
-.env                        ← API keys (never commit!)
+│   ├── cli.ts                  ← inquirer menu, commander flags, ora, chalk
+│   ├── simulate.ts             ← mock responses for options 3–5
+│   └── mock-articles.ts        ← fallback data for offline testing
+├── config.ts                   ← Zod validation of config.json
+└── index.ts                    ← entry point, runs the workflow loop
+workspace/
+├── articles/                   ← output JSON files (one per article)
+└── dlq.db                      ← failed jobs (SQLite, auto-created)
+logs/app.log                    ← structured logs (auto-created)
+config.json                     ← all config values (no secrets)
+.env                            ← API keys (never commit!)
 ```
 
 ---
 
 ## Configuration
 
-All settings live in `config.json`:
+All settings live in `config.json` — no hardcoded values in code:
 
 | Key | What it controls |
-|-----|--------------------|
+|-----|-----------------|
 | `model` | LLM model via OpenRouter |
 | `retry.attempts` | Max retry attempts per LLM call |
 | `retry.factor` | Backoff multiplier (2 = doubles each time) |
 | `retry.minTimeoutMs` | Initial wait before first retry |
+| `circuitBreaker.failureThreshold` | % failures before breaker opens |
+| `circuitBreaker.timeoutMs` | Max time for a single LLM call |
+| `circuitBreaker.resetTimeoutMs` | How long breaker stays open before half-open |
 | `monitor.minSummaryLength` | Alert if summary shorter than N characters |
-| `monitor.schemaErrorRateAlertThreshold` | Alert threshold for JSON schema errors |
+| `dlq.reprocessBatchSize` | Max DLQ items to reprocess per run |
+| `dlq.maxSize` | Max DLQ size before backpressure kicks in |
 | `workflow.intervalMs` | How often to run (milliseconds) |
 | `workflow.articles` | Articles to fetch per run |
+
+---
+
+## How it works together
+
+```
+Every run:
+  1. Canary check (every 10 runs or after errors)
+  2. Reprocess pending DLQ items (if circuit is closed)
+  3. Fetch new articles from Hacker News
+     └── For each article:
+           retry → circuit breaker → LLM API
+                          ↓ on failure
+                       Dead Letter Queue
+  4. Log metrics (infra + pipeline + quality)
+```
 
 ---
 
@@ -125,11 +173,11 @@ Each processed article is saved as `workspace/articles/{timestamp}-{id}.json`:
 
 | Layer | What it checks |
 |-------|---------------|
-| **Layer 1 — Infra** | API response time, token usage, error rate |
-| **Layer 2 — Pipeline** | Throughput, retry rate, failed articles |
+| **Layer 1 — Infra** | API latency, token usage, error rate, circuit breaker state |
+| **Layer 2 — Pipeline** | Throughput, retry rate, failed count, DLQ size |
 | **Layer 3 — Quality** | JSON schema validity, summary length, canary check |
 
-The **canary check** runs before every batch: it sends a simple prompt with a known correct answer (`{"ok": true}`) to detect model drift or API issues before processing real articles.
+The **canary check** sends a simple prompt with a known answer (`{"ok": true}`) to detect model drift before processing real articles. Runs every 10 cycles or after any failure.
 
 ---
 
