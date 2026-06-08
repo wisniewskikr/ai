@@ -53,8 +53,14 @@ export async function callLLM(
     }
   );
 
-  const content = response.choices[0]?.message?.content ?? "{}";
-  return { content, latencyMs: Date.now() - start };
+  const raw = response.choices[0]?.message?.content ?? "{}";
+  return { content: stripMarkdownFences(raw), latencyMs: Date.now() - start };
+}
+
+// Some models wrap JSON in ```json ... ``` despite response_format: json_object
+function stripMarkdownFences(text: string): string {
+  const match = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+  return match ? match[1]!.trim() : text.trim();
 }
 
 export async function runCanaryCheck(): Promise<boolean> {
@@ -69,7 +75,7 @@ export async function runCanaryCheck(): Promise<boolean> {
       { retries: 2, minTimeout: 500, factor: 2 }
     );
 
-    const content = res.choices[0]?.message?.content ?? "{}";
+    const content = stripMarkdownFences(res.choices[0]?.message?.content ?? "{}");
     const parsed = JSON.parse(content);
     const passed = parsed?.ok === true;
     log.info({ layer: "quality", check: "canary", passed }, "health check");
