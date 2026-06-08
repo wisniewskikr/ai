@@ -55,6 +55,8 @@ Dwa wywołania HTTP — bez żadnych zależności:
 
 Artykuły mają pole `text` (posty z dyskusji) lub `url` (linki zewnętrzne). Na potrzeby demo używamy `title` + `text` jako wejście do LLM.
 
+**Kolejność pobierania:** `/v0/topstories.json` zwraca do 500 ID posortowanych według aktualnego rankingu HN (punkty + świeżość). Pobieramy pierwsze N z listy — czyli zawsze **top N najbardziej popularnych** w danej chwili, gdzie N = `workflow.articles` z `config.json`.
+
 **Fallback — mock lokalny**
 
 Jeśli HN API nie odpowiada (test offline, CI), `news-fetcher.ts` zwraca listę 5 przykładowych artykułów z pliku `mock-articles.ts`. Retry i monitoring działają identycznie.
