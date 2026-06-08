@@ -1,0 +1,16 @@
+{
+  "model": "anthropic/claude-haiku-4-5",
+  "retry": {
+    "attempts": 4,
+    "minTimeoutMs": 1000,
+    "factor": 2
+  },
+  "monitor": {
+    "minSummaryLength": 50,
+    "schemaErrorRateAlertThreshold": 0.05
+  },
+  "workflow": {
+    "intervalMs": 60000,
+    "articles": 3
+  }
+}
