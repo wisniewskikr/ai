@@ -697,31 +697,36 @@ if (getDLQSize() > config.dlq.maxSize) {
 
 ## Co zobaczysz w konsoli
 
-Po każdym runie wyniki są prezentowane w tabeli — jeden wiersz na artykuł:
+Podczas przetwarzania każdy artykuł pokazuje spinner z postępem (retry, done, failed). Po zakończeniu wszystkich artykułów w runie pojawia się tabela — jeden wiersz na artykuł — a następnie summary:
 
 ```
-Run #1 Summary
-  Canary: ok  |  DLQ: 2 pending  |  Avg latency: 891ms
+  [1/3] Processing: "OpenAI raises $40B at $300B valuation"
+        ✔ Done (891ms)
+  [2/3] Processing: "TypeScript 5.8 released"
+        ⚠ Retry 1/4 — rate limit (429)...
+        ✔ Done (2103ms)
+  [3/3] Processing: "Show HN: I built a..."
+        ✖ Failed: Breaker is open
 
-  Article                              Retries  Breaker  Schema  Length  Status
-  ───────────────────────────────────────────────────────────────────────────────
-  OpenAI raises $40B at $300B val...      0       ok       ok      ok    ✓ saved
-  TypeScript 5.8 released                 2       ok       ok      ok    ✓ saved
-  Show HN: I built a...                   3       open     -       -     ✗ DLQ
+  Article                                 Retries  Breaker  Schema  Length  Status
+  ──────────────────────────────────────────────────────────────────────────────────
+  OpenAI raises $40B at $300B valuation      0       ok       ok      ok    ✓ saved
+  TypeScript 5.8 released                    1       ok       ok      ok    ✓ saved
+  Show HN: I built a...                      3       open     -       -     ✗ DLQ
 ```
 
 Kolumny tabeli:
 
 | Kolumna | Co pokazuje |
 |---------|-------------|
-| **Article** | Tytuł artykułu (skrócony do ~35 znaków) |
-| **Retries** | Liczba ponownych prób przed sukcesem lub DLQ |
-| **Breaker** | Stan circuit breakera gdy artykuł był przetwarzany (`ok` / `open`) |
+| **Article** | Tytuł artykułu (skrócony do 38 znaków) |
+| **Retries** | Liczba ponownych prób przed sukcesem lub DLQ (żółty gdy > 0) |
+| **Breaker** | Stan circuit breakera w momencie przetwarzania (`ok` / `open`) |
 | **Schema** | Walidacja JSON outputu — czy ma pola `summary` i `topics` |
-| **Length** | Czy podsumowanie ma wymaganą minimalną długość |
-| **Status** | `✓ saved` / `✗ DLQ` / `→ skipped` |
+| **Length** | Czy podsumowanie spełnia minimalną długość z `config.json` |
+| **Status** | `✓ saved` / `✗ DLQ` / `→ skipped` / `(dry-run)` |
 
-Canary check jest per-run (nie per-artykuł) — wyświetlany nad tabelą w sekcji summary.
+Wartość `-` oznacza kolumnę bez znaczenia (np. schema i length gdy breaker był otwarty — LLM nie był wywołany). Canary check jest per-run — wyświetlany w sekcji summary pod tabelą.
 
 Logi szczegółowe zapisywane do `logs/app.log` w formacie czytelnym dla człowieka:
 

@@ -173,29 +173,34 @@ Each processed article is saved as `workspace/articles/{timestamp}-{id}.json`:
 
 ## Console output
 
-After each run, results are shown as a table — one row per article:
+Each article shows a live spinner during processing. After all articles finish, a table summarises the run — one row per article:
 
 ```
-Run #1 Summary
-  Canary: ok  |  DLQ: 2 pending  |  Avg latency: 891ms
+  [1/3] Processing: "OpenAI raises $40B at $300B valuation"
+        ✔ Done (891ms)
+  [2/3] Processing: "TypeScript 5.8 released"
+        ⚠ Retry 1/4 — rate limit (429)...
+        ✔ Done (2103ms)
+  [3/3] Processing: "Show HN: I built a..."
+        ✖ Failed: Breaker is open
 
-  Article                              Retries  Breaker  Schema  Length  Status
-  ───────────────────────────────────────────────────────────────────────────────
-  OpenAI raises $40B at $300B val...      0       ok       ok      ok    ✓ saved
-  TypeScript 5.8 released                 2       ok       ok      ok    ✓ saved
-  Show HN: I built a...                   3       open     -       -     ✗ DLQ
+  Article                                 Retries  Breaker  Schema  Length  Status
+  ──────────────────────────────────────────────────────────────────────────────────
+  OpenAI raises $40B at $300B valuation      0       ok       ok      ok    ✓ saved
+  TypeScript 5.8 released                    1       ok       ok      ok    ✓ saved
+  Show HN: I built a...                      3       open     -       -     ✗ DLQ
 ```
 
 | Column | What it shows |
 |--------|--------------|
-| **Article** | Title (truncated to ~35 chars) |
-| **Retries** | Number of retries before success or DLQ |
-| **Breaker** | Circuit breaker state when article was processed (`ok` / `open`) |
+| **Article** | Title (truncated to 38 chars) |
+| **Retries** | Retry count (yellow when > 0) |
+| **Breaker** | Circuit breaker state at processing time (`ok` / `open`) |
 | **Schema** | Whether LLM output has required `summary` and `topics` fields |
-| **Length** | Whether summary meets minimum length |
-| **Status** | `✓ saved` / `✗ DLQ` / `→ skipped` |
+| **Length** | Whether summary meets minimum length from `config.json` |
+| **Status** | `✓ saved` / `✗ DLQ` / `→ skipped` / `(dry-run)` |
 
-Canary check is per-run (not per-article) — shown above the table in the summary header.
+`-` means not applicable (e.g. schema and length when breaker was open — LLM was never called). Canary check is per-run, shown in the summary section below the table.
 
 ---
 
