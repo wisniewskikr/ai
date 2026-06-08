@@ -18,7 +18,7 @@ Prosty projekt TypeScript + OpenRouter, który demonstruje dwie techniki zapobie
 
 ## Propozycja projektu: "News Summarizer"
 
-**Scenariusz:** Co minutę pobieramy tekst artykułu, wysyłamy do LLM przez OpenRouter i dostajemy podsumowanie w JSON.
+**Scenariusz:** Co minutę pobieramy artykuł z Hacker News, wysyłamy do LLM przez OpenRouter i dostajemy podsumowanie w JSON.
 
 **Dlaczego to dobre demo?**
 
@@ -28,15 +28,50 @@ Prosty projekt TypeScript + OpenRouter, który demonstruje dwie techniki zapobie
 
 ---
 
+## Źródło artykułów
+
+### Hacker News API
+
+**Dlaczego Hacker News?**
+
+| Cecha | Wartość |
+|-------|---------|
+| Koszt | Darmowe, bez limitu |
+| Klucz API | Nie wymagany |
+| Format | JSON — bez parsowania XML |
+| Dostępność | Bardzo stabilne (Firebase) |
+
+**Jak pobieramy artykuły?**
+
+Dwa wywołania HTTP — bez żadnych zależności:
+
+```
+1. GET https://hacker-news.firebaseio.com/v0/topstories.json
+   → lista ID: [43821, 43820, 43819, ...]
+
+2. GET https://hacker-news.firebaseio.com/v0/item/43821.json
+   → { title, url, text, score, by, time }
+```
+
+Artykuły mają pole `text` (posty z dyskusji) lub `url` (linki zewnętrzne). Na potrzeby demo używamy `title` + `text` jako wejście do LLM.
+
+**Fallback — mock lokalny**
+
+Jeśli HN API nie odpowiada (test offline, CI), `news-fetcher.ts` zwraca listę 5 przykładowych artykułów z pliku `mock-articles.ts`. Retry i monitoring działają identycznie.
+
+---
+
 ## Struktura projektu
 
 ```
 js-ai-aiworkflow-basic/
 ├── src/
-│   ├── index.ts          # punkt wejścia, uruchamia workflow w pętli
-│   ├── llm-client.ts     # wywołanie OpenRouter z retry
-│   ├── retry.ts          # Exponential Backoff + Jitter
-│   └── monitor.ts        # 3 warstwy monitoringu
+│   ├── index.ts            # punkt wejścia, uruchamia workflow w pętli
+│   ├── news-fetcher.ts     # pobiera artykuły z Hacker News API
+│   ├── mock-articles.ts    # fallback — lokalne dane testowe
+│   ├── llm-client.ts       # wywołanie OpenRouter z retry
+│   ├── retry.ts            # Exponential Backoff + Jitter
+│   └── monitor.ts          # 3 warstwy monitoringu
 ├── .env.example
 ├── package.json
 └── Agents.md
@@ -177,7 +212,12 @@ quality: {
 ## Jak to działa razem — przepływ danych
 
 ```
-[input: tekst artykułu]
+[news-fetcher.ts]
+  Hacker News API
+  └── fallback: mock-articles.ts
+        |
+        v
+[input: title + text artykułu]
         |
         v
 [llm-client.ts]
