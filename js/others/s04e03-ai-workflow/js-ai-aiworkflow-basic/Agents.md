@@ -66,14 +66,54 @@ Jeśli HN API nie odpowiada (test offline, CI), `news-fetcher.ts` zwraca listę 
 ```
 js-ai-aiworkflow-basic/
 ├── src/
-│   ├── index.ts            # punkt wejścia, uruchamia workflow w pętli
-│   ├── news-fetcher.ts     # pobiera artykuły z Hacker News API
-│   ├── mock-articles.ts    # fallback — lokalne dane testowe
-│   ├── llm-client.ts       # wywołanie OpenRouter z p-retry
-│   └── monitor.ts          # 3 warstwy monitoringu (pino)
-├── .env.example
+│   ├── prompts/
+│   │   └── summarize.md        # prompt do podsumowania artykułu (edytowalny bez zmian kodu)
+│   ├── services/
+│   │   ├── news-fetcher.ts     # pobiera artykuły z Hacker News API
+│   │   ├── llm-client.ts       # wywołanie OpenRouter z p-retry
+│   │   └── monitor.ts          # 3 warstwy monitoringu (pino)
+│   ├── utils/
+│   │   └── mock-articles.ts    # fallback — lokalne dane testowe
+│   └── index.ts                # punkt wejścia, uruchamia workflow w pętli
+├── logs/                        # logi aplikacji (tworzone automatycznie)
+├── config.json                  # timeouty, limity, model, progi monitoringu
+├── .env                         # klucze API (nie commituj!)
+├── .env.example                 # szablon zmiennych środowiskowych
 ├── package.json
-└── Agents.md
+└── Readme.md                    # dokumentacja projektu (angielski)
+```
+
+### Co idzie gdzie?
+
+| Plik | Co zawiera |
+|------|------------|
+| `src/prompts/summarize.md` | Prompt do LLM — edytujesz treść bez dotykania kodu |
+| `src/services/llm-client.ts` | Wywołanie OpenRouter z `p-retry` |
+| `src/services/news-fetcher.ts` | Pobieranie artykułów z HN API |
+| `src/services/monitor.ts` | Zbieranie i logowanie metryk (3 warstwy) |
+| `src/utils/mock-articles.ts` | Fallback — dane testowe gdy HN nie odpowiada |
+| `config.json` | Wszystkie zmienne konfiguracyjne (bez sekretów) |
+| `logs/app.log` | Logi z każdego uruchomienia |
+
+### `config.json` — przykład
+
+```json
+{
+  "model": "anthropic/claude-haiku-4-5",
+  "retry": {
+    "attempts": 4,
+    "minTimeoutMs": 1000,
+    "factor": 2
+  },
+  "monitor": {
+    "canaryIntervalCalls": 5,
+    "minSummaryLength": 50,
+    "schemaErrorRateAlertThreshold": 0.05
+  },
+  "workflow": {
+    "intervalMs": 60000
+  }
+}
 ```
 
 ---
@@ -206,45 +246,57 @@ log.error({ layer: "quality", check: "canary" }, "canary failed");
 ## Jak to działa razem — przepływ danych
 
 ```
-[news-fetcher.ts]
+[services/news-fetcher.ts]
   Hacker News API
-  └── fallback: mock-articles.ts
+  └── fallback: utils/mock-articles.ts
         |
         v
 [input: title + text artykułu]
         |
         v
-[llm-client.ts]
-  └── withRetry() ──► OpenRouter API
-        |                    |
-        |              sukces / błąd
-        |                    |
-        v                    v
-[monitor.ts]          [retry.ts]
-  Warstwa 1           Exponential
-  Warstwa 2           Backoff +
-  Warstwa 3           Jitter
+[services/llm-client.ts]
+  prompts/summarize.md ──► p-retry ──► OpenRouter API
+        |                                    |
+        |                             sukces / błąd
+        |                                    |
+        v                                    v
+[services/monitor.ts]           Exponential Backoff
+  Warstwa 1: Infrastruktura      + Jitter (p-retry)
+  Warstwa 2: Pipeline
+  Warstwa 3: Jakość outputu
         |
         v
-[output: JSON] lub [alert w konsoli]
+[output: JSON] + [logs/app.log]
 ```
 
 ---
 
 ## Co zobaczysz w konsoli
 
-`pino` wypisuje JSON — jeden rekord na linię:
+Logi zapisywane do `logs/app.log` w formacie czytelnym dla człowieka:
 
 ```
-{"level":30,"layer":"infra","latencyMs":342,"status":200,"msg":"llm call"}
-{"level":40,"layer":"infra","attempt":2,"error":"rate limit","msg":"retry"}
-{"level":40,"layer":"infra","attempt":3,"error":"rate limit","msg":"retry"}
-{"level":30,"layer":"pipeline","processed":12,"retries":2,"failed":0,"msg":"pipeline stats"}
-{"level":30,"layer":"quality","check":"schema","msg":"schema ok"}
-{"level":50,"layer":"quality","check":"canary","msg":"canary failed"}
+[2026-06-08 10:01:00] [INFO]  llm call | latency=342ms status=200
+[2026-06-08 10:01:01] [WARN]  retry attempt=2 error="rate limit (429)"
+[2026-06-08 10:01:05] [WARN]  retry attempt=3 error="rate limit (429)"
+[2026-06-08 10:01:10] [INFO]  pipeline stats | processed=12 retries=2 failed=0
+[2026-06-08 10:01:10] [INFO]  quality check | schema=ok length=ok canary=ok
+[2026-06-08 10:01:10] [ERROR] canary failed — sprawdz model!
 ```
 
-Poziomy logów `pino`: `10` trace · `20` debug · `30` info · `40` warn · `50` error · `60` fatal
+`pino` konfigurujemy z transportem plikowym i formatowaniem przez `pino-pretty`:
+
+```typescript
+// src/services/monitor.ts
+export const log = pino({
+  transport: {
+    targets: [
+      { target: "pino-pretty", options: { destination: "logs/app.log" } },
+      { target: "pino-pretty", options: { colorize: true } },  // konsola
+    ],
+  },
+});
+```
 
 ---
 
@@ -252,12 +304,13 @@ Poziomy logów `pino`: `10` trace · `20` debug · `30` info · `40` warn · `50
 
 | Co | Technologia |
 |----|-------------|
-| Jezyk | TypeScript |
+| Jezyk | TypeScript (strict mode) |
 | LLM API | OpenRouter |
 | Runtime | Node.js (tsx) |
 | Retry | `p-retry` — Exponential Backoff + Jitter + AbortError |
-| Logging | `pino` — strukturalne logi JSON |
+| Logging | `pino` + `pino-pretty` — logi do konsoli i `logs/app.log` |
 | LLM SDK | `openai` (kompatybilne z OpenRouter) |
+| Konfiguracja | `config.json` — bez hardcodowania wartości w kodzie |
 
 ---
 
