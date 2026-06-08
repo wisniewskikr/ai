@@ -7,12 +7,14 @@
 
 ## Co to jest?
 
-Prosty projekt TypeScript + OpenRouter, który demonstruje dwie techniki zapobiegania cichej degradacji:
+Prosty projekt TypeScript + OpenRouter, który demonstruje cztery techniki zapobiegania cichej degradacji:
 
 | Technika | Co robi |
 |----------|---------|
 | **Retry z Exponential Backoff + Jitter** | Inteligentnie ponawia nieudane wywołania API |
 | **Monitoring (3 warstwy)** | Obserwuje czy workflow działa *i czy wynik ma sens* |
+| **Circuit Breaker** | Chroni przed kaskadą awarii — zatrzymuje żądania gdy usługa pada |
+| **Dead Letter Queue** | Chroni przed utratą danych — przechowuje nieudane zadania do ponownego przetworzenia |
 
 ---
 
@@ -92,6 +94,8 @@ js-ai-aiworkflow-full/
 │   ├── services/
 │   │   ├── news-fetcher.ts     # pobiera artykuły z Hacker News API
 │   │   ├── llm-client.ts       # wywołanie OpenRouter z p-retry
+│   │   ├── circuit-breaker.ts  # circuit breaker (opossum) — 3 stany
+│   │   ├── dlq.ts              # Dead Letter Queue — SQLite przez better-sqlite3
 │   │   └── monitor.ts          # 3 warstwy monitoringu (pino)
 │   ├── utils/
 │   │   ├── cli.ts              # commander, ora spinners, chalk colors
@@ -99,7 +103,8 @@ js-ai-aiworkflow-full/
 │   ├── config.ts               # walidacja config.json przez Zod (fail-fast na starcie)
 │   └── index.ts                # punkt wejścia, uruchamia workflow w pętli
 ├── workflow/
-│   └── articles/                # pobrane artykuły — każdy w osobnym pliku JSON
+│   ├── articles/                # pobrane artykuły — każdy w osobnym pliku JSON
+│   └── dlq.db                   # Dead Letter Queue — SQLite (tworzona automatycznie)
 ├── logs/                        # logi aplikacji (tworzone automatycznie)
 ├── config.json                  # timeouty, limity, model, progi monitoringu
 ├── .env                         # klucze API (nie commituj!)
@@ -115,11 +120,14 @@ js-ai-aiworkflow-full/
 | `src/prompts/summarize.md` | Prompt do LLM — edytujesz treść bez dotykania kodu |
 | `src/services/llm-client.ts` | Wywołanie OpenRouter z `p-retry` |
 | `src/services/news-fetcher.ts` | Pobieranie artykułów z HN API |
+| `src/services/circuit-breaker.ts` | Circuit breaker (`opossum`) — 3 stany: zamknięty / otwarty / półotwarty |
+| `src/services/dlq.ts` | Dead Letter Queue — SQLite, nieudane zadania do ponownego przetworzenia |
 | `src/services/monitor.ts` | Zbieranie i logowanie metryk (3 warstwy) |
 | `src/utils/cli.ts` | Commander flags, ora spinners, chalk colors |
 | `src/utils/mock-articles.ts` | Fallback — dane testowe gdy HN nie odpowiada |
 | `src/config.ts` | Zod schema + walidacja `config.json` przy starcie |
 | `workflow/articles/` | Pobrane artykuły — każdy w osobnym pliku JSON |
+| `workflow/dlq.db` | Dead Letter Queue — SQLite (tworzona automatycznie) |
 | `config.json` | Wszystkie zmienne konfiguracyjne (bez sekretów) |
 | `logs/app.log` | Logi z każdego uruchomienia |
 
@@ -174,6 +182,11 @@ Haiku to najszybszy i najtańszy model Claude — idealny do powtarzalnych, pros
     "minTimeoutMs": 1000,
     "factor": 2
   },
+  "circuitBreaker": {
+    "failureThreshold": 5,
+    "successThreshold": 2,
+    "timeoutMs": 60000
+  },
   "monitor": {
     "minSummaryLength": 50,
     "schemaErrorRateAlertThreshold": 0.05
@@ -201,6 +214,11 @@ const ConfigSchema = z.object({
     attempts: z.number().min(1),
     minTimeoutMs: z.number().min(0),
     factor: z.number().min(1),
+  }),
+  circuitBreaker: z.object({
+    failureThreshold: z.number().min(1),
+    successThreshold: z.number().min(1),
+    timeoutMs: z.number().min(1000),
   }),
   monitor: z.object({
     minSummaryLength: z.number().min(1),
@@ -336,11 +354,13 @@ log.error({ layer: "infra", status: 429 }, "rate limit hit");
 |---------|-------------|
 | Throughput | Ile zadań przetworzyliśmy na minutę |
 | Retry rate | Ile % wywołań wymagało retry |
-| Błędy po wyczerpaniu retry | Ile zadań "przepadło" |
+| Błędy po wyczerpaniu retry | Ile zadań trafiło do DLQ |
+| DLQ fill rate | Ile zadań czeka na ponowne przetworzenie |
+| Circuit breaker state | Czy breaker jest zamknięty / otwarty / półotwarty |
 
 ```typescript
 // Warstwa 2 — log po każdym zadaniu
-log.info({ layer: "pipeline", processed, retries, failed }, "pipeline stats");
+log.info({ layer: "pipeline", processed, retries, failed, dlqSize, breakerState }, "pipeline stats");
 ```
 
 ### Warstwa 3: Jakość outputu
@@ -392,6 +412,138 @@ export async function runHealthCheck(): Promise<boolean> {
 
 ---
 
+## Technika 3: Circuit Breaker (`opossum`)
+
+### Analogia
+
+> Bezpiecznik elektryczny. Gdy prąd jest za duży — wyłącza się automatycznie, chroniąc resztę instalacji.
+
+### Trzy stany
+
+```
+[ZAMKNIĘTY] ──── za dużo błędów ───► [OTWARTY]
+     ▲                                    │
+     │                               po timeoutMs
+     │                                    │
+[PÓŁOTWARTY] ◄──────────────────────────────
+     │
+     ├── próba się udała → [ZAMKNIĘTY]
+     └── próba się nie udała → [OTWARTY]
+```
+
+| Stan | Co się dzieje |
+|------|---------------|
+| **Zamknięty** | Wszystko działa — żądania przechodzą normalnie |
+| **Otwarty** | Usługa pada — żądania blokowane natychmiast, bez czekania na timeout |
+| **Półotwarty** | Jedno próbne żądanie — test czy usługa wróciła |
+
+**Dlaczego to ważne w AI?** Każdy provider (OpenAI, Anthropic) miał w ostatnim roku incydenty. Bez circuit breakera — spalasz tokeny na żądania, które *nigdy* się nie powiodą.
+
+**Uwaga:** W AI musisz zdefiniować co to "błąd". Timeout? Jasne. HTTP 500? Jasne. Odpowiedź z kodem 200 zawierająca halucynację? To problem dla walidacji outputu (Warstwa 3).
+
+### Implementacja w `circuit-breaker.ts`
+
+```typescript
+import CircuitBreaker from "opossum";
+import { config } from "../config.js";
+
+const options = {
+  errorThresholdPercentage: config.circuitBreaker.failureThreshold,
+  successThreshold: config.circuitBreaker.successThreshold,
+  timeout: config.circuitBreaker.timeoutMs,
+  resetTimeout: config.circuitBreaker.timeoutMs,
+};
+
+export function createLLMBreaker(fn: (...args: unknown[]) => Promise<unknown>) {
+  const breaker = new CircuitBreaker(fn, options);
+
+  breaker.on("open",     () => log.error({ layer: "infra", breaker: "open" },       "circuit breaker opened"));
+  breaker.on("halfOpen", () => log.warn({ layer: "infra", breaker: "half-open" },   "circuit breaker half-open"));
+  breaker.on("close",    () => log.info({ layer: "infra", breaker: "closed" },      "circuit breaker closed"));
+
+  return breaker;
+}
+```
+
+Circuit breaker **opakowuje** wywołanie LLM w `llm-client.ts`. Gdy breaker jest otwarty — zadanie trafia bezpośrednio do DLQ bez czekania na timeout.
+
+### Który błąd otwiera breaker?
+
+| Błąd | Otwiera breaker? |
+|------|-----------------|
+| HTTP 500 / timeout | Tak — liczy się do progu |
+| HTTP 429 (rate limit) | Tak — zbyt wiele = usługa niedostępna |
+| HTTP 400 (zły prompt) | Nie — wina klienta, nie serwera |
+| Błąd walidacji JSON | Nie — serwer odpowiedział, wynik był zły |
+
+---
+
+## Technika 4: Dead Letter Queue (`better-sqlite3`)
+
+### Analogia
+
+> Skrzynka "do wyjaśnienia" na poczcie. Paczka, której nie można dostarczyć, nie znika — czeka na ręczne sprawdzenie.
+
+Gdy retry się wyczerpie **i** circuit breaker jest otwarty — dane muszą gdzieś trafić. Bez DLQ te zadania po prostu znikają.
+
+### Schemat tabeli SQLite
+
+| Kolumna | Opis |
+|---------|------|
+| `id` | Autoinkrementowany klucz |
+| `timestamp` | Kiedy zadanie trafiło do DLQ |
+| `article_id` | ID artykułu z Hacker News |
+| `payload` | Oryginalne dane wejściowe (JSON) |
+| `error_type` | Typ błędu (timeout / rate_limit / breaker_open) |
+| `attempts` | Liczba prób przed trafieniem do DLQ |
+| `status` | `pending` / `reprocessed` / `manual_review` |
+
+### Dwa scenariusze
+
+| Bez DLQ | Z DLQ |
+|---------|-------|
+| "Straciliśmy dane z 7 dni" | "Mamy kolejkę 7 dni do przetworzenia" |
+| Panika, ręczne szukanie w logach | Odpalamy reprocessing, idziemy na kawę |
+
+### Implementacja w `dlq.ts`
+
+```typescript
+import Database from "better-sqlite3";
+import { log } from "./monitor.js";
+
+const db = new Database("workflow/dlq.db");
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS dead_letter (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    timestamp  TEXT    NOT NULL,
+    article_id INTEGER NOT NULL,
+    payload    TEXT    NOT NULL,
+    error_type TEXT    NOT NULL,
+    attempts   INTEGER NOT NULL,
+    status     TEXT    NOT NULL DEFAULT 'pending'
+  )
+`);
+
+export function pushToDLQ(articleId: number, payload: unknown, errorType: string, attempts: number) {
+  db.prepare(`
+    INSERT INTO dead_letter (timestamp, article_id, payload, error_type, attempts)
+    VALUES (?, ?, ?, ?, ?)
+  `).run(new Date().toISOString(), articleId, JSON.stringify(payload), errorType, attempts);
+
+  log.warn({ layer: "pipeline", dlq: "push", articleId, errorType, attempts }, "pushed to DLQ");
+}
+
+export function getDLQSize(): number {
+  const row = db.prepare("SELECT COUNT(*) as count FROM dead_letter WHERE status = 'pending'").get() as { count: number };
+  return row.count;
+}
+```
+
+`pushToDLQ()` jest wywoływana w `index.ts` gdy p-retry wyczerpie wszystkie próby lub gdy circuit breaker odrzuci żądanie (stan otwarty).
+
+---
+
 ## Jak to działa razem — przepływ danych
 
 ```
@@ -403,20 +555,27 @@ export async function runHealthCheck(): Promise<boolean> {
 [input: title + text artykułu]
         |
         v
-[services/llm-client.ts]
-  prompts/summarize.md ──► p-retry ──► OpenRouter API
-        |                                    |
-        |                             sukces / błąd
-        |                                    |
-        v                                    v
-[services/monitor.ts]           Exponential Backoff
-  Warstwa 1: Infrastruktura      + Jitter (p-retry)
-  Warstwa 2: Pipeline
-  Warstwa 3: Jakość outputu
+[services/circuit-breaker.ts]
+  breaker zamknięty? ──► TAK ──► [services/llm-client.ts]
+        |                          prompts/summarize.md ──► p-retry ──► OpenRouter API
+        |                                                         |
+        |                                                   sukces / wyczerpano retry
+        |                                                         |
+        ├── breaker otwarty? ──► TAK ──────────────────────────► |
+        |                                                         v
+        |                                              [services/dlq.ts]
+        |                                               workflow/dlq.db ← nieudane zadania
+        |
+        v
+[services/monitor.ts]
+  Warstwa 1: Infrastruktura    (latencja, tokeny, error rate, breaker state)
+  Warstwa 2: Pipeline          (throughput, retry rate, DLQ fill rate)
+  Warstwa 3: Jakość outputu    (schema, length, canary)
         |
         v
 [output: JSON]
   ├── workflow/articles/{timestamp}-{id}.json   ← każdy artykuł osobno
+  ├── workflow/dlq.db                           ← nieudane zadania (SQLite)
   └── logs/app.log                              ← metryki i zdarzenia
 ```
 
@@ -568,6 +727,8 @@ src/
 | LLM API | OpenRouter |
 | Runtime | Node.js (tsx) |
 | Retry | `p-retry` — Exponential Backoff + Jitter + AbortError |
+| Circuit Breaker | `opossum` — 3 stany: zamknięty / otwarty / półotwarty |
+| Dead Letter Queue | `better-sqlite3` — tabela `dead_letter` w `workflow/dlq.db` |
 | Logging | `pino` + `pino-pretty` — logi do konsoli i `logs/app.log` |
 | LLM SDK | `openai` (kompatybilne z OpenRouter) |
 | Konfiguracja | `config.json` + `zod` — walidacja przy starcie |
@@ -701,6 +862,9 @@ All settings live in `config.json` — no hardcoded values in code:
 | `model` | LLM model used via OpenRouter |
 | `retry.attempts` | Max retry attempts |
 | `retry.factor` | Backoff multiplier (2 = doubles each time) |
+| `circuitBreaker.failureThreshold` | % failures before breaker opens |
+| `circuitBreaker.successThreshold` | Successes in half-open needed to close |
+| `circuitBreaker.timeoutMs` | How long breaker stays open before half-open |
 | `monitor.minSummaryLength` | Alert if output shorter than N chars |
 | `workflow.intervalMs` | How often to run the workflow |
 | `workflow.articles` | How many articles to fetch per run |
