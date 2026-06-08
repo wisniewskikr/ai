@@ -14,6 +14,15 @@ export interface CliOptions {
   simMode: SimMode;
 }
 
+export interface ArticleResult {
+  title: string;
+  retries: number;
+  breakerOpen: boolean;
+  schemaError: boolean;
+  lengthError: boolean;
+  status: "saved" | "dlq" | "skipped" | "dry-run";
+}
+
 function parseCliFlags(): { opts: Record<string, any>; skipMenu: boolean } {
   const program = new Command();
   program
@@ -92,36 +101,72 @@ export function printRunHeader(runNumber: number) {
   console.log(chalk.bold(`Run #${runNumber} — ${now}\n`));
 }
 
-export function printArticleResult(
-  index: number,
-  title: string,
-  summary: string,
-  topics: string[],
-  savedPath: string
-) {
-  const W = 55;
-  const COL1 = 8;
-  const COL2 = W - COL1 - 3;
+export function printRunTable(results: ArticleResult[]) {
+  if (results.length === 0) return;
 
-  const titleTrunc = `#${index} ${title}`.slice(0, W - 2);
-  const topicsStr = topics.join(", ").slice(0, COL2);
-  const savedTrunc = savedPath.slice(0, COL2);
-  const summaryLines = wrapText(summary, COL2);
+  const W = { title: 38, retries: 7, breaker: 8, schema: 7, length: 7 };
+  const totalWidth = W.title + W.retries + W.breaker + W.schema + W.length + 5 * 2 + 10;
 
-  console.log("┌" + "─".repeat(W) + "┐");
-  console.log(`│ ${titleTrunc.padEnd(W - 1)}│`);
-  console.log("├" + "─".repeat(COL1) + "┬" + "─".repeat(W - COL1 - 1) + "┤");
+  console.log(
+    "  " + chalk.bold(
+      "Article".padEnd(W.title) + "  " +
+      "Retries".padEnd(W.retries) + "  " +
+      "Breaker".padEnd(W.breaker) + "  " +
+      "Schema".padEnd(W.schema) + "  " +
+      "Length".padEnd(W.length) + "  " +
+      "Status"
+    )
+  );
+  console.log("  " + chalk.gray("─".repeat(totalWidth)));
 
-  summaryLines.forEach((line, i) => {
-    const label = i === 0 ? " Summary " : "         ";
-    console.log(`│${label}│ ${line.padEnd(COL2)}│`);
-  });
+  for (const r of results) {
+    const na = r.status === "skipped" || r.status === "dry-run";
 
-  console.log("├" + "─".repeat(COL1) + "┼" + "─".repeat(W - COL1 - 1) + "┤");
-  console.log(`│ Topics  │ ${topicsStr.padEnd(COL2)}│`);
-  console.log("├" + "─".repeat(COL1) + "┼" + "─".repeat(W - COL1 - 1) + "┤");
-  console.log(`│ Saved   │ ${savedTrunc.padEnd(COL2)}│`);
-  console.log("└" + "─".repeat(COL1) + "┴" + "─".repeat(W - COL1 - 1) + "┘\n");
+    const titleTrunc = r.title.length > W.title
+      ? r.title.slice(0, W.title - 3) + "..."
+      : r.title.padEnd(W.title);
+
+    const retriesVal = (na || r.breakerOpen) ? "-" : String(r.retries);
+    const retriesCol = retriesVal.padEnd(W.retries);
+    const retriesStr = (!na && !r.breakerOpen && r.retries > 0)
+      ? chalk.yellow(retriesCol) : chalk.gray(retriesCol);
+
+    const breakerVal = na ? "-" : (r.breakerOpen ? "open" : "ok");
+    const breakerCol = breakerVal.padEnd(W.breaker);
+    const breakerStr = na
+      ? chalk.gray(breakerCol)
+      : r.breakerOpen ? chalk.red(breakerCol) : chalk.green(breakerCol);
+
+    const schemaVal = (na || r.breakerOpen) ? "-" : (r.schemaError ? "error" : "ok");
+    const schemaCol = schemaVal.padEnd(W.schema);
+    const schemaStr = (na || r.breakerOpen)
+      ? chalk.gray(schemaCol)
+      : r.schemaError ? chalk.red(schemaCol) : chalk.green(schemaCol);
+
+    const lengthVal = (na || r.breakerOpen) ? "-" : (r.lengthError ? "short" : "ok");
+    const lengthCol = lengthVal.padEnd(W.length);
+    const lengthStr = (na || r.breakerOpen)
+      ? chalk.gray(lengthCol)
+      : r.lengthError ? chalk.yellow(lengthCol) : chalk.green(lengthCol);
+
+    let statusStr: string;
+    switch (r.status) {
+      case "saved":    statusStr = chalk.green("✓ saved");   break;
+      case "dlq":      statusStr = chalk.red("✗ DLQ");       break;
+      case "skipped":  statusStr = chalk.gray("→ skipped");  break;
+      case "dry-run":  statusStr = chalk.gray("(dry-run)");  break;
+    }
+
+    console.log(
+      "  " + titleTrunc + "  " +
+      retriesStr + "  " +
+      breakerStr + "  " +
+      schemaStr + "  " +
+      lengthStr + "  " +
+      statusStr
+    );
+  }
+  console.log();
 }
 
 export function printRunSummary(

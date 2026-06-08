@@ -18,8 +18,9 @@ import {
   getCliOptions,
   printHeader,
   printRunHeader,
-  printArticleResult,
+  printRunTable,
   printRunSummary,
+  type ArticleResult,
 } from "./utils/cli.js";
 import { setSimMode, getSimMode } from "./utils/simulate.js";
 import type { Article } from "./services/news-fetcher.js";
@@ -114,6 +115,7 @@ while (true) {
   while (!isShuttingDown) {
     printRunHeader(runNumber);
     const stats = createRunStats();
+    const articleResults: ArticleResult[] = [];
     let canaryPassed = true;
 
     // Canary check — every 10 runs or after an error (never in dry-run)
@@ -212,6 +214,7 @@ while (true) {
           console.log(
             `  [${i + 1}/${articles.length}] ${chalk.gray(`Skipping: "${article.title}" (already processed)`)}`
           );
+          articleResults.push({ title: article.title, retries: 0, breakerOpen: false, schemaError: false, lengthError: false, status: "skipped" });
           continue;
         }
 
@@ -219,6 +222,7 @@ while (true) {
 
         if (cliOpts.dryRun) {
           console.log(chalk.gray("        (dry-run — LLM call skipped)\n"));
+          articleResults.push({ title: article.title, retries: 0, breakerOpen: false, schemaError: false, lengthError: false, status: "dry-run" });
           continue;
         }
 
@@ -227,10 +231,14 @@ while (true) {
           console.log(chalk.red("        Circuit breaker OPEN — sending to DLQ"));
           pushToDLQ(article.id, article, "breaker_open", 0);
           stats.failed++;
+          articleResults.push({ title: article.title, retries: 0, breakerOpen: true, schemaError: false, lengthError: false, status: "dlq" });
           continue;
         }
 
         const spinner = ora("        Calling LLM...").start();
+        let articleRetries = 0;
+        let articleSchemaError = false;
+        let articleLengthError = false;
 
         try {
           const result = await callLLM(
@@ -240,6 +248,7 @@ while (true) {
                 `        Retry ${attempt}/${config.retry.attempts} — ${reason}...`
               );
               stats.retries++;
+              articleRetries++;
             }
           );
 
@@ -256,6 +265,7 @@ while (true) {
           // Layer 3: Schema validation
           if (!parsed.summary || !Array.isArray(parsed.topics)) {
             stats.schemaErrors++;
+            articleSchemaError = true;
             log.warn({ layer: "quality", check: "schema", content: result.content }, "schema error");
             parsed.summary = parsed.summary ?? result.content.slice(0, 200);
             parsed.topics = parsed.topics ?? [];
@@ -265,6 +275,7 @@ while (true) {
           const summaryLen = parsed.summary?.length ?? 0;
           if (summaryLen < config.monitor.minSummaryLength) {
             stats.shortOutputs++;
+            articleLengthError = true;
             log.warn({ layer: "quality", check: "length", chars: summaryLen }, "output too short");
           }
 
@@ -283,13 +294,7 @@ while (true) {
           stats.processed++;
 
           spinner.succeed(chalk.green(`        Done (${result.latencyMs}ms)`));
-          printArticleResult(
-            i + 1,
-            article.title,
-            parsed.summary ?? "",
-            parsed.topics ?? [],
-            outputPath
-          );
+          articleResults.push({ title: article.title, retries: articleRetries, breakerOpen: false, schemaError: articleSchemaError, lengthError: articleLengthError, status: "saved" });
         } catch (err) {
           stats.failed++;
           const errMsg = String(err);
@@ -297,6 +302,7 @@ while (true) {
           spinner.fail(chalk.red(`        Failed: ${errMsg}`));
           log.error({ layer: "pipeline", id: article.id, error: errMsg }, "article failed");
           pushToDLQ(article.id, article, errorType, config.retry.attempts);
+          articleResults.push({ title: article.title, retries: articleRetries, breakerOpen: errorType === "breaker_open", schemaError: false, lengthError: false, status: "dlq" });
         }
       }
     }
@@ -305,6 +311,7 @@ while (true) {
 
     logPipelineStats(stats);
     logQualityCheck(stats, canaryPassed);
+    printRunTable(articleResults);
     printRunSummary(runNumber, stats, canaryPassed, getDLQSize(), getBreakerState(breaker));
 
     if (cliOpts.once || isShuttingDown) break;
