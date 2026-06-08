@@ -769,9 +769,9 @@ AI Workflow — Silent Degradation Demo
 ? What do you want to do?
   1) Run normally
   2) Recover articles from DLQ
-  3) Simulate retry failure
-  4) Simulate monitoring failure (canary check)
-  5) Simulate Circuit Breaker failure
+  3) Simulate retry failure (DLQ: retry_exhausted)
+  4) Simulate monitoring failure (canary check) (no DLQ)
+  5) Simulate Circuit Breaker failure (DLQ: retry_exhausted → breaker_open)
   0) Exit
 ```
 
@@ -779,9 +779,9 @@ AI Workflow — Silent Degradation Demo
 |--------|-------------|
 | `1` Run normally | Fetch articles, call LLM, save results — standard loop |
 | `2` Recover from DLQ | Process all `pending` items from `workspace/dlq.db`, then return to menu |
-| `3` Simulate retry failure | Mock API returning HTTP 500 — shows exponential backoff + jitter in console (failed articles are pushed to DLQ), then return to menu |
-| `4` Simulate canary failure | Mock LLM returning invalid canary response — shows monitoring alert, then return to menu |
-| `5` Simulate Circuit Breaker failure | Mock repeated failures until breaker opens — shows state transitions: closed → open → half-open (rejected articles are pushed to DLQ), then return to menu |
+| `3` Simulate retry failure | Mock API returning HTTP 500 — shows exponential backoff + jitter in console; failed articles pushed to DLQ as `retry_exhausted`, then return to menu |
+| `4` Simulate canary failure | Mock LLM returning invalid canary response — canary fails before any articles are processed; **no DLQ entries**, then return to menu |
+| `5` Simulate Circuit Breaker failure | Mock repeated failures until breaker opens — shows state transitions: closed → open → half-open; first articles pushed to DLQ as `retry_exhausted`, subsequent ones as `breaker_open`, then return to menu |
 | `0` Exit | Graceful shutdown |
 
 After each task completes, the menu reappears automatically. Pressing Ctrl+C during a task stops the current work gracefully and returns to the menu. The only way to exit the application is option `0`.

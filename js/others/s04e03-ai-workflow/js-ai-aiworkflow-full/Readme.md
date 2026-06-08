@@ -59,9 +59,9 @@ AI Workflow — Silent Degradation Demo
 ? What do you want to do?
   1) Run normally
   2) Recover articles from DLQ
-  3) Simulate retry failure
-  4) Simulate monitoring failure (canary check)
-  5) Simulate Circuit Breaker failure
+  3) Simulate retry failure (DLQ: retry_exhausted)
+  4) Simulate monitoring failure (canary check) (no DLQ)
+  5) Simulate Circuit Breaker failure (DLQ: retry_exhausted → breaker_open)
   0) Exit
 ```
 
@@ -69,9 +69,9 @@ AI Workflow — Silent Degradation Demo
 |--------|-------------|
 | **1** Run normally | Fetch articles, call LLM, save results |
 | **2** Recover from DLQ | Reprocess all failed articles, then return to menu |
-| **3** Simulate retry failure | Watch exponential backoff in action (no real API calls), then return to menu |
-| **4** Simulate canary failure | Watch monitoring catch output drift, then return to menu |
-| **5** Simulate Circuit Breaker | Watch the breaker trip: closed → open → half-open, then return to menu |
+| **3** Simulate retry failure | Watch exponential backoff in action; failed articles pushed to DLQ as `retry_exhausted` |
+| **4** Simulate canary failure | Canary fails before any articles are processed — **no DLQ entries** |
+| **5** Simulate Circuit Breaker | Breaker trips: closed → open → half-open; articles go to DLQ as `retry_exhausted` then `breaker_open` |
 | **0** Exit | Graceful shutdown — the only way to exit |
 
 After each task the menu reappears automatically. Ctrl+C during a task stops it gracefully and returns to the menu.

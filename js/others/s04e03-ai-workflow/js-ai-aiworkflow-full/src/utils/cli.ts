@@ -50,9 +50,9 @@ export async function getCliOptions(): Promise<CliOptions> {
       choices: [
         { name: "1) Run normally", value: "run" },
         { name: "2) Recover articles from DLQ", value: "dlq" },
-        { name: "3) Simulate retry failure", value: "retry" },
-        { name: "4) Simulate monitoring failure (canary check)", value: "canary" },
-        { name: "5) Simulate Circuit Breaker failure", value: "breaker" },
+        { name: "3) Simulate retry failure (DLQ: retry_exhausted)", value: "retry" },
+        { name: "4) Simulate monitoring failure (canary check) (no DLQ)", value: "canary" },
+        { name: "5) Simulate Circuit Breaker failure (DLQ: retry_exhausted → breaker_open)", value: "breaker" },
         { name: "0) Exit", value: "exit" },
       ],
     });
