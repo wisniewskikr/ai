@@ -182,6 +182,8 @@ async function main() {
   }
 
   log.info("Shutdown complete.");
+  // Wait for pino worker threads to flush, then print final message last
+  await new Promise((r) => setTimeout(r, 500));
   console.log(chalk.green("\nShutdown complete."));
   process.exit(0);
 }
