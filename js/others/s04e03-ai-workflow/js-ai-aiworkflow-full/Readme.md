@@ -171,6 +171,34 @@ Each processed article is saved as `workspace/articles/{timestamp}-{id}.json`:
 
 ---
 
+## Console output
+
+After each run, results are shown as a table — one row per article:
+
+```
+Run #1 Summary
+  Canary: ok  |  DLQ: 2 pending  |  Avg latency: 891ms
+
+  Article                              Retries  Breaker  Schema  Length  Status
+  ───────────────────────────────────────────────────────────────────────────────
+  OpenAI raises $40B at $300B val...      0       ok       ok      ok    ✓ saved
+  TypeScript 5.8 released                 2       ok       ok      ok    ✓ saved
+  Show HN: I built a...                   3       open     -       -     ✗ DLQ
+```
+
+| Column | What it shows |
+|--------|--------------|
+| **Article** | Title (truncated to ~35 chars) |
+| **Retries** | Number of retries before success or DLQ |
+| **Breaker** | Circuit breaker state when article was processed (`ok` / `open`) |
+| **Schema** | Whether LLM output has required `summary` and `topics` fields |
+| **Length** | Whether summary meets minimum length |
+| **Status** | `✓ saved` / `✗ DLQ` / `→ skipped` |
+
+Canary check is per-run (not per-article) — shown above the table in the summary header.
+
+---
+
 ## Monitoring layers
 
 | Layer | What it checks |

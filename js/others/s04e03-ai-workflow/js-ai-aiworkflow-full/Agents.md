@@ -697,7 +697,33 @@ if (getDLQSize() > config.dlq.maxSize) {
 
 ## Co zobaczysz w konsoli
 
-Logi zapisywane do `logs/app.log` w formacie czytelnym dla człowieka:
+Po każdym runie wyniki są prezentowane w tabeli — jeden wiersz na artykuł:
+
+```
+Run #1 Summary
+  Canary: ok  |  DLQ: 2 pending  |  Avg latency: 891ms
+
+  Article                              Retries  Breaker  Schema  Length  Status
+  ───────────────────────────────────────────────────────────────────────────────
+  OpenAI raises $40B at $300B val...      0       ok       ok      ok    ✓ saved
+  TypeScript 5.8 released                 2       ok       ok      ok    ✓ saved
+  Show HN: I built a...                   3       open     -       -     ✗ DLQ
+```
+
+Kolumny tabeli:
+
+| Kolumna | Co pokazuje |
+|---------|-------------|
+| **Article** | Tytuł artykułu (skrócony do ~35 znaków) |
+| **Retries** | Liczba ponownych prób przed sukcesem lub DLQ |
+| **Breaker** | Stan circuit breakera gdy artykuł był przetwarzany (`ok` / `open`) |
+| **Schema** | Walidacja JSON outputu — czy ma pola `summary` i `topics` |
+| **Length** | Czy podsumowanie ma wymaganą minimalną długość |
+| **Status** | `✓ saved` / `✗ DLQ` / `→ skipped` |
+
+Canary check jest per-run (nie per-artykuł) — wyświetlany nad tabelą w sekcji summary.
+
+Logi szczegółowe zapisywane do `logs/app.log` w formacie czytelnym dla człowieka:
 
 ```
 [2026-06-08 10:01:00] [INFO]  llm call | latency=342ms status=200
