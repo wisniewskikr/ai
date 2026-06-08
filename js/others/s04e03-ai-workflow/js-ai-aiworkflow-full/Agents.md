@@ -98,7 +98,8 @@ js-ai-aiworkflow-full/
 │   │   ├── dlq.ts              # Dead Letter Queue — SQLite przez better-sqlite3
 │   │   └── monitor.ts          # 3 warstwy monitoringu (pino)
 │   ├── utils/
-│   │   ├── cli.ts              # commander, ora spinners, chalk colors
+│   │   ├── cli.ts              # commander, inquirer menu, ora spinners, chalk colors
+│   │   ├── simulate.ts         # mock API responses dla opcji 3–5 (retry/canary/breaker)
 │   │   └── mock-articles.ts    # fallback — lokalne dane testowe
 │   ├── config.ts               # walidacja config.json przez Zod (fail-fast na starcie)
 │   └── index.ts                # punkt wejścia, uruchamia workflow w pętli
@@ -123,7 +124,8 @@ js-ai-aiworkflow-full/
 | `src/services/circuit-breaker.ts` | Circuit breaker (`opossum`) — 3 stany: zamknięty / otwarty / półotwarty |
 | `src/services/dlq.ts` | Dead Letter Queue — SQLite, nieudane zadania do ponownego przetworzenia |
 | `src/services/monitor.ts` | Zbieranie i logowanie metryk (3 warstwy) |
-| `src/utils/cli.ts` | Commander flags, ora spinners, chalk colors |
+| `src/utils/cli.ts` | Commander flags, inquirer menu, ora spinners, chalk colors |
+| `src/utils/simulate.ts` | Mock API responses dla opcji 3–5 (retry / canary / circuit breaker) |
 | `src/utils/mock-articles.ts` | Fallback — dane testowe gdy HN nie odpowiada |
 | `src/config.ts` | Zod schema + walidacja `config.json` przy starcie |
 | `workspace/articles/` | Pobrane artykuły — każdy w osobnym pliku JSON |
@@ -673,28 +675,48 @@ export const log = pino({
 | Library | Role |
 |---------|------|
 | `commander` | Argument parsing — flags and options |
+| `inquirer` | Interactive menu — numbered options on startup |
 | `ora` | Spinner — shows progress during fetch and LLM call |
 | `chalk` | Colors — green success, yellow warn, red error |
 
-### 1. Input — how to start
+### 1. Input — interactive menu on startup
 
-```bash
-npm run dev [options]
+After `npm run dev` the user sees a menu and picks an option:
 
-Options:
-  --articles <n>    Articles to process per run    (default: 3)
-  --interval <ms>   Milliseconds between runs       (default: 60000)
-  --once            Run once and exit (no loop)
-  --dry-run         Fetch articles, skip LLM call (monitoring still runs)
-  --help            Show help
+```
+AI Workflow — Silent Degradation Demo
+======================================
+
+? What do you want to do?
+  1) Run normally
+  2) Recover articles from DLQ
+  3) Simulate retry failure
+  4) Simulate monitoring failure (canary check)
+  5) Simulate Circuit Breaker failure
+  0) Exit
 ```
 
-Examples:
+| Option | What it does |
+|--------|-------------|
+| `1` Run normally | Fetch articles, call LLM, save results — standard loop |
+| `2` Recover from DLQ | Process all `pending` items from `workspace/dlq.db` and exit |
+| `3` Simulate retry failure | Mock API returning HTTP 500 — shows exponential backoff + jitter in console (failed articles are pushed to DLQ) |
+| `4` Simulate canary failure | Mock LLM returning invalid canary response — shows monitoring alert |
+| `5` Simulate Circuit Breaker failure | Mock repeated failures until breaker opens — shows state transitions: closed → open → half-open (rejected articles are pushed to DLQ) |
+| `0` Exit | Graceful shutdown |
+
+Options 3–5 are **simulations** — they mock API responses locally, no real LLM calls, no tokens spent. Their purpose is to show what failure looks like in the console and in `logs/app.log`.
+
+### 2. Input — CLI flags (still available)
+
+Flags can be passed directly to skip the menu, useful for scripting:
 
 ```bash
-npm run dev                            # loop, 3 articles/min
-npm run dev -- --articles 5 --once    # run once, 5 articles
+npm run dev                            # show interactive menu
+npm run dev -- --articles 5 --once    # run once, 5 articles (skips menu)
 npm run dev -- --dry-run              # test fetcher without spending tokens
+npm run dev -- --reprocess-dlq        # recover from DLQ and exit
+npm run dev -- --help                 # show all options
 ```
 
 ### 2. Process — what the user sees
@@ -758,7 +780,8 @@ Next run in 60s. Press Ctrl+C to stop.
 ```
 src/
 ├── utils/
-│   └── cli.ts          ← commander setup, ora spinners, chalk colors
+│   ├── cli.ts          ← commander setup, inquirer menu, ora spinners, chalk colors
+│   └── simulate.ts     ← mock API responses for options 3–5
 ```
 
 ---
@@ -776,7 +799,7 @@ src/
 | Logging | `pino` + `pino-pretty` — logi do konsoli i `logs/app.log` |
 | LLM SDK | `openai` (kompatybilne z OpenRouter) |
 | Konfiguracja | `config.json` + `zod` — walidacja przy starcie |
-| CLI | `commander` + `ora` + `chalk` |
+| CLI | `commander` + `inquirer` + `ora` + `chalk` |
 
 ---
 
