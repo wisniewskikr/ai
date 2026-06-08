@@ -55,6 +55,25 @@ Dwa wywołania HTTP — bez żadnych zależności:
 
 Artykuły mają pole `text` (posty z dyskusji) lub `url` (linki zewnętrzne). Na potrzeby demo używamy `title` + `text` jako wejście do LLM.
 
+**Artykuły bez `text`:** Większość top stories to linki zewnętrzne — mają `url`, ale nie mają `text`. Podsumowanie z samego tytułu (5–10 słów) nie ma sensu. `news-fetcher.ts` pomija takie artykuły i loguje to jako metrykę:
+
+```typescript
+if (!item.text) {
+  log.info({ layer: "pipeline", id: item.id }, "skipped — no text");
+  continue;
+}
+```
+
+**Deduplikacja:** Workflow działa co minutę, a top stories zmieniają się wolno. Ten sam artykuł nie powinien być przetwarzany dwa razy. Przed wywołaniem LLM sprawdzamy, czy plik już istnieje:
+
+```typescript
+const outputPath = `workflow/articles/${timestamp}-${id}.json`;
+if (fs.existsSync(outputPath)) {
+  log.info({ layer: "pipeline", id }, "skipped — already processed");
+  continue;
+}
+```
+
 **Kolejność pobierania:** `/v0/topstories.json` zwraca do 500 ID posortowanych według aktualnego rankingu HN (punkty + świeżość). Pobieramy pierwsze N z listy — czyli zawsze **top N najbardziej popularnych** w danej chwili, gdzie N = `workflow.articles` z `config.json`.
 
 **Fallback — mock lokalny**
@@ -77,6 +96,7 @@ js-ai-aiworkflow-basic/
 │   ├── utils/
 │   │   ├── cli.ts              # commander, ora spinners, chalk colors
 │   │   └── mock-articles.ts    # fallback — lokalne dane testowe
+│   ├── config.ts               # walidacja config.json przez Zod (fail-fast na starcie)
 │   └── index.ts                # punkt wejścia, uruchamia workflow w pętli
 ├── workflow/
 │   └── articles/                # pobrane artykuły — każdy w osobnym pliku JSON
@@ -98,6 +118,7 @@ js-ai-aiworkflow-basic/
 | `src/services/monitor.ts` | Zbieranie i logowanie metryk (3 warstwy) |
 | `src/utils/cli.ts` | Commander flags, ora spinners, chalk colors |
 | `src/utils/mock-articles.ts` | Fallback — dane testowe gdy HN nie odpowiada |
+| `src/config.ts` | Zod schema + walidacja `config.json` przy starcie |
 | `workflow/articles/` | Pobrane artykuły — każdy w osobnym pliku JSON |
 | `config.json` | Wszystkie zmienne konfiguracyjne (bez sekretów) |
 | `logs/app.log` | Logi z każdego uruchomienia |
@@ -154,7 +175,6 @@ Haiku to najszybszy i najtańszy model Claude — idealny do powtarzalnych, pros
     "factor": 2
   },
   "monitor": {
-    "canaryIntervalCalls": 5,
     "minSummaryLength": 50,
     "schemaErrorRateAlertThreshold": 0.05
   },
@@ -164,6 +184,38 @@ Haiku to najszybszy i najtańszy model Claude — idealny do powtarzalnych, pros
   }
 }
 ```
+
+**Walidacja przy starcie — Zod**
+
+> **Analogia:** Zanim zaczniesz gotować, sprawdzasz czy masz wszystkie składniki. Nie w połowie przepisu.
+
+`config.json` jest walidowany przez Zod **zanim cokolwiek się uruchomi**. Brakujące lub błędne pole = natychmiastowy błąd z opisem, co jest nie tak:
+
+```typescript
+// src/config.ts
+import { z } from "zod";
+
+const ConfigSchema = z.object({
+  model: z.string(),
+  retry: z.object({
+    attempts: z.number().min(1),
+    minTimeoutMs: z.number().min(0),
+    factor: z.number().min(1),
+  }),
+  monitor: z.object({
+    minSummaryLength: z.number().min(1),
+    schemaErrorRateAlertThreshold: z.number().min(0).max(1),
+  }),
+  workflow: z.object({
+    intervalMs: z.number().min(1000),
+    articles: z.number().min(1),
+  }),
+});
+
+export const config = ConfigSchema.parse(JSON.parse(fs.readFileSync("config.json", "utf-8")));
+```
+
+Błędny `config.json` zatrzymuje aplikację na starcie — nie przy pierwszym wywołaniu LLM po minucie działania.
 
 ---
 
@@ -209,7 +261,22 @@ import pRetry, { AbortError } from "p-retry";
 export async function callLLM(text: string) {
   return pRetry(
     async () => {
-      const res = await openai.chat.completions.create({ ... });
+      const res = await openai.chat.completions.create({
+        model: config.model,
+        response_format: { type: "json_object" },  // wymusza JSON na wyjściu
+        messages: [{ role: "user", content: prompt + text }],
+      });
+
+      // token tracking — Warstwa 1
+      log.info({
+        layer: "infra",
+        tokens: {
+          prompt: res.usage?.prompt_tokens,
+          completion: res.usage?.completion_tokens,
+          total: res.usage?.total_tokens,
+        },
+      }, "token usage");
+
       return res;
     },
     {
@@ -251,12 +318,15 @@ export const log = pino({ level: "info" });
 | HTTP error rate | Ile % wywołań kończy się błędem |
 | Latencja | Czas odpowiedzi w ms |
 | Rate limit hits | Ile razy dostaliśmy 429 |
+| Token usage | Prompt / completion / total tokens per wywołanie |
 
 ```typescript
 // Warstwa 1 — log po każdym wywołaniu
-log.info({ layer: "infra", latencyMs, status: res.status }, "llm call");
+log.info({ layer: "infra", latencyMs, status: res.status, tokens: res.usage?.total_tokens }, "llm call");
 log.error({ layer: "infra", status: 429 }, "rate limit hit");
 ```
+
+> **Po co liczyć tokeny?** Projekt podkreśla *"każde wywołanie = tokeny = pieniądze"*. Bez licznika nie widać, kiedy koszty rosną — np. gdy prompt przypadkowo urośnie albo model zaczyna generować długie odpowiedzi.
 
 ### Warstwa 2: Pipeline
 
@@ -281,7 +351,7 @@ log.info({ layer: "pipeline", processed, retries, failed }, "pipeline stats");
 |----------|---------------|-----------|
 | Schema validation | Czy JSON ma pola `summary`, `topics` | Brak pola |
 | Length test | Czy podsumowanie ma > 50 znaków | Za krótkie = halucynacja |
-| Canary check | Co 5 wywołań — testowe zdanie z oczekiwanym outputem | Inny wynik niż baseline |
+| Canary check | Przed każdym runem — pytanie z jednoznaczną odpowiedzią | Odpowiedź inna niż oczekiwana |
 
 ```typescript
 // Warstwa 3 — log po walidacji outputu
@@ -289,6 +359,36 @@ log.warn({ layer: "quality", check: "schema", field: "topics" }, "schema error")
 log.warn({ layer: "quality", check: "length", chars: 12 }, "output too short");
 log.error({ layer: "quality", check: "canary" }, "canary failed");
 ```
+
+#### Canary check — jak to działa?
+
+> **Analogia:** Zegarek sprawdzasz przez porównanie z zegarem wzorcowym — nie z własną pamięcią. Canary to taki zegar wzorcowy dla LLM.
+
+LLM-y są **niedeterministyczne** — ten sam prompt może zwrócić inny tekst przy każdym wywołaniu. Porównywanie outputu z wcześniej zapisanym stringiem zawsze się posypie.
+
+Zamiast tego canary wysyła proste pytanie z **jednoznaczną, sprawdzalną odpowiedzią**:
+
+```typescript
+// src/services/monitor.ts
+const CANARY_PROMPT = 'Reply with only valid JSON: {"ok": true}';
+
+export async function runHealthCheck(): Promise<boolean> {
+  const res = await callLLM(CANARY_PROMPT);
+  const parsed = JSON.parse(res);
+  const passed = parsed?.ok === true;
+  log.info({ layer: "quality", check: "canary", passed }, "health check");
+  return passed;
+}
+```
+
+**Dlaczego `runHealthCheck()` to osobna funkcja — nie licznik co-N-wywołań?**
+
+| Podejście | Problem |
+|-----------|---------|
+| Co 5 wywołań w pętli | Miesza logikę canary z przetwarzaniem artykułów |
+| Osobna funkcja przed runem | Prosta, testowalna, niezależna od liczby artykułów |
+
+`runHealthCheck()` jest wywoływana w `index.ts` **przed** każdym runem. Jeśli zwróci `false` — run jest pomijany i logowany jako błąd.
 
 ---
 
@@ -372,7 +472,7 @@ Options:
   --articles <n>    Articles to process per run    (default: 3)
   --interval <ms>   Milliseconds between runs       (default: 60000)
   --once            Run once and exit (no loop)
-  --dry-run         Fetch articles, skip LLM call
+  --dry-run         Fetch articles, skip LLM call (monitoring still runs)
   --help            Show help
 ```
 
@@ -459,8 +559,39 @@ src/
 | Retry | `p-retry` — Exponential Backoff + Jitter + AbortError |
 | Logging | `pino` + `pino-pretty` — logi do konsoli i `logs/app.log` |
 | LLM SDK | `openai` (kompatybilne z OpenRouter) |
-| Konfiguracja | `config.json` — bez hardcodowania wartości w kodzie |
+| Konfiguracja | `config.json` + `zod` — walidacja przy starcie |
 | CLI | `commander` + `ora` + `chalk` |
+
+---
+
+## Graceful Shutdown
+
+> **Analogia:** Nie wyciągaj wtyczki z komputera — użyj przycisku zamknięcia, żeby system zdążył zapisać pliki.
+
+Bez obsługi sygnałów Ctrl+C (`SIGINT`) przerywa działanie w połowie przetwarzania artykułu. Plik JSON zostaje niekompletny, log urwany.
+
+```typescript
+// src/index.ts
+let isShuttingDown = false;
+
+process.on("SIGINT", () => {
+  isShuttingDown = true;
+  log.info("Shutdown signal received — finishing current article...");
+});
+
+// w pętli głównej
+if (isShuttingDown) {
+  log.info("Shutdown complete.");
+  process.exit(0);
+}
+```
+
+| Sygnał | Kiedy | Co robimy |
+|--------|-------|-----------|
+| `SIGINT` | Ctrl+C | Ustawiamy flagę, kończymy bieżący artykuł, wychodzimy |
+| `SIGTERM` | kill / docker stop | To samo — jeden handler obsługuje oba |
+
+Flaga `isShuttingDown` jest sprawdzana na początku każdej iteracji pętli. Workflow zawsze kończy bieżące zadanie przed wyjściem.
 
 ---
 
@@ -473,7 +604,7 @@ cp .env.example .env
 npm install
 npm run dev               # default: loop, 3 articles/min
 npm run dev --once        # run once and exit
-npm run dev --dry-run     # no LLM calls, test fetcher only
+npm run dev --dry-run     # no LLM calls, test fetcher + monitor (pino file output, canary skipped)
 ```
 
 ---
