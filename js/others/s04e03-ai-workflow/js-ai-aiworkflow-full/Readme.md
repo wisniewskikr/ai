@@ -32,7 +32,7 @@ The demo fetches Hacker News articles every minute, sends them to an LLM via Ope
 
 ```bash
 git clone <repo>
-cd js-ai-aiworkflow-basic
+cd js-ai-aiworkflow-full
 
 cp .env.example .env
 # Add your OPENROUTER_API_KEY to .env

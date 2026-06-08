@@ -85,7 +85,7 @@ Jeśli HN API nie odpowiada (test offline, CI), `news-fetcher.ts` zwraca listę 
 ## Struktura projektu
 
 ```
-js-ai-aiworkflow-basic/
+js-ai-aiworkflow-full/
 ├── src/
 │   ├── prompts/
 │   │   └── summarize.md        # prompt do podsumowania artykułu (edytowalny bez zmian kodu)
@@ -658,7 +658,7 @@ A TypeScript demo that shows two techniques for preventing silent AI workflow fa
 
 ```bash
 git clone <repo>
-cd js-ai-aiworkflow-basic
+cd js-ai-aiworkflow-full
 
 cp .env.example .env
 # Add your OPENROUTER_API_KEY to .env
