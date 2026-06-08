@@ -542,6 +542,50 @@ export function getDLQSize(): number {
 
 `pushToDLQ()` jest wywoływana w `index.ts` gdy p-retry wyczerpie wszystkie próby lub gdy circuit breaker odrzuci żądanie (stan otwarty).
 
+### Strategia odzyskiwania
+
+**Automatyczny reprocessing na początku każdego runu** — bez ręcznej interwencji.
+
+Kolejność kroków w `index.ts` po zmianie:
+
+```
+Run #N → canary check → reprocess DLQ (maks. 3) → fetch nowych artykułów
+```
+
+Limit 3 zadania z DLQ per run zapobiega blokowaniu przetwarzania nowych artykułów gdy kolejka urośnie.
+
+```typescript
+// src/index.ts — przed fetchArticles()
+if (!cliOpts.dryRun && breakerState === "closed") {
+  const dlqItems = getDLQPending(3);
+  for (const item of dlqItems) {
+    try {
+      await processArticle(item.payload);
+      markDLQItem(item.id, "reprocessed");
+      log.info({ layer: "pipeline", dlq: "reprocessed", id: item.article_id }, "DLQ item reprocessed");
+    } catch {
+      markDLQItem(item.id, "manual_review");
+      log.warn({ layer: "pipeline", dlq: "manual_review", id: item.article_id }, "DLQ item needs manual review");
+    }
+  }
+}
+```
+
+### Przejścia statusów
+
+```
+pending → reprocessed     (sukces przy ponownej próbie)
+pending → manual_review   (błąd przy ponownej próbie — wymaga ręcznego sprawdzenia)
+```
+
+| Status | Znaczenie |
+|--------|-----------|
+| `pending` | Czeka na ponowne przetworzenie |
+| `reprocessed` | Przetworzone pomyślnie |
+| `manual_review` | Nie udało się ponownie — wymaga ręcznej interwencji |
+
+**Warunek reprocessingu:** circuit breaker musi być zamknięty. Gdy jest otwarty — DLQ rośnie, ale nie próbujemy ponownie (usługa i tak nie odpowiada). Gdy breaker się zamknie — następny run automatycznie zaczyna nadrabiać zaległości.
+
 ---
 
 ## Jak to działa razem — przepływ danych
