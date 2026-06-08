@@ -26,7 +26,7 @@ if (!process.env.OPENROUTER_API_KEY) {
   process.exit(1);
 }
 
-fs.mkdirSync("workflow/articles", { recursive: true });
+fs.mkdirSync("workspace/articles", { recursive: true });
 
 let isShuttingDown = false;
 
@@ -75,7 +75,7 @@ async function processRun(runNumber: number): Promise<void> {
 
     // Deduplication: check if already processed in a previous run
     const alreadyProcessed = fs
-      .readdirSync("workflow/articles")
+      .readdirSync("workspace/articles")
       .some((f) => f.endsWith(`-${article.id}.json`));
 
     if (alreadyProcessed) {
@@ -133,7 +133,7 @@ async function processRun(runNumber: number): Promise<void> {
 
       // Save result
       const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
-      const outputPath = `workflow/articles/${timestamp}-${article.id}.json`;
+      const outputPath = `workspace/articles/${timestamp}-${article.id}.json`;
       const output = {
         id: article.id,
         fetchedAt: new Date().toISOString(),
