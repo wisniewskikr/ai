@@ -69,7 +69,7 @@ if (!item.text) {
 **Deduplikacja:** Workflow działa co minutę, a top stories zmieniają się wolno. Ten sam artykuł nie powinien być przetwarzany dwa razy. Przed wywołaniem LLM sprawdzamy, czy plik już istnieje:
 
 ```typescript
-const outputPath = `workflow/articles/${timestamp}-${id}.json`;
+const outputPath = `workspace/articles/${timestamp}-${id}.json`;
 if (fs.existsSync(outputPath)) {
   log.info({ layer: "pipeline", id }, "skipped — already processed");
   continue;
@@ -102,7 +102,7 @@ js-ai-aiworkflow-full/
 │   │   └── mock-articles.ts    # fallback — lokalne dane testowe
 │   ├── config.ts               # walidacja config.json przez Zod (fail-fast na starcie)
 │   └── index.ts                # punkt wejścia, uruchamia workflow w pętli
-├── workflow/
+├── workspace/
 │   ├── articles/                # pobrane artykuły — każdy w osobnym pliku JSON
 │   └── dlq.db                   # Dead Letter Queue — SQLite (tworzona automatycznie)
 ├── logs/                        # logi aplikacji (tworzone automatycznie)
@@ -126,14 +126,14 @@ js-ai-aiworkflow-full/
 | `src/utils/cli.ts` | Commander flags, ora spinners, chalk colors |
 | `src/utils/mock-articles.ts` | Fallback — dane testowe gdy HN nie odpowiada |
 | `src/config.ts` | Zod schema + walidacja `config.json` przy starcie |
-| `workflow/articles/` | Pobrane artykuły — każdy w osobnym pliku JSON |
-| `workflow/dlq.db` | Dead Letter Queue — SQLite (tworzona automatycznie) |
+| `workspace/articles/` | Pobrane artykuły — każdy w osobnym pliku JSON |
+| `workspace/dlq.db` | Dead Letter Queue — SQLite (tworzona automatycznie) |
 | `config.json` | Wszystkie zmienne konfiguracyjne (bez sekretów) |
 | `logs/app.log` | Logi z każdego uruchomienia |
 
-**Format nazwy pliku:** `workflow/articles/{timestamp}-{id}.json`
+**Format nazwy pliku:** `workspace/articles/{timestamp}-{id}.json`
 
-Przykład: `workflow/articles/2026-06-08T10-01-00-43821.json`
+Przykład: `workspace/articles/2026-06-08T10-01-00-43821.json`
 
 ```json
 {
@@ -511,7 +511,7 @@ Gdy retry się wyczerpie **i** circuit breaker jest otwarty — dane muszą gdzi
 import Database from "better-sqlite3";
 import { log } from "./monitor.js";
 
-const db = new Database("workflow/dlq.db");
+const db = new Database("workspace/dlq.db");
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS dead_letter (
@@ -564,7 +564,7 @@ export function getDLQSize(): number {
         ├── breaker otwarty? ──► TAK ──────────────────────────► |
         |                                                         v
         |                                              [services/dlq.ts]
-        |                                               workflow/dlq.db ← nieudane zadania
+        |                                               workspace/dlq.db ← nieudane zadania
         |
         v
 [services/monitor.ts]
@@ -574,8 +574,8 @@ export function getDLQSize(): number {
         |
         v
 [output: JSON]
-  ├── workflow/articles/{timestamp}-{id}.json   ← każdy artykuł osobno
-  ├── workflow/dlq.db                           ← nieudane zadania (SQLite)
+  ├── workspace/articles/{timestamp}-{id}.json   ← każdy artykuł osobno
+  ├── workspace/dlq.db                           ← nieudane zadania (SQLite)
   └── logs/app.log                              ← metryki i zdarzenia
 ```
 
@@ -705,7 +705,7 @@ Next run in 60s. Press Ctrl+C to stop.
 ├─────────────────────────────────────────────────────┤
 │ Topics   │ AI, funding, OpenAI, SoftBank             │
 ├─────────────────────────────────────────────────────┤
-│ Saved to │ workflow/articles/2026-06-08T10-01-00-43821.json │
+│ Saved to │ workspace/articles/2026-06-08T10-01-00-43821.json │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -728,7 +728,7 @@ src/
 | Runtime | Node.js (tsx) |
 | Retry | `p-retry` — Exponential Backoff + Jitter + AbortError |
 | Circuit Breaker | `opossum` — 3 stany: zamknięty / otwarty / półotwarty |
-| Dead Letter Queue | `better-sqlite3` — tabela `dead_letter` w `workflow/dlq.db` |
+| Dead Letter Queue | `better-sqlite3` — tabela `dead_letter` w `workspace/dlq.db` |
 | Logging | `pino` + `pino-pretty` — logi do konsoli i `logs/app.log` |
 | LLM SDK | `openai` (kompatybilne z OpenRouter) |
 | Konfiguracja | `config.json` + `zod` — walidacja przy starcie |
