@@ -151,11 +151,11 @@ Dla tego projektu liczy się:
 | **JSON reliability** | Schema validation w Warstwie 3 wykryje każdy błąd struktury |
 | **Jakość streszczeń** | Wystarczy dobra — nie potrzebujemy Opus do podsumowania newsa |
 
-**Rekomendacja: `anthropic/claude-haiku-4-5-20251001`**
+**Rekomendacja: `anthropic/claude-haiku-4-5`**
 
 | Model | Szybkość | Koszt | JSON | Wybór |
 |-------|----------|-------|------|-------|
-| `anthropic/claude-haiku-4-5-20251001` | Bardzo szybki | Bardzo niski | Doskonały | **Rekomendowany** |
+| `anthropic/claude-haiku-4-5` | Bardzo szybki | Bardzo niski | Doskonały | **Rekomendowany** |
 | `google/gemini-flash-2.0` | Bardzo szybki | Bardzo niski | Dobry | Dobra alternatywa |
 | `openai/gpt-4o-mini` | Szybki | Niski | Dobry | Dobra alternatywa |
 | `anthropic/claude-sonnet-4-5` | Wolniejszy | Wyższy | Doskonały | Gdy jakość ważniejsza niż koszt |
@@ -168,7 +168,7 @@ Haiku to najszybszy i najtańszy model Claude — idealny do powtarzalnych, pros
 
 ```json
 {
-  "model": "anthropic/claude-haiku-4-5-20251001",
+  "model": "anthropic/claude-haiku-4-5",
   "retry": {
     "attempts": 4,
     "minTimeoutMs": 1000,
