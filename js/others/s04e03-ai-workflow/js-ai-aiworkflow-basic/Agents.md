@@ -69,9 +69,8 @@ js-ai-aiworkflow-basic/
 │   ├── index.ts            # punkt wejścia, uruchamia workflow w pętli
 │   ├── news-fetcher.ts     # pobiera artykuły z Hacker News API
 │   ├── mock-articles.ts    # fallback — lokalne dane testowe
-│   ├── llm-client.ts       # wywołanie OpenRouter z retry
-│   ├── retry.ts            # Exponential Backoff + Jitter
-│   └── monitor.ts          # 3 warstwy monitoringu
+│   ├── llm-client.ts       # wywołanie OpenRouter z p-retry
+│   └── monitor.ts          # 3 warstwy monitoringu (pino)
 ├── .env.example
 ├── package.json
 └── Agents.md
@@ -79,7 +78,7 @@ js-ai-aiworkflow-basic/
 
 ---
 
-## Technika 1: Retry z Exponential Backoff + Jitter
+## Technika 1: Retry z Exponential Backoff + Jitter (`p-retry`)
 
 ### Analogia
 
@@ -100,7 +99,7 @@ Każda kolejna próba czeka coraz dłużej:
 
 Sam backoff nie wystarczy — bez jittera wszystkie instancje ruszają jednocześnie (efekt **Thundering Herd**).
 
-Jitter rozkłada ruch losowo: każda instancja czeka `random(0, base_delay)` sekund.
+`p-retry` ma wbudowany jitter (`randomize: true`) — jedna opcja zamiast własnej matematyki.
 
 ### Które błędy retryować?
 
@@ -108,45 +107,50 @@ Jitter rozkłada ruch losowo: każda instancja czeka `random(0, base_delay)` sek
 |------|--------|----------|
 | HTTP 429 (rate limit) | Tak, z dłuższą przerwą | Serwer prosi o chwilę |
 | HTTP 500 (błąd serwera) | Tak | Przejściowy problem |
-| Timeout | Tak | Może być chwilowa przeciążenie |
+| Timeout | Tak | Może być chwilowe przeciążenie |
 | HTTP 400 (zły prompt) | Nie | Prompt się nie naprawi sam |
 
-### Implementacja w `retry.ts`
+`p-retry` rozróżnia błędy przez `AbortError` — rzucamy go dla błędów, których nie chcemy retryować (np. 400).
+
+### Implementacja w `llm-client.ts`
 
 ```typescript
-export async function withRetry<T>(
-  fn: () => Promise<T>,
-  maxAttempts = 4,
-  baseDelayMs = 1000
-): Promise<T> {
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      return await fn();
-    } catch (error) {
-      if (attempt === maxAttempts) throw error;
+import pRetry, { AbortError } from "p-retry";
 
-      // Exponential Backoff
-      const exponential = baseDelayMs * Math.pow(2, attempt - 1);
-
-      // Jitter — "decorrelated" (polecany przez AWS)
-      const jitter = Math.random() * exponential;
-      const delay = Math.floor(exponential + jitter);
-
-      console.log(`[RETRY] Próba ${attempt}/${maxAttempts}. Czekam ${delay}ms...`);
-      await sleep(delay);
+export async function callLLM(text: string) {
+  return pRetry(
+    async () => {
+      const res = await openai.chat.completions.create({ ... });
+      return res;
+    },
+    {
+      retries: 4,
+      minTimeout: 1000,
+      factor: 2,          // Exponential Backoff: 1s → 2s → 4s → 8s
+      randomize: true,    // Jitter — losowe odchylenie
+      onFailedAttempt: (err) => {
+        if (err.response?.status === 400) throw new AbortError(err);
+        log.warn({ attempt: err.attemptNumber, error: err.message }, "retry");
+      },
     }
-  }
-  throw new Error("Unreachable");
+  );
 }
-```
 
 ---
 
-## Technika 2: Monitoring (3 warstwy)
+## Technika 2: Monitoring (3 warstwy) z `pino`
 
 ### Analogia
 
 > Klasyczny monitoring pyta: "Czy serwer żyje?". Monitoring AI pyta też: "Czy wynik ma sens?".
+
+`pino` to logger strukturalny — zamiast tekstu wypisuje JSON. Każdy log to rekord z polami, który łatwo przeszukać, przefiltrować i wysłać do zewnętrznych narzędzi (Datadog, Loki, CloudWatch).
+
+```typescript
+// monitor.ts
+import pino from "pino";
+export const log = pino({ level: "info" });
+```
 
 ### Warstwa 1: Infrastruktura
 
@@ -160,13 +164,9 @@ export async function withRetry<T>(
 | Rate limit hits | Ile razy dostaliśmy 429 |
 
 ```typescript
-// monitor.ts — Warstwa 1
-infra: {
-  totalCalls: number;
-  errorRate: number;      // błędy / totalCalls
-  avgLatencyMs: number;
-  rateLimitHits: number;
-}
+// Warstwa 1 — log po każdym wywołaniu
+log.info({ layer: "infra", latencyMs, status: res.status }, "llm call");
+log.error({ layer: "infra", status: 429 }, "rate limit hit");
 ```
 
 ### Warstwa 2: Pipeline
@@ -180,12 +180,8 @@ infra: {
 | Błędy po wyczerpaniu retry | Ile zadań "przepadło" |
 
 ```typescript
-// monitor.ts — Warstwa 2
-pipeline: {
-  processedPerMinute: number;
-  retryRate: number;      // retry / totalCalls
-  failedPermanently: number;
-}
+// Warstwa 2 — log po każdym zadaniu
+log.info({ layer: "pipeline", processed, retries, failed }, "pipeline stats");
 ```
 
 ### Warstwa 3: Jakość outputu
@@ -199,12 +195,10 @@ pipeline: {
 | Canary check | Co 5 wywołań — testowe zdanie z oczekiwanym outputem | Inny wynik niż baseline |
 
 ```typescript
-// monitor.ts — Warstwa 3
-quality: {
-  schemaErrorRate: number;  // błędy schema / totalCalls
-  lengthAlerts: number;     // outputy poniżej progu
-  canaryFailures: number;   // nieudane testy canary
-}
+// Warstwa 3 — log po walidacji outputu
+log.warn({ layer: "quality", check: "schema", field: "topics" }, "schema error");
+log.warn({ layer: "quality", check: "length", chars: 12 }, "output too short");
+log.error({ layer: "quality", check: "canary" }, "canary failed");
 ```
 
 ---
@@ -239,14 +233,18 @@ quality: {
 
 ## Co zobaczysz w konsoli
 
+`pino` wypisuje JSON — jeden rekord na linię:
+
 ```
-[INFRA]    latencja: 342ms | error rate: 0%
-[RETRY]    Próba 2/4. Czekam 1847ms... (HTTP 429)
-[RETRY]    Próba 3/4. Czekam 3214ms... (HTTP 429)
-[PIPELINE] throughput: 12 zadań/min | retry rate: 16%
-[QUALITY]  schema OK | length OK | canary OK
-[ALERT]    schema error rate > 5% — sprawdz model!
+{"level":30,"layer":"infra","latencyMs":342,"status":200,"msg":"llm call"}
+{"level":40,"layer":"infra","attempt":2,"error":"rate limit","msg":"retry"}
+{"level":40,"layer":"infra","attempt":3,"error":"rate limit","msg":"retry"}
+{"level":30,"layer":"pipeline","processed":12,"retries":2,"failed":0,"msg":"pipeline stats"}
+{"level":30,"layer":"quality","check":"schema","msg":"schema ok"}
+{"level":50,"layer":"quality","check":"canary","msg":"canary failed"}
 ```
+
+Poziomy logów `pino`: `10` trace · `20` debug · `30` info · `40` warn · `50` error · `60` fatal
 
 ---
 
@@ -257,9 +255,9 @@ quality: {
 | Jezyk | TypeScript |
 | LLM API | OpenRouter |
 | Runtime | Node.js (tsx) |
-| Zaleznosci | tylko `openai` SDK (kompatybilne z OpenRouter) |
-
-Brak zewnętrznych bibliotek do retry ani monitoringu — wszystko implementujemy od zera, żeby zrozumieć mechanizm.
+| Retry | `p-retry` — Exponential Backoff + Jitter + AbortError |
+| Logging | `pino` — strukturalne logi JSON |
+| LLM SDK | `openai` (kompatybilne z OpenRouter) |
 
 ---
 
