@@ -61,7 +61,7 @@ npm run dev -- --help              # show all options
 | `--dry-run` | false | Fetch articles, skip LLM calls |
 
 Logs appear in the console and in `logs/app.log`.
-Articles are saved to `workflow/articles/`.
+Articles are saved to `workspace/articles/`.
 
 ---
 
@@ -79,7 +79,7 @@ src/
 │   └── mock-articles.ts    ← fallback data for offline testing
 ├── config.ts               ← Zod validation of config.json
 └── index.ts                ← entry point, runs the workflow loop
-workflow/articles/          ← output JSON files (one per article)
+workspace/articles/          ← output JSON files (one per article)
 logs/app.log                ← structured logs (auto-created)
 config.json                 ← all config values (no secrets)
 .env                        ← API keys (never commit!)
@@ -106,7 +106,7 @@ All settings live in `config.json`:
 
 ## Output format
 
-Each processed article is saved as `workflow/articles/{timestamp}-{id}.json`:
+Each processed article is saved as `workspace/articles/{timestamp}-{id}.json`:
 
 ```json
 {
