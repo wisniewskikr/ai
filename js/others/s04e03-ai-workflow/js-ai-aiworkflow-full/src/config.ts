@@ -8,9 +8,18 @@ const ConfigSchema = z.object({
     minTimeoutMs: z.number().min(0),
     factor: z.number().min(1),
   }),
+  circuitBreaker: z.object({
+    failureThreshold: z.number().min(1).max(100),
+    timeoutMs: z.number().min(1000),
+    resetTimeoutMs: z.number().min(1000),
+  }),
   monitor: z.object({
     minSummaryLength: z.number().min(1),
     schemaErrorRateAlertThreshold: z.number().min(0).max(1),
+  }),
+  dlq: z.object({
+    reprocessBatchSize: z.number().min(1),
+    maxSize: z.number().min(1),
   }),
   workflow: z.object({
     intervalMs: z.number().min(1000),

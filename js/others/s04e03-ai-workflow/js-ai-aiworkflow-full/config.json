@@ -5,9 +5,18 @@
     "minTimeoutMs": 1000,
     "factor": 2
   },
+  "circuitBreaker": {
+    "failureThreshold": 50,
+    "timeoutMs": 10000,
+    "resetTimeoutMs": 30000
+  },
   "monitor": {
     "minSummaryLength": 50,
     "schemaErrorRateAlertThreshold": 0.05
+  },
+  "dlq": {
+    "reprocessBatchSize": 3,
+    "maxSize": 100
   },
   "workflow": {
     "intervalMs": 60000,
