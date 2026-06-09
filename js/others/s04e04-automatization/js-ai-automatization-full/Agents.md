@@ -23,7 +23,7 @@ To jest właśnie ten projekt: prosty agent TypeScript + OpenRouter, który gene
 
 ## Scenariusz: "Codzienny digest nagłówków"
 
-Agent dostaje plik `data/news.json` (mockowe nagłówki newsów z timestampem) i prosi OpenRouter o wygenerowanie krótkiego podsumowania w formacie JSON. Wynik trafia do `results/report.json`.
+Agent dostaje plik `data/news.json` (mockowe nagłówki newsów z timestampem) i prosi OpenRouter o wygenerowanie krótkiego podsumowania w formacie JSON. Wynik trafia do `workspace/results/report_<timestamp>.json`.
 
 Wyobraź sobie listonosza, który co rano przynosi gazetę — ale najpierw sprawdza, czy gazeta nie jest sprzed tygodnia, czy jest kompletna, i zostawia kartkę w skrzynce gdy coś nie gra.
 
@@ -38,7 +38,7 @@ OpenRouter prompt       →  "Podsumuj te nagłówki jako JSON: { summary, topic
        ↓
 validate output         →  JSON? summary.length > 100? topics.length > 0?
        ↓
-results/report.json     →  zapisz wynik
+workspace/results/report_<timestamp>.json  →  zapisz wynik
        ↓
 heartbeat ping          →  sukces
 ```
@@ -118,14 +118,14 @@ Pełny output jednego runa:
 [INFO] Input data is fresh (generatedAt: 2026-06-09 08:55 Warsaw)
 [INFO] OpenRouter response received
 [INFO] Output valid — summary: 143 chars, topics: 4
-[INFO] Report saved → results/report.json
+[INFO] Report saved → workspace/results/report_2026-06-09T09-00-12.json
 [INFO] Heartbeat sent ✓
 [INFO] Lock released
 
 Next run in: 00:59  (Ctrl+C to stop)
 ```
 
-Zawartość `results/report.json` po udanym runie:
+Zawartość `workspace/results/report_2026-06-09T09-00-12.json` po udanym runie:
 
 ```json
 {
@@ -228,8 +228,9 @@ project/
 │       └── logger.ts          ← zapis logów do logs/
 ├── data/
 │   └── news.json              ← mockowe dane wejściowe (z timestampem)
-├── results/
-│   └── report.json            ← wynik działania agenta
+├── workspace/
+│   └── results/
+│       └── report_2026-06-09T09-00-12.json  ← wynik z timestampem
 ├── logs/                      ← logi aplikacji (auto-generowane)
 ├── config.json                ← wszystkie zmienne konfiguracyjne
 ├── .env                       ← OPENROUTER_API_KEY (nie commituj!)
@@ -255,7 +256,7 @@ project/
   "heartbeatUrl": "https://hc-ping.com/YOUR-UUID",
   "model": "google/gemini-2.0-flash-001",
   "logsDir": "logs",
-  "resultsDir": "results"
+  "resultsDir": "workspace/results"
 }
 ```
 
@@ -414,7 +415,7 @@ src/
   utils/alert.ts
   utils/logger.ts
 data/news.json          ← input data (with timestamp)
-results/report.json     ← output
+workspace/results/      ← output z timestampem (np. report_2026-06-09T09-00-12.json)
 logs/                   ← auto-generated logs
 config.json             ← all config values (model, limits, paths)
 .env                    ← API keys (never commit!)
