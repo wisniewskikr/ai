@@ -1,6 +1,7 @@
 import "dotenv/config";
 import fs from "fs";
 import chalk from "chalk";
+import ora from "ora";
 import { config } from "./config.js";
 import { fetchArticles } from "./services/news-fetcher.js";
 import { mockArticles } from "./utils/mock-articles.js";
@@ -118,7 +119,7 @@ while (true) {
   }
 
   while (!isShuttingDown) {
-    if (cliOpts.once) console.log("\nIn progress ...\n");
+    const spinner = ora({ color: "cyan" }).start();
     const stats = createRunStats();
     const articleResults: ArticleResult[] = [];
     let canaryPassed = true;
@@ -128,6 +129,7 @@ while (true) {
     if (shouldRunCanary) {
       canaryPassed = await runCanaryCheck();
       if (!canaryPassed) {
+        spinner.stop();
         logQualityCheck(stats, false);
         logPipelineStats(stats);
         articleResults.push({ title: "Canary health check", retries: 0, breakerOpen: false, monitoring: "canary", status: "canary-fail" });
@@ -292,6 +294,7 @@ while (true) {
       }
     }
 
+    spinner.stop();
     lastRunHadErrors = stats.failed > 0 || stats.schemaErrors > 0;
 
     logPipelineStats(stats);
