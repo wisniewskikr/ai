@@ -100,12 +100,44 @@ Select mode:
 
 | Opcja | Co robi | Czego uczy |
 |-------|---------|------------|
-| **1. Run normally** | Uruchamia crona co 1 minutę na poprawnych danych (interwał w `config.json`) | Pokazuje happy path — wszystkie 6 komponentów działa poprawnie |
+| **1. Run normally** | Uruchamia crona co 1 minutę na poprawnych danych (interwał w `config.json`) | Pokazuje happy path — wszystkie 6 komponentów działa poprawnie. Gdy wszystko OK — agent działa cicho, regularnie i przewidywalnie |
 | **2. Stale input** | Podmienia timestamp w `news.json` na >24h wstecz | Alert z komponentu 2 — weryfikacja danych wejściowych |
 | **3. Invalid output** | Zwraca zniekształcony JSON z OpenRouter (mock) | Alert z komponentu 3 — walidacja outputu |
 | **4. Heartbeat failure** | Blokuje ping do healthchecks.io | Alert z komponentu 4 — heartbeat |
 | **5. Lock conflict** | Uruchamia dwie instancje jednocześnie | Alert z komponentu 5 — lock file |
 | **6. Exit** | Czyste zamknięcie programu | — |
+
+### Opcja 1 — rezultat (happy path)
+
+Pełny output jednego runa:
+
+```
+⠋ Processing articles...
+
+[INFO] Lock acquired
+[INFO] Input data is fresh (generatedAt: 2026-06-09 08:55 Warsaw)
+[INFO] OpenRouter response received
+[INFO] Output valid — summary: 143 chars, topics: 4
+[INFO] Report saved → results/report.json
+[INFO] Heartbeat sent ✓
+[INFO] Lock released
+
+Next run in: 00:59  (Ctrl+C to stop)
+```
+
+Zawartość `results/report.json` po udanym runie:
+
+```json
+{
+  "generatedAt": "2026-06-09T09:00:12.000+02:00",
+  "summary": "Today's headlines focus on AI regulation in Europe...",
+  "topics": ["AI", "regulation", "Europe", "tech"]
+}
+```
+
+Po minucie — to samo od nowa. Run #2, #3, #4...
+
+---
 
 ### Spinner — aplikacja pracuje w tle
 
