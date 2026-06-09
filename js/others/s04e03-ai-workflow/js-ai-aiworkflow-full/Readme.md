@@ -174,10 +174,10 @@ Each processed article is saved as `workspace/articles/{timestamp}-{id}.json`:
 
 ## Console output
 
-During processing you see one line: `In progress ...`. When done, a table appears — one row per article:
+During processing a spinner animates in the terminal. When done, a table appears — one row per article:
 
 ```
-In progress ...
+⠋
 
   Article                                 Retries  Breaker   Monitoring  Status
   ──────────────────────────────────────────────────────────────────────────────
@@ -189,7 +189,7 @@ In progress ...
 Option 4 (canary failure) shows a single row instead of articles:
 
 ```
-In progress ...
+⠋
 
   Article                                 Retries  Breaker   Monitoring  Status
   ──────────────────────────────────────────────────────────────────────────────

@@ -692,10 +692,10 @@ if (getDLQSize() > config.dlq.maxSize) {
 
 ## Co zobaczysz w konsoli
 
-Podczas przetwarzania wyświetla się jeden tekst: `In progress ...`. Po zakończeniu pojawia się tabela — jeden wiersz na artykuł:
+Podczas przetwarzania animuje się spinner (`ora`). Po zakończeniu pojawia się tabela — jeden wiersz na artykuł:
 
 ```
-In progress ...
+⠋
 
   Article                                 Retries  Breaker   Monitoring  Status
   ──────────────────────────────────────────────────────────────────────────────
@@ -707,7 +707,7 @@ In progress ...
 Opcja 4 (canary) pokazuje jeden wiersz zamiast artykułów:
 
 ```
-In progress ...
+⠋
 
   Article                                 Retries  Breaker   Monitoring  Status
   ──────────────────────────────────────────────────────────────────────────────
@@ -835,7 +835,7 @@ AI Workflow — Silent Degradation Demo
 
 ? What do you want to do? › 1) Run normally
 
-In progress ...
+⠋
 
   Article                                 Retries  Breaker   Monitoring  Status
   ──────────────────────────────────────────────────────────────────────────────
