@@ -69,14 +69,14 @@ AI Workflow — Silent Degradation Demo
 |--------|-------------|
 | **1** Run normally | Fetch articles, call LLM, save results |
 | **2** Recover from DLQ | Reprocess all failed articles, then return to menu |
-| **3** Simulate retry failure | Watch exponential backoff in action; failed articles pushed to DLQ as `retry_exhausted` |
-| **4** Simulate canary failure | Canary fails before any articles are processed — **no DLQ entries** |
-| **5** Simulate Circuit Breaker | Breaker trips: closed → open → half-open; articles go to DLQ as `retry_exhausted` then `breaker_open` |
+| **3** Simulate retry failure | Retries only — circuit breaker bypassed; all articles fail with `retry_exhausted` |
+| **4** Simulate canary failure | Canary fails, one row in the result table — **no DLQ entries** |
+| **5** Simulate Circuit Breaker | Circuit breaker only — no retries; first failure opens breaker, rest go to DLQ as `breaker_open` |
 | **0** Exit | Graceful shutdown — the only way to exit |
 
 After each task the menu reappears automatically. Ctrl+C during a task stops it gracefully and returns to the menu.
 
-Options 3–5 use mock responses — **no tokens spent**.
+Options 3–5 use mock responses — **no tokens spent**. Each option isolates one mechanism so you can see exactly what it does.
 
 ### CLI flags (skip the menu)
 
@@ -173,34 +173,37 @@ Each processed article is saved as `workspace/articles/{timestamp}-{id}.json`:
 
 ## Console output
 
-Each article shows a live spinner during processing. After all articles finish, a table summarises the run — one row per article:
+During processing you see one line: `In progress ...`. When done, a table appears — one row per article:
 
 ```
-  [1/3] Processing: "OpenAI raises $40B at $300B valuation"
-        ✔ Done (891ms)
-  [2/3] Processing: "TypeScript 5.8 released"
-        ⚠ Retry 1/4 — rate limit (429)...
-        ✔ Done (2103ms)
-  [3/3] Processing: "Show HN: I built a..."
-        ✖ Failed: Breaker is open
+In progress ...
 
-  Article                                 Retries  Breaker  Schema  Length  Status
-  ──────────────────────────────────────────────────────────────────────────────────
-  OpenAI raises $40B at $300B valuation      0       ok       ok      ok    ✓ saved
-  TypeScript 5.8 released                    1       ok       ok      ok    ✓ saved
-  Show HN: I built a...                      3       open     -       -     ✗ DLQ
+  Article                                 Retries  Breaker   Monitoring  Status
+  ──────────────────────────────────────────────────────────────────────────────
+  OpenAI raises $40B at $300B valuation      0       ok       ok          ✓ saved
+  TypeScript 5.8 released                    2       ok       ok          ✓ saved
+  Show HN: I built a...                      0       open     -           ✗ DLQ
+```
+
+Option 4 (canary failure) shows a single row instead of articles:
+
+```
+In progress ...
+
+  Article                                 Retries  Breaker   Monitoring  Status
+  ──────────────────────────────────────────────────────────────────────────────
+  Canary health check                        0       -        canary      ✗ canary
 ```
 
 | Column | What it shows |
 |--------|--------------|
 | **Article** | Title (truncated to 38 chars) |
-| **Retries** | Retry count (yellow when > 0) |
-| **Breaker** | Circuit breaker state at processing time (`ok` / `open`) |
-| **Schema** | Whether LLM output has required `summary` and `topics` fields |
-| **Length** | Whether summary meets minimum length from `config.json` |
-| **Status** | `✓ saved` / `✗ DLQ` / `→ skipped` / `(dry-run)` |
+| **Retries** | Retry count — yellow when > 0 |
+| **Breaker** | Circuit breaker state (`ok` / `open`) |
+| **Monitoring** | Output quality: `ok` / `schema` / `short` / `schema+short` / `canary` |
+| **Status** | `✓ saved` / `✗ DLQ` / `→ skipped` / `(dry-run)` / `✗ canary` |
 
-`-` means not applicable (e.g. schema and length when breaker was open — LLM was never called). Canary check is per-run, shown in the summary section below the table.
+`-` means not applicable — e.g. Monitoring when breaker was open (LLM was never called).
 
 ---
 

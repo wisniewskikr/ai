@@ -697,22 +697,26 @@ if (getDLQSize() > config.dlq.maxSize) {
 
 ## Co zobaczysz w konsoli
 
-Podczas przetwarzania każdy artykuł pokazuje spinner z postępem (retry, done, failed). Po zakończeniu wszystkich artykułów w runie pojawia się tabela — jeden wiersz na artykuł — a następnie summary:
+Podczas przetwarzania wyświetla się jeden tekst: `In progress ...`. Po zakończeniu pojawia się tabela — jeden wiersz na artykuł:
 
 ```
-  [1/3] Processing: "OpenAI raises $40B at $300B valuation"
-        ✔ Done (891ms)
-  [2/3] Processing: "TypeScript 5.8 released"
-        ⚠ Retry 1/4 — rate limit (429)...
-        ✔ Done (2103ms)
-  [3/3] Processing: "Show HN: I built a..."
-        ✖ Failed: Breaker is open
+In progress ...
 
-  Article                                 Retries  Breaker  Schema  Length  Status
-  ──────────────────────────────────────────────────────────────────────────────────
-  OpenAI raises $40B at $300B valuation      0       ok       ok      ok    ✓ saved
-  TypeScript 5.8 released                    1       ok       ok      ok    ✓ saved
-  Show HN: I built a...                      3       open     -       -     ✗ DLQ
+  Article                                 Retries  Breaker   Monitoring  Status
+  ──────────────────────────────────────────────────────────────────────────────
+  OpenAI raises $40B at $300B valuation      0       ok       ok          ✓ saved
+  TypeScript 5.8 released                    2       ok       ok          ✓ saved
+  Show HN: I built a...                      0       open     -           ✗ DLQ
+```
+
+Opcja 4 (canary) pokazuje jeden wiersz zamiast artykułów:
+
+```
+In progress ...
+
+  Article                                 Retries  Breaker   Monitoring  Status
+  ──────────────────────────────────────────────────────────────────────────────
+  Canary health check                        0       -        canary      ✗ canary
 ```
 
 Kolumny tabeli:
@@ -720,22 +724,19 @@ Kolumny tabeli:
 | Kolumna | Co pokazuje |
 |---------|-------------|
 | **Article** | Tytuł artykułu (skrócony do 38 znaków) |
-| **Retries** | Liczba ponownych prób przed sukcesem lub DLQ (żółty gdy > 0) |
-| **Breaker** | Stan circuit breakera w momencie przetwarzania (`ok` / `open`) |
-| **Schema** | Walidacja JSON outputu — czy ma pola `summary` i `topics` |
-| **Length** | Czy podsumowanie spełnia minimalną długość z `config.json` |
-| **Status** | `✓ saved` / `✗ DLQ` / `→ skipped` / `(dry-run)` |
+| **Retries** | Liczba ponownych prób — żółty gdy > 0 |
+| **Breaker** | Stan circuit breakera (`ok` / `open`) |
+| **Monitoring** | Jakość outputu: `ok` / `schema` / `short` / `schema+short` / `canary` |
+| **Status** | `✓ saved` / `✗ DLQ` / `→ skipped` / `(dry-run)` / `✗ canary` |
 
-Wartość `-` oznacza kolumnę bez znaczenia (np. schema i length gdy breaker był otwarty — LLM nie był wywołany). Canary check jest per-run — wyświetlany w sekcji summary pod tabelą.
+`-` oznacza brak zastosowania — np. Monitoring gdy breaker był otwarty (LLM nie był wywołany).
 
-Logi szczegółowe zapisywane do `logs/app.log` w formacie czytelnym dla człowieka:
+Logi szczegółowe zapisywane do `logs/app.log`:
 
 ```
 [2026-06-08 10:01:00] [INFO]  llm call | latency=342ms status=200
 [2026-06-08 10:01:01] [WARN]  retry attempt=2 error="rate limit (429)"
-[2026-06-08 10:01:05] [WARN]  retry attempt=3 error="rate limit (429)"
 [2026-06-08 10:01:10] [INFO]  pipeline stats | processed=12 retries=2 failed=0
-[2026-06-08 10:01:10] [INFO]  quality check | schema=ok length=ok canary=ok
 [2026-06-08 10:01:10] [ERROR] canary failed — sprawdz model!
 ```
 
@@ -810,14 +811,14 @@ AI Workflow — Silent Degradation Demo
 |--------|-------------|
 | `1` Run normally | Fetch articles, call LLM, save results — standard loop |
 | `2` Recover from DLQ | Process all `pending` items from `workspace/dlq.db`, then return to menu |
-| `3` Simulate retry failure | Mock API returning HTTP 500 — shows exponential backoff + jitter in console; failed articles pushed to DLQ as `retry_exhausted`, then return to menu |
-| `4` Simulate canary failure | Mock LLM returning invalid canary response — canary fails before any articles are processed; **no DLQ entries**, then return to menu |
-| `5` Simulate Circuit Breaker failure | Mock repeated failures until breaker opens — shows state transitions: closed → open → half-open; first articles pushed to DLQ as `retry_exhausted`, subsequent ones as `breaker_open`, then return to menu |
+| `3` Simulate retry failure | Retries only — circuit breaker bypassed; all articles fail with `retry_exhausted` |
+| `4` Simulate canary failure | Canary fails, one row shown in table — **no DLQ entries** |
+| `5` Simulate Circuit Breaker failure | Circuit breaker only — 0 retries; first failure opens breaker, rest go to DLQ as `breaker_open` |
 | `0` Exit | Graceful shutdown |
 
-After each task completes, the menu reappears automatically. Pressing Ctrl+C during a task stops the current work gracefully and returns to the menu. The only way to exit the application is option `0`.
+After each task the menu reappears automatically. The only way to exit is option `0`.
 
-Options 3–5 are **simulations** — they mock API responses locally, no real LLM calls, no tokens spent. Their purpose is to show what failure looks like in the console and in `logs/app.log`.
+Options 3–5 are **simulations** — mock responses locally, no real LLM calls, no tokens spent. Each option isolates one mechanism so you see exactly what it does.
 
 ### 2. Input — CLI flags (still available)
 
@@ -836,40 +837,18 @@ npm run dev -- --help                 # show all options
 ```
 AI Workflow — Silent Degradation Demo
 ======================================
-Press Ctrl+C at any time to stop gracefully.
 
-Run #1 — 2026-06-08 10:01:00
+? What do you want to do? › 1) Run normally
 
-  Fetching top stories from Hacker News... done (312ms)
+In progress ...
 
-  [1/3] Processing: "OpenAI raises $40B at $300B valuation"
-        ⠸ Calling LLM...
-        ✔ Done (891ms)
+  Article                                 Retries  Breaker   Monitoring  Status
+  ──────────────────────────────────────────────────────────────────────────────
+  OpenAI raises $40B at $300B valuation      0       ok       ok          ✓ saved
+  TypeScript 5.8 released                    2       ok       ok          ✓ saved
+  Show HN: I built a...                      0       open     -           ✗ DLQ
 
-  [2/3] Processing: "TypeScript 5.8 released"
-        ⠸ Calling LLM...
-        ⚠ Retry 2/4 — rate limit (429). Waiting 1847ms...
-        ⚠ Retry 3/4 — rate limit (429). Waiting 3214ms...
-        ✔ Done (6103ms)
-
-  [3/3] Processing: "Canary check"
-        ⠸ Calling LLM...
-        ✖ Canary failed — output drift detected!
-
-──────────────────────────────────────────
-Run #1 Summary
-  Processed : 3 articles
-  Retries   : 2
-  Failed    : 0
-  Avg latency: 2961ms
-
-  Monitoring
-  Layer 1 Infra    : error_rate=0%  avg_latency=891ms
-  Layer 2 Pipeline : retry_rate=33%  failed=0
-  Layer 3 Quality  : schema=ok  length=ok  canary=FAIL ⚠
-──────────────────────────────────────────
-
-Next run in 60s. Press Ctrl+C to stop.
+? What do you want to do? ›
 ```
 
 ### 3. Output — result per article
