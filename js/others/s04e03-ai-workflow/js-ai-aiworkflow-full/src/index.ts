@@ -1,7 +1,6 @@
 import "dotenv/config";
 import fs from "fs";
 import chalk from "chalk";
-import ora from "ora";
 import { config } from "./config.js";
 import { fetchArticles } from "./services/news-fetcher.js";
 import { mockArticles } from "./utils/mock-articles.js";
@@ -16,8 +15,6 @@ import {
 } from "./services/monitor.js";
 import {
   getCliOptions,
-  printHeader,
-  printRunHeader,
   printRunTable,
   printRunSummary,
   type ArticleResult,
@@ -37,7 +34,6 @@ let isShuttingDown = false;
 function onShutdown() {
   isShuttingDown = true;
   log.info("Shutdown signal received — finishing current article...");
-  console.log(chalk.yellow("\nShutdown signal received — finishing current article..."));
 }
 
 process.on("SIGINT", onShutdown);
@@ -53,24 +49,19 @@ while (true) {
   // Activate simulation mode before any runs
   if (cliOpts.simMode !== "none") {
     setSimMode(cliOpts.simMode);
-    console.log(chalk.yellow(`\nSimulation mode: ${cliOpts.simMode.toUpperCase()}\n`));
   }
-
-  console.log(chalk.gray("Press Ctrl+C at any time to stop gracefully.\n"));
 
   // ─── Option 2: Recover from DLQ ─────────────────────────────────────────
   if (cliOpts.reprocessDlq) {
   const items = getAllDLQPending();
   if (items.length === 0) {
-    console.log(chalk.green("DLQ is empty — nothing to reprocess."));
     continue;
   }
 
-  console.log(chalk.bold(`Reprocessing ${items.length} pending DLQ items...\n`));
+  console.log("\nIn progress ...\n");
 
   for (const item of items) {
     const payload = JSON.parse(item.payload) as Article;
-    const spinner = ora(`  [DLQ] "${payload.title}"`).start();
 
     try {
       const result = await callLLM(`Title: ${payload.title}\n\n${payload.text}`);
@@ -95,16 +86,13 @@ while (true) {
       );
 
       markDLQItem(item.id, "reprocessed");
-      spinner.succeed(chalk.green(`  [DLQ] Reprocessed: "${payload.title}"`));
       log.info({ layer: "pipeline", dlq: "reprocessed", id: payload.id }, "DLQ item reprocessed");
     } catch (err) {
       markDLQItem(item.id, "manual_review");
-      spinner.fail(chalk.red(`  [DLQ] Failed — needs manual review: "${payload.title}"`));
       log.warn({ layer: "pipeline", dlq: "manual_review", id: payload.id }, "DLQ item needs manual review");
     }
   }
 
-  console.log(chalk.green("\nDLQ reprocessing complete."));
   continue;
   }
 
@@ -113,7 +101,7 @@ while (true) {
   let lastRunHadErrors = false;
 
   while (!isShuttingDown) {
-    printRunHeader(runNumber);
+    console.log("\nIn progress ...\n");
     const stats = createRunStats();
     const articleResults: ArticleResult[] = [];
     let canaryPassed = true;
@@ -121,12 +109,8 @@ while (true) {
     // Canary check — every 10 runs or after an error (never in dry-run)
     const shouldRunCanary = !cliOpts.dryRun && (runNumber % 10 === 1 || lastRunHadErrors || getSimMode() === "canary");
     if (shouldRunCanary) {
-      const spinner = ora("Running canary health check...").start();
       canaryPassed = await runCanaryCheck();
-      if (canaryPassed) {
-        spinner.succeed(chalk.green("Canary check passed"));
-      } else {
-        spinner.fail(chalk.red("Canary failed — output drift detected!"));
+      if (!canaryPassed) {
         logQualityCheck(stats, false);
         logPipelineStats(stats);
         printRunSummary(runNumber, stats, false, getDLQSize(), getBreakerState(breaker));
@@ -152,7 +136,6 @@ while (true) {
           continue;
         }
 
-        const spinner = ora(`  [DLQ] Reprocessing: "${payload.title}"`).start();
         try {
           const result = await callLLM(`Title: ${payload.title}\n\n${payload.text}`);
           const parsed = JSON.parse(result.content) as { summary?: string; topics?: string[] };
@@ -174,11 +157,9 @@ while (true) {
             )
           );
           markDLQItem(item.id, "reprocessed");
-          spinner.succeed(chalk.green(`  [DLQ] Reprocessed: "${payload.title}"`));
           log.info({ layer: "pipeline", dlq: "reprocessed", id: payload.id }, "DLQ item reprocessed");
         } catch {
           markDLQItem(item.id, "manual_review");
-          spinner.fail(chalk.red(`  [DLQ] Manual review needed: "${payload.title}"`));
           log.warn({ layer: "pipeline", dlq: "manual_review", id: payload.id }, "DLQ item needs manual review");
         }
       }
@@ -187,17 +168,12 @@ while (true) {
     // Backpressure: skip new articles if DLQ is too large
     if (getDLQSize() > config.dlq.maxSize) {
       log.warn({ layer: "pipeline", dlqSize: getDLQSize() }, "DLQ backpressure — skipping new articles");
-      console.log(chalk.yellow(`  DLQ backpressure (${getDLQSize()} pending) — skipping new articles this run.`));
     } else {
       // Fetch articles — use mock data in simulation mode (no real HN fetch)
-      const fetchSpinner = ora("Fetching top stories from Hacker News...").start();
-      const fetchStart = Date.now();
       const articles =
         getSimMode() !== "none"
           ? mockArticles.slice(0, cliOpts.articles)
           : await fetchArticles(cliOpts.articles);
-      fetchSpinner.succeed(`Fetching top stories... done (${Date.now() - fetchStart}ms)`);
-      console.log();
 
       for (let i = 0; i < articles.length; i++) {
         if (isShuttingDown) break;
@@ -211,31 +187,23 @@ while (true) {
 
         if (alreadyProcessed && getSimMode() === "none") {
           log.info({ layer: "pipeline", id: article.id }, "skipped — already processed");
-          console.log(
-            `  [${i + 1}/${articles.length}] ${chalk.gray(`Skipping: "${article.title}" (already processed)`)}`
-          );
           articleResults.push({ title: article.title, retries: 0, breakerOpen: false, schemaError: false, lengthError: false, status: "skipped" });
           continue;
         }
 
-        console.log(`  [${i + 1}/${articles.length}] Processing: "${chalk.cyan(article.title)}"`);
-
         if (cliOpts.dryRun) {
-          console.log(chalk.gray("        (dry-run — LLM call skipped)\n"));
           articleResults.push({ title: article.title, retries: 0, breakerOpen: false, schemaError: false, lengthError: false, status: "dry-run" });
           continue;
         }
 
         // Circuit breaker check: if open, send directly to DLQ
         if (getBreakerState(breaker) === "open") {
-          console.log(chalk.red("        Circuit breaker OPEN — sending to DLQ"));
           pushToDLQ(article.id, article, "breaker_open", 0);
           stats.failed++;
           articleResults.push({ title: article.title, retries: 0, breakerOpen: true, schemaError: false, lengthError: false, status: "dlq" });
           continue;
         }
 
-        const spinner = ora("        Calling LLM...").start();
         let articleRetries = 0;
         let articleSchemaError = false;
         let articleLengthError = false;
@@ -243,10 +211,7 @@ while (true) {
         try {
           const result = await callLLM(
             `Title: ${article.title}\n\n${article.text}`,
-            (attempt, reason) => {
-              spinner.text = chalk.yellow(
-                `        Retry ${attempt}/${config.retry.attempts} — ${reason}...`
-              );
+            (_attempt, _reason) => {
               stats.retries++;
               articleRetries++;
             }
@@ -293,13 +258,11 @@ while (true) {
           fs.writeFileSync(outputPath, JSON.stringify(output, null, 2));
           stats.processed++;
 
-          spinner.succeed(chalk.green(`        Done (${result.latencyMs}ms)`));
           articleResults.push({ title: article.title, retries: articleRetries, breakerOpen: false, schemaError: articleSchemaError, lengthError: articleLengthError, status: "saved" });
         } catch (err) {
           stats.failed++;
           const errMsg = String(err);
           const errorType = errMsg.toLowerCase().includes("open") ? "breaker_open" : "retry_exhausted";
-          spinner.fail(chalk.red(`        Failed: ${errMsg}`));
           log.error({ layer: "pipeline", id: article.id, error: errMsg }, "article failed");
           pushToDLQ(article.id, article, errorType, config.retry.attempts);
           articleResults.push({ title: article.title, retries: articleRetries, breakerOpen: errorType === "breaker_open", schemaError: false, lengthError: false, status: "dlq" });
@@ -315,9 +278,6 @@ while (true) {
     printRunSummary(runNumber, stats, canaryPassed, getDLQSize(), getBreakerState(breaker));
 
     if (cliOpts.once || isShuttingDown) break;
-
-    const nextIn = cliOpts.interval / 1000;
-    console.log(chalk.gray(`Next run in ${nextIn}s. Press Ctrl+C to stop.\n`));
 
     const end = Date.now() + cliOpts.interval;
     while (Date.now() < end && !isShuttingDown) {
