@@ -108,8 +108,17 @@ while (true) {
   let runNumber = 1;
   let lastRunHadErrors = false;
 
+  if (!cliOpts.once) {
+    console.log(
+      chalk.gray(
+        `\nFetching ${cliOpts.articles} articles every ${cliOpts.interval / 1000}s` +
+        ` — press Ctrl+C to stop and return to the main menu.\n`
+      )
+    );
+  }
+
   while (!isShuttingDown) {
-    console.log("\nIn progress ...\n");
+    if (cliOpts.once) console.log("\nIn progress ...\n");
     const stats = createRunStats();
     const articleResults: ArticleResult[] = [];
     let canaryPassed = true;
@@ -297,5 +306,9 @@ while (true) {
     }
 
     runNumber++;
+  }
+
+  if (isShuttingDown && !cliOpts.once) {
+    console.log(chalk.gray("\nStopped. Returning to main menu...\n"));
   }
 }
