@@ -77,11 +77,49 @@ Jeden skrypt (`src/agent.ts`) uruchamiany np. cronjobem o 9:00 Europe/Warsaw.
 
 ---
 
+## CLI — komunikacja z użytkownikiem
+
+Cała interakcja odbywa się przez terminal w języku angielskim. Po uruchomieniu (`npm start`) użytkownik widzi menu:
+
+```
+╔══════════════════════════════════════════╗
+║       Daily News Digest Agent            ║
+║  Press Ctrl+C at any time to exit safely ║
+╚══════════════════════════════════════════╝
+
+Select mode:
+  1. Run normally     (cron every 1 min, clean data)
+  2. Simulate error   — stale input data
+  3. Simulate error   — invalid AI output
+  4. Simulate error   — heartbeat failure
+  5. Simulate error   — lock file conflict
+  6. Exit
+
+> _
+```
+
+| Opcja | Co robi | Czego uczy |
+|-------|---------|------------|
+| **1. Run normally** | Uruchamia crona co 1 minutę na poprawnych danych (interwał w `config.json`) | Pokazuje happy path — wszystkie 6 komponentów działa poprawnie |
+| **2. Stale input** | Podmienia timestamp w `news.json` na >24h wstecz | Alert z komponentu 2 — weryfikacja danych wejściowych |
+| **3. Invalid output** | Zwraca zniekształcony JSON z OpenRouter (mock) | Alert z komponentu 3 — walidacja outputu |
+| **4. Heartbeat failure** | Blokuje ping do healthchecks.io | Alert z komponentu 4 — heartbeat |
+| **5. Lock conflict** | Uruchamia dwie instancje jednocześnie | Alert z komponentu 5 — lock file |
+| **6. Exit** | Czyste zamknięcie programu | — |
+
+**Ctrl+C** działa zawsze — grzecznie kończy crona, zwalnia lock, loguje `[INFO] Agent stopped by user`.
+
+Interwał crona (domyślnie `1` minuta) konfigurowalny w `config.json`:
+
+```json
+"cronIntervalMinutes": 1
+```
+
+---
+
 ## Jak zasymulować awarię?
 
-- Podmień `generatedAt` w `news.json` na wczorajszy timestamp → zobaczysz alert z komponentu 2
-- Uruchom skrypt dwa razy jednocześnie → druga instancja grzecznie odpuści (komponent 5)
-- Wyłącz internet → heartbeat nie dotrze → healthchecks.io wyśle e-mail po upływie okna czasowego (komponent 4)
+Przez menu CLI — bez ręcznego edytowania plików. Każda symulacja wyświetla alert w terminalu i zapisuje wpis do `logs/`.
 
 ---
 
