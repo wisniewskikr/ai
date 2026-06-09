@@ -126,9 +126,9 @@ export function printRunTable(results: ArticleResult[]) {
       ? r.title.slice(0, W.title - 3) + "..."
       : r.title.padEnd(W.title);
 
-    const retriesVal = (na || r.breakerOpen) ? "-" : String(r.retries);
+    const retriesVal = na ? "-" : String(r.retries);
     const retriesCol = retriesVal.padEnd(W.retries);
-    const retriesStr = (!na && !r.breakerOpen && r.retries > 0)
+    const retriesStr = (!na && r.retries > 0)
       ? chalk.yellow(retriesCol) : chalk.gray(retriesCol);
 
     const breakerVal = na ? "-" : (r.breakerOpen ? "open" : "ok");
