@@ -117,6 +117,36 @@ Interwał crona (domyślnie `1` minuta) konfigurowalny w `config.json`:
 
 ---
 
+## Zachowanie przy błędzie
+
+| Sytuacja | Zachowanie | Dlaczego |
+|----------|------------|---------|
+| Błąd w cron run (opcja 1) | Loguj + alert, **kontynuuj crona** | Jedna awaria nie powinna zabijać schedulera |
+| Błąd w symulacji (opcje 2–5) | Pokaż alert, **wróć do menu** | Demo — użytkownik chce eksplorować kolejne opcje |
+| Lock conflict | Pomiń ten run, **czekaj na następny tick** | Poprzednia instancja jeszcze działa — to normalne |
+| Ctrl+C / opcja 6 | **Zatrzymaj wszystko** gracefully | Jedyny sposób na pełne wyjście |
+
+**Błąd w cron run** — flow:
+
+```
+[Run #1] → stale data detected → ALERT → log ERROR → run failed
+[Run #2] → 1 min later → try again normally
+[Run #3] → ...
+```
+
+**Błąd w symulacji** — flow:
+
+```
+> 2 (stale input)
+[ERROR] Input data is 26h old — refusing to generate report
+[ALERT] Stale data alert sent
+
+Press Enter to return to menu...
+> _
+```
+
+---
+
 ## Jak zasymulować awarię?
 
 Przez menu CLI — bez ręcznego edytowania plików. Każda symulacja wyświetla alert w terminalu i zapisuje wpis do `logs/`.
