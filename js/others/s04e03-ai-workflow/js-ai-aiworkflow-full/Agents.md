@@ -799,6 +799,7 @@ AI Workflow — Silent Degradation Demo
   3) Simulate retry failure (DLQ: retry_exhausted)
   4) Simulate monitoring failure (canary check) (no DLQ)
   5) Simulate Circuit Breaker failure (DLQ: retry_exhausted → breaker_open)
+  6) Clear workspace
   0) Exit
 ```
 
@@ -809,6 +810,7 @@ AI Workflow — Silent Degradation Demo
 | `3` Simulate retry failure | Retries only — circuit breaker bypassed; all articles fail with `retry_exhausted` |
 | `4` Simulate canary failure | Canary fails, one row shown in table — **no DLQ entries** |
 | `5` Simulate Circuit Breaker failure | Circuit breaker only — 0 retries; first failure opens breaker, rest go to DLQ as `breaker_open` |
+| `6` Clear workspace | Delete all saved article JSON files from `workspace/articles/` |
 | `0` Exit | Graceful shutdown |
 
 After each task the menu reappears automatically. The only way to exit is option `0`.
