@@ -185,9 +185,9 @@ Haiku to najszybszy i najtańszy model Claude — idealny do powtarzalnych, pros
     "factor": 2
   },
   "circuitBreaker": {
-    "failureThreshold": 5,
-    "successThreshold": 2,
-    "timeoutMs": 60000
+    "failureThreshold": 50,
+    "timeoutMs": 10000,
+    "resetTimeoutMs": 30000
   },
   "monitor": {
     "minSummaryLength": 50,
@@ -199,7 +199,8 @@ Haiku to najszybszy i najtańszy model Claude — idealny do powtarzalnych, pros
   },
   "workflow": {
     "intervalMs": 60000,
-    "articles": 3
+    "articles": 3,
+    "candidateCount": 100
   }
 }
 ```
@@ -222,9 +223,9 @@ const ConfigSchema = z.object({
     factor: z.number().min(1),
   }),
   circuitBreaker: z.object({
-    failureThreshold: z.number().min(1),
-    successThreshold: z.number().min(1),
+    failureThreshold: z.number().min(1).max(100),
     timeoutMs: z.number().min(1000),
+    resetTimeoutMs: z.number().min(1000),
   }),
   monitor: z.object({
     minSummaryLength: z.number().min(1),
@@ -237,6 +238,7 @@ const ConfigSchema = z.object({
   workflow: z.object({
     intervalMs: z.number().min(1000),
     articles: z.number().min(1),
+    candidateCount: z.number().min(1),
   }),
 });
 
@@ -403,30 +405,21 @@ log.warn({ layer: "quality", check: "length", chars: 12 }, "output too short");
 log.error({ layer: "quality", check: "canary" }, "canary failed");
 ```
 
-#### Warstwa 3 — Zod dla outputu LLM
+#### Warstwa 3 — walidacja outputu LLM
 
-Projekt używa Zod do walidacji `config.json`. Ten sam wzorzec powinien obowiązywać dla outputu LLM — zamiast ręcznego sprawdzania pól:
+W `index.ts` walidacja jest robiona ręcznie — sprawdzanie obecności pól `summary` i `topics` oraz długości podsumowania. Alternatywnie można użyć Zod (ten sam wzorzec co dla `config.json`), co daje strukturalne błędy z dokładnym polem i przyczyną:
 
 ```typescript
-// src/services/monitor.ts — zamiast ad-hoc if (!output.summary)
-import { z } from "zod";
-import { config } from "../config.js";
-
-export const SummarySchema = z.object({
+// propozycja — nie jest w bieżącym kodzie
+const SummarySchema = z.object({
   summary: z.string().min(config.monitor.minSummaryLength),
   topics: z.array(z.string()).min(1),
 });
-
-export type Summary = z.infer<typeof SummarySchema>;
-
-// w index.ts po otrzymaniu outputu z LLM:
 const result = SummarySchema.safeParse(JSON.parse(raw));
 if (!result.success) {
   log.warn({ layer: "quality", check: "schema", errors: result.error.issues }, "schema error");
 }
 ```
-
-Zod daje strukturalne błędy walidacji — wiadomo dokładnie, które pole jest nieprawidłowe i dlaczego.
 
 #### Canary check — jak to działa?
 
@@ -437,19 +430,22 @@ LLM-y są **niedeterministyczne** — ten sam prompt może zwrócić inny tekst 
 Zamiast tego canary wysyła proste pytanie z **jednoznaczną, sprawdzalną odpowiedzią**:
 
 ```typescript
-// src/services/monitor.ts
-const CANARY_PROMPT = 'Reply with only valid JSON: {"ok": true}';
-
-export async function runHealthCheck(): Promise<boolean> {
-  const res = await callLLM(CANARY_PROMPT);
-  const parsed = JSON.parse(res);
+// src/services/llm-client.ts
+export async function runCanaryCheck(): Promise<boolean> {
+  const res = await client.chat.completions.create({
+    model: config.model,
+    response_format: { type: "json_object" },
+    messages: [{ role: "user", content: 'Reply with only valid JSON: {"ok": true}' }],
+  });
+  const content = res.choices[0]?.message?.content ?? "{}";
+  const parsed = JSON.parse(content);
   const passed = parsed?.ok === true;
   log.info({ layer: "quality", check: "canary", passed }, "health check");
   return passed;
 }
 ```
 
-**Dlaczego `runHealthCheck()` to osobna funkcja — nie licznik co-N-wywołań?**
+**Dlaczego `runCanaryCheck()` to osobna funkcja — nie licznik co-N-wywołań?**
 
 | Podejście | Problem |
 |-----------|---------|
@@ -462,9 +458,9 @@ export async function runHealthCheck(): Promise<boolean> {
 
 ```typescript
 // Canary co 10 runów lub po błędzie
-const shouldRunCanary = runCount % 10 === 0 || lastRunHadErrors;
+const shouldRunCanary = runNumber % 10 === 1 || lastRunHadErrors;
 if (shouldRunCanary) {
-  const healthy = await runHealthCheck();
+  const healthy = await runCanaryCheck();
   if (!healthy) { /* pomiń run */ }
 }
 ```
@@ -508,9 +504,8 @@ import { config } from "../config.js";
 
 const options = {
   errorThresholdPercentage: config.circuitBreaker.failureThreshold,
-  successThreshold: config.circuitBreaker.successThreshold,
   timeout: config.circuitBreaker.timeoutMs,
-  resetTimeout: config.circuitBreaker.timeoutMs,
+  resetTimeout: config.circuitBreaker.resetTimeoutMs,
 };
 
 export function createLLMBreaker(fn: (...args: unknown[]) => Promise<unknown>) {
@@ -759,16 +754,16 @@ export const log = pino({
   transport: {
     targets: [
       {
-        // Konsola: tylko warn i error — unika mieszania z ora spinnerami
-        target: "pino-pretty",
-        level: "warn",
-        options: { colorize: true, translateTime: "HH:MM:ss", ignore: "pid,hostname" },
-      },
-      {
         // Plik: pełne logi info+ do debugowania i metryk
         target: "pino-pretty",
         level: "info",
-        options: { colorize: false, translateTime: "yyyy-mm-dd HH:MM:ss", destination: "logs/app.log", append: true },
+        options: {
+          colorize: false,
+          translateTime: "yyyy-mm-dd HH:MM:ss",
+          ignore: "pid,hostname",
+          destination: "logs/app.log",
+          append: true,
+        },
       },
     ],
   },
@@ -1021,11 +1016,12 @@ All settings live in `config.json` — no hardcoded values in code:
 | `retry.attempts` | Max retry attempts |
 | `retry.factor` | Backoff multiplier (2 = doubles each time) |
 | `circuitBreaker.failureThreshold` | % failures before breaker opens |
-| `circuitBreaker.successThreshold` | Successes in half-open needed to close |
-| `circuitBreaker.timeoutMs` | How long breaker stays open before half-open |
+| `circuitBreaker.timeoutMs` | Max time for a single LLM call |
+| `circuitBreaker.resetTimeoutMs` | How long breaker stays open before half-open |
 | `monitor.minSummaryLength` | Alert if output shorter than N chars |
 | `workflow.intervalMs` | How often to run the workflow |
-| `workflow.articles` | How many articles to fetch per run |
+| `workflow.articles` | Max articles used in simulation mode (options 3–5) |
+| `workflow.candidateCount` | How many top HN stories to scan per run (articles without text are skipped) |
 
 ---
 
