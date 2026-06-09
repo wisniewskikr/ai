@@ -16,7 +16,6 @@ import {
 import {
   getCliOptions,
   printRunTable,
-  printRunSummary,
   type ArticleResult,
 } from "./utils/cli.js";
 import { setSimMode, getSimMode } from "./utils/simulate.js";
@@ -113,7 +112,6 @@ while (true) {
       if (!canaryPassed) {
         logQualityCheck(stats, false);
         logPipelineStats(stats);
-        printRunSummary(runNumber, stats, false, getDLQSize(), getBreakerState(breaker));
         lastRunHadErrors = true;
         break; // Stop loop on canary failure — operator should investigate
       }
@@ -275,7 +273,6 @@ while (true) {
     logPipelineStats(stats);
     logQualityCheck(stats, canaryPassed);
     printRunTable(articleResults);
-    printRunSummary(runNumber, stats, canaryPassed, getDLQSize(), getBreakerState(breaker));
 
     if (cliOpts.once || isShuttingDown) break;
 
