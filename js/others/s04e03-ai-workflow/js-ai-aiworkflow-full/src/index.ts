@@ -55,13 +55,18 @@ while (true) {
   if (cliOpts.reprocessDlq) {
   const items = getAllDLQPending();
   if (items.length === 0) {
+    console.log(chalk.gray("\nDLQ is empty — no articles to recover.\n"));
     continue;
   }
 
-  console.log("\nIn progress ...\n");
+  console.log(`\nRecovering ${items.length} article(s) from DLQ...\n`);
 
   for (const item of items) {
     const payload = JSON.parse(item.payload) as Article;
+    const titleTrunc = payload.title.length > 50
+      ? payload.title.slice(0, 47) + "..."
+      : payload.title;
+    process.stdout.write(`  ${titleTrunc.padEnd(50)}  `);
 
     try {
       const result = await callLLM(`Title: ${payload.title}\n\n${payload.text}`);
@@ -87,12 +92,15 @@ while (true) {
 
       markDLQItem(item.id, "reprocessed");
       log.info({ layer: "pipeline", dlq: "reprocessed", id: payload.id }, "DLQ item reprocessed");
+      console.log(chalk.green("✓ reprocessed"));
     } catch (err) {
       markDLQItem(item.id, "manual_review");
       log.warn({ layer: "pipeline", dlq: "manual_review", id: payload.id }, "DLQ item needs manual review");
+      console.log(chalk.red("✗ manual review"));
     }
   }
 
+  console.log();
   continue;
   }
 
