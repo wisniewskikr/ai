@@ -107,6 +107,31 @@ Select mode:
 | **5. Lock conflict** | Uruchamia dwie instancje jednocześnie | Alert z komponentu 5 — lock file |
 | **6. Exit** | Czyste zamknięcie programu | — |
 
+### Spinner — aplikacja pracuje w tle
+
+Podczas przetwarzania artykułów (wywołanie OpenRouter, walidacja, zapis) wyświetla się animowany spinner:
+
+```
+⠋ Processing articles...
+⠙ Processing articles...
+⠹ Processing articles...
+```
+
+Spinner znika gdy run się kończy (sukces lub błąd). Biblioteka: `ora` (lekka, zero zależności).
+
+### Odliczanie do następnego runa (opcja 1)
+
+Po zakończeniu każdego runa wyświetla się odliczanie w tej samej linii (`\r`):
+
+```
+[INFO] Run #3 completed successfully
+Next run in: 00:47  (Ctrl+C to stop)
+Next run in: 00:46  (Ctrl+C to stop)
+Next run in: 00:45  (Ctrl+C to stop)
+```
+
+Gdy odliczanie dojdzie do zera — spinner startuje natychmiast.
+
 **Ctrl+C** działa zawsze — grzecznie kończy crona, zwalnia lock, loguje `[INFO] Agent stopped by user`.
 
 Interwał crona (domyślnie `1` minuta) konfigurowalny w `config.json`:
