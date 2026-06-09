@@ -324,7 +324,6 @@ while (true) {
   }
 
   if (isShuttingDown && !cliOpts.once) {
-    console.log(chalk.gray("\nStopped.\n"));
     process.exit(0);
   }
 }
