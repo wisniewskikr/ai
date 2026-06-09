@@ -113,6 +113,8 @@ while (true) {
       if (!canaryPassed) {
         logQualityCheck(stats, false);
         logPipelineStats(stats);
+        articleResults.push({ title: "Canary health check", retries: 0, breakerOpen: false, monitoring: "canary", status: "canary-fail" });
+        printRunTable(articleResults);
         lastRunHadErrors = true;
         break; // Stop loop on canary failure — operator should investigate
       }
@@ -186,12 +188,12 @@ while (true) {
 
         if (alreadyProcessed && getSimMode() === "none") {
           log.info({ layer: "pipeline", id: article.id }, "skipped — already processed");
-          articleResults.push({ title: article.title, retries: 0, breakerOpen: false, schemaError: false, lengthError: false, status: "skipped" });
+          articleResults.push({ title: article.title, retries: 0, breakerOpen: false, monitoring: "ok", status: "skipped" });
           continue;
         }
 
         if (cliOpts.dryRun) {
-          articleResults.push({ title: article.title, retries: 0, breakerOpen: false, schemaError: false, lengthError: false, status: "dry-run" });
+          articleResults.push({ title: article.title, retries: 0, breakerOpen: false, monitoring: "ok", status: "dry-run" });
           continue;
         }
 
@@ -199,7 +201,7 @@ while (true) {
         if (getBreakerState(breaker) === "open") {
           pushToDLQ(article.id, article, "breaker_open", 0);
           stats.failed++;
-          articleResults.push({ title: article.title, retries: 0, breakerOpen: true, schemaError: false, lengthError: false, status: "dlq" });
+          articleResults.push({ title: article.title, retries: 0, breakerOpen: true, monitoring: "ok", status: "dlq" });
           continue;
         }
 
@@ -257,14 +259,18 @@ while (true) {
           fs.writeFileSync(outputPath, JSON.stringify(output, null, 2));
           stats.processed++;
 
-          articleResults.push({ title: article.title, retries: articleRetries, breakerOpen: false, schemaError: articleSchemaError, lengthError: articleLengthError, status: "saved" });
+          const monitoringVal = articleSchemaError && articleLengthError ? "schema+short"
+            : articleSchemaError ? "schema"
+            : articleLengthError ? "short"
+            : "ok";
+          articleResults.push({ title: article.title, retries: articleRetries, breakerOpen: false, monitoring: monitoringVal, status: "saved" });
         } catch (err) {
           stats.failed++;
           const errMsg = String(err);
           const errorType = errMsg.toLowerCase().includes("open") ? "breaker_open" : "retry_exhausted";
           log.error({ layer: "pipeline", id: article.id, error: errMsg }, "article failed");
           pushToDLQ(article.id, article, errorType, config.retry.attempts);
-          articleResults.push({ title: article.title, retries: articleRetries, breakerOpen: errorType === "breaker_open", schemaError: false, lengthError: false, status: "dlq" });
+          articleResults.push({ title: article.title, retries: articleRetries, breakerOpen: errorType === "breaker_open", monitoring: "ok", status: "dlq" });
         }
       }
     }

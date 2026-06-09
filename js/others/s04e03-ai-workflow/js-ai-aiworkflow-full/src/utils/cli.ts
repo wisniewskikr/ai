@@ -18,9 +18,8 @@ export interface ArticleResult {
   title: string;
   retries: number;
   breakerOpen: boolean;
-  schemaError: boolean;
-  lengthError: boolean;
-  status: "saved" | "dlq" | "skipped" | "dry-run";
+  monitoring: "ok" | "schema" | "short" | "schema+short" | "canary";
+  status: "saved" | "dlq" | "skipped" | "dry-run" | "canary-fail";
 }
 
 function parseCliFlags(): { opts: Record<string, any>; skipMenu: boolean } {
@@ -104,16 +103,15 @@ export function printRunHeader(runNumber: number) {
 export function printRunTable(results: ArticleResult[]) {
   if (results.length === 0) return;
 
-  const W = { title: 38, retries: 7, breaker: 8, schema: 7, length: 7 };
-  const totalWidth = W.title + W.retries + W.breaker + W.schema + W.length + 5 * 2 + 10;
+  const W = { title: 38, retries: 7, breaker: 8, monitoring: 12 };
+  const totalWidth = W.title + W.retries + W.breaker + W.monitoring + 4 * 2 + 10;
 
   console.log(
     "  " + chalk.bold(
       "Article".padEnd(W.title) + "  " +
       "Retries".padEnd(W.retries) + "  " +
       "Breaker".padEnd(W.breaker) + "  " +
-      "Schema".padEnd(W.schema) + "  " +
-      "Length".padEnd(W.length) + "  " +
+      "Monitoring".padEnd(W.monitoring) + "  " +
       "Status"
     )
   );
@@ -131,38 +129,41 @@ export function printRunTable(results: ArticleResult[]) {
     const retriesStr = (!na && r.retries > 0)
       ? chalk.yellow(retriesCol) : chalk.gray(retriesCol);
 
-    const breakerVal = na ? "-" : (r.breakerOpen ? "open" : "ok");
+    const breakerVal = (na || r.status === "canary-fail") ? "-" : (r.breakerOpen ? "open" : "ok");
     const breakerCol = breakerVal.padEnd(W.breaker);
-    const breakerStr = na
+    const breakerStr = (na || r.status === "canary-fail")
       ? chalk.gray(breakerCol)
       : r.breakerOpen ? chalk.red(breakerCol) : chalk.green(breakerCol);
 
-    const schemaVal = (na || r.breakerOpen) ? "-" : (r.schemaError ? "error" : "ok");
-    const schemaCol = schemaVal.padEnd(W.schema);
-    const schemaStr = (na || r.breakerOpen)
-      ? chalk.gray(schemaCol)
-      : r.schemaError ? chalk.red(schemaCol) : chalk.green(schemaCol);
-
-    const lengthVal = (na || r.breakerOpen) ? "-" : (r.lengthError ? "short" : "ok");
-    const lengthCol = lengthVal.padEnd(W.length);
-    const lengthStr = (na || r.breakerOpen)
-      ? chalk.gray(lengthCol)
-      : r.lengthError ? chalk.yellow(lengthCol) : chalk.green(lengthCol);
+    const monVal = (na || r.breakerOpen) ? "-" : r.monitoring;
+    const monCol = monVal.padEnd(W.monitoring);
+    let monStr: string;
+    if (na || r.breakerOpen) {
+      monStr = chalk.gray(monCol);
+    } else {
+      switch (r.monitoring) {
+        case "ok":          monStr = chalk.green(monCol); break;
+        case "schema":      monStr = chalk.red(monCol); break;
+        case "short":       monStr = chalk.yellow(monCol); break;
+        case "schema+short": monStr = chalk.red(monCol); break;
+        case "canary":      monStr = chalk.red(monCol); break;
+      }
+    }
 
     let statusStr: string;
     switch (r.status) {
-      case "saved":    statusStr = chalk.green("✓ saved");   break;
-      case "dlq":      statusStr = chalk.red("✗ DLQ");       break;
-      case "skipped":  statusStr = chalk.gray("→ skipped");  break;
-      case "dry-run":  statusStr = chalk.gray("(dry-run)");  break;
+      case "saved":       statusStr = chalk.green("✓ saved");    break;
+      case "dlq":         statusStr = chalk.red("✗ DLQ");        break;
+      case "skipped":     statusStr = chalk.gray("→ skipped");   break;
+      case "dry-run":     statusStr = chalk.gray("(dry-run)");   break;
+      case "canary-fail": statusStr = chalk.red("✗ canary");     break;
     }
 
     console.log(
       "  " + titleTrunc + "  " +
       retriesStr + "  " +
       breakerStr + "  " +
-      schemaStr + "  " +
-      lengthStr + "  " +
+      monStr + "  " +
       statusStr
     );
   }
