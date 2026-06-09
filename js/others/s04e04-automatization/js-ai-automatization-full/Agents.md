@@ -176,6 +176,27 @@ await lock.release();
 
 ---
 
+## Model AI — rekomendacja
+
+To zadanie jest proste: nagłówki wchodzą → JSON wychodzi. Nie potrzeba "mózgu" — potrzeba **szybkości i dokładności JSON-a**.
+
+Jak wybór samochodu do zakupów: nie bierzesz Ferrari, bierzesz coś niezawodnego i taniego.
+
+| Model (OpenRouter) | Cena input/M | Cena output/M | JSON output | Szybkość | Ocena |
+|--------------------|-------------|--------------|-------------|----------|-------|
+| `google/gemini-2.0-flash-001` | $0.10 | $0.40 | ✅ świetny | ⚡ bardzo szybki | ✅ **rekomendowany** |
+| `openai/gpt-4o-mini` | $0.15 | $0.60 | ✅ świetny | ⚡ bardzo szybki | dobry backup |
+| `anthropic/claude-haiku-4-5` | $0.80 | $4.00 | ✅ bardzo dobry | ⚡ szybki | za drogi do tego zadania |
+| `anthropic/claude-sonnet-4-5` | $3.00 | $15.00 | ✅ doskonały | średni | zdecydowanie za drogi |
+
+**Rekomendacja: `google/gemini-2.0-flash-001`**
+
+- Najtańszy model z niezawodnym JSON output
+- Wystarczający do prostego summarization
+- Łatwa zamiana w `config.json` — bez zmiany kodu
+
+---
+
 ## Dlaczego TypeScript + OpenRouter?
 
 | Powód | Wyjaśnienie |
