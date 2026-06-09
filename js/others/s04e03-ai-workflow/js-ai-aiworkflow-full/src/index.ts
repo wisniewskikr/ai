@@ -4,7 +4,7 @@ import chalk from "chalk";
 import { config } from "./config.js";
 import { fetchArticles } from "./services/news-fetcher.js";
 import { mockArticles } from "./utils/mock-articles.js";
-import { callLLM, runCanaryCheck, breaker } from "./services/llm-client.js";
+import { callLLM, runCanaryCheck, breaker, resetBreaker } from "./services/llm-client.js";
 import { getBreakerState } from "./services/circuit-breaker.js";
 import { pushToDLQ, getDLQPending, getAllDLQPending, markDLQItem, getDLQSize } from "./services/dlq.js";
 import {
@@ -42,6 +42,7 @@ process.on("SIGTERM", onShutdown);
 while (true) {
   isShuttingDown = false;
   setSimMode("none");
+  resetBreaker();
 
   const cliOpts = await getCliOptions();
 

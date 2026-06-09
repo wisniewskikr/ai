@@ -36,6 +36,10 @@ async function makeApiCall(prompt: string): Promise<OpenAI.Chat.ChatCompletion> 
 // Retry is on the outside: retry → breaker.fire() → makeApiCall
 export const breaker = createLLMBreaker(makeApiCall);
 
+export function resetBreaker(): void {
+  breaker.close();
+}
+
 export async function callLLM(
   text: string,
   onRetry?: (attempt: number, error: string) => void
