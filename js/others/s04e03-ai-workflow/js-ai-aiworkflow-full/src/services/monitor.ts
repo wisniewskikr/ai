@@ -9,16 +9,6 @@ export const log = pino({
   transport: {
     targets: [
       {
-        // Console: only warnings and errors — avoids interleaving with ora spinners
-        target: "pino-pretty",
-        level: "warn",
-        options: {
-          colorize: true,
-          translateTime: "HH:MM:ss",
-          ignore: "pid,hostname",
-        },
-      },
-      {
         // File: full info logs for debugging and metrics
         target: "pino-pretty",
         level: "info",
