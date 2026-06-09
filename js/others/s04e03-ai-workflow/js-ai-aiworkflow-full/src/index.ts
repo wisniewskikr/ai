@@ -112,7 +112,7 @@ while (true) {
     console.log(
       chalk.gray(
         `\nChecking top ${config.workflow.candidateCount} HN stories every ${cliOpts.interval / 1000}s` +
-        ` — press Ctrl+C to stop and return to the main menu.\n`
+        ` — press Ctrl+C to exit.\n`
       )
     );
   }
@@ -322,6 +322,7 @@ while (true) {
   }
 
   if (isShuttingDown && !cliOpts.once) {
-    console.log(chalk.gray("\nStopped. Returning to main menu...\n"));
+    console.log(chalk.gray("\nStopped.\n"));
+    process.exit(0);
   }
 }
