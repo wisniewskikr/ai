@@ -187,6 +187,96 @@ await lock.release();
 
 ---
 
+## Readme.md — proponowana treść
+
+> Plik w języku angielskim, styl: prosto jak dla 5-latka, tabele, analogie.
+
+---
+
+```markdown
+# Daily News Digest Agent
+
+Think of this as a postman who checks the newspaper before delivering it:
+is it today's edition? Is it complete? If not — he leaves a note and rings the alarm.
+
+This agent fetches news headlines, asks AI to summarize them, and saves the result.
+Every step has a safety check.
+
+---
+
+## Requirements
+
+| Tool    | Version  |
+|---------|----------|
+| Node.js | >= 20    |
+| npm     | >= 10    |
+
+---
+
+## Setup
+
+1. Clone the repo
+2. Install dependencies:
+   \`\`\`bash
+   npm install
+   \`\`\`
+3. Copy `.env.example` to `.env` and add your OpenRouter key:
+   \`\`\`
+   OPENROUTER_API_KEY=your-key-here
+   \`\`\`
+4. (Optional) Set your heartbeat URL in `config.json`:
+   \`\`\`json
+   "heartbeatUrl": "https://hc-ping.com/YOUR-UUID"
+   \`\`\`
+
+---
+
+## Run
+
+\`\`\`bash
+npm start
+\`\`\`
+
+To simulate a failure — edit `data/news.json` and set `generatedAt` to yesterday.
+
+---
+
+## How it works
+
+| Step | What happens            | Fails when...                     |
+|------|-------------------------|-----------------------------------|
+| 1    | Check timezone          | Run outside 9:00–9:05 Warsaw time |
+| 2    | Acquire lock            | Another instance is already running |
+| 3    | Validate input          | `news.json` is older than 24h     |
+| 4    | Call OpenRouter         | API error or timeout              |
+| 5    | Validate output         | Response is not valid JSON or too short |
+| 6    | Send heartbeat ping     | No internet                       |
+| 7    | Release lock            | Always runs (finally block)       |
+
+---
+
+## File structure
+
+\`\`\`
+src/
+  prompts/digest.md     ← edit the AI prompt here
+  services/agent.ts     ← main logic
+  services/openrouter.ts
+  services/lock.ts
+  services/heartbeat.ts
+  utils/validate.ts
+  utils/alert.ts
+  utils/logger.ts
+data/news.json          ← input data (with timestamp)
+results/report.json     ← output
+logs/                   ← auto-generated logs
+config.json             ← all config values (model, limits, paths)
+.env                    ← API keys (never commit!)
+\`\`\`
+```
+
+---
+
 ## Co pokazuje ten demo?
 
 > **Różnica między automatyzacją, której ufasz, a automatyzacją, za którą się modlisz — to te 20 linijek.**
