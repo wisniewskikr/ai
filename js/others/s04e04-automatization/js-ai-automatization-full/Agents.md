@@ -88,47 +88,87 @@ Jeden skrypt (`src/agent.ts`) uruchamiany np. cronjobem o 9:00 Europe/Warsaw.
 ## Struktura plików
 
 ```
-src/
-  agent.ts        ← główna logika, łączy wszystko
-  lock.ts         ← lock file (acquire / release)
-  heartbeat.ts    ← ping do healthchecks.io
-  validate.ts     ← walidacja inputu i outputu
-  alert.ts        ← alert na fail (Slack / console)
-.env.example
-package.json
-tsconfig.json
+project/
+├── src/
+│   ├── prompts/
+│   │   └── digest.md          ← prompt do OpenRouter (edytowalny bez zmiany kodu)
+│   ├── services/
+│   │   ├── agent.ts           ← główna logika, łączy wszystko
+│   │   ├── openrouter.ts      ← wywołanie OpenRouter API
+│   │   ├── lock.ts            ← lock file (acquire / release)
+│   │   └── heartbeat.ts       ← ping do healthchecks.io
+│   └── utils/
+│       ├── validate.ts        ← walidacja inputu i outputu
+│       ├── alert.ts           ← alert na fail (console + Slack)
+│       └── logger.ts          ← zapis logów do logs/
+├── data/
+│   └── news.json              ← mockowe dane wejściowe (z timestampem)
+├── results/
+│   └── report.json            ← wynik działania agenta
+├── logs/                      ← logi aplikacji (auto-generowane)
+├── config.json                ← wszystkie zmienne konfiguracyjne
+├── .env                       ← OPENROUTER_API_KEY (nie commituj!)
+├── .env.example               ← szablon zmiennych środowiskowych
+├── package.json
+├── tsconfig.json
+└── Readme.md                  ← dokumentacja w języku angielskim
 ```
+
+---
+
+## config.json — zmienne konfiguracyjne
+
+```json
+{
+  "timezone": "Europe/Warsaw",
+  "scheduleHour": 9,
+  "scheduleWindowMinutes": 5,
+  "maxInputAgeHours": 24,
+  "minOutputLength": 100,
+  "lockFilePath": ".agent.lock",
+  "lockTtlMinutes": 30,
+  "heartbeatUrl": "https://hc-ping.com/YOUR-UUID",
+  "model": "google/gemini-2.0-flash-001",
+  "logsDir": "logs",
+  "resultsDir": "results"
+}
+```
+
+Zmiana modelu, strefy, limitów — tylko tu. Bez dotykania kodu.
 
 ---
 
 ## Przykładowy flow (pseudokod)
 
 ```typescript
-// 1. Jawna strefa czasowa
-const now = DateTime.now().setZone('Europe/Warsaw');
+// src/services/agent.ts
+import config from '../../config.json';
+
+// 1. Jawna strefa czasowa z config.json
+const now = DateTime.now().setZone(config.timezone);
 
 // 2. Lock file — czy już działa?
-await lock.acquire();
+await lock.acquire(config.lockFilePath, config.lockTtlMinutes);
 
 // 3. Weryfikacja danych wejściowych
-if (isOlderThan24h(inputData.timestamp)) {
+if (isOlderThan(inputData.generatedAt, config.maxInputAgeHours)) {
   await alert.send('Dane za stare — odmowa generacji raportu');
   await lock.release();
   process.exit(1);
 }
 
-// 4. Wywołanie OpenRouter
-const response = await openrouter.chat(prompt);
+// 4. Wywołanie OpenRouter (prompt z src/prompts/digest.md)
+const response = await openrouter.chat(prompt, config.model);
 
 // 5. Walidacja outputu
-if (!isValidOutput(response)) {
+if (!isValidOutput(response, config.minOutputLength)) {
   await alert.send('Output niepoprawny — raport nie wysłany');
   await lock.release();
   process.exit(1);
 }
 
 // 6. Heartbeat — sukces
-await heartbeat.ping();
+await heartbeat.ping(config.heartbeatUrl);
 
 // 7. Zwolnij lock
 await lock.release();
@@ -140,9 +180,10 @@ await lock.release();
 
 | Powód | Wyjaśnienie |
 |-------|-------------|
-| TypeScript | Typy pomagają wyłapać błędy walidacji już na etapie pisania kodu |
-| OpenRouter | Jeden klucz API, dostęp do wielu modeli (Claude, GPT, Gemini) — łatwa zamiana modelu |
-| Node.js | Naturalny wybór dla cronjobów i prostych agentów HTTP |
+| TypeScript strict | Typy wyłapują błędy walidacji już na etapie pisania kodu |
+| OpenRouter | Jeden klucz API, łatwa zamiana modelu w `config.json` bez zmiany kodu |
+| `config.json` | Wszystkie wartości konfiguracyjne w jednym miejscu — zero hardcodowania |
+| `src/prompts/` | Prompt edytowalny bez znajomości kodu — może go zmienić każdy |
 
 ---
 
