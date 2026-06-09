@@ -112,8 +112,7 @@ while (true) {
   if (!cliOpts.once) {
     console.log(
       chalk.gray(
-        `\nChecking top ${config.workflow.candidateCount} HN stories every ${cliOpts.interval / 1000}s` +
-        ` — press Ctrl+C to exit.\n`
+        `\nChecking top ${config.workflow.candidateCount} HN stories every ${cliOpts.interval / 1000}s (press Ctrl+C to exit).\n`
       )
     );
   }
@@ -304,7 +303,7 @@ while (true) {
     if (newArticles.length > 0) {
       printRunTable(articleResults);
     } else if (!cliOpts.once) {
-      console.log(chalk.gray("  No new articles.\n"));
+      console.log(chalk.gray("  No new articles (press Ctrl+C to exit).\n"));
     } else {
       printRunTable(articleResults);
     }
