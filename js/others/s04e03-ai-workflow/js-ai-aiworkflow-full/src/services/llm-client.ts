@@ -47,14 +47,21 @@ export async function callLLM(
   const start = Date.now();
   const prompt = `${summarizePrompt}\n\nArticle:\n${text}`;
 
-  // In simulation mode, use short timeouts so demos complete quickly
-  const isSimulation = getSimMode() !== "none";
-  const retries = isSimulation ? 2 : config.retry.attempts;
+  // In simulation mode, isolate each mechanism:
+  // - "retry": bypass circuit breaker (show only retry exhaustion)
+  // - "breaker": 0 retries (first failure opens breaker immediately)
+  // - "canary": normal article processing, only canary check is affected
+  const simMode = getSimMode();
+  const isSimulation = simMode !== "none";
+  const retries = simMode === "breaker" ? 0 : isSimulation ? 2 : config.retry.attempts;
   const minTimeout = isSimulation ? 300 : config.retry.minTimeoutMs;
+  const useBreaker = simMode !== "retry";
 
   const response = await pRetry(
     async () => {
-      const res = (await breaker.fire(prompt)) as OpenAI.Chat.ChatCompletion;
+      const res = useBreaker
+        ? (await breaker.fire(prompt)) as OpenAI.Chat.ChatCompletion
+        : await makeApiCall(prompt) as OpenAI.Chat.ChatCompletion;
       logInfraCall(Date.now() - start, {
         prompt: res.usage?.prompt_tokens,
         completion: res.usage?.completion_tokens,
