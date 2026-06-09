@@ -111,7 +111,7 @@ while (true) {
   if (!cliOpts.once) {
     console.log(
       chalk.gray(
-        `\nFetching ${cliOpts.articles} articles every ${cliOpts.interval / 1000}s` +
+        `\nChecking top ${config.workflow.candidateCount} HN stories every ${cliOpts.interval / 1000}s` +
         ` — press Ctrl+C to stop and return to the main menu.\n`
       )
     );
@@ -191,7 +191,7 @@ while (true) {
       const articles =
         getSimMode() !== "none"
           ? mockArticles.slice(0, cliOpts.articles)
-          : await fetchArticles(cliOpts.articles);
+          : await fetchArticles(config.workflow.candidateCount);
 
       for (let i = 0; i < articles.length; i++) {
         if (isShuttingDown) break;
@@ -296,13 +296,26 @@ while (true) {
 
     logPipelineStats(stats);
     logQualityCheck(stats, canaryPassed);
-    printRunTable(articleResults);
+
+    const newArticles = articleResults.filter(r => r.status !== "skipped");
+    if (newArticles.length > 0) {
+      printRunTable(articleResults);
+    } else if (!cliOpts.once) {
+      console.log(chalk.gray("  No new articles.\n"));
+    } else {
+      printRunTable(articleResults);
+    }
 
     if (cliOpts.once || isShuttingDown) break;
 
     const end = Date.now() + cliOpts.interval;
     while (Date.now() < end && !isShuttingDown) {
+      const remaining = Math.ceil((end - Date.now()) / 1000);
+      process.stdout.write(chalk.gray(`\r  Next check in: ${remaining}s   `));
       await new Promise((r) => setTimeout(r, 1000));
+    }
+    if (!isShuttingDown) {
+      process.stdout.write("\r" + " ".repeat(30) + "\r");
     }
 
     runNumber++;

@@ -20,6 +20,7 @@
   },
   "workflow": {
     "intervalMs": 60000,
-    "articles": 3
+    "articles": 3,
+    "candidateCount": 20
   }
 }

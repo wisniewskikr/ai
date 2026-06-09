@@ -24,6 +24,7 @@ const ConfigSchema = z.object({
   workflow: z.object({
     intervalMs: z.number().min(1000),
     articles: z.number().min(1),
+    candidateCount: z.number().min(1),
   }),
 });
 

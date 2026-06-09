@@ -6,7 +6,7 @@ const HN_ITEM_URL = (id: number) => `https://hacker-news.firebaseio.com/v0/item/
 
 export type { Article };
 
-export async function fetchArticles(count: number): Promise<Article[]> {
+export async function fetchArticles(candidateCount: number): Promise<Article[]> {
   try {
     const topRes = await fetch(HN_TOP_URL, { signal: AbortSignal.timeout(8000) });
     if (!topRes.ok) throw new Error(`HN API returned ${topRes.status}`);
@@ -14,10 +14,7 @@ export async function fetchArticles(count: number): Promise<Article[]> {
     const ids: number[] = await topRes.json();
     const articles: Article[] = [];
 
-    // Fetch up to 5x the needed count to account for articles without text
-    for (const id of ids.slice(0, Math.min(count * 5, 50))) {
-      if (articles.length >= count) break;
-
+    for (const id of ids.slice(0, candidateCount)) {
       const itemRes = await fetch(HN_ITEM_URL(id), { signal: AbortSignal.timeout(5000) });
       if (!itemRes.ok) continue;
 
@@ -32,12 +29,12 @@ export async function fetchArticles(count: number): Promise<Article[]> {
 
     if (articles.length === 0) {
       log.warn({ layer: "pipeline" }, "no articles with text found — using mock data");
-      return mockArticles.slice(0, count);
+      return mockArticles;
     }
 
     return articles;
   } catch (err) {
     log.warn({ layer: "pipeline", error: String(err) }, "HN API unavailable — using mock data");
-    return mockArticles.slice(0, count);
+    return mockArticles;
   }
 }
