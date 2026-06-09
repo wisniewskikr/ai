@@ -21,6 +21,32 @@ To jest właśnie ten projekt: prosty agent TypeScript + OpenRouter, który gene
 
 ---
 
+## Scenariusz: "Codzienny digest nagłówków"
+
+Agent dostaje plik `data/news.json` (mockowe nagłówki newsów z timestampem) i prosi OpenRouter o wygenerowanie krótkiego podsumowania w formacie JSON. Wynik trafia do `results/report.json`.
+
+Wyobraź sobie listonosza, który co rano przynosi gazetę — ale najpierw sprawdza, czy gazeta nie jest sprzed tygodnia, czy jest kompletna, i zostawia kartkę w skrzynce gdy coś nie gra.
+
+---
+
+## Flow danych
+
+```
+data/news.json          →  validate input (timestamp < 24h?)
+       ↓
+OpenRouter prompt       →  "Podsumuj te nagłówki jako JSON: { summary, topics }"
+       ↓
+validate output         →  JSON? summary.length > 100? topics.length > 0?
+       ↓
+results/report.json     →  zapisz wynik
+       ↓
+heartbeat ping          →  sukces
+```
+
+Każdy krok, który się nie powiedzie → **głośny alert**.
+
+---
+
 ## Co agent robi?
 
 Jeden skrypt (`src/agent.ts`) uruchamiany np. cronjobem o 9:00 Europe/Warsaw.
@@ -36,20 +62,26 @@ Jeden skrypt (`src/agent.ts`) uruchamiany np. cronjobem o 9:00 Europe/Warsaw.
 [KONIEC]
 ```
 
-Każdy krok, który się nie powiedzie → **głośny alert**.
-
 ---
 
 ## 6 komponentów bezpieczeństwa
 
-| # | Komponent | Co robi | Jak to działa |
-|---|-----------|---------|---------------|
-| 1 | **Jawna strefa czasowa** | Nie "domyślna serwera", zawsze `Europe/Warsaw` | `luxon` — `DateTime.now().setZone('Europe/Warsaw')` |
-| 2 | **Weryfikacja danych wejściowych** | Dane starsze niż 24h → odmowa + alert | Porównanie timestamp z aktualną godziną |
-| 3 | **Walidacja outputu** | Czy odpowiedź AI ma sens? | Sprawdź: JSON parsuje się? Długość > 100 znaków? |
-| 4 | **Heartbeat** | Ping po każdym sukcesie | `fetch('https://hc-ping.com/UUID')` na końcu |
-| 5 | **Lock file** | Blokada przed nakładaniem się instancji | `proper-lockfile` — druga instancja odpuszcza |
-| 6 | **Alert na fail** | Każda odmowa krzyczy | `console.error` + opcjonalny Slack webhook |
+| # | Komponent | Co konkretnie sprawdza | Jak to działa |
+|---|-----------|------------------------|---------------|
+| 1 | **Jawna strefa czasowa** | Czy godzina uruchomienia to 9:00–9:05 Europe/Warsaw? Poza oknem → alert | `luxon` — `DateTime.now().setZone('Europe/Warsaw')` |
+| 2 | **Weryfikacja danych wejściowych** | Czy `news.json` ma pole `generatedAt` i czy to nie więcej niż 24h temu? | Porównanie timestamp z aktualną godziną |
+| 3 | **Walidacja outputu** | Czy odpowiedź to `{ summary: string, topics: string[] }`? Czy `summary.length > 100`? | JSON.parse + sprawdzenie pól i długości |
+| 4 | **Heartbeat** | Ping po każdym **udanym** uruchomieniu | `fetch('https://hc-ping.com/UUID')` na końcu |
+| 5 | **Lock file** | Plik `.agent.lock` — jeśli istnieje i ma < 30 min → exit bez błędu | `proper-lockfile` — druga instancja odpuszcza |
+| 6 | **Alert na fail** | Każdy `throw` → głośny komunikat | `console.error` + opcjonalny Slack webhook |
+
+---
+
+## Jak zasymulować awarię?
+
+- Podmień `generatedAt` w `news.json` na wczorajszy timestamp → zobaczysz alert z komponentu 2
+- Uruchom skrypt dwa razy jednocześnie → druga instancja grzecznie odpuści (komponent 5)
+- Wyłącz internet → heartbeat nie dotrze → healthchecks.io wyśle e-mail po upływie okna czasowego (komponent 4)
 
 ---
 
