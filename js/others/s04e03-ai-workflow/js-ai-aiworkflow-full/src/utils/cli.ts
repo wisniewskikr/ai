@@ -11,6 +11,7 @@ export interface CliOptions {
   once: boolean;
   dryRun: boolean;
   reprocessDlq: boolean;
+  clearWorkspace: boolean;
   simMode: SimMode;
 }
 
@@ -61,6 +62,7 @@ export async function getCliOptions(): Promise<CliOptions> {
         { name: "3) Simulate retry failure (DLQ: retry_exhausted)", value: "retry" },
         { name: "4) Simulate monitoring failure (canary check) (no DLQ)", value: "canary" },
         { name: "5) Simulate Circuit Breaker failure (DLQ: retry_exhausted → breaker_open)", value: "breaker" },
+        { name: "6) Clear workspace", value: "clear" },
         { name: "0) Exit", value: "exit" },
       ],
     });
@@ -75,6 +77,7 @@ export async function getCliOptions(): Promise<CliOptions> {
       once: action !== "run",
       dryRun: false,
       reprocessDlq: action === "dlq",
+      clearWorkspace: action === "clear",
       simMode: (["retry", "canary", "breaker"].includes(action) ? action : "none") as SimMode,
     };
   }
@@ -85,6 +88,7 @@ export async function getCliOptions(): Promise<CliOptions> {
     once: !!opts.once,
     dryRun: !!opts.dryRun,
     reprocessDlq: !!opts.reprocessDlq,
+    clearWorkspace: false,
     simMode: "none",
   };
 }

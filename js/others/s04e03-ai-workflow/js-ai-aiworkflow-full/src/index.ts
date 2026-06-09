@@ -105,6 +105,20 @@ while (true) {
   continue;
   }
 
+  // ─── Option 6: Clear workspace ──────────────────────────────────────────
+  if (cliOpts.clearWorkspace) {
+    const files = fs.readdirSync("workspace/articles");
+    if (files.length === 0) {
+      console.log(chalk.gray("\nWorkspace is already empty.\n"));
+    } else {
+      for (const file of files) {
+        fs.unlinkSync(`workspace/articles/${file}`);
+      }
+      console.log(chalk.green(`\nRemoved ${files.length} article(s) from workspace.\n`));
+    }
+    continue;
+  }
+
   // ─── Main workflow loop ──────────────────────────────────────────────────
   let runNumber = 1;
   let lastRunHadErrors = false;
