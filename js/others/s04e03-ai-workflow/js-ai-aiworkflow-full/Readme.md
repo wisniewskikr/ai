@@ -134,7 +134,8 @@ All settings live in `config.json` — no hardcoded values in code:
 | `dlq.reprocessBatchSize` | Max DLQ items to reprocess per run |
 | `dlq.maxSize` | Max DLQ size before backpressure kicks in |
 | `workflow.intervalMs` | How often to run (milliseconds) |
-| `workflow.articles` | Articles to fetch per run |
+| `workflow.articles` | Max articles used in simulation mode (options 3–5) |
+| `workflow.candidateCount` | How many top HN stories to scan per run (articles without text are skipped) |
 
 ---
 
