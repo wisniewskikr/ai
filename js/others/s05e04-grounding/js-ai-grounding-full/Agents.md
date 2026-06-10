@@ -131,7 +131,7 @@ project/
 ├── index.ts                  # punkt wejscia
 ├── .env                      # OPENROUTER_API_KEY (nie commituj!)
 ├── .env.example              # szablon zmiennych srodowiskowych
-└── Readme.md                 # dokumentacja w jezyku angielskim
+└── Readme.md                 # dokumentacja w jezyku angielskim (patrz nizej)
 ```
 
 ### config.json — co przechowuje?
@@ -222,6 +222,30 @@ Warstwa 3 — Self-confidence:
 ---
 Finalny confidence: WYSOKI ✓
 ```
+
+---
+
+## Readme.md — struktura i styl
+
+Plik `Readme.md` w jezyku **angielskim**, pisany prosto i zwiezle (zasady: krotko, tabele, punkty, analogie tam gdzie mozliwe).
+
+### Sekcje
+
+| Sekcja | Zawartosc |
+|--------|-----------|
+| **What is this?** | Jednozdaniowy opis — czym jest grounding i co robi aplikacja |
+| **How it works** | Trzy warstwy weryfikacji w punktach |
+| **Requirements** | Node.js >= 18, klucz OpenRouter API |
+| **Installation** | 3 kroki: clone, `npm install`, skopiuj `.env.example` do `.env` |
+| **Run** | `npm start` |
+| **File structure** | Tabela z plikami i ich rolami |
+| **Configuration** | Co mozna zmienic w `config.json` (modele, progi, pytania) |
+
+### Przykladowa tresc sekcji "What is this?"
+
+> AI answers with confidence — but sometimes it's just guessing.
+> This app asks two models the same question, cross-checks with Wikipedia,
+> and shows you how sure we really are.
 
 ---
 
