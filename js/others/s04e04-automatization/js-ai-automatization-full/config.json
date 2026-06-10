@@ -6,7 +6,7 @@
   "minOutputLength": 100,
   "lockFilePath": ".agent.lock",
   "lockTtlMinutes": 30,
-  "model": "google/gemini-2.0-flash-001",
+  "model": "google/gemini-2.0-flash",
   "logsDir": "logs",
   "resultsDir": "workspace/results",
   "cronIntervalMinutes": 1
