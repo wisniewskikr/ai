@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-06-10T08:55:00.000+02:00",
+  "articles": [
+    {
+      "title": "EU Passes Landmark AI Regulation Framework Affecting All Major Tech Companies",
+      "source": "TechCrunch"
+    },
+    {
+      "title": "OpenAI Announces Next-Generation Model with Unprecedented Reasoning Capabilities",
+      "source": "The Verge"
+    },
+    {
+      "title": "European Tech Startups Raise Record 50 Billion Euros in First Quarter of 2026",
+      "source": "Financial Times"
+    },
+    {
+      "title": "Climate Tech Investment Surges as Carbon Credits Hit New All-Time High",
+      "source": "Reuters"
+    },
+    {
+      "title": "Quantum Computing Breakthrough: IBM Achieves Major Milestone in Error Correction",
+      "source": "Nature"
+    }
+  ]
+}
