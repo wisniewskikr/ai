@@ -2,7 +2,7 @@
 
 ## Co to jest grounding?
 
-Wyobraz sobie, ze pytasz dwoch ekspertow o to samo. Jesli obaj mowia to samo — mozesz im ufac. Jesli sie roznia — cos jest nie tak. **Grounding to wlasnie to: weryfikacja odpowiedzi przez porownanie dwoch niezaleznych modeli AI.**
+Wyobraz sobie, ze pytasz dwoch ekspertow o to samo. Jesli obaj mowia to samo — mozesz im ufac. Jesli sie roznia — cos jest nie tak. **Grounding to wlasnie to: weryfikacja odpowiedzi przez porownanie dwoch niezaleznych modeli AI oraz zewnetrznego zrodla.**
 
 ---
 
@@ -22,14 +22,15 @@ Pytanie (predefiniowane lub wlasne)
         +----------+--------------+
                    |
                    v
-         Warstwa 1: Czy odpowiedzi sa zgodne?
+     Warstwa 1: Czy odpowiedzi modeli sa zgodne?
                    |
                    v
-         Warstwa 2: Wikipedia API
-         (szukaj keywords z odpowiedzi)
+     Warstwa 2: Wikipedia API
+     (szukaj keywords z odpowiedzi)
                    |
                    v
-         Czy Wikipedia potwierdza?
+     Warstwa 3: Self-confidence modeli
+     (srednia z pol confidence)
                    |
                    v
          Finalny confidence score
@@ -39,12 +40,13 @@ Pytanie (predefiniowane lub wlasne)
 
 ## Opcje CLI
 
-| Opcja | Opis | Jak dziala? |
-|-------|------|-------------|
-| **1** | Benchmark: Nauka i historia | 5 predefiniowanych pytan, oba modele odpowiadaja, pokazuje zgodnosc |
-| **2** | Benchmark: Technologia i geografia | 5 innych predefiniowanych pytan, ten sam mechanizm |
-| **3** | Wlasne pytanie | Uzytkownik wpisuje pytanie, oba modele odpowiadaja i sa porownywane |
-| **4** | Wyjscie | Koniec programu |
+| Opcja | Pytanie | Dziedzina |
+|-------|---------|-----------|
+| **1** | Kto odkryl penicyline? | Nauka |
+| **2** | Jaka jest stolica Australii? | Geografia |
+| **3** | Jaki jezyk programowania stworzyl Guido van Rossum? | Technologia |
+| **4** | Wlasne pytanie | — |
+| **5** | Wyjscie | — |
 
 ---
 
@@ -56,15 +58,15 @@ Kazda warstwa dodaje pewnosc. Razem daja finalny confidence score.
 |---------|-------------|------|
 | **1. Multi-model** | Czy oba modele odpowiadaja tak samo? | Porownanie `answer` z structured output |
 | **2. Wikipedia API** | Czy zewnetrzne zrodlo potwierdza odpowiedz? | Szukaj `keywords` z odpowiedzi w Wikipedii |
-| **3. Self-confidence** | Czy modele same sa pewne swoich odpowiedzi? | Pole `confidence` ze structured output (0.0–1.0) |
+| **3. Self-confidence** | Czy modele same sa pewne swoich odpowiedzi? | Srednia z pola `confidence` (0.0–1.0) |
 
 ### Finalny confidence score
 
 | Wynik | Warunki |
 |-------|---------|
-| Wysoki | Modele zgodne + Wikipedia potwierdza + oba confidence >= 0.8 |
-| Sredni | Modele zgodne LUB Wikipedia potwierdza, ale nie oba |
-| Niski | Modele sprzeczne i/lub Wikipedia nie potwierdza |
+| Wysoki | Modele zgodne + Wikipedia potwierdza + sredni confidence >= 0.8 |
+| Sredni | Dwa z trzech powyzszych warunkow spelnione |
+| Niski | Jeden lub zero warunkow — sprawdz recznie |
 
 > Analogia: dwoch ekspertow mowi to samo, a encyklopedia sie zgadza — mozesz im ufac. Jesli chociaz jedno sie rozni — sprawdz recznie.
 
@@ -109,7 +111,7 @@ Wikipedia API dostaje `keywords[0]` jako zapytanie i sprawdza, czy `answer` pokr
 ```
 src/
   cli.ts              # menu glowne, petla CLI
-  benchmarks.ts       # dwa zestawy predefiniowanych pytan
+  questions.ts        # 3 predefiniowane pytania z dziedzinami
   verifier.ts         # wywoluje oba modele, porownuje odpowiedzi
   scorer.ts           # liczy finalny confidence score (3 warstwy)
   openrouter.ts       # klient HTTP do OpenRouter API (structured output)
@@ -120,50 +122,35 @@ index.ts              # punkt wejscia
 
 ---
 
-## Przykladowe pytania — zestaw 1 (Nauka i historia)
-
-```json
-[
-  "Ile planet jest w Ukladzie Slonecznym?",
-  "W ktorym roku wybuchl wulkan Wezuwiusz niszczac Pompeje?",
-  "Kto odkryl penicyline?",
-  "Jaki pierwiastek ma symbol chemiczny Au?",
-  "W ktorym roku zakonczyla sie II Wojna Swiatowa?"
-]
-```
-
-## Przykladowe pytania — zestaw 2 (Technologia i geografia)
-
-```json
-[
-  "Jaki jezyk programowania stworzyl Guido van Rossum?",
-  "Ile bajtow ma jeden kilobajt?",
-  "Jaka jest stolica Australii?",
-  "Kto zalozyl firme Apple?",
-  "W jakim kraju znajduje sie Mount Everest?"
-]
-```
-
----
-
-## Przykladowy output w terminalu
+## Przykladowy output — pytanie predefiniowane
 
 ```
-=== Benchmark: Nauka i historia ===
+=== Grounding Demo ===
+
+[1] Kto odkryl penicyline?
+[2] Jaka jest stolica Australii?
+[3] Jaki jezyk stworzyl Guido van Rossum?
+[4] Wlasne pytanie
+[5] Wyjscie
+
+Wybierz opcje: 1
 
 Pytanie: Kto odkryl penicyline?
+
+Warstwa 1 — Multi-model:
   gpt-4o-mini : "Alexander Fleming odkryl penicyline w 1928 roku"  (pewnosc: 0.97)
   mistral-7b  : "Alexander Fleming"                                 (pewnosc: 0.91)
-  Wikipedia   : Potwierdzono (artykul: "Alexander Fleming")
-  Confidence  : Wysoki ✓
+  Zgodnosc    : TAK ✓
 
-Pytanie: W ktorym roku zakonczyla sie II Wojna Swiatowa?
-  gpt-4o-mini : "1945"  (pewnosc: 0.99)
-  mistral-7b  : "1944"  (pewnosc: 0.72)
-  Wikipedia   : Potwierdzono "1945" (artykul: "II Wojna Swiatowa")
-  Confidence  : Sredni ⚡ Modele sie roznia, Wikipedia wskazuje 1945
+Warstwa 2 — Wikipedia:
+  Zapytanie   : "Alexander Fleming"
+  Wynik       : Potwierdzono — artykul zawiera "penicylina" ✓
 
-=== Wynik: 4/5 wysokich confidence ===
+Warstwa 3 — Self-confidence:
+  Srednia     : 0.94 ✓
+
+---
+Finalny confidence: WYSOKI ✓
 ```
 
 ---
@@ -171,12 +158,24 @@ Pytanie: W ktorym roku zakonczyla sie II Wojna Swiatowa?
 ## Przykladowy output — wlasne pytanie
 
 ```
+Wybierz opcje: 4
+
 Twoje pytanie: Ile ksiezycy ma Mars?
 
+Warstwa 1 — Multi-model:
   gpt-4o-mini : "Mars ma 2 ksiezyce: Fobos i Deimos"  (pewnosc: 0.98)
   mistral-7b  : "2 ksiezyce — Fobos i Deimos"          (pewnosc: 0.96)
-  Wikipedia   : Potwierdzono (artykul: "Mars")
-  Confidence  : Wysoki ✓
+  Zgodnosc    : TAK ✓
+
+Warstwa 2 — Wikipedia:
+  Zapytanie   : "Mars"
+  Wynik       : Potwierdzono — artykul zawiera "Fobos" i "Deimos" ✓
+
+Warstwa 3 — Self-confidence:
+  Srednia     : 0.97 ✓
+
+---
+Finalny confidence: WYSOKI ✓
 ```
 
 ---
