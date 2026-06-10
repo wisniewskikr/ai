@@ -16,6 +16,7 @@ To jest właśnie ten projekt: prosty agent TypeScript + OpenRouter, który gene
 | AI | OpenRouter API (`openai` SDK) |
 | Strefa czasowa | `luxon` z jawnym `Europe/Warsaw` |
 | Lock file | `proper-lockfile` |
+| Walidacja danych | `zod` — schematy dla inputu i outputu |
 | Heartbeat | `healthchecks.io` (free tier) + `fetch` |
 | Alert na fail | `console.error` + Slack webhook |
 
@@ -68,10 +69,10 @@ Jeden skrypt (`src/agent.ts`) uruchamiany np. cronjobem o 9:00 Europe/Warsaw.
 
 | # | Komponent | Co konkretnie sprawdza | Jak to działa |
 |---|-----------|------------------------|---------------|
-| 1 | **Jawna strefa czasowa** | Czy godzina uruchomienia to 9:00–9:05 Europe/Warsaw? Poza oknem → alert | `luxon` — `DateTime.now().setZone('Europe/Warsaw')` |
-| 2 | **Weryfikacja danych wejściowych** | Czy `news.json` ma pole `generatedAt` i czy to nie więcej niż 24h temu? | Porównanie timestamp z aktualną godziną |
-| 3 | **Walidacja outputu** | Czy odpowiedź to `{ summary: string, topics: string[] }`? Czy `summary.length > 100`? | JSON.parse + sprawdzenie pól i długości |
-| 4 | **Heartbeat** | Ping po każdym **udanym** uruchomieniu | `fetch('https://hc-ping.com/UUID')` na końcu |
+| 1 | **Jawna strefa czasowa** | Czy godzina uruchomienia to 9:00–9:05 Europe/Warsaw? Poza oknem → alert | `luxon` — `DateTime.now().setZone('Europe/Warsaw')`. **Uwaga:** jeśli cron już pilnuje godziny, ten check jest redundantny i blokuje ręczne uruchomienia (np. debug o 14:00). Rozważ flagę `--skip-time-check` lub całkowite usunięcie. |
+| 2 | **Weryfikacja danych wejściowych** | Czy `news.json` ma pole `generatedAt`, czy to nie więcej niż 24h temu, **i czy ma niepuste `articles[]`?** | `zod` schema + porównanie timestamp. Sam timestamp nie wystarczy — plik może być świeży, ale pusty. |
+| 3 | **Walidacja outputu** | Czy odpowiedź to `{ summary: string, topics: string[] }`? Czy `summary.length > 100`? | `zod` zamiast ręcznego `JSON.parse + sprawdzenie pól` — czytelniej, typesafe, mniej try/catch |
+| 4 | **Heartbeat** | Ping po każdym **udanym** uruchomieniu | `fetch(process.env.HEALTHCHECK_URL)` na końcu. UUID z `.env`, nie z `config.json` — to wrażliwy identyfikator. |
 | 5 | **Lock file** | Plik `.agent.lock` — jeśli istnieje i ma < 30 min → exit bez błędu | `proper-lockfile` — druga instancja odpuszcza |
 | 6 | **Alert na fail** | Każdy `throw` → głośny komunikat | `console.error` + opcjonalny Slack webhook |
 
@@ -217,13 +218,14 @@ project/
 ├── src/
 │   ├── prompts/
 │   │   └── digest.md          ← prompt do OpenRouter (edytowalny bez zmiany kodu)
+│   ├── schemas/
+│   │   └── index.ts           ← zod schematy: InputSchema, OutputSchema
 │   ├── services/
 │   │   ├── agent.ts           ← główna logika, łączy wszystko
-│   │   ├── openrouter.ts      ← wywołanie OpenRouter API
+│   │   ├── openrouter.ts      ← wywołanie OpenRouter API (z retry dla 429/5xx)
 │   │   ├── lock.ts            ← lock file (acquire / release)
 │   │   └── heartbeat.ts       ← ping do healthchecks.io
 │   └── utils/
-│       ├── validate.ts        ← walidacja inputu i outputu
 │       ├── alert.ts           ← alert na fail (console + Slack)
 │       └── logger.ts          ← zapis logów do logs/
 ├── data/
@@ -232,11 +234,12 @@ project/
 │   └── results/
 │       └── report_2026-06-09T09-00-12.json  ← wynik z timestampem
 ├── logs/                      ← logi aplikacji (auto-generowane)
-├── config.json                ← wszystkie zmienne konfiguracyjne
-├── .env                       ← OPENROUTER_API_KEY (nie commituj!)
+├── config.json                ← wszystkie zmienne konfiguracyjne (bez sekretów)
+├── .env                       ← OPENROUTER_API_KEY, HEALTHCHECK_URL (nie commituj!)
 ├── .env.example               ← szablon zmiennych środowiskowych
+├── .gitignore                 ← .env, logs/, workspace/, .agent.lock
 ├── package.json
-├── tsconfig.json
+├── tsconfig.json              ← strict: true
 └── Readme.md                  ← dokumentacja w języku angielskim
 ```
 
@@ -253,11 +256,18 @@ project/
   "minOutputLength": 100,
   "lockFilePath": ".agent.lock",
   "lockTtlMinutes": 30,
-  "heartbeatUrl": "https://hc-ping.com/YOUR-UUID",
   "model": "google/gemini-2.0-flash-001",
   "logsDir": "logs",
   "resultsDir": "workspace/results"
 }
+```
+
+**Uwaga:** `heartbeatUrl` (UUID healthchecks.io) przeniesione do `.env` jako `HEALTHCHECK_URL` — to wrażliwy identyfikator, nie powinien trafiać do repozytorium.
+
+```
+# .env
+OPENROUTER_API_KEY=your-key-here
+HEALTHCHECK_URL=https://hc-ping.com/YOUR-UUID
 ```
 
 Zmiana modelu, strefy, limitów — tylko tu. Bez dotykania kodu.
@@ -276,28 +286,32 @@ const now = DateTime.now().setZone(config.timezone);
 // 2. Lock file — czy już działa?
 await lock.acquire(config.lockFilePath, config.lockTtlMinutes);
 
-// 3. Weryfikacja danych wejściowych
-if (isOlderThan(inputData.generatedAt, config.maxInputAgeHours)) {
-  await alert.send('Dane za stare — odmowa generacji raportu');
-  await lock.release();
-  process.exit(1);
+// WAŻNE: try/finally gwarantuje zwolnienie locka nawet przy wyjątkach.
+// Wzorzec z ręcznym lock.release() przed process.exit() jest zawodny —
+// wyjątek między acquire a release zostawi lock na zawsze.
+try {
+  // 3. Weryfikacja danych wejściowych (zod schema)
+  const inputData = InputSchema.parse(rawData); // rzuca ZodError jeśli błąd
+  if (isOlderThan(inputData.generatedAt, config.maxInputAgeHours)) {
+    throw new Error('Dane za stare — odmowa generacji raportu');
+  }
+
+  // 4. Wywołanie OpenRouter (prompt z src/prompts/digest.md)
+  // Retry tylko dla błędów przejściowych (429, 5xx) — nie dla błędów logicznych
+  const response = await openrouter.chatWithRetry(prompt, config.model);
+
+  // 5. Walidacja outputu (zod schema)
+  const output = OutputSchema.parse(response); // rzuca ZodError jeśli błąd
+
+  // 6. Heartbeat — sukces
+  await heartbeat.ping(process.env.HEALTHCHECK_URL);
+
+} catch (err) {
+  await alert.send(err.message);
+  throw err; // re-throw — cron/scheduler loguje i kontynuuje
+} finally {
+  await lock.release(); // zawsze — niezależnie od sukcesu lub błędu
 }
-
-// 4. Wywołanie OpenRouter (prompt z src/prompts/digest.md)
-const response = await openrouter.chat(prompt, config.model);
-
-// 5. Walidacja outputu
-if (!isValidOutput(response, config.minOutputLength)) {
-  await alert.send('Output niepoprawny — raport nie wysłany');
-  await lock.release();
-  process.exit(1);
-}
-
-// 6. Heartbeat — sukces
-await heartbeat.ping(config.heartbeatUrl);
-
-// 7. Zwolnij lock
-await lock.release();
 ```
 
 ---
@@ -421,6 +435,20 @@ config.json             ← all config values (model, limits, paths)
 .env                    ← API keys (never commit!)
 \`\`\`
 ```
+
+---
+
+## Znane pułapki — czego nie robić
+
+| Pułapka | Problem | Rozwiązanie |
+|---------|---------|-------------|
+| `lock.release()` przed `process.exit(1)` | Wyjątek między acquire a release → lock zostaje na zawsze | `try/finally` — lock.release() zawsze w bloku `finally` |
+| Ręczny `JSON.parse` + sprawdzenie pól | Brak typów, crashuje przy `null`, mnożą się `try/catch` | `zod` schema — rzuca `ZodError` z czytelnym opisem błędu |
+| `heartbeatUrl` w `config.json` | UUID trafia do repozytorium, każdy z dostępem do repo może ping'ować | `HEALTHCHECK_URL` w `.env` |
+| Brak `.gitignore` | `.env`, `logs/`, `.agent.lock` wylądują w repozytorium | `.gitignore` jako **pierwszy** plik projektu |
+| Brak `SIGTERM` handlera | Docker/systemd wysyła SIGTERM przed SIGKILL — lock zostaje, cron nie startuje | `process.on('SIGTERM', cleanup)` tak samo jak `SIGINT` |
+| Walidacja tylko timestamp w `news.json` | Świeży plik z pustym `articles: []` przejdzie walidację i wygeneruje bzdurny raport | Zod schema sprawdza też strukturę i `articles.length > 0` |
+| Brak retry dla błędów API | Jeden timeout = fail = alert = martwy run | Retry z exponential backoff tylko dla 429/5xx, nie dla błędów logicznych |
 
 ---
 
