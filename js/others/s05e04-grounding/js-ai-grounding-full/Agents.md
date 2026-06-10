@@ -103,11 +103,26 @@ Wikipedia API dostaje `keywords[0]` jako zapytanie i sprawdza, czy `answer` pokr
 |---------|-------------|
 | Jezyk | TypeScript |
 | Model A | `openai/gpt-4o-mini` (przez OpenRouter) |
-| Model B | `mistralai/mistral-7b-instruct` (przez OpenRouter) |
+| Model B | `google/gemini-2.0-flash-lite` (przez OpenRouter) |
 | Structured output | `response_format: { type: "json_object" }` w OpenRouter API |
 | Weryfikacja zewnetrzna | Wikipedia REST API (darmowe, bez klucza) |
 | CLI | `readline` (wbudowane w Node.js) |
 | Output | tabela w terminalu |
+
+### Dlaczego te dwa modele?
+
+Kluczowa zasada: **modele musza pochodzic od roznych firm** — inaczej grounding nie ma sensu (te same dane treningowe = te same bledy).
+
+| | Model A | Model B |
+|--|---------|---------|
+| **Nazwa** | `openai/gpt-4o-mini` | `google/gemini-2.0-flash-lite` |
+| **Firma** | OpenAI | Google |
+| **Cena** | $0.15 / 1M tokenow | $0.075 / 1M tokenow |
+| **JSON mode** | Tak | Tak |
+| **Mocna strona** | Fakty, precyzja | Szerokie dane, aktualnosc |
+| **Dane treningowe** | Rozne od Google | Rozne od OpenAI |
+
+> Analogia: pytasz o fakt amerykanskiego i europejskiego eksperta. Jesli obaj mowia to samo — bardziej mozesz im ufac niz gdybys pytal dwoch absolwentow tej samej uczelni.
 
 ---
 
@@ -140,7 +155,7 @@ project/
 {
   "models": {
     "modelA": "openai/gpt-4o-mini",
-    "modelB": "mistralai/mistral-7b-instruct"
+    "modelB": "google/gemini-2.0-flash-lite"
   },
   "confidence": {
     "highThreshold": 0.8,
@@ -158,7 +173,7 @@ project/
 ```
 [2026-06-10 14:32:01] [INFO]  Pytanie: Kto odkryl penicyline?
 [2026-06-10 14:32:02] [INFO]  gpt-4o-mini odpowiedzial (confidence: 0.97)
-[2026-06-10 14:32:03] [INFO]  mistral-7b odpowiedzial (confidence: 0.91)
+[2026-06-10 14:32:03] [INFO]  gemini-lite odpowiedzial (confidence: 0.91)
 [2026-06-10 14:32:03] [INFO]  Wikipedia: potwierdzono
 [2026-06-10 14:32:03] [INFO]  Finalny confidence: WYSOKI
 [2026-06-10 14:32:03] [WARN]  Modele roznia sie odpowiedziami — sprawdz recznie
@@ -184,7 +199,7 @@ Pytanie: Kto odkryl penicyline?
 
 Warstwa 1 — Multi-model:
   gpt-4o-mini : "Alexander Fleming odkryl penicyline w 1928 roku"  (pewnosc: 0.97)
-  mistral-7b  : "Alexander Fleming"                                 (pewnosc: 0.91)
+  gemini-lite : "Alexander Fleming"                                 (pewnosc: 0.91)
   Zgodnosc    : TAK ✓
 
 Warstwa 2 — Wikipedia:
@@ -209,7 +224,7 @@ Twoje pytanie: Ile ksiezycy ma Mars?
 
 Warstwa 1 — Multi-model:
   gpt-4o-mini : "Mars ma 2 ksiezyce: Fobos i Deimos"  (pewnosc: 0.98)
-  mistral-7b  : "2 ksiezyce — Fobos i Deimos"          (pewnosc: 0.96)
+  gemini-lite : "2 ksiezyce — Fobos i Deimos"          (pewnosc: 0.96)
   Zgodnosc    : TAK ✓
 
 Warstwa 2 — Wikipedia:
