@@ -114,15 +114,55 @@ Wikipedia API dostaje `keywords[0]` jako zapytanie i sprawdza, czy `answer` pokr
 ## Struktura projektu
 
 ```
-src/
-  cli.ts              # menu glowne, petla CLI
-  questions.ts        # 3 predefiniowane pytania z dziedzinami
-  verifier.ts         # wywoluje oba modele, porownuje odpowiedzi
-  scorer.ts           # liczy finalny confidence score (3 warstwy)
-  openrouter.ts       # klient HTTP do OpenRouter API (structured output)
-  wikipedia.ts        # klient Wikipedia REST API
-index.ts              # punkt wejscia
-.env                  # OPENROUTER_API_KEY
+project/
+├── src/
+│   ├── prompts/
+│   │   └── verify.ts         # prompt do structured output (answer, confidence, keywords)
+│   ├── services/
+│   │   ├── openrouter.ts     # klient OpenRouter API
+│   │   ├── wikipedia.ts      # klient Wikipedia REST API
+│   │   ├── verifier.ts       # wywoluje oba modele, porownuje odpowiedzi
+│   │   └── scorer.ts         # liczy finalny confidence score (3 warstwy)
+│   └── utils/
+│       ├── cli.ts            # menu glowne, petla CLI
+│       └── logger.ts         # zapis logow do logs/
+├── logs/                     # logi aplikacji (auto-generowane)
+├── config.json               # modele, progi confidence, lista 8 pytan
+├── index.ts                  # punkt wejscia
+├── .env                      # OPENROUTER_API_KEY (nie commituj!)
+├── .env.example              # szablon zmiennych srodowiskowych
+└── Readme.md                 # dokumentacja w jezyku angielskim
+```
+
+### config.json — co przechowuje?
+
+```json
+{
+  "models": {
+    "modelA": "openai/gpt-4o-mini",
+    "modelB": "mistralai/mistral-7b-instruct"
+  },
+  "confidence": {
+    "highThreshold": 0.8,
+    "mediumThreshold": 0.5
+  },
+  "questions": [
+    { "id": 1, "question": "Ile planet jest w Ukladzie Slonecznym?", "domain": "Nauka", "difficulty": "Latwe" },
+    { "id": 2, "question": "Kto odkryl penicyline?", "domain": "Nauka", "difficulty": "Latwe" }
+  ]
+}
+```
+
+### logs/ — format logow
+
+```
+[2026-06-10 14:32:01] [INFO]  Pytanie: Kto odkryl penicyline?
+[2026-06-10 14:32:02] [INFO]  gpt-4o-mini odpowiedzial (confidence: 0.97)
+[2026-06-10 14:32:03] [INFO]  mistral-7b odpowiedzial (confidence: 0.91)
+[2026-06-10 14:32:03] [INFO]  Wikipedia: potwierdzono
+[2026-06-10 14:32:03] [INFO]  Finalny confidence: WYSOKI
+[2026-06-10 14:32:03] [WARN]  Modele roznia sie odpowiedziami — sprawdz recznie
+[2026-06-10 14:32:03] [ERROR] Wikipedia API niedostepna — warstwa 2 pominieta
 ```
 
 ---
