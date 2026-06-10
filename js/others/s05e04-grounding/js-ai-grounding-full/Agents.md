@@ -40,13 +40,18 @@ Pytanie (predefiniowane lub wlasne)
 
 ## Opcje CLI
 
-| Opcja | Pytanie | Dziedzina |
-|-------|---------|-----------|
-| **1** | Kto odkryl penicyline? | Nauka |
-| **2** | Jaka jest stolica Australii? | Geografia |
-| **3** | Jaki jezyk programowania stworzyl Guido van Rossum? | Technologia |
-| **4** | Wlasne pytanie | — |
-| **5** | Wyjscie | — |
+| Opcja | Pytanie | Dziedzina | Trudnosc |
+|-------|---------|-----------|----------|
+| **1** | Ile planet jest w Ukladzie Slonecznym? | Nauka | Latwe |
+| **2** | Kto odkryl penicyline? | Nauka | Latwe |
+| **3** | Jaka jest stolica Australii? | Geografia | Srednie |
+| **4** | Jaki jezyk programowania stworzyl Guido van Rossum? | Technologia | Latwe |
+| **5** | W ktorym roku upadlo Cesarstwo Rzymskie? | Historia | Srednie |
+| **6** | Ile wynosi predkosc swiatla w prozni (w km/s)? | Fizyka | Srednie |
+| **7** | Kto napisal "Zbrodnie i kare"? | Literatura | Srednie |
+| **8** | Jaki jest najciezszy pierwiastek naturalnie wystepujacy na Ziemi? | Chemia | Trudne |
+| **9** | Wlasne pytanie | — | — |
+| **10** | Wyjscie | — | — |
 
 ---
 
