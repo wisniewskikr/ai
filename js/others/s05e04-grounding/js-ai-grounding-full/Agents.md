@@ -171,13 +171,13 @@ project/
 ### logs/ — format logow
 
 ```
-[2026-06-10 14:32:01] [INFO]  Pytanie: Kto odkryl penicyline?
-[2026-06-10 14:32:02] [INFO]  gpt-4o-mini odpowiedzial (confidence: 0.97)
-[2026-06-10 14:32:03] [INFO]  gemini-lite odpowiedzial (confidence: 0.91)
-[2026-06-10 14:32:03] [INFO]  Wikipedia: potwierdzono
-[2026-06-10 14:32:03] [INFO]  Finalny confidence: WYSOKI
-[2026-06-10 14:32:03] [WARN]  Modele roznia sie odpowiedziami — sprawdz recznie
-[2026-06-10 14:32:03] [ERROR] Wikipedia API niedostepna — warstwa 2 pominieta
+[2026-06-10 14:32:01] [INFO]  Question: Who discovered penicillin?
+[2026-06-10 14:32:02] [INFO]  gpt-4o-mini responded (confidence: 0.97)
+[2026-06-10 14:32:03] [INFO]  gemini-lite responded (confidence: 0.91)
+[2026-06-10 14:32:03] [INFO]  Wikipedia: confirmed
+[2026-06-10 14:32:03] [INFO]  Final confidence: HIGH
+[2026-06-10 14:32:03] [WARN]  Models disagree — verify manually
+[2026-06-10 14:32:03] [ERROR] Wikipedia API unavailable — layer 2 skipped
 ```
 
 ---
@@ -187,30 +187,35 @@ project/
 ```
 === Grounding Demo ===
 
-[1] Kto odkryl penicyline?
-[2] Jaka jest stolica Australii?
-[3] Jaki jezyk stworzyl Guido van Rossum?
-[4] Wlasne pytanie
-[5] Wyjscie
+ [1] How many planets are in the Solar System?         (Science / Easy)
+ [2] Who discovered penicillin?                        (Science / Easy)
+ [3] What is the capital of Australia?                 (Geography / Medium)
+ [4] What programming language did Guido van Rossum create? (Technology / Easy)
+ [5] In what year did the Roman Empire fall?           (History / Medium)
+ [6] What is the speed of light in a vacuum (km/s)?   (Physics / Medium)
+ [7] Who wrote "Crime and Punishment"?                 (Literature / Medium)
+ [8] What is the heaviest naturally occurring element? (Chemistry / Hard)
+ [9] Custom question
+[10] Exit
 
-Wybierz opcje: 1
+Select option: 2
 
-Pytanie: Kto odkryl penicyline?
+Question: Who discovered penicillin?
 
-Warstwa 1 — Multi-model:
-  gpt-4o-mini : "Alexander Fleming odkryl penicyline w 1928 roku"  (pewnosc: 0.97)
-  gemini-lite : "Alexander Fleming"                                 (pewnosc: 0.91)
-  Zgodnosc    : TAK ✓
+Layer 1 — Multi-model:
+  gpt-4o-mini : "Alexander Fleming discovered penicillin in 1928"  (confidence: 0.97)
+  gemini-lite : "Alexander Fleming"                                 (confidence: 0.91)
+  Match       : YES ✓
 
-Warstwa 2 — Wikipedia:
-  Zapytanie   : "Alexander Fleming"
-  Wynik       : Potwierdzono — artykul zawiera "penicylina" ✓
+Layer 2 — Wikipedia:
+  Query  : "Alexander Fleming"
+  Result : Confirmed — article contains "penicillin" ✓
 
-Warstwa 3 — Self-confidence:
-  Srednia     : 0.94 ✓
+Layer 3 — Self-confidence:
+  Average: 0.94 ✓
 
 ---
-Finalny confidence: WYSOKI ✓
+Final confidence: HIGH ✓
 ```
 
 ---
@@ -218,24 +223,24 @@ Finalny confidence: WYSOKI ✓
 ## Przykladowy output — wlasne pytanie
 
 ```
-Wybierz opcje: 4
+Select option: 9
 
-Twoje pytanie: Ile ksiezycy ma Mars?
+Your question: How many moons does Mars have?
 
-Warstwa 1 — Multi-model:
-  gpt-4o-mini : "Mars ma 2 ksiezyce: Fobos i Deimos"  (pewnosc: 0.98)
-  gemini-lite : "2 ksiezyce — Fobos i Deimos"          (pewnosc: 0.96)
-  Zgodnosc    : TAK ✓
+Layer 1 — Multi-model:
+  gpt-4o-mini : "Mars has 2 moons: Phobos and Deimos"  (confidence: 0.98)
+  gemini-lite : "2 moons — Phobos and Deimos"           (confidence: 0.96)
+  Match       : YES ✓
 
-Warstwa 2 — Wikipedia:
-  Zapytanie   : "Mars"
-  Wynik       : Potwierdzono — artykul zawiera "Fobos" i "Deimos" ✓
+Layer 2 — Wikipedia:
+  Query  : "Mars"
+  Result : Confirmed — article contains "Phobos" and "Deimos" ✓
 
-Warstwa 3 — Self-confidence:
-  Srednia     : 0.97 ✓
+Layer 3 — Self-confidence:
+  Average: 0.97 ✓
 
 ---
-Finalny confidence: WYSOKI ✓
+Final confidence: HIGH ✓
 ```
 
 ---
