@@ -6,7 +6,7 @@
   "minOutputLength": 100,
   "lockFilePath": ".agent.lock",
   "lockTtlMinutes": 30,
-  "model": "google/gemini-2.0-flash",
+  "model": "openai/gpt-4o-mini",
   "logsDir": "logs",
   "resultsDir": "workspace/results",
   "cronIntervalMinutes": 1
