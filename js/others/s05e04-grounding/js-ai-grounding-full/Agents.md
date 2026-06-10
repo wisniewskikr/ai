@@ -15,14 +15,24 @@ Pytanie (predefiniowane lub wlasne)
   Model A (gpt-4o-mini)     Model B (mistral-7b)
         |                         |
         v                         v
-     Odpowiedz A             Odpowiedz B
+  Structured output         Structured output
+  { answer, confidence,     { answer, confidence,
+    keywords }                keywords }
         |                         |
         +----------+--------------+
                    |
                    v
-         Czy odpowiedzi sa zgodne?
-         TAK --> Wysoki confidence
-         NIE --> Flaga ostrzezenia
+         Warstwa 1: Czy odpowiedzi sa zgodne?
+                   |
+                   v
+         Warstwa 2: Wikipedia API
+         (szukaj keywords z odpowiedzi)
+                   |
+                   v
+         Czy Wikipedia potwierdza?
+                   |
+                   v
+         Finalny confidence score
 ```
 
 ---
@@ -38,17 +48,45 @@ Pytanie (predefiniowane lub wlasne)
 
 ---
 
-## Confidence score — jak sie liczy?
+## Trzy warstwy weryfikacji
 
-Brak zewnetrznego "ground truth". Score oparty na zgodnosci modeli:
+Kazda warstwa dodaje pewnosc. Razem daja finalny confidence score.
 
-| Wynik | Znaczenie |
-|-------|-----------|
-| Wysoki | Oba modele odpowiedzialy tak samo (lub bardzo podobnie) |
-| Sredni | Odpowiedzi czesciowo sie pokrywaja |
-| Niski | Odpowiedzi sa sprzeczne — mozliwa halucynacja, sprawdz recznie |
+| Warstwa | Co sprawdza? | Jak? |
+|---------|-------------|------|
+| **1. Multi-model** | Czy oba modele odpowiadaja tak samo? | Porownanie `answer` z structured output |
+| **2. Wikipedia API** | Czy zewnetrzne zrodlo potwierdza odpowiedz? | Szukaj `keywords` z odpowiedzi w Wikipedii |
+| **3. Self-confidence** | Czy modele same sa pewne swoich odpowiedzi? | Pole `confidence` ze structured output (0.0–1.0) |
 
-> Analogia: dwoch tlumaczy przetlumaczonych ten sam tekst inaczej — ktos sie myli. Nie wiesz kto, ale wiesz, ze warto sprawdzic.
+### Finalny confidence score
+
+| Wynik | Warunki |
+|-------|---------|
+| Wysoki | Modele zgodne + Wikipedia potwierdza + oba confidence >= 0.8 |
+| Sredni | Modele zgodne LUB Wikipedia potwierdza, ale nie oba |
+| Niski | Modele sprzeczne i/lub Wikipedia nie potwierdza |
+
+> Analogia: dwoch ekspertow mowi to samo, a encyklopedia sie zgadza — mozesz im ufac. Jesli chociaz jedno sie rozni — sprawdz recznie.
+
+---
+
+## Structured output — format odpowiedzi modelu
+
+Kazdy model zwraca JSON zamiast czystego tekstu:
+
+```json
+{
+  "answer": "Alexander Fleming odkryl penicyline w 1928 roku",
+  "confidence": 0.95,
+  "keywords": ["Alexander Fleming", "penicylina", "1928"]
+}
+```
+
+- **`answer`** — odpowiedz modelu
+- **`confidence`** — pewnosc modelu (0.0–1.0), deklarowana przez model
+- **`keywords`** — slowa kluczowe do weryfikacji w Wikipedii
+
+Wikipedia API dostaje `keywords[0]` jako zapytanie i sprawdza, czy `answer` pokrywa sie z trescia artykulu.
 
 ---
 
@@ -59,6 +97,8 @@ Brak zewnetrznego "ground truth". Score oparty na zgodnosci modeli:
 | Jezyk | TypeScript |
 | Model A | `openai/gpt-4o-mini` (przez OpenRouter) |
 | Model B | `mistralai/mistral-7b-instruct` (przez OpenRouter) |
+| Structured output | `response_format: { type: "json_object" }` w OpenRouter API |
+| Weryfikacja zewnetrzna | Wikipedia REST API (darmowe, bez klucza) |
 | CLI | `readline` (wbudowane w Node.js) |
 | Output | tabela w terminalu |
 
@@ -71,8 +111,9 @@ src/
   cli.ts              # menu glowne, petla CLI
   benchmarks.ts       # dwa zestawy predefiniowanych pytan
   verifier.ts         # wywoluje oba modele, porownuje odpowiedzi
-  scorer.ts           # liczy confidence score na podstawie zgodnosci
-  openrouter.ts       # klient HTTP do OpenRouter API
+  scorer.ts           # liczy finalny confidence score (3 warstwy)
+  openrouter.ts       # klient HTTP do OpenRouter API (structured output)
+  wikipedia.ts        # klient Wikipedia REST API
 index.ts              # punkt wejscia
 .env                  # OPENROUTER_API_KEY
 ```
@@ -110,22 +151,19 @@ index.ts              # punkt wejscia
 ```
 === Benchmark: Nauka i historia ===
 
-Pytanie: Ile planet jest w Ukladzie Slonecznym?
-  gpt-4o-mini : "8 planet"
-  mistral-7b  : "8"
-  Confidence  : Wysoki ✓
-
 Pytanie: Kto odkryl penicyline?
-  gpt-4o-mini : "Alexander Fleming"
-  mistral-7b  : "Alexander Fleming w 1928 roku"
+  gpt-4o-mini : "Alexander Fleming odkryl penicyline w 1928 roku"  (pewnosc: 0.97)
+  mistral-7b  : "Alexander Fleming"                                 (pewnosc: 0.91)
+  Wikipedia   : Potwierdzono (artykul: "Alexander Fleming")
   Confidence  : Wysoki ✓
 
 Pytanie: W ktorym roku zakonczyla sie II Wojna Swiatowa?
-  gpt-4o-mini : "1945"
-  mistral-7b  : "1944"
-  Confidence  : Niski ⚠ Odpowiedzi sie roznia — sprawdz recznie
+  gpt-4o-mini : "1945"  (pewnosc: 0.99)
+  mistral-7b  : "1944"  (pewnosc: 0.72)
+  Wikipedia   : Potwierdzono "1945" (artykul: "II Wojna Swiatowa")
+  Confidence  : Sredni ⚡ Modele sie roznia, Wikipedia wskazuje 1945
 
-=== Wynik: 4/5 zgodnych odpowiedzi ===
+=== Wynik: 4/5 wysokich confidence ===
 ```
 
 ---
@@ -135,8 +173,9 @@ Pytanie: W ktorym roku zakonczyla sie II Wojna Swiatowa?
 ```
 Twoje pytanie: Ile ksiezycy ma Mars?
 
-  gpt-4o-mini : "Mars ma 2 ksiezyce: Fobos i Deimos"
-  mistral-7b  : "2 ksiezyce"
+  gpt-4o-mini : "Mars ma 2 ksiezyce: Fobos i Deimos"  (pewnosc: 0.98)
+  mistral-7b  : "2 ksiezyce — Fobos i Deimos"          (pewnosc: 0.96)
+  Wikipedia   : Potwierdzono (artykul: "Mars")
   Confidence  : Wysoki ✓
 ```
 
@@ -145,6 +184,6 @@ Twoje pytanie: Ile ksiezycy ma Mars?
 ## Dlaczego bez ground truth?
 
 - Realistyczny scenariusz — w produkcji rzadko znamy "prawdziwa odpowiedz" z gory
-- Dwa niezalezne modele to praktyczna i tania weryfikacja
+- Trzy niezalezne warstwy weryfikacji zamiast jednej
 - Uczy intuicji: **roznica miedzy modelami = sygnal do sprawdzenia**
-- Latwo rozszerzyc o trzeci model lub zewnetrzne zrodlo (np. Wikipedia API)
+- Wikipedia jako darmowe, zewnetrzne zrodlo faktow — bez zadnego API key
