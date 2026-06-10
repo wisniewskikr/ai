@@ -1,40 +1,54 @@
-# Grounding — propozycja demo
+# Grounding — demo (TypeScript + OpenRouter)
 
 ## Co to jest grounding?
 
-Wyobraz sobie, ze pytasz nowego pracownika o fakty. Moze odpowiedziec pewnie... ale zmyslac. **Grounding to sprawdzenie, czy to, co powiedzial, jest prawda.**
+Wyobraz sobie, ze pytasz dwoch ekspertow o to samo. Jesli obaj mowia to samo — mozesz im ufac. Jesli sie roznia — cos jest nie tak. **Grounding to wlasnie to: weryfikacja odpowiedzi przez porownanie dwoch niezaleznych modeli AI.**
 
 ---
 
-## Propozycja: Hallucination Benchmark
-
-Najprostsze demo bez zadnych dodatkowych API — tylko OpenRouter.
-
-### Jak to dziala?
+## Jak dziala aplikacja?
 
 ```
-Znane pytanie + znana odpowiedz (ground truth)
+Pytanie (predefiniowane lub wlasne)
         |
         v
-    Model odpowiada
-        |
-        v
-  Porownaj: zgodne? --> wynik + confidence score
+  Model A (gpt-4o-mini)     Model B (mistral-7b)
+        |                         |
+        v                         v
+     Odpowiedz A             Odpowiedz B
+        |                         |
+        +----------+--------------+
+                   |
+                   v
+         Czy odpowiedzi sa zgodne?
+         TAK --> Wysoki confidence
+         NIE --> Flaga ostrzezenia
 ```
 
-### Trzy kroki weryfikacji
+---
 
-| Krok | Pytanie | Co sprawdza? |
-|------|---------|--------------|
-| 1 | Czy odpowiedz jest zgodna z prawda? | Halucynacje faktyczne |
-| 2 | Czy model jest pewny swojej odpowiedzi? | Kalibracja pewnosci |
-| 3 | Ile % odpowiedzi bylo poprawnych? | Benchmark dla konkretnych pytan |
+## Opcje CLI
 
-### Confidence score
+| Opcja | Opis | Jak dziala? |
+|-------|------|-------------|
+| **1** | Benchmark: Nauka i historia | 5 predefiniowanych pytan, oba modele odpowiadaja, pokazuje zgodnosc |
+| **2** | Benchmark: Technologia i geografia | 5 innych predefiniowanych pytan, ten sam mechanizm |
+| **3** | Wlasne pytanie | Uzytkownik wpisuje pytanie, oba modele odpowiadaja i sa porownywane |
+| **4** | Wyjscie | Koniec programu |
 
-- Wysoki (>=0.8) — odpowiedz zgodna, model pewny
-- Sredni (0.5-0.8) — czesc sie zgadza
-- Niski (<0.5) — blad lub brak odpowiedzi
+---
+
+## Confidence score — jak sie liczy?
+
+Brak zewnetrznego "ground truth". Score oparty na zgodnosci modeli:
+
+| Wynik | Znaczenie |
+|-------|-----------|
+| Wysoki | Oba modele odpowiedzialy tak samo (lub bardzo podobnie) |
+| Sredni | Odpowiedzi czesciowo sie pokrywaja |
+| Niski | Odpowiedzi sa sprzeczne — mozliwa halucynacja, sprawdz recznie |
+
+> Analogia: dwoch tlumaczy przetlumaczonych ten sam tekst inaczej — ktos sie myli. Nie wiesz kto, ale wiesz, ze warto sprawdzic.
 
 ---
 
@@ -43,8 +57,9 @@ Znane pytanie + znana odpowiedz (ground truth)
 | Element | Technologia |
 |---------|-------------|
 | Jezyk | TypeScript |
-| Model | OpenRouter (np. `openai/gpt-4o-mini`) |
-| Test cases | lokalny plik JSON |
+| Model A | `openai/gpt-4o-mini` (przez OpenRouter) |
+| Model B | `mistralai/mistral-7b-instruct` (przez OpenRouter) |
+| CLI | `readline` (wbudowane w Node.js) |
 | Output | tabela w terminalu |
 
 ---
@@ -53,33 +68,38 @@ Znane pytanie + znana odpowiedz (ground truth)
 
 ```
 src/
-  benchmark.ts        # glowna logika
-  questions.json      # zestaw 10 pytan ze znanymi odpowiedziami
-  scorer.ts           # porownanie odpowiedzi modelu z ground truth
-index.ts              # punkt wejscia CLI
+  cli.ts              # menu glowne, petla CLI
+  benchmarks.ts       # dwa zestawy predefiniowanych pytan
+  verifier.ts         # wywoluje oba modele, porownuje odpowiedzi
+  scorer.ts           # liczy confidence score na podstawie zgodnosci
+  openrouter.ts       # klient HTTP do OpenRouter API
+index.ts              # punkt wejscia
+.env                  # OPENROUTER_API_KEY
 ```
 
 ---
 
-## Przykladowy plik questions.json
+## Przykladowe pytania — zestaw 1 (Nauka i historia)
 
 ```json
 [
-  {
-    "id": 1,
-    "question": "Ile planet jest w Ukladzie Slonecznym?",
-    "expected": "8"
-  },
-  {
-    "id": 2,
-    "question": "W ktorym roku Neil Armstrong stangl na Ksiezycu?",
-    "expected": "1969"
-  },
-  {
-    "id": 3,
-    "question": "Jaki jezyk programowania stworzyl Guido van Rossum?",
-    "expected": "Python"
-  }
+  "Ile planet jest w Ukladzie Slonecznym?",
+  "W ktorym roku wybuchl wulkan Wezuwiusz niszczac Pompeje?",
+  "Kto odkryl penicyline?",
+  "Jaki pierwiastek ma symbol chemiczny Au?",
+  "W ktorym roku zakonczyla sie II Wojna Swiatowa?"
+]
+```
+
+## Przykladowe pytania — zestaw 2 (Technologia i geografia)
+
+```json
+[
+  "Jaki jezyk programowania stworzyl Guido van Rossum?",
+  "Ile bajtow ma jeden kilobajt?",
+  "Jaka jest stolica Australii?",
+  "Kto zalozyl firme Apple?",
+  "W jakim kraju znajduje sie Mount Everest?"
 ]
 ```
 
@@ -88,30 +108,43 @@ index.ts              # punkt wejscia CLI
 ## Przykladowy output w terminalu
 
 ```
-Pytanie                                    Oczekiwano   Model odpowiedzial   Wynik
------------------------------------------  -----------  ------------------  ------
-Ile planet jest w Ukladzie Slonecznym?     8            8                   Wysoki
-W ktorym roku Armstrong stangl...          1969         1969                Wysoki
-Jaka jest stolica Australii?              Canberra     Sydney              Niski
+=== Benchmark: Nauka i historia ===
+
+Pytanie: Ile planet jest w Ukladzie Slonecznym?
+  gpt-4o-mini : "8 planet"
+  mistral-7b  : "8"
+  Confidence  : Wysoki ✓
+
+Pytanie: Kto odkryl penicyline?
+  gpt-4o-mini : "Alexander Fleming"
+  mistral-7b  : "Alexander Fleming w 1928 roku"
+  Confidence  : Wysoki ✓
+
+Pytanie: W ktorym roku zakonczyla sie II Wojna Swiatowa?
+  gpt-4o-mini : "1945"
+  mistral-7b  : "1944"
+  Confidence  : Niski ⚠ Odpowiedzi sie roznia — sprawdz recznie
+
+=== Wynik: 4/5 zgodnych odpowiedzi ===
 ```
 
-**Wynik: 80% poprawnych odpowiedzi (8/10)**
+---
+
+## Przykladowy output — wlasne pytanie
+
+```
+Twoje pytanie: Ile ksiezycy ma Mars?
+
+  gpt-4o-mini : "Mars ma 2 ksiezyce: Fobos i Deimos"
+  mistral-7b  : "2 ksiezyce"
+  Confidence  : Wysoki ✓
+```
 
 ---
 
-## Dlaczego to dobre demo?
+## Dlaczego bez ground truth?
 
-- Nie wymaga zadnych dodatkowych API (Google Search, itd.)
-- Pokazuje wszystkie trzy warstwy weryfikacji z lekcji s05e04
-- Latwo rozszerzyc o wiecej pytan lub inne modele
-- Wynik jest czytelny i mierzalny
-
----
-
-## Rozszerzenia (opcjonalne)
-
-| Rozszerzenie | Opis |
-|--------------|------|
-| Multi-model | To samo pytanie do Claude + GPT — porownaj roznice |
-| CSV export | Zapisz wyniki do pliku do analizy |
-| Kategorie pytan | Geografia, historia, nauka — sprawdz, gdzie model halucynuje najczesciej |
+- Realistyczny scenariusz — w produkcji rzadko znamy "prawdziwa odpowiedz" z gory
+- Dwa niezalezne modele to praktyczna i tania weryfikacja
+- Uczy intuicji: **roznica miedzy modelami = sygnal do sprawdzenia**
+- Latwo rozszerzyc o trzeci model lub zewnetrzne zrodlo (np. Wikipedia API)
