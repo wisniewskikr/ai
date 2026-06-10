@@ -72,7 +72,7 @@ Jeden skrypt (`src/agent.ts`) uruchamiany np. cronjobem o 9:00 Europe/Warsaw.
 | 1 | **Jawna strefa czasowa** | Czy godzina uruchomienia to 9:00–9:05 Europe/Warsaw? Poza oknem → alert | `luxon` — `DateTime.now().setZone('Europe/Warsaw')`. **Uwaga:** jeśli cron już pilnuje godziny, ten check jest redundantny i blokuje ręczne uruchomienia (np. debug o 14:00). Rozważ flagę `--skip-time-check` lub całkowite usunięcie. |
 | 2 | **Weryfikacja danych wejściowych** | Czy `news.json` ma pole `generatedAt`, czy to nie więcej niż 24h temu, **i czy ma niepuste `articles[]`?** | `zod` schema + porównanie timestamp. Sam timestamp nie wystarczy — plik może być świeży, ale pusty. |
 | 3 | **Walidacja outputu** | Czy odpowiedź to `{ summary: string, topics: string[] }`? Czy `summary.length > 100`? | `zod` zamiast ręcznego `JSON.parse + sprawdzenie pól` — czytelniej, typesafe, mniej try/catch |
-| 4 | **Heartbeat** | Ping po każdym **udanym** uruchomieniu | `fetch(process.env.HEALTHCHECK_URL)` na końcu. UUID z `.env`, nie z `config.json` — to wrażliwy identyfikator. |
+| 4 | **Heartbeat** | Ping po każdym **udanym** uruchomieniu | `fetch(process.env.HEALTHCHECK_PING_URL)` na końcu. Ping URL z `.env`, nie z `config.json` — to wrażliwy identyfikator. |
 | 5 | **Lock file** | Plik `.agent.lock` — jeśli istnieje i ma < 30 min → exit bez błędu | `proper-lockfile` — druga instancja odpuszcza |
 | 6 | **Alert na fail** | Każdy `throw` → głośny komunikat | `console.error` + opcjonalny Slack webhook |
 
@@ -205,6 +205,55 @@ Press Enter to return to menu...
 
 ---
 
+## Healthchecks.io — jak to działa i dlaczego zewnętrzny serwis?
+
+### Dead man's switch — odwrócony monitoring
+
+Standardowy monitoring wykrywa gdy serwer jest DOWN. Healthchecks.io działa odwrotnie:
+
+```
+Cron o 9:00 pinguje healthchecks.io → wszystko OK, cisza
+Cron o 9:00 NIE pinguje              → po X minutach: alert email/Slack
+```
+
+Dzięki temu wykryjesz też sytuację gdy cron **w ogóle się nie odpalił** — czego żaden wewnętrzny monitor nie wykryje, bo też nie działa.
+
+### Dlaczego zewnętrzny serwis, a nie własna implementacja?
+
+```
+Twoja aplikacja crashuje
+    ↓
+Wewnętrzny watchdog też nie działa
+    ↓
+Nikt nie wysyła alertu → nie wiesz że coś nie działa
+```
+
+Zewnętrzny serwis działa niezależnie od Twojej infrastruktury. Nawet jeśli cały serwer pada — healthchecks.io czeka na ping i po przekroczeniu limitu wysyła alert.
+
+Własny watchdog ma sens tylko jako **uzupełnienie**, nigdy jako jedyny monitor.
+
+### Dwa osobne sekrety
+
+| Zmienna | Format | Do czego |
+|---------|--------|----------|
+| `HEALTHCHECK_API_KEY` | `hcw_...` | REST API — tworzenie i listowanie checków (`GET /api/v3/checks/`) |
+| `HEALTHCHECK_PING_URL` | `https://hc-ping.com/UUID` | Ping po udanym runie — jedyna operacja wykonywana przez agenta |
+
+`HEALTHCHECK_API_KEY` to klucz konta (zarządzanie), `HEALTHCHECK_PING_URL` to URL konkretnego check'u (monitorowanie). Ping URL pobierzesz z dashboardu healthchecks.io lub przez REST API.
+
+### Alternatywy
+
+| Serwis | Uwagi |
+|--------|-------|
+| **healthchecks.io** (SaaS) | Free tier: 20 checków, open source |
+| **self-hosted healthchecks** | Ten sam projekt, własny Docker — pełna kontrola danych |
+| **Cronitor** | SaaS, bardziej rozbudowany |
+| **Grafana OnCall** | Enterprise |
+
+Dla tego projektu — healthchecks.io free tier wystarczy. Na produkcji z wrażliwymi danymi: self-hosted.
+
+---
+
 ## Jak zasymulować awarię?
 
 Przez menu CLI — bez ręcznego edytowania plików. Każda symulacja wyświetla alert w terminalu i zapisuje wpis do `logs/`.
@@ -267,7 +316,8 @@ project/
 ```
 # .env
 OPENROUTER_API_KEY=your-key-here
-HEALTHCHECK_URL=https://hc-ping.com/YOUR-UUID
+HEALTHCHECK_API_KEY=your-healthcheck-api-key-here   # hcw_... — do REST API
+HEALTHCHECK_PING_URL=https://hc-ping.com/YOUR-UUID  # ping URL konkretnego check'u
 ```
 
 Zmiana modelu, strefy, limitów — tylko tu. Bez dotykania kodu.
@@ -304,7 +354,7 @@ try {
   const output = OutputSchema.parse(response); // rzuca ZodError jeśli błąd
 
   // 6. Heartbeat — sukces
-  await heartbeat.ping(process.env.HEALTHCHECK_URL);
+  await heartbeat.ping(process.env.HEALTHCHECK_PING_URL);
 
 } catch (err) {
   await alert.send(err.message);
@@ -381,14 +431,17 @@ Every step has a safety check.
    \`\`\`bash
    npm install
    \`\`\`
-3. Copy `.env.example` to `.env` and add your OpenRouter key:
+3. Copy `.env.example` to `.env` and fill in your keys:
    \`\`\`
    OPENROUTER_API_KEY=your-key-here
+   HEALTHCHECK_API_KEY=hcw_...        # Account → API keys on healthchecks.io
+   HEALTHCHECK_PING_URL=https://hc-ping.com/YOUR-UUID
    \`\`\`
-4. (Optional) Set your heartbeat URL in `config.json`:
-   \`\`\`json
-   "heartbeatUrl": "https://hc-ping.com/YOUR-UUID"
-   \`\`\`
+4. Set up a free check at [healthchecks.io](https://healthchecks.io):
+   - Register → **New Check** → set period to **2 minutes**, grace to **5 minutes**
+   - Copy the ping URL to `HEALTHCHECK_PING_URL` in `.env`
+   - The agent pings this URL after every successful run — no ping = alert
+   - `HEALTHCHECK_API_KEY` (`hcw_...`) is your account key for the REST API (managing checks programmatically); the ping URL is a separate, per-check identifier
 
 ---
 
