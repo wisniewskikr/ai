@@ -92,7 +92,8 @@ async function executeTool(name: string, args: Record<string, string>): Promise<
 async function routeTags(userMessage: string): Promise<string[]> {
   const allTags = getAllTags();
   const userPrompt = `User query: "${userMessage}"\n\nAvailable tags: ${JSON.stringify(allTags)}`;
-  const result = await callLLM(userPrompt, routerPrompt, config);
+  logger.info(`Router using model: ${config.routerModel}`);
+  const result = await callLLM(userPrompt, routerPrompt, config, config.routerModel, config.routerMaxTokens);
   try {
     const tags = JSON.parse(result) as string[];
     if (Array.isArray(tags) && tags.length > 0) return tags;

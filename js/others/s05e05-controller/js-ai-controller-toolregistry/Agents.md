@@ -73,31 +73,30 @@ Pokazac w prostym demo jak działa:
 
 ---
 
-## Wybór modelu AI
+## Wybór modeli AI
 
-W tym projekcie liczy sie jedna rzecz: **czy model niezawodnie wybiera narzedzie**.
-To nie zadanie na rozumowanie — to zadanie na precyzje.
+Ten projekt uzywa dwóch modeli do dwóch róznych zadan.
 
-### Porównanie kandydatów
+### Model agenta — precyzja tool use
 
 | Model (OpenRouter) | Tool Use | Szybkosc | Koszt (1M tokenów in/out) | Uwagi |
 |--------------------|----------|----------|--------------------------|-------|
-| `anthropic/claude-haiku-4-5` | Doskonały | Bardzo szybki | $0.80 / $4.00 | Najlepsza precyzja tool use w tej klasie cenowej |
-| `google/gemini-2.0-flash-001` | Dobry | Bardzo szybki | $0.10 / $0.40 | Najtanszy, ale slabszy routing przy niejednoznacznych pytaniach |
+| `anthropic/claude-haiku-4-5` | Doskonały | Bardzo szybki | $0.80 / $4.00 | **Wybrany** — najlepsza precyzja tool use w tej klasie cenowej |
 | `openai/gpt-4o-mini` | Dobry | Szybki | $0.15 / $0.60 | Solidny, ale tool use gorszy niz Haiku |
 | `anthropic/claude-sonnet-4-5` | Doskonały | Sredni | $3.00 / $15.00 | Przesadna moc jak na demo z 4 narzędziami |
 
-### Rekomendacja: `anthropic/claude-haiku-4-5`
+### Model routera — szybkosc i koszt
 
-Dlaczego:
+Router robi jedno zadanie: klasyfikuje zapytanie w tagi i zwraca JSON array.
+To nie wymaga precyzji tool use — wymaga szybkosci i niskiego kosztu.
 
-- **Tool use to rdzen tego projektu** — Haiku ma najlepsza precyzje wyboru narzedzi w swojej klasie cenowej
-- **Szybki** — odpowiedz w CLI pojawia sie natychmiast
-- **Tani** — demo mozna uruchamiac bez liczenia tokenów
-- **Dostepny przez OpenRouter** — bez osobnego konta Anthropic
+| Model (OpenRouter) | Zadanie routingu | Koszt | Uwagi |
+|--------------------|-----------------|-------|-------|
+| `google/gemini-3.5-flash` | Bardzo dobry | Niski | **Wybrany** — wystarczajacy do klasyfikacji tagów |
+| `openai/gpt-4o-mini` | Dobry | Niski | Alternatywa jezeli Gemini niedostepny |
 
-> Analogia: nie bierzesz Ferrari do przejazdu 2 km — ale bierzesz niezawodne auto, nie rower.
-> Gemini jest jak rower — działa, ale przy zakrecie (niejednoznaczne pytanie) możesz sie wywrocic.
+> Analogia: do sortowania listów nie potrzebujesz najlepszego pracownika w biurze.
+> Potrzebujesz kogos szybkiego, kto rozpozna adres i wrzuci list do właściwej przegródki.
 
 ---
 
@@ -356,43 +355,66 @@ logs/           — tool call logs
 
 ---
 
-## Dwufazowy routing (zaimplementowany)
+## Dwufazowy routing z dwoma modelami (zaimplementowany)
 
 ### Problem
 
-Przy duzej liczbie narzedzi model dostaje za dużo kontekstu — myli narzedzia, koszt rośnie.
+Przy duzej liczbie narzedzi (50+) model dostaje za dużo kontekstu — myli narzedzia, koszt rośnie.
+Wysłanie 50 schematów narzedzi do agenta to strata tokenów przy każdym zapytaniu.
 
-### Rozwiązanie: router przed agentem
+### Rozwiązanie: tańszy model robi routing, droższy robi robotę
+
+| Rola | Model | Koszt | Zadanie |
+|------|-------|-------|---------|
+| Router | `google/gemini-3.5-flash` | niski | zwróć JSON array z tagami (max 128 tokenów) |
+| Agent | `anthropic/claude-haiku-4-5` | sredni | wywołaj narzedzie, sformułuj odpowiedź |
+
+Oba modele konfigurowane w `config.json` — zmiana modelu bez dotykania kodu.
+
+```json
+{
+  "model": "anthropic/claude-haiku-4-5",
+  "maxTokens": 1024,
+  "routerModel": "google/gemini-3.5-flash",
+  "routerMaxTokens": 128
+}
+```
+
+### Przepływ
 
 ```
 Pytanie użytkownika
         |
         v
-Faza 1 — Router: pytanie + lista tagów → model zwraca pasujące tagi (JSON)
+Faza 1 — Router (gemini-3.5-flash, max 128 tokenów)
+pytanie + lista tagów → ["weather", "local"]
         |
         v
-Rejestr filtrowany — model główny dostaje tylko narzedzia z pasującymi tagami
+Rejestr filtrowany: 50 narzedzi → 2 narzedzia
         |
         v
-Faza 2 — Agent: pętla tool use z okrojonym zestawem narzedzi
+Faza 2 — Agent (claude-haiku-4-5)
+pętla tool use z okrojonym zestawem narzedzi
 ```
 
 ### Pliki
 
 | Plik | Rola |
 |------|------|
+| `config.json` | `routerModel`, `routerMaxTokens` — model i limit tokenów routera |
+| `src/types.ts` | `AppConfig` — pola `routerModel` i `routerMaxTokens` |
+| `src/utils/llm.ts` | `callLLM(... model?, maxTokens?)` — opcjonalne nadpisanie modelu |
 | `src/prompts/router.md` | System prompt routera — instrukcja zwrotu JSON z tagami |
-| `src/services/registry.ts` | `getAllTags()` — unikalne tagi z rejestru; `filterByTags()` — filtruje narzedzia |
-| `src/services/agent.ts` | `routeTags()` — wywołuje router; `runAgent()` — integruje obie fazy |
+| `src/services/registry.ts` | `getAllTags()`, `filterByTags()` |
+| `src/services/agent.ts` | `routeTags()` — wywołuje router z tańszym modelem |
 
-### Przykład
-
-Pytanie: `"jaka pogoda w Krakowie?"`
+### Przykład z logów
 
 ```
-Router → ["weather", "local"]
-filterByTags(["weather", "local"]) → [check_weather]
-Agent dostaje 1 narzedzie zamiast 4
+[INFO ] Router using model: google/gemini-3.5-flash
+[INFO ] Router selected tags: [math]
+[INFO ] Tools after filtering: [calculate]
+[INFO ] Agent selected tool: calculate
 ```
 
 ### Fallback

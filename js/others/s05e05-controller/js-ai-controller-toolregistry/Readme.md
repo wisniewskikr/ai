@@ -66,19 +66,33 @@ Pick an option:
 Options 1–4 are preset scenarios with ready-made input.
 Option 5 lets the agent choose the right tool on its own.
 
+## Two models, two roles
+
+| Role | Model | Why |
+|------|-------|-----|
+| **Router** | `google/gemini-3.5-flash` | Cheap and fast — only returns a JSON array of tags |
+| **Agent** | `anthropic/claude-haiku-4-5` | Best-in-class tool use precision |
+
+The router runs on a cheaper model with a low token limit (`routerMaxTokens: 128`).
+The agent runs only after the tool list has been narrowed down.
+
+Both are configurable in `config.json` — no code changes needed to swap models.
+
 ## How the agent loop works
 
 ```
 User sends a question
         |
         v
-Phase 1 — Router: query + all tags → model returns matching tags
+Phase 1 — Router (gemini-3.5-flash, 128 tokens max)
+query + tag list → ["weather", "local"]
         |
         v
-Registry filtered to tools with matching tags
+Registry filtered: 50 tools → 2 tools
         |
         v
-Phase 2 — Agent: question + filtered tools sent to OpenRouter
+Phase 2 — Agent (claude-haiku-4-5)
+question + 2 tools sent to OpenRouter
         |
         v
 Model returns: finish_reason = "tool_calls"
@@ -93,8 +107,8 @@ Tool result sent back to model
 Model returns: finish_reason = "stop" → final answer shown
 ```
 
-The router reduces the tool list before the agent sees it.
-For 4 tools it changes nothing. For 50+ tools it prevents context bloat and wrong tool selection.
+At 50 tools the router call costs ~10x less than sending all tool schemas to the agent.
+If the router fails to return valid JSON, the agent falls back to the full registry.
 
 ## File structure
 
@@ -114,7 +128,7 @@ src/
     logger.ts         — file logger + daily usage tracking
     llm.ts            — simple LLM call helper (no tools)
   index.ts            — CLI entry point
-config.json           — model, limits, timeouts
+config.json           — agent model, router model, limits, timeouts
 logs/
   app.log             — human-readable event log
   usage.json          — daily tool usage counters (persisted)
@@ -124,6 +138,9 @@ logs/
 
 ```
 [2026-06-11 14:23:01] [INFO ] User selected option: 2
+[2026-06-11 14:23:01] [INFO ] Router using model: google/gemini-3.5-flash
+[2026-06-11 14:23:02] [INFO ] Router selected tags: [language, translation]
+[2026-06-11 14:23:02] [INFO ] Tools after filtering: [translate_text]
 [2026-06-11 14:23:02] [INFO ] Agent selected tool: translate_text
 [2026-06-11 14:23:03] [INFO ] Tool executed successfully — time: 1.2s
 [2026-06-11 14:23:10] [WARN ] Approaching daily limit: translate_text (180/200)

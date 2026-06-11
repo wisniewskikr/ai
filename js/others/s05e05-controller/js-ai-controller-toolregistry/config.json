@@ -1,6 +1,8 @@
 {
   "model": "anthropic/claude-haiku-4-5",
   "maxTokens": 1024,
+  "routerModel": "google/gemini-3.5-flash",
+  "routerMaxTokens": 128,
   "requestTimeoutMs": 10000,
   "tools": {
     "check_weather": { "cost": "low", "limitPerDay": 100 },

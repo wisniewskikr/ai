@@ -22,6 +22,8 @@ export interface RegistryEntry {
 export interface AppConfig {
   model: string;
   maxTokens: number;
+  routerModel: string;
+  routerMaxTokens: number;
   requestTimeoutMs: number;
   tools: Record<string, { cost: string; limitPerDay: number | null }>;
 }
