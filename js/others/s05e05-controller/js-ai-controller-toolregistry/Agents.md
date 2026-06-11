@@ -9,6 +9,47 @@ To właśnie **Tool Registry**.
 
 ---
 
+## Tool Registry vs zwykły zestaw narzędzi
+
+### Zwykły zestaw narzędzi
+
+Przekazujesz modelowi listę funkcji. Model wybiera które wywołac. To wszystko.
+
+```typescript
+// Ty decydujesz co przekazac — zwykle "wszystko"
+tools: [weatherTool, translateTool, calculateTool, summarizerTool]
+```
+
+Problem: przy 50+ narzędziach model dostaje za dużo kontekstu, myli narzędzia,
+a Ty nie masz kontroli nad kosztami ani limitami.
+
+### Tool Registry — co dodaje?
+
+Warstwa posrednia z dodatkowymi metadanymi:
+
+| Pole | Przykład | Po co |
+|------|---------|-------|
+| `cost` | `"low"` / `"high"` | Nie ładujesz drogich narzedzi bez powodu |
+| `limit` | `100/dzien` | Przerywasz zanim przekroczysz limit API |
+| `tags` | `["math", "local"]` | Filtrujesz narzedzia wg kontekstu zapytania |
+| `fallback` | `calculateTool` | Gdy narzedzie pada — rejestr wie co uzyc zamiast |
+
+Zamiast dawac modelowi wszystko:
+
+```typescript
+// Rejestr filtruje — model dostaje tylko co potrzeba
+const relevantTools = registry.getToolsFor(userIntent);
+```
+
+### Analogia
+
+- **Zwykłe narzedzia** = wysypujesz cały kufer na stół i mówisz "wybierz".
+- **Tool Registry** = masz szufladnik z etykietkami — nie otwierasz szuflady z wiertarką gdy wystarczy wkret ręcznie.
+
+> Przy 3–5 narzędziach rejestr to overengineering. Przy 20+ to koniecznosc.
+
+---
+
 ## Cel projektu
 
 Pokazac w prostym demo jak działa:
