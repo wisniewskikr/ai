@@ -76,15 +76,51 @@ Pokazac w prostym demo jak działa:
 ## Struktura aplikacji
 
 ```
-src/
-  index.ts          — punkt wejscia, menu CLI
-  registry.ts       — definicja Tool Registry (katalog narzedzi)
-  agent.ts          — agent: wysyla zapytanie do OpenRouter z tool use
-  tools/
-    weather.ts      — narzedzie: pogoda dla miasta (mock)
-    translator.ts   — narzedzie: tlumaczenie tekstu PL/EN
-    calculator.ts   — narzedzie: obliczenia matematyczne
-    summarizer.ts   — narzedzie: streszczanie tekstu
+project/
+├── src/
+│   ├── prompts/
+│   │   └── agent.md          — system prompt dla agenta (edytowalny bez zmiany kodu)
+│   ├── services/
+│   │   ├── registry.ts       — Tool Registry: katalog narzedzi z metadanymi
+│   │   ├── agent.ts          — wysyla zapytanie do OpenRouter z tool use
+│   │   ├── weather.ts        — narzedzie: pogoda dla miasta (mock)
+│   │   ├── translator.ts     — narzedzie: tlumaczenie tekstu PL/EN
+│   │   ├── calculator.ts     — narzedzie: obliczenia matematyczne
+│   │   └── summarizer.ts     — narzedzie: streszczanie tekstu
+│   ├── utils/
+│   │   └── logger.ts         — zapis logów do katalogu logs/
+│   └── index.ts              — punkt wejscia, menu CLI
+├── logs/                     — logi wywołan narzedzi
+├── config.json               — modele, limity, timeouty (bez sekretów)
+├── .env                      — OPENROUTER_API_KEY (nie commituj!)
+├── .env.example              — szablon zmiennych srodowiskowych
+└── Readme.md                 — dokumentacja po angielsku
+```
+
+### config.json — co zawiera?
+
+```json
+{
+  "model": "google/gemini-flash-1.5",
+  "maxTokens": 1024,
+  "requestTimeoutMs": 10000,
+  "tools": {
+    "weather": { "cost": "low", "limitPerDay": 100 },
+    "translate": { "cost": "low", "limitPerDay": 200 },
+    "calculate": { "cost": "none", "limitPerDay": null },
+    "summarize": { "cost": "medium", "limitPerDay": 50 }
+  }
+}
+```
+
+### logs/ — format wpisu
+
+```
+[2026-06-11 14:23:01] [INFO]  Uzytkownik wybrał opcje: 2 (tlumaczenie)
+[2026-06-11 14:23:02] [INFO]  Agent wybrał narzedzie: translate_text
+[2026-06-11 14:23:03] [INFO]  Narzedzie wykonane pomyslnie — czas: 1.2s
+[2026-06-11 14:23:10] [WARN]  Zbliżasz sie do limitu dziennego: translate_text (180/200)
+[2026-06-11 14:23:15] [ERROR] Przekroczono limit: summarize (50/50) — zapytanie odrzucone
 ```
 
 ---
