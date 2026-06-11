@@ -12,28 +12,35 @@ Wyobraz sobie, ze pytasz dwoch ekspertow o to samo. Jesli obaj mowia to samo —
 Pytanie (predefiniowane lub wlasne)
         |
         v
-  Model A (gpt-4o-mini)     Model B (mistral-7b)
+  Model A (gpt-4o-mini)     Model B (gemini-2.0-flash-lite)
         |                         |
-        v                         v
+        +----------+--------------+
+                   | (rownolegly fetch — Promise.all)
+                   v
   Structured output         Structured output
   { answer, confidence,     { answer, confidence,
-    keywords }                keywords }
+    keywords, language }      keywords, language }
         |                         |
         +----------+--------------+
                    |
                    v
-     Warstwa 1: Czy odpowiedzi modeli sa zgodne?
+     Warstwa 1: Semantyczne porownanie odpowiedzi
+     (keywords overlap, nie proste ===)
                    |
                    v
      Warstwa 2: Wikipedia API
-     (szukaj keywords z odpowiedzi)
+     (wszystkie keywords, coverage score)
                    |
                    v
      Warstwa 3: Self-confidence modeli
-     (srednia z pol confidence)
+     (srednia z pol confidence — niski weight)
                    |
                    v
-         Finalny confidence score
+     Warstwa 4: Arbiter LLM
+     (trzeci model ocenia spojnosc wszystkiego)
+                   |
+                   v
+         Finalny confidence score (0.0–1.0)
 ```
 
 ---
@@ -55,25 +62,57 @@ Pytanie (predefiniowane lub wlasne)
 
 ---
 
-## Trzy warstwy weryfikacji
+## Cztery warstwy weryfikacji
 
 Kazda warstwa dodaje pewnosc. Razem daja finalny confidence score.
 
-| Warstwa | Co sprawdza? | Jak? |
-|---------|-------------|------|
-| **1. Multi-model** | Czy oba modele odpowiadaja tak samo? | Porownanie `answer` z structured output |
-| **2. Wikipedia API** | Czy zewnetrzne zrodlo potwierdza odpowiedz? | Szukaj `keywords` z odpowiedzi w Wikipedii |
-| **3. Self-confidence** | Czy modele same sa pewne swoich odpowiedzi? | Srednia z pola `confidence` (0.0–1.0) |
+| Warstwa | Co sprawdza? | Jak? | Weight |
+|---------|-------------|------|--------|
+| **1. Multi-model** | Czy oba modele odpowiadaja to samo? | Semantyczne porownanie — keywords overlap, nie `===` | 35% |
+| **2. Wikipedia API** | Czy zewnetrzne zrodlo potwierdza odpowiedz? | Coverage score: ile keywords pojawia sie w artykule | 35% |
+| **3. Self-confidence** | Czy modele same sa pewne swoich odpowiedzi? | Srednia z pola `confidence` (0.0–1.0) — niski weight bo modele zawyzzaja | 10% |
+| **4. Arbiter LLM** | Czy pytanie + obie odpowiedzi + Wikipedia tworza spojny obraz? | Lekki model (Haiku) jako sedzia | 20% |
+
+### Dlaczego semantyczne porownanie zamiast ===?
+
+Model A moze odpowiedziec: `"Alexander Fleming odkryl penicyline w 1928 roku"`
+Model B moze odpowiedziec: `"Alexander Fleming"`
+
+Oba sa poprawne — ale proste porownanie stringow powie `NIE`. Dlatego:
+
+```
+answersMatch(a, b):
+  1. Wyodrebnij keywords z obu odpowiedzi
+  2. Policz overlap (czesc wspolna / suma)
+  3. Jesli overlap >= threshold (np. 0.5) → ZGODNE
+```
+
+### Dlaczego Wikipedia coverage score?
+
+Samo sprawdzenie `keywords[0]` to za malo — jesli model ustawi zly pierwszy keyword, cala weryfikacja pada.
+
+```
+wikipeAdiaScore(keywords, articleText):
+  1. Wyszukaj artykul dla keywords[0], potem keywords[1], itd.
+     (az do pierwszego trafienia)
+  2. Sprawdz ile z keywords[0..n] pojawia sie w tekscie artykulu
+  3. coverage = znalezione / wszystkie keywords
+  4. Jesli coverage >= 0.5 → POTWIERDZONE
+```
 
 ### Finalny confidence score
 
-| Wynik | Warunki |
-|-------|---------|
-| Wysoki | Modele zgodne + Wikipedia potwierdza + sredni confidence >= 0.8 |
-| Sredni | Dwa z trzech powyzszych warunkow spelnione |
-| Niski | Jeden lub zero warunkow — sprawdz recznie |
+```
+score = (layer1 * 0.35) + (layer2 * 0.35) + (layer3 * 0.10) + (layer4 * 0.20)
+```
 
-> Analogia: dwoch ekspertow mowi to samo, a encyklopedia sie zgadza — mozesz im ufac. Jesli chociaz jedno sie rozni — sprawdz recznie.
+| Wynik | Score |
+|-------|-------|
+| Wysoki | >= 0.8 |
+| Sredni | >= 0.5 |
+| Niski | < 0.5 |
+
+> Analogia: dwoch ekspertow mowi to samo, encyklopedia sie zgadza, a trzeci ekspert-sedzia potwierdza spojnosc — dopiero wtedy mozesz im w pelni ufac.
 
 ---
 
@@ -85,15 +124,29 @@ Kazdy model zwraca JSON zamiast czystego tekstu:
 {
   "answer": "Alexander Fleming odkryl penicyline w 1928 roku",
   "confidence": 0.95,
-  "keywords": ["Alexander Fleming", "penicylina", "1928"]
+  "keywords": ["Alexander Fleming", "penicylina", "1928"],
+  "language": "pl"
 }
 ```
 
 - **`answer`** — odpowiedz modelu
 - **`confidence`** — pewnosc modelu (0.0–1.0), deklarowana przez model
 - **`keywords`** — slowa kluczowe do weryfikacji w Wikipedii
+- **`language`** — jezyk odpowiedzi (normalizacja: oba modele musza odpowiadac w tym samym jezyku co pytanie)
 
-Wikipedia API dostaje `keywords[0]` jako zapytanie i sprawdza, czy `answer` pokrywa sie z trescia artykulu.
+> Pole `language` zapobiega sytuacji, gdy Model A odpowiada po polsku, a Model B po angielsku — wtedy semantyczne porownanie failuje z powodu jezyka, nie merytoryki.
+
+---
+
+## Robustness — co gdy cos sie wysypie?
+
+| Problem | Rozwiazanie |
+|---------|-------------|
+| API nie odpowiada | Timeout 10s + 2 retry z exponential backoff |
+| Wikipedia niedostepna | Layer 2 = `null`, score liczony bez tej warstwy (redistribute weights) |
+| Model zwraca niepoprawny JSON | Retry z promptem przypominajacym o formacie |
+| Ta sama odpytanie drugi raz | Cache w pamieci (Map) — unika ponownych wywolan API |
+| Modele odpowiadaja w roznych jezykach | Wykryj jezyk z pola `language`, przetlumacz keywords przed porownaniem |
 
 ---
 
@@ -104,25 +157,26 @@ Wikipedia API dostaje `keywords[0]` jako zapytanie i sprawdza, czy `answer` pokr
 | Jezyk | TypeScript |
 | Model A | `openai/gpt-4o-mini` (przez OpenRouter) |
 | Model B | `google/gemini-2.0-flash-lite` (przez OpenRouter) |
+| Model Arbiter (Layer 4) | `anthropic/claude-haiku-4-5` (przez OpenRouter) |
 | Structured output | `response_format: { type: "json_object" }` w OpenRouter API |
 | Weryfikacja zewnetrzna | Wikipedia REST API (darmowe, bez klucza) |
+| Rownolegle wywolania | `Promise.all` dla Model A i Model B |
 | CLI | `readline` (wbudowane w Node.js) |
+| Cache | `Map<string, CachedResult>` w pamieci |
 | Output | tabela w terminalu |
 
-### Dlaczego te dwa modele?
+### Dlaczego te modele?
 
 Kluczowa zasada: **modele musza pochodzic od roznych firm** — inaczej grounding nie ma sensu (te same dane treningowe = te same bledy).
 
-| | Model A | Model B |
-|--|---------|---------|
-| **Nazwa** | `openai/gpt-4o-mini` | `google/gemini-2.0-flash-lite` |
-| **Firma** | OpenAI | Google |
-| **Cena** | $0.15 / 1M tokenow | $0.075 / 1M tokenow |
-| **JSON mode** | Tak | Tak |
-| **Mocna strona** | Fakty, precyzja | Szerokie dane, aktualnosc |
-| **Dane treningowe** | Rozne od Google | Rozne od OpenAI |
+| | Model A | Model B | Arbiter |
+|--|---------|---------|---------|
+| **Nazwa** | `openai/gpt-4o-mini` | `google/gemini-2.0-flash-lite` | `anthropic/claude-haiku-4-5` |
+| **Firma** | OpenAI | Google | Anthropic |
+| **Rola** | Odpowiedz | Odpowiedz | Ocena spojnosci |
+| **JSON mode** | Tak | Tak | Tak |
 
-> Analogia: pytasz o fakt amerykanskiego i europejskiego eksperta. Jesli obaj mowia to samo — bardziej mozesz im ufac niz gdybys pytal dwoch absolwentow tej samej uczelni.
+> Analogia: pytasz o fakt amerykanskiego, europejskiego i azjatyckiego eksperta. Jesli wszyscy trojej sie zgadzaja — masz naprawde solidna podstawe.
 
 ---
 
@@ -132,21 +186,29 @@ Kluczowa zasada: **modele musza pochodzic od roznych firm** — inaczej groundin
 project/
 ├── src/
 │   ├── prompts/
-│   │   └── verify.ts         # prompt do structured output (answer, confidence, keywords)
+│   │   ├── verify.ts         # prompt do structured output (answer, confidence, keywords, language)
+│   │   └── arbiter.ts        # prompt dla Layer 4 — arbiter LLM
 │   ├── services/
-│   │   ├── openrouter.ts     # klient OpenRouter API
-│   │   ├── wikipedia.ts      # klient Wikipedia REST API
-│   │   ├── verifier.ts       # wywoluje oba modele, porownuje odpowiedzi
-│   │   └── scorer.ts         # liczy finalny confidence score (3 warstwy)
+│   │   ├── openrouter.ts     # klient OpenRouter API (z timeout + retry)
+│   │   ├── wikipedia.ts      # klient Wikipedia REST API (coverage score, keyword fallback)
+│   │   ├── verifier.ts       # wywoluje oba modele rownolegly (Promise.all)
+│   │   ├── comparator.ts     # semantyczne porownanie odpowiedzi (keywords overlap)
+│   │   ├── arbiter.ts        # Layer 4 — wywolanie modelu-arbitra
+│   │   ├── scorer.ts         # liczy finalny confidence score (4 warstwy, weighted)
+│   │   └── cache.ts          # cache w pamieci (Map) dla powtarzajacych sie pytan
 │   └── utils/
 │       ├── cli.ts            # menu glowne, petla CLI
 │       └── logger.ts         # zapis logow do logs/
+├── tests/
+│   ├── comparator.test.ts    # testy dla semantycznego porownania
+│   ├── scorer.test.ts        # testy dla weighted score
+│   └── wikipedia.test.ts     # testy dla coverage score
 ├── logs/                     # logi aplikacji (auto-generowane)
 ├── config.json               # modele, progi confidence, lista 8 pytan
 ├── index.ts                  # punkt wejscia
 ├── .env                      # OPENROUTER_API_KEY (nie commituj!)
 ├── .env.example              # szablon zmiennych srodowiskowych
-└── Readme.md                 # dokumentacja w jezyku angielskim (patrz nizej)
+└── Readme.md                 # dokumentacja w jezyku angielskim
 ```
 
 ### config.json — co przechowuje?
@@ -155,11 +217,24 @@ project/
 {
   "models": {
     "modelA": "openai/gpt-4o-mini",
-    "modelB": "google/gemini-2.0-flash-lite"
+    "modelB": "google/gemini-2.0-flash-lite",
+    "arbiter": "anthropic/claude-haiku-4-5"
   },
   "confidence": {
     "highThreshold": 0.8,
     "mediumThreshold": 0.5
+  },
+  "weights": {
+    "layer1": 0.35,
+    "layer2": 0.35,
+    "layer3": 0.10,
+    "layer4": 0.20
+  },
+  "verification": {
+    "keywordOverlapThreshold": 0.5,
+    "wikipediaCoverageThreshold": 0.5,
+    "timeoutMs": 10000,
+    "maxRetries": 2
   },
   "questions": [
     { "id": 1, "question": "Ile planet jest w Ukladzie Slonecznym?", "domain": "Nauka", "difficulty": "Latwe" },
@@ -172,12 +247,16 @@ project/
 
 ```
 [2026-06-10 14:32:01] [INFO]  Question: Who discovered penicillin?
-[2026-06-10 14:32:02] [INFO]  gpt-4o-mini responded (confidence: 0.97)
-[2026-06-10 14:32:03] [INFO]  gemini-lite responded (confidence: 0.91)
-[2026-06-10 14:32:03] [INFO]  Wikipedia: confirmed
-[2026-06-10 14:32:03] [INFO]  Final confidence: HIGH
-[2026-06-10 14:32:03] [WARN]  Models disagree — verify manually
-[2026-06-10 14:32:03] [ERROR] Wikipedia API unavailable — layer 2 skipped
+[2026-06-10 14:32:01] [INFO]  Cache: MISS
+[2026-06-10 14:32:02] [INFO]  gpt-4o-mini responded (confidence: 0.97, language: en)
+[2026-06-10 14:32:02] [INFO]  gemini-lite responded (confidence: 0.91, language: en)
+[2026-06-10 14:32:02] [INFO]  Layer 1 — keywords overlap: 0.80 → MATCH
+[2026-06-10 14:32:03] [INFO]  Wikipedia: coverage 3/3 keywords → CONFIRMED
+[2026-06-10 14:32:03] [INFO]  Layer 3 — avg confidence: 0.94
+[2026-06-10 14:32:04] [INFO]  Arbiter: consistent → 0.95
+[2026-06-10 14:32:04] [INFO]  Final confidence: 0.89 → HIGH
+[2026-06-10 14:32:04] [WARN]  Models disagree — verify manually
+[2026-06-10 14:32:04] [ERROR] Wikipedia API unavailable — layer 2 skipped, weights redistributed
 ```
 
 ---
@@ -202,20 +281,26 @@ Select option: 2
 
 Question: Who discovered penicillin?
 
-Layer 1 — Multi-model:
+Layer 1 — Multi-model (semantic):
   gpt-4o-mini : "Alexander Fleming discovered penicillin in 1928"  (confidence: 0.97)
   gemini-lite : "Alexander Fleming"                                 (confidence: 0.91)
-  Match       : YES ✓
+  Overlap     : 0.80 → Match YES
 
-Layer 2 — Wikipedia:
-  Query  : "Alexander Fleming"
-  Result : Confirmed — article contains "penicillin" ✓
+Layer 2 — Wikipedia (coverage):
+  Query  : "Alexander Fleming" (keyword 1)
+  Found  : 3/3 keywords in article → coverage: 1.00
+  Result : Confirmed
 
 Layer 3 — Self-confidence:
-  Average: 0.94 ✓
+  Average: 0.94 (weight: 10%)
+
+Layer 4 — Arbiter (claude-haiku):
+  Input  : question + both answers + wikipedia excerpt
+  Output : consistent → 0.95
 
 ---
-Final confidence: HIGH ✓
+Weighted score: (0.80*0.35) + (1.00*0.35) + (0.94*0.10) + (0.95*0.20) = 0.90
+Final confidence: HIGH (0.90)
 ```
 
 ---
@@ -227,20 +312,26 @@ Select option: 9
 
 Your question: How many moons does Mars have?
 
-Layer 1 — Multi-model:
+Layer 1 — Multi-model (semantic):
   gpt-4o-mini : "Mars has 2 moons: Phobos and Deimos"  (confidence: 0.98)
   gemini-lite : "2 moons — Phobos and Deimos"           (confidence: 0.96)
-  Match       : YES ✓
+  Overlap     : 1.00 → Match YES
 
-Layer 2 — Wikipedia:
-  Query  : "Mars"
-  Result : Confirmed — article contains "Phobos" and "Deimos" ✓
+Layer 2 — Wikipedia (coverage):
+  Query  : "Mars" (keyword 1)
+  Found  : 3/3 keywords in article → coverage: 1.00
+  Result : Confirmed
 
 Layer 3 — Self-confidence:
-  Average: 0.97 ✓
+  Average: 0.97 (weight: 10%)
+
+Layer 4 — Arbiter (claude-haiku):
+  Input  : question + both answers + wikipedia excerpt
+  Output : consistent → 0.98
 
 ---
-Final confidence: HIGH ✓
+Weighted score: (1.00*0.35) + (1.00*0.35) + (0.97*0.10) + (0.98*0.20) = 0.99
+Final confidence: HIGH (0.99)
 ```
 
 ---
@@ -254,24 +345,25 @@ Plik `Readme.md` w jezyku **angielskim**, pisany prosto i zwiezle (zasady: krotk
 | Sekcja | Zawartosc |
 |--------|-----------|
 | **What is this?** | Jednozdaniowy opis — czym jest grounding i co robi aplikacja |
-| **How it works** | Trzy warstwy weryfikacji w punktach |
+| **How it works** | Cztery warstwy weryfikacji w punktach |
 | **Requirements** | Node.js >= 18, klucz OpenRouter API |
 | **Installation** | 3 kroki: clone, `npm install`, skopiuj `.env.example` do `.env` |
 | **Run** | `npm start` |
 | **File structure** | Tabela z plikami i ich rolami |
-| **Configuration** | Co mozna zmienic w `config.json` (modele, progi, pytania) |
+| **Configuration** | Co mozna zmienic w `config.json` (modele, progi, wagi, pytania) |
 
 ### Przykladowa tresc sekcji "What is this?"
 
 > AI answers with confidence — but sometimes it's just guessing.
 > This app asks two models the same question, cross-checks with Wikipedia,
-> and shows you how sure we really are.
+> and uses a third model as a judge — then shows you how sure we really are.
 
 ---
 
 ## Dlaczego bez ground truth?
 
 - Realistyczny scenariusz — w produkcji rzadko znamy "prawdziwa odpowiedz" z gory
-- Trzy niezalezne warstwy weryfikacji zamiast jednej
+- Cztery niezalezne warstwy weryfikacji zamiast jednej
 - Uczy intuicji: **roznica miedzy modelami = sygnal do sprawdzenia**
 - Wikipedia jako darmowe, zewnetrzne zrodlo faktow — bez zadnego API key
+- Semantyczne porownanie zamiast string-matching — odporne na rozne style odpowiedzi
