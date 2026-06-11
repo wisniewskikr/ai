@@ -9,7 +9,7 @@ That's a **Tool Registry**.
 | Concept | What you see |
 |---------|-------------|
 | **Tool Registry** | A catalog of tools with description, cost, and daily limits |
-| **Routing Intelligence** | The agent picks the right tool — no if-else chains |
+| **Two-phase routing** | Router filters tools by tags before the agent sees them |
 | **Multi-turn loop** | Proper tool use: send → execute → return result → get final answer |
 | **CLI menu** | Choose a preset scenario or type your own question |
 
@@ -72,7 +72,13 @@ Option 5 lets the agent choose the right tool on its own.
 User sends a question
         |
         v
-Agent sends question + tool list to OpenRouter
+Phase 1 — Router: query + all tags → model returns matching tags
+        |
+        v
+Registry filtered to tools with matching tags
+        |
+        v
+Phase 2 — Agent: question + filtered tools sent to OpenRouter
         |
         v
 Model returns: finish_reason = "tool_calls"
@@ -87,18 +93,19 @@ Tool result sent back to model
 Model returns: finish_reason = "stop" → final answer shown
 ```
 
-Without the feedback step, the model would call a tool and go silent.
-Like a waiter who takes your order, goes to the kitchen, and never comes back.
+The router reduces the tool list before the agent sees it.
+For 4 tools it changes nothing. For 50+ tools it prevents context bloat and wrong tool selection.
 
 ## File structure
 
 ```
 src/
   prompts/
-    agent.md          — system prompt (edit without touching code)
+    agent.md          — system prompt for the main agent
+    router.md         — system prompt for the tag router
   services/
     registry.ts       — tool catalog with cost, limits, and tags
-    agent.ts          — multi-turn tool use loop
+    agent.ts          — two-phase routing + multi-turn tool use loop
     weather.ts        — weather tool (mock data)
     translator.ts     — translation tool (LLM-powered)
     calculator.ts     — math evaluation (mathjs, no eval())

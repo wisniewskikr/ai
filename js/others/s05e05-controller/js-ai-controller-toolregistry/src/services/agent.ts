@@ -7,12 +7,13 @@ import {
   OpenRouterResponse,
   RegistryEntry,
 } from "../types";
-import { toolRegistry } from "./registry";
+import { toolRegistry, getAllTags, filterByTags } from "./registry";
 import { checkWeather } from "./weather";
 import { translateText } from "./translator";
 import { calculate } from "./calculator";
 import { summarize } from "./summarizer";
 import { logger, getUsageCount, incrementUsage } from "../utils/logger";
+import { callLLM } from "../utils/llm";
 
 const config = JSON.parse(
   fs.readFileSync(path.join(process.cwd(), "config.json"), "utf8")
@@ -20,6 +21,11 @@ const config = JSON.parse(
 
 const systemPrompt = fs.readFileSync(
   path.join(process.cwd(), "src/prompts/agent.md"),
+  "utf8"
+);
+
+const routerPrompt = fs.readFileSync(
+  path.join(process.cwd(), "src/prompts/router.md"),
   "utf8"
 );
 
@@ -83,6 +89,20 @@ async function executeTool(name: string, args: Record<string, string>): Promise<
   }
 }
 
+async function routeTags(userMessage: string): Promise<string[]> {
+  const allTags = getAllTags();
+  const userPrompt = `User query: "${userMessage}"\n\nAvailable tags: ${JSON.stringify(allTags)}`;
+  const result = await callLLM(userPrompt, routerPrompt, config);
+  try {
+    const tags = JSON.parse(result) as string[];
+    if (Array.isArray(tags) && tags.length > 0) return tags;
+    throw new Error("Empty or invalid array");
+  } catch {
+    logger.warn("Router returned unparseable response — falling back to all tools");
+    return allTags;
+  }
+}
+
 function isWithinLimit(toolName: string): boolean {
   const toolConfig = config.tools[toolName];
   if (!toolConfig || toolConfig.limitPerDay === null) return true;
@@ -100,11 +120,23 @@ function warnIfApproachingLimit(toolName: string): void {
 }
 
 export async function runAgent(userMessage: string): Promise<string> {
+  // Phase 1: route — select relevant tags, then filter tools
+  const selectedTags = await routeTags(userMessage);
+  logger.info(`Router selected tags: [${selectedTags.join(", ")}]`);
+
+  let filteredRegistry = filterByTags(selectedTags);
+  if (filteredRegistry.length === 0) {
+    logger.warn("No tools matched selected tags — falling back to full registry");
+    filteredRegistry = toolRegistry;
+  }
+  logger.info(`Tools after filtering: [${filteredRegistry.map((e) => e.name).join(", ")}]`);
+
+  // Phase 2: agent — run with filtered tools only
   const messages: ChatMessage[] = [
     { role: "system", content: systemPrompt },
     { role: "user", content: userMessage },
   ];
-  const tools = buildTools(toolRegistry);
+  const tools = buildTools(filteredRegistry);
 
   for (let turn = 0; turn < MAX_TURNS; turn++) {
     const data = await callOpenRouter(messages, tools);

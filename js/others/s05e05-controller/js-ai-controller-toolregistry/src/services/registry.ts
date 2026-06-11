@@ -1,5 +1,13 @@
 import { RegistryEntry } from "../types";
 
+export function getAllTags(): string[] {
+  return [...new Set(toolRegistry.flatMap((e) => e.tags))];
+}
+
+export function filterByTags(tags: string[]): RegistryEntry[] {
+  return toolRegistry.filter((e) => e.tags.some((t) => tags.includes(t)));
+}
+
 export const toolRegistry: RegistryEntry[] = [
   {
     name: "check_weather",

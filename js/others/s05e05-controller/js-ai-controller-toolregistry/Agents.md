@@ -356,6 +356,52 @@ logs/           — tool call logs
 
 ---
 
+## Dwufazowy routing (zaimplementowany)
+
+### Problem
+
+Przy duzej liczbie narzedzi model dostaje za dużo kontekstu — myli narzedzia, koszt rośnie.
+
+### Rozwiązanie: router przed agentem
+
+```
+Pytanie użytkownika
+        |
+        v
+Faza 1 — Router: pytanie + lista tagów → model zwraca pasujące tagi (JSON)
+        |
+        v
+Rejestr filtrowany — model główny dostaje tylko narzedzia z pasującymi tagami
+        |
+        v
+Faza 2 — Agent: pętla tool use z okrojonym zestawem narzedzi
+```
+
+### Pliki
+
+| Plik | Rola |
+|------|------|
+| `src/prompts/router.md` | System prompt routera — instrukcja zwrotu JSON z tagami |
+| `src/services/registry.ts` | `getAllTags()` — unikalne tagi z rejestru; `filterByTags()` — filtruje narzedzia |
+| `src/services/agent.ts` | `routeTags()` — wywołuje router; `runAgent()` — integruje obie fazy |
+
+### Przykład
+
+Pytanie: `"jaka pogoda w Krakowie?"`
+
+```
+Router → ["weather", "local"]
+filterByTags(["weather", "local"]) → [check_weather]
+Agent dostaje 1 narzedzie zamiast 4
+```
+
+### Fallback
+
+Jezeli router zwróci nieparserowalny JSON lub pusty wynik — agent dostaje pełny rejestr.
+Logowane jako `[WARN] Router returned unparseable response — falling back to all tools`.
+
+---
+
 ## Analiza projektu — co zmienić, czego brakuje
 
 ### Co jest dobrze
