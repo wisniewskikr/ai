@@ -12,7 +12,7 @@ Wyobraz sobie, ze pytasz dwoch ekspertow o to samo. Jesli obaj mowia to samo —
 Pytanie (predefiniowane lub wlasne)
         |
         v
-  Model A (gpt-4o-mini)     Model B (gemini-2.0-flash-lite)
+  Model A (gpt-4o-mini)     Model B (gemini-3.5-flash)
         |                         |
         +----------+--------------+
                    | (rownolegly fetch — Promise.all)
@@ -156,7 +156,7 @@ Kazdy model zwraca JSON zamiast czystego tekstu:
 |---------|-------------|
 | Jezyk | TypeScript |
 | Model A | `openai/gpt-4o-mini` (przez OpenRouter) |
-| Model B | `google/gemini-2.0-flash-lite` (przez OpenRouter) |
+| Model B | `google/gemini-3.5-flash` (przez OpenRouter) |
 | Model Arbiter (Layer 4) | `anthropic/claude-haiku-4-5` (przez OpenRouter) |
 | Structured output | `response_format: { type: "json_object" }` w OpenRouter API |
 | Weryfikacja zewnetrzna | Wikipedia REST API (darmowe, bez klucza) |
@@ -171,7 +171,7 @@ Kluczowa zasada: **modele musza pochodzic od roznych firm** — inaczej groundin
 
 | | Model A | Model B | Arbiter |
 |--|---------|---------|---------|
-| **Nazwa** | `openai/gpt-4o-mini` | `google/gemini-2.0-flash-lite` | `anthropic/claude-haiku-4-5` |
+| **Nazwa** | `openai/gpt-4o-mini` | `google/gemini-3.5-flash` | `anthropic/claude-haiku-4-5` |
 | **Firma** | OpenAI | Google | Anthropic |
 | **Rola** | Odpowiedz | Odpowiedz | Ocena spojnosci |
 | **JSON mode** | Tak | Tak | Tak |
@@ -217,7 +217,7 @@ project/
 {
   "models": {
     "modelA": "openai/gpt-4o-mini",
-    "modelB": "google/gemini-2.0-flash-lite",
+    "modelB": "google/gemini-3.5-flash",
     "arbiter": "anthropic/claude-haiku-4-5"
   },
   "confidence": {

@@ -1,7 +1,7 @@
 {
   "models": {
     "modelA": "openai/gpt-4o-mini",
-    "modelB": "google/gemini-2.0-flash-lite",
+    "modelB": "google/gemini-3.5-flash",
     "arbiter": "anthropic/claude-haiku-4-5"
   },
   "confidence": {
