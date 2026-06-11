@@ -67,9 +67,37 @@ Pokazac w prostym demo jak działa:
 | Element | Technologia |
 |---------|-------------|
 | Jezyk | TypeScript (Node.js) |
-| AI / LLM | OpenRouter API (np. `google/gemini-flash-1.5`) |
+| AI / LLM | OpenRouter API — `anthropic/claude-haiku-4-5` |
 | CLI | `readline` (wbudowany w Node.js) |
 | Brak zewnetrznych frameworków | — proste i przejrzyste |
+
+---
+
+## Wybór modelu AI
+
+W tym projekcie liczy sie jedna rzecz: **czy model niezawodnie wybiera narzedzie**.
+To nie zadanie na rozumowanie — to zadanie na precyzje.
+
+### Porównanie kandydatów
+
+| Model (OpenRouter) | Tool Use | Szybkosc | Koszt (1M tokenów in/out) | Uwagi |
+|--------------------|----------|----------|--------------------------|-------|
+| `anthropic/claude-haiku-4-5` | Doskonały | Bardzo szybki | $0.80 / $4.00 | Najlepsza precyzja tool use w tej klasie cenowej |
+| `google/gemini-2.0-flash-001` | Dobry | Bardzo szybki | $0.10 / $0.40 | Najtanszy, ale slabszy routing przy niejednoznacznych pytaniach |
+| `openai/gpt-4o-mini` | Dobry | Szybki | $0.15 / $0.60 | Solidny, ale tool use gorszy niz Haiku |
+| `anthropic/claude-sonnet-4-5` | Doskonały | Sredni | $3.00 / $15.00 | Przesadna moc jak na demo z 4 narzędziami |
+
+### Rekomendacja: `anthropic/claude-haiku-4-5`
+
+Dlaczego:
+
+- **Tool use to rdzen tego projektu** — Haiku ma najlepsza precyzje wyboru narzedzi w swojej klasie cenowej
+- **Szybki** — odpowiedz w CLI pojawia sie natychmiast
+- **Tani** — demo mozna uruchamiac bez liczenia tokenów
+- **Dostepny przez OpenRouter** — bez osobnego konta Anthropic
+
+> Analogia: nie bierzesz Ferrari do przejazdu 2 km — ale bierzesz niezawodne auto, nie rower.
+> Gemini jest jak rower — działa, ale przy zakrecie (niejednoznaczne pytanie) możesz sie wywrocic.
 
 ---
 
@@ -101,7 +129,7 @@ project/
 
 ```json
 {
-  "model": "google/gemini-flash-1.5",
+  "model": "anthropic/claude-haiku-4-5",
   "maxTokens": 1024,
   "requestTimeoutMs": 10000,
   "tools": {
