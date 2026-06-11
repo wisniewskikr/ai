@@ -83,8 +83,10 @@ Oba sa poprawne — ale proste porownanie stringow powie `NIE`. Dlatego:
 ```
 answersMatch(a, b):
   1. Wyodrebnij keywords z obu odpowiedzi
-  2. Policz overlap (czesc wspolna / suma)
-  3. Jesli overlap >= threshold (np. 0.5) → ZGODNE
+  2. Policz Jaccard: overlap = czesc wspolna / suma
+  3. Policz containment: overlap = czesc wspolna / mniejszy zbior
+  4. Uzyj max(Jaccard, containment) — odporne na krotkie vs dlugie odpowiedzi
+  5. Jesli overlap >= threshold (np. 0.5) → ZGODNE
 ```
 
 ### Dlaczego Wikipedia coverage score?
@@ -145,6 +147,7 @@ Kazdy model zwraca JSON zamiast czystego tekstu:
 | API nie odpowiada | Timeout 10s + 2 retry z exponential backoff |
 | Wikipedia niedostepna | Layer 2 = `null`, score liczony bez tej warstwy (redistribute weights) |
 | Model zwraca niepoprawny JSON | Retry z promptem przypominajacym o formacie |
+| Model owija JSON w markdown (```json) | Automatyczne strippowanie przed JSON.parse |
 | Ta sama odpytanie drugi raz | Cache w pamieci (Map) — unika ponownych wywolan API |
 | Modele odpowiadaja w roznych jezykach | Wykryj jezyk z pola `language`, przetlumacz keywords przed porownaniem |
 

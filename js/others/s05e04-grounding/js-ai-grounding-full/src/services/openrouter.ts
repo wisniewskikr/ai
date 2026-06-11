@@ -55,7 +55,8 @@ export async function callModel<T>(model: string, prompt: string): Promise<T> {
       const content: string | undefined = data.choices?.[0]?.message?.content;
       if (!content) throw new Error("Empty response from model");
 
-      return JSON.parse(content) as T;
+      const cleaned = content.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
+      return JSON.parse(cleaned) as T;
     } catch (err) {
       if (attempt === maxRetries) throw err;
       // Exponential backoff before retry
