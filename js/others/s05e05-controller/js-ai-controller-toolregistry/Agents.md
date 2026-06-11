@@ -353,3 +353,134 @@ logs/           — tool call logs
 - Dodac pole `limit` do rejestru i przerwac wywołanie gdy limit przekroczony
 - Dodac log wywołan narzedzi do pliku (pamiec epizodyczna)
 - Podmienic mock pogody na prawdziwe API (np. Open-Meteo — bezpłatne)
+
+---
+
+## Analiza projektu — co zmienić, czego brakuje
+
+### Co jest dobrze
+
+| Element | Dlaczego działa |
+|---------|----------------|
+| Osobne foldery `services/`, `prompts/`, `utils/` | Każdy wie gdzie szukać |
+| `agent.md` jako edytowalny plik | Zmieniasz zachowanie AI bez dotykania kodu |
+| `config.json` na ustawienia, `.env` na sekrety | Sekrety nie wyciekają do repozytorium |
+
+---
+
+### Co zmienić
+
+**1. Schemat narzędzi jest za luźny**
+
+To co masz:
+```typescript
+inputSchema: { city: "string" }
+```
+
+To co wymaga Anthropic API:
+```typescript
+input_schema: {
+  type: "object",
+  properties: { city: { type: "string", description: "Nazwa miasta" } },
+  required: ["city"]
+}
+```
+
+Bez tego API zwróci błąd walidacji.
+
+**2. Narzędzie `calculate` — nie używaj `eval()`**
+
+`eval("2 + 2")` to jak wpuszczenie obcego do domu i danie mu kluczy do wszystkich pokoi.
+Zamiast tego: biblioteka `mathjs` lub `expr-eval` — oblicza wyrażenia bez ryzyka.
+
+**3. Rejestr bez typów TypeScript**
+
+Teraz to zwykła tablica — TypeScript nie pilnuje struktury. Dodaj interfejs:
+
+```typescript
+interface RegistryEntry {
+  name: string;
+  cost: "none" | "low" | "medium" | "high";
+  limitPerDay: number | null;
+  tags: string[];
+  fallback?: string;
+  definition: Tool; // typ z Anthropic SDK
+}
+```
+
+---
+
+### Czego brakuje — krytyczne
+
+**1. Multi-turn loop — największy brak**
+
+Diagram przepływu w dokumencie jest niepełny. Anthropic tool use działa tak:
+
+```
+Krok 1: Wyślij pytanie + narzędzia → model odpowiada: stop_reason: "tool_use"
+Krok 2: Wykonaj narzędzie → dostań wynik
+Krok 3: Wyślij wynik z powrotem jako "tool_result"
+Krok 4: Model generuje TERAZ finalną odpowiedź tekstową
+Krok 5: Pokaż odpowiedź użytkownikowi
+```
+
+Bez kroku 3 i 4 aplikacja nigdy nie pokaże odpowiedzi — model zwróci `tool_use` i na tym koniec.
+
+> Analogia: kelner bierze zamówienie, idzie do kuchni, ale nigdy nie wraca z jedzeniem.
+
+**2. Licznik `limitPerDay` resetuje się po restarcie**
+
+`limitPerDay: 100` w config.json nie wystarczy — to tylko definicja limitu, nie jego śledzenie.
+Każdy restart aplikacji zeruje licznik. Potrzebny plik `logs/usage.json`:
+
+```json
+{
+  "2026-06-11": {
+    "translate_text": 23,
+    "summarize": 7
+  }
+}
+```
+
+**3. Brak obsługi `stop_reason`**
+
+Model może odpowiedzieć na trzy sposoby — każdy wymaga innej reakcji:
+
+| `stop_reason` | Co zrobić |
+|---------------|-----------|
+| `"tool_use"` | Wywołaj narzędzie, wyślij wynik, kontynuuj pętlę |
+| `"end_turn"` | Pokaż odpowiedź użytkownikowi |
+| `"max_tokens"` | Pokaż błąd — odpowiedź ucięta |
+
+**4. `tags` i `fallback` — wymienione, ale nie zaimplementowane**
+
+Tabela w dokumencie je wymienia, ale schemat TypeScript ich nie zawiera.
+Albo są w projekcie, albo nie — nie mogą wisieć tylko w dokumentacji.
+
+---
+
+### Czego brakuje — jakość
+
+| Brak | Skutek |
+|------|--------|
+| `AbortController` dla timeoutu | `requestTimeoutMs` w config.json nic nie robi |
+| Walidacja `config.json` (np. Zod) | Błędna konfiguracja = cicha awaria |
+| `tsconfig.json` z `strict: true` | Błędy typowania widać w runtime zamiast przy kompilacji |
+| Obsługa pustego inputu w CLI | Użytkownik wciska Enter — nic się nie dzieje |
+
+---
+
+### Kolejność implementacji
+
+Buduj w tej kolejności — każdy krok zależy od poprzedniego:
+
+| Krok | Co budujesz | Dlaczego najpierw |
+|------|-------------|-------------------|
+| 1 | `src/types.ts` — interfejsy | Wszystko inne korzysta z typów |
+| 2 | `registry.ts` — statyczna lista | Bez logiki, tylko dane |
+| 3 | `agent.ts` — pętla tool use | Najtrudniejsze, rdzeń aplikacji |
+| 4 | Narzędzia (weather, translate, calculate, summarize) | Mają gotowy kontrakt z typów |
+| 5 | Logger + usage tracking z persystencją | Potrzebuje gotowych narzędzi |
+| 6 | `index.ts` — CLI menu | Ostatnie — tylko warstwa widoku |
+
+> Największe ryzyko to krok 3. Jeśli pętla agenta jest zła, nic nie działa — niezależnie od reszty.
