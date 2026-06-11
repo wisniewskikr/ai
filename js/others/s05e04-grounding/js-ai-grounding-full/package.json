@@ -1,0 +1,30 @@
+{
+  "name": "js-ai-grounding",
+  "version": "1.0.0",
+  "description": "AI grounding demo — multi-model verification with Wikipedia cross-check",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts",
+    "build": "tsc",
+    "test": "jest"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.14.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testMatch": ["**/tests/**/*.test.ts"],
+    "moduleNameMapper": {
+      "^../../config.json$": "<rootDir>/config.json"
+    }
+  }
+}

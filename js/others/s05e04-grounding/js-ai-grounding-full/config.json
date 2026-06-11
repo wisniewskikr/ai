@@ -1,0 +1,33 @@
+{
+  "models": {
+    "modelA": "openai/gpt-4o-mini",
+    "modelB": "google/gemini-2.0-flash-lite",
+    "arbiter": "anthropic/claude-haiku-4-5"
+  },
+  "confidence": {
+    "highThreshold": 0.8,
+    "mediumThreshold": 0.5
+  },
+  "weights": {
+    "layer1": 0.35,
+    "layer2": 0.35,
+    "layer3": 0.10,
+    "layer4": 0.20
+  },
+  "verification": {
+    "keywordOverlapThreshold": 0.5,
+    "wikipediaCoverageThreshold": 0.5,
+    "timeoutMs": 10000,
+    "maxRetries": 2
+  },
+  "questions": [
+    { "id": 1, "question": "How many planets are in the Solar System?", "domain": "Science", "difficulty": "Easy" },
+    { "id": 2, "question": "Who discovered penicillin?", "domain": "Science", "difficulty": "Easy" },
+    { "id": 3, "question": "What is the capital of Australia?", "domain": "Geography", "difficulty": "Medium" },
+    { "id": 4, "question": "What programming language did Guido van Rossum create?", "domain": "Technology", "difficulty": "Easy" },
+    { "id": 5, "question": "In what year did the Western Roman Empire fall?", "domain": "History", "difficulty": "Medium" },
+    { "id": 6, "question": "What is the speed of light in a vacuum (km/s)?", "domain": "Physics", "difficulty": "Medium" },
+    { "id": 7, "question": "Who wrote \"Crime and Punishment\"?", "domain": "Literature", "difficulty": "Medium" },
+    { "id": 8, "question": "What is the heaviest naturally occurring element?", "domain": "Chemistry", "difficulty": "Hard" }
+  ]
+}
