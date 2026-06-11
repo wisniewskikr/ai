@@ -1,0 +1,19 @@
+{
+  "name": "js-ai-controller-toolregistry",
+  "version": "1.0.0",
+  "description": "Tool Registry demo — AI agent routing with metadata-driven tool selection",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "ts-node src/index.ts",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "mathjs": "^11.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}

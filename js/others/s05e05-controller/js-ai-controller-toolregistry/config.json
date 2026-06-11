@@ -1,0 +1,11 @@
+{
+  "model": "anthropic/claude-haiku-4-5",
+  "maxTokens": 1024,
+  "requestTimeoutMs": 10000,
+  "tools": {
+    "check_weather": { "cost": "low", "limitPerDay": 100 },
+    "translate_text": { "cost": "low", "limitPerDay": 200 },
+    "calculate": { "cost": "none", "limitPerDay": null },
+    "summarize": { "cost": "medium", "limitPerDay": 50 }
+  }
+}
