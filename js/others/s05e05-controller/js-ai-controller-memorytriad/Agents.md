@@ -31,17 +31,29 @@ Prosty asystent CLI w TypeScript, ktory:
 
 ---
 
+## Jezyk komunikacji
+
+Cala komunikacja przez CLI — menu, pytania, odpowiedzi agenta — w jezyku **angielskim**.
+
+Dotyczy:
+- tekstu menu i opcji
+- odpowiedzi agenta (system prompt wymusza EN)
+- komunikatow bledu i potwierdzen
+- logow w katalogu `logs/`
+
+---
+
 ## Menu CLI
 
 ```
-Co chcesz zrobic?
+What would you like to do?
 
-  1. Przedstaw sie   — agent mowi kim jestes (long-term)
-  2. Zapamiętaj moje imie  — zapisuje imie do bazy (long-term)
-  3. Podsumuj nasza rozmowe — skrot tej sesji (short-term)
-  4. Pokaz historię akcji  — co agent robil wczesniej (epizodyczna)
-> 5. Wpisz wlasne pytanie  — pytanie do LLM z pelnym kontekstem
-  6. Wyjście
+  1. Introduce me       — agent tells who you are (long-term)
+  2. Remember my name   — saves your name to the database (long-term)
+  3. Summarize session  — summary of this conversation (short-term)
+  4. Show action log    — what the agent did before (episodic)
+> 5. Ask your question  — custom question with full memory context
+  6. Exit
 ```
 
 ---
