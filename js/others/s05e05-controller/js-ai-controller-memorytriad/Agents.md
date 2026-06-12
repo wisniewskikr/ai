@@ -50,7 +50,7 @@ Co chcesz zrobic?
 
 | Element | Biblioteka |
 |---------|-----------|
-| Jezyk | TypeScript (Node.js) |
+| Jezyk | TypeScript strict (Node.js) |
 | CLI | `@inquirer/prompts` |
 | LLM API | OpenRouter (fetch) |
 | Baza danych | `better-sqlite3` |
@@ -61,19 +61,54 @@ Co chcesz zrobic?
 ## Struktura projektu
 
 ```
-src/
-  index.ts          — punkt wejscia, petla CLI
-  memory/
-    shortTerm.ts    — tablica wiadomosci biezacej sesji
-    longTerm.ts     — zapis/odczyt danych z SQLite
-    episodic.ts     — zapis akcji agenta do dziennika
-  llm/
-    openrouter.ts   — wywolanie modelu przez OpenRouter
-  cli/
-    menu.ts         — definicja opcji menu
-db/
-  memory.db         — baza SQLite (tworzona automatycznie)
-.env                — klucz API
+project/
+├── src/
+│   ├── prompts/
+│   │   ├── system.md          — glowny system prompt agenta
+│   │   ├── summarize.md       — prompt do podsumowania sesji
+│   │   └── introduce.md       — prompt do przedstawienia sie
+│   ├── services/
+│   │   ├── memory/
+│   │   │   ├── shortTerm.ts   — tablica wiadomosci biezacej sesji
+│   │   │   ├── longTerm.ts    — zapis/odczyt danych z SQLite
+│   │   │   └── episodic.ts    — zapis akcji agenta do dziennika
+│   │   ├── openrouter.ts      — wywolanie modelu przez OpenRouter
+│   │   └── database.ts        — inicjalizacja i polaczenie SQLite
+│   └── utils/
+│       ├── menu.ts            — definicja i renderowanie opcji CLI
+│       └── logger.ts          — zapis logow do katalogu logs/
+├── logs/                      — logi aplikacji (auto-tworzone)
+├── db/
+│   └── memory.db              — baza SQLite (auto-tworzona)
+├── index.ts                   — punkt wejscia, petla CLI
+├── config.json                — model, limity, timeouty, nazwa bazy
+├── .env                       — klucz OPENROUTER_API_KEY
+├── .env.example               — szablon zmiennych srodowiskowych
+└── Readme.md                  — dokumentacja (EN)
+```
+
+### config.json — co tu trafia
+
+```json
+{
+  "model": "openai/gpt-4o-mini",
+  "maxTokens": 1024,
+  "dbPath": "./db/memory.db",
+  "logsDir": "./logs",
+  "sessionTimeoutMinutes": 60
+}
+```
+
+Wszystkie wartosci konfiguracyjne tylko tutaj — nigdy w kodzie.
+
+### logs/ — format wpisu
+
+```
+[2026-06-12 14:32:01] [INFO] Uzytkownik wybral opcje: Przedstaw sie
+[2026-06-12 14:32:02] [INFO] Zaladowano dane z long-term: imie=Marek
+[2026-06-12 14:32:03] [INFO] Odpowiedz agenta zapisana do pamieci epizodycznej
+[2026-06-12 14:32:10] [WARN] Brak danych w long-term — pierwsza wizyta uzytkownika
+[2026-06-12 14:35:00] [ERROR] Blad polaczenia z OpenRouter: timeout
 ```
 
 ---
@@ -126,11 +161,13 @@ Bez Memory Triad — agent by zapomnial wszystko.
 
 ## Konfiguracja
 
+`.env` — tylko sekrety:
 ```env
 OPENROUTER_API_KEY=sk-...
 ```
 
-Model domyslny: `openai/gpt-4o-mini` (tani, wystarczajaco madry)
+`config.json` — wszystko inne (model, limity, sciezki).
+Model domyslny: `openai/gpt-4o-mini` (tani, wystarczajaco madry dla tego demo)
 
 ---
 
