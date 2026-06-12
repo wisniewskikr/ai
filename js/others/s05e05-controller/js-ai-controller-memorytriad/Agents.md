@@ -194,6 +194,28 @@ Bez Memory Triad — agent by zapomnial wszystko.
 
 ---
 
+## Model AI
+
+Porownanie modeli dostepnych przez OpenRouter dla tego projektu:
+
+| Model | Koszt (1M tokenow) | Szybkosc | Jakosc dla CLI | Rekomendacja |
+|-------|--------------------|----------|----------------|--------------|
+| `google/gemini-flash-2.0` | ~$0.10 | bardzo szybki | dobra | backup |
+| `openai/gpt-4o-mini` | ~$0.15 | szybki | dobra | backup |
+| `anthropic/claude-haiku-4-5` | ~$0.80 | szybki | **bardzo dobra** | **wybor** |
+| `anthropic/claude-sonnet-4-5` | ~$3.00 | sredni | swietna | za duzym kosztem |
+
+**Wybrany model: `anthropic/claude-haiku-4-5`**
+
+Dlaczego:
+
+- Demo uczy o pamieci agenta — model musi dobrze rozumiec kontekst wstrzykniety z trzech warstw
+- Haiku 4.5 radzi sobie z dlugim kontekstem lepiej niz gpt-4o-mini przy podobnym koszcie
+- Szybki odpowiedz — CLI musi byc responsywne
+- Wystarczajaco tani na potrzeby demo
+
+---
+
 ## Konfiguracja
 
 `.env` — tylko sekrety:
@@ -202,7 +224,7 @@ OPENROUTER_API_KEY=sk-...
 ```
 
 `config.json` — wszystko inne (model, limity, sciezki).
-Model domyslny: `openai/gpt-4o-mini` (tani, wystarczajaco madry dla tego demo)
+Model domyslny: `anthropic/claude-haiku-4-5` (szybki, dobry z kontekstem, optymalny dla tego demo)
 
 ---
 
