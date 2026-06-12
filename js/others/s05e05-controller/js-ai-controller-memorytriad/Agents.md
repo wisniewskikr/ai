@@ -53,7 +53,8 @@ What would you like to do?
   3. Summarize session  — summary of this conversation (short-term)
   4. Show action log    — what the agent did before (episodic)
 > 5. Ask your question  — custom question with full memory context
-  6. Exit
+  6. Clear my data      — remove all long-term and episodic memory
+  7. Exit
 ```
 
 ---
@@ -76,27 +77,30 @@ What would you like to do?
 project/
 ├── src/
 │   ├── prompts/
-│   │   ├── system.md          — glowny system prompt agenta
-│   │   ├── summarize.md       — prompt do podsumowania sesji
-│   │   └── introduce.md       — prompt do przedstawienia sie
+│   │   ├── system.md              — glowny system prompt agenta
+│   │   ├── summarize.md           — prompt do podsumowania sesji
+│   │   ├── introduce.md           — prompt do przedstawienia sie
+│   │   └── context-builder.ts     — skleja kontekst z trzech warstw w jeden string
+│   ├── memory/
+│   │   ├── MemoryManager.ts       — fasada: dostep do wszystkich trzech warstw
+│   │   ├── shortTerm.ts           — tablica wiadomosci biezacej sesji (z auto-trim)
+│   │   ├── longTerm.ts            — generyczny key-value store na SQLite
+│   │   └── episodic.ts            — zapis akcji + podsumowanie ostatnich N wpisow
 │   ├── services/
-│   │   ├── memory/
-│   │   │   ├── shortTerm.ts   — tablica wiadomosci biezacej sesji
-│   │   │   ├── longTerm.ts    — zapis/odczyt danych z SQLite
-│   │   │   └── episodic.ts    — zapis akcji agenta do dziennika
-│   │   ├── openrouter.ts      — wywolanie modelu przez OpenRouter
-│   │   └── database.ts        — inicjalizacja i polaczenie SQLite
-│   └── utils/
-│       ├── menu.ts            — definicja i renderowanie opcji CLI
-│       └── logger.ts          — zapis logow do katalogu logs/
-├── logs/                      — logi aplikacji (auto-tworzone)
+│   │   ├── openrouter.ts          — wywolanie modelu przez OpenRouter
+│   │   └── database.ts            — inicjalizacja i polaczenie SQLite
+│   └── cli/
+│       ├── menu.ts                — definicja i renderowanie opcji CLI
+│       ├── handlers.ts            — logika dla kazdej opcji menu
+│       └── logger.ts              — zapis logow do katalogu logs/
+├── logs/                          — logi aplikacji (auto-tworzone)
 ├── db/
-│   └── memory.db              — baza SQLite (auto-tworzona)
-├── index.ts                   — punkt wejscia, petla CLI
-├── config.json                — model, limity, timeouty, nazwa bazy
-├── .env                       — klucz OPENROUTER_API_KEY
-├── .env.example               — szablon zmiennych srodowiskowych
-└── Readme.md                  — dokumentacja (EN)
+│   └── memory.db                  — baza SQLite (auto-tworzona)
+├── index.ts                       — punkt wejscia, petla CLI
+├── config.json                    — model, limity, timeouty, nazwa bazy
+├── .env                           — klucz OPENROUTER_API_KEY
+├── .env.example                   — szablon zmiennych srodowiskowych
+└── Readme.md                      — dokumentacja (EN)
 ```
 
 ### Readme.md — zasady pisania
@@ -138,15 +142,20 @@ Most AI agents only have the first layer. This demo shows all three.
 
 ```json
 {
-  "model": "openai/gpt-4o-mini",
+  "model": "anthropic/claude-haiku-4-5",
   "maxTokens": 1024,
   "dbPath": "./db/memory.db",
   "logsDir": "./logs",
-  "sessionTimeoutMinutes": 60
+  "sessionTimeoutMinutes": 60,
+  "maxShortTermMessages": 20,
+  "maxEpisodicSummaryEntries": 5
 }
 ```
 
 Wszystkie wartosci konfiguracyjne tylko tutaj — nigdy w kodzie.
+
+- `maxShortTermMessages` — limit wiadomosci w pamieci krotkoterminowej; po przekroczeniu najstarsze sa usuwane
+- `maxEpisodicSummaryEntries` — ile ostatnich epizodow trafia do system promptu jako kontekst
 
 ### logs/ — format wpisu
 
@@ -166,10 +175,16 @@ Wszystkie wartosci konfiguracyjne tylko tutaj — nigdy w kodzie.
 Uzytkownik wybiera opcje
         |
         v
-CLI zbiera kontekst z trzech warstw pamieci
+handler.ts wywoluje MemoryManager
         |
         v
-Wysyla prompt do OpenRouter
+context-builder.ts skleja:
+  longTerm.getAll()          → [KNOWN FACTS]
+  episodic.getRecent(N)      → [RECENT ACTIONS]
+  shortTerm.getMessages()    → messages[]
+        |
+        v
+Wysyla prompt do OpenRouter (system + messages)
         |
         v
 Odpowiedz trafia do short-term (historia sesji)
@@ -180,6 +195,61 @@ Akcja zapisywana do pamieci epizodycznej
         v
 Wynik wyswietlany uzytkownikowi
 ```
+
+---
+
+## Schemat bazy danych SQLite
+
+```sql
+-- Pamiec dlugoterminowa: generyczny key-value store
+CREATE TABLE IF NOT EXISTS user_data (
+  key        TEXT PRIMARY KEY,
+  value      TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+
+-- Pamiec epizodyczna: dziennik akcji agenta
+CREATE TABLE IF NOT EXISTS action_log (
+  id        INTEGER PRIMARY KEY AUTOINCREMENT,
+  action    TEXT NOT NULL,
+  result    TEXT NOT NULL,
+  timestamp TEXT NOT NULL
+);
+```
+
+---
+
+## Strategia wstrzykiwania kontekstu
+
+Kluczowa decyzja architektoniczna: jak trzy warstwy pamieci trafiaja do promptu.
+
+`context-builder.ts` skleja je w jeden string i wstrzykuje do system promptu przed kazdym wywolaniem modelu:
+
+```
+[BASE SYSTEM PROMPT]         — z pliku system.md
+
+[KNOWN FACTS ABOUT USER]     — z long-term (key-value)
+name=Marek
+preference=dark_mode
+
+[RECENT AGENT ACTIONS]       — ostatnie N wpisow z episodic
+2026-06-12 14:32 | Introduce me | Told user their name is Marek
+2026-06-12 14:35 | Ask question | Answered question about memory layers
+
+[CONVERSATION HISTORY]       — short-term jako messages[]
+user: what is episodic memory?
+assistant: Episodic memory stores what I did and with what result...
+```
+
+Zasady budowania kontekstu:
+
+| Warstwa | Gdzie w promptcie | Format |
+|---------|------------------|--------|
+| Long-term | System prompt (sekcja KNOWN FACTS) | `key=value` per linia |
+| Episodic | System prompt (sekcja RECENT ACTIONS) | `timestamp \| action \| result` |
+| Short-term | Tablica `messages[]` przekazana do API | role/content pairs |
+
+Dzieki temu agent nie tylko *wyswietla* co zrobil — faktycznie *uzywa* historii przy odpowiedziach.
 
 ---
 
@@ -203,6 +273,18 @@ Agent: Czesc, Marek! Milo cie widziec ponownie.
 ```
 
 Bez Memory Triad — agent by zapomnial wszystko.
+
+**Po wybraniu opcji 6 (Clear my data):**
+```
+Agent: All your data has been removed. I no longer know who you are.
+```
+
+**Ponownie opcja 1 po wyczyszczeniu:**
+```
+Agent: I don't know your name yet. Choose option 2 to introduce yourself.
+```
+
+To pokazuje demo w obie strony: agent pamięta *i* potrafi zapomnieć.
 
 ---
 
