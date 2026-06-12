@@ -87,6 +87,41 @@ project/
 └── Readme.md                  — dokumentacja (EN)
 ```
 
+### Readme.md — zasady pisania
+
+Plik w jezyku **angielskim**. Pisany jak dla 5-latka — prosto, bez zbednych slow.
+
+| Sekcja | Co zawiera | Forma |
+|--------|------------|-------|
+| **Title + one-liner** | Co to jest w jednym zdaniu | Naglowek H1 |
+| **What is it?** | Analogia do trzech warstw pamieci | 3 punkty z analogia |
+| **Requirements** | Node.js, klucz API | Lista punktowana |
+| **Installation** | `npm install`, skopiuj `.env` | Blok kodu krok po kroku |
+| **Usage** | `npm run dev` + opis menu | Blok kodu |
+| **Project structure** | Drzewo katalogow z opisami | Blok kodu |
+
+Zasady (z doc-rules):
+
+- Tabel i punktow uzyj wszedzie, gdzie mozliwe — zero scian tekstu
+- Kazda analogia musi byc prosta: "short-term = notepad on your desk"
+- Mniej znaczy lepiej — jesli mozna napisac krocej, napisz krocej
+
+Przyklad otwierajacej sekcji Readme:
+
+```markdown
+# Memory Triad Demo
+
+A CLI assistant that remembers — like a person does.
+
+| Memory layer | Analogy | Lives in |
+|---|---|---|
+| Short-term | Notepad on your desk | RAM |
+| Long-term | Filing cabinet | SQLite |
+| Episodic | Personal diary | SQLite |
+
+Most AI agents only have the first layer. This demo shows all three.
+```
+
 ### config.json — co tu trafia
 
 ```json
