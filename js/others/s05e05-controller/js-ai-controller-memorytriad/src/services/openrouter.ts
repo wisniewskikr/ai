@@ -4,7 +4,7 @@ import { Message } from '../memory/shortTerm';
 interface OpenRouterResponse {
   choices: Array<{
     message: {
-      content: string;
+      content: string | null;
     };
   }>;
 }
@@ -37,5 +37,9 @@ export async function callModel(system: string, messages: Message[]): Promise<st
   }
 
   const data = await response.json() as OpenRouterResponse;
-  return data.choices[0].message.content;
+  const content = data.choices[0]?.message?.content;
+  if (content === null || content === undefined) {
+    throw new Error('Model returned empty content');
+  }
+  return content;
 }
