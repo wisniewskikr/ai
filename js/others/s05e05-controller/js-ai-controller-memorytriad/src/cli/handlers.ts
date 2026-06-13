@@ -27,20 +27,28 @@ export async function handleIntroduce(memory: MemoryManager): Promise<void> {
   }
 }
 
-export async function handleRememberName(memory: MemoryManager): Promise<void> {
-  logger.info('User selected: Remember my name');
-  const name = await input({ message: 'What is your name?' });
+export async function handleAddInfo(memory: MemoryManager): Promise<void> {
+  logger.info('User selected: Add some information about you');
+  const key = await input({ message: 'What kind of information? (e.g. name, hobby, preference):' });
 
-  if (!name.trim()) {
-    logger.warn('User provided empty name — skipped');
-    console.log('\nNo name provided.\n');
+  if (!key.trim()) {
+    logger.warn('User provided empty key — skipped');
+    console.log('\nNo information type provided.\n');
     return;
   }
 
-  memory.longTerm.set('name', name.trim());
-  logger.info(`Saved name to long-term memory: ${name.trim()}`);
-  memory.episodic.log('Remember my name', `Saved name: ${name.trim()}`);
-  console.log(`\nGot it! I'll remember your name is ${name.trim()}.\n`);
+  const value = await input({ message: `Value for "${key.trim()}":` });
+
+  if (!value.trim()) {
+    logger.warn('User provided empty value — skipped');
+    console.log('\nNo value provided.\n');
+    return;
+  }
+
+  memory.longTerm.set(key.trim(), value.trim());
+  logger.info(`Saved to long-term memory: ${key.trim()}=${value.trim()}`);
+  memory.episodic.log('Add information', `Saved ${key.trim()}=${value.trim()}`);
+  console.log(`\nGot it! I'll remember: ${key.trim()} = ${value.trim()}.\n`);
 }
 
 export async function handleSummarizeSession(memory: MemoryManager): Promise<void> {
@@ -81,29 +89,11 @@ export async function handleShowActionLog(memory: MemoryManager): Promise<void> 
   console.log('------------------\n');
 }
 
-export async function handleAskQuestion(memory: MemoryManager): Promise<void> {
-  logger.info('User selected: Ask your question');
-  const question = await input({ message: 'Your question:' });
-
-  if (!question.trim()) {
-    logger.warn('User submitted empty question');
-    console.log('\nNo question provided.\n');
-    return;
-  }
-
-  memory.shortTerm.add('user', question.trim());
-
-  try {
-    const response = await ask(memory, 'system.md', question.trim());
-    memory.shortTerm.add('assistant', response);
-    memory.episodic.log('Ask question', response.substring(0, 120));
-    logger.info('Agent response saved to episodic memory');
-    console.log('\n' + response + '\n');
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    logger.error(`Failed to call model: ${msg}`);
-    console.error(`\nError: ${msg}\n`);
-  }
+export async function handleClearSession(memory: MemoryManager): Promise<void> {
+  logger.info('User selected: Clear session');
+  memory.shortTerm.clear();
+  logger.info('Short-term memory cleared');
+  console.log('\nSession cleared. I no longer remember this conversation, but your saved data is intact.\n');
 }
 
 export async function handleClearData(memory: MemoryManager): Promise<void> {

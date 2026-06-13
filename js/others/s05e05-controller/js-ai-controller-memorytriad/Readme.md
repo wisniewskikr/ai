@@ -39,12 +39,12 @@ Menu:
 
 ```
 What would you like to do?
-  1. Introduce me       — agent tells who you are (long-term)
-  2. Remember my name   — saves your name to the database (long-term)
-  3. Summarize session  — summary of this conversation (short-term)
-  4. Show action log    — what the agent did before (episodic)
-  5. Ask your question  — custom question with full memory context
-  6. Clear my data      — remove all long-term and episodic memory
+  1. Add some information about you — saves any fact to long-term memory
+  2. Summarize session              — summary of this conversation (short-term)
+  3. Introduce me                   — agent tells who you are (long-term)
+  4. Show action log                — what the agent did before (episodic)
+  5. Clear session                  — clears short-term memory (current conversation only)
+  6. Clear my data                  — remove all long-term and episodic memory
   7. Exit
 ```
 

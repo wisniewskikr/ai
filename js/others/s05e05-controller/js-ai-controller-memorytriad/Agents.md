@@ -48,12 +48,12 @@ Dotyczy:
 ```
 What would you like to do?
 
-  1. Introduce me       — agent tells who you are (long-term)
-  2. Remember my name   — saves your name to the database (long-term)
-  3. Summarize session  — summary of this conversation (short-term)
-  4. Show action log    — what the agent did before (episodic)
-> 5. Ask your question  — custom question with full memory context
-  6. Clear my data      — remove all long-term and episodic memory
+  1. Add some information about you — saves any fact to long-term memory
+  2. Summarize session              — summary of this conversation (short-term)
+  3. Introduce me                   — agent tells who you are (long-term)
+  4. Show action log                — what the agent did before (episodic)
+  5. Clear session                  — clears short-term memory (current conversation only)
+  6. Clear my data                  — remove all long-term and episodic memory
   7. Exit
 ```
 
@@ -260,13 +260,14 @@ Dzieki temu agent nie tylko *wyswietla* co zrobil — faktycznie *uzywa* histori
 Agent: Nie znam Twojego imienia. Wybierz opcje 2, zeby sie przedstawic.
 ```
 
-**Po wybraniu opcji 2:**
+**Po wybraniu opcji 1:**
 ```
-Twoje imie: Marek
-Agent: Zapisalem. Czesc, Marek!
+What kind of information? (e.g. name, hobby, preference): name
+Value for "name": Marek
+Got it! I'll remember: name = Marek.
 ```
 
-**Po restarcie programu, opcja 1:**
+**Po restarcie programu, opcja 3:**
 ```
 Agent: Czesc, Marek! Milo cie widziec ponownie.
        Ostatnio pytales o pogode (2 dni temu).
@@ -274,14 +275,14 @@ Agent: Czesc, Marek! Milo cie widziec ponownie.
 
 Bez Memory Triad — agent by zapomnial wszystko.
 
-**Po wybraniu opcji 6 (Clear my data):**
+**Po wybraniu opcji 5 (Clear session):**
 ```
-Agent: All your data has been removed. I no longer know who you are.
+Session cleared. I no longer remember this conversation, but your saved data is intact.
 ```
 
-**Ponownie opcja 1 po wyczyszczeniu:**
+**Po wybraniu opcji 6 (Clear my data):**
 ```
-Agent: I don't know your name yet. Choose option 2 to introduce yourself.
+All your data has been removed. I no longer know who you are.
 ```
 
 To pokazuje demo w obie strony: agent pamięta *i* potrafi zapomnieć.
