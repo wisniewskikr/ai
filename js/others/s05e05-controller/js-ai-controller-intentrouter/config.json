@@ -1,0 +1,7 @@
+{
+  "model": "google/gemini-flash-1.5",
+  "requestTimeoutMs": 10000,
+  "maxRetries": 2,
+  "vectorTopK": 3,
+  "logLevel": "info"
+}
