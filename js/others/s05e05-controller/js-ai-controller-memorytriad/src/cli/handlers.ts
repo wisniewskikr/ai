@@ -46,6 +46,8 @@ export async function handleAddInfo(memory: MemoryManager): Promise<void> {
   }
 
   memory.longTerm.set(key.trim(), value.trim());
+  memory.shortTerm.add('user', `Save this about me: ${key.trim()} = ${value.trim()}`);
+  memory.shortTerm.add('assistant', `Got it! I'll remember: ${key.trim()} = ${value.trim()}.`);
   logger.info(`Saved to long-term memory: ${key.trim()}=${value.trim()}`);
   memory.episodic.log('Add information', `Saved ${key.trim()}=${value.trim()}`);
   console.log(`\nGot it! I'll remember: ${key.trim()} = ${value.trim()}.\n`);
@@ -54,15 +56,10 @@ export async function handleAddInfo(memory: MemoryManager): Promise<void> {
 export async function handleSummarizeSession(memory: MemoryManager): Promise<void> {
   logger.info('User selected: Summarize session');
 
-  if (memory.shortTerm.isEmpty()) {
-    logger.warn('Summarize requested but session is empty');
-    console.log('\nNo conversation history yet in this session.\n');
-    return;
-  }
-
   try {
     const { system, messages } = buildContext(memory, 'summarize.md');
-    const response = await callModel(system, messages);
+    const trigger = { role: 'user' as const, content: 'Please summarize the current session.' };
+    const response = await callModel(system, [...messages, trigger]);
     memory.episodic.log('Summarize session', response.substring(0, 120));
     logger.info('Session summary generated');
     console.log('\n' + response + '\n');
