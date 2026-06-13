@@ -85,22 +85,47 @@ Select an option:
   3. [Relation]    Who reports to Jan?
   4. [Relation]    What is the path between Piotr and Ewa?
   5. [Global]      Describe the overall company structure
-  6. [Custom]      Type your own question
+  6. [Global]      What are the main departments and their responsibilities?
+  7. [Custom]      Type your own question
   0. Exit
 ```
 
-- Opcje 1-5: pytania z gory zdefiniowane, pokazuja kazdy typ routingu
-- Opcja 6: uzytkownik wpisuje wlasne pytanie — LLM klasyfikuje i kieruje
+- Opcje 1-6: pytania z gory zdefiniowane, pokazuja kazdy typ routingu
+- Opcja 7: uzytkownik wpisuje wlasne pytanie — LLM klasyfikuje i kieruje
 - Opcja 0: wyjscie
+
+Dla opcji 1-6 znamy z gory oczekiwany typ intencji — dlatego CLI pokazuje weryfikacje:
+
+```
+> You selected: "Who reports to Jan?"
+> Expected intent:  relation
+> Detected intent:  relation
+> Verdict:          CORRECT
+>
+> Result (graph engine): Jan -> Piotr, Jan -> Maria
+```
+
+Jesli LLM sie pomyli:
+
+```
+> You selected: "Describe the overall company structure"
+> Expected intent:  global
+> Detected intent:  similarity    <-- pomylka modelu
+> Verdict:          WRONG (expected: global)
+>
+> Result (similarity engine): Anna - CEO, leadership score: 0.91 ...
+```
+
+Dzieki temu uzytkownik widzi na zywo, jak dobrze (lub zle) LLM klasyfikuje intencje.
 
 ---
 
-## Przeplyw dla opcji 6 (custom)
+## Przeplyw dla opcji 7 (custom)
 
 ```
 1. Uzytkownik wpisuje pytanie
 2. LLM (OpenRouter) klasyfikuje: similarity | relation | global
-3. CLI pokazuje: "Detected intent: [TYP]"
+3. CLI pokazuje: "Detected intent: [TYP]"  (brak weryfikacji — brak oczekiwanego typu)
 4. Wywolanie odpowiedniej funkcji (vector / graph / summary)
 5. Wyswietlenie wyniku z etykieta zrodla
 ```
@@ -128,6 +153,7 @@ src/
 | Koncept | Jak jest zilustrowany |
 |---------|----------------------|
 | Routing Intelligence | LLM decyduje o sciezce, nie if-else |
+| Weryfikacja klasyfikacji | dla opcji 1-6: Expected vs Detected + CORRECT/WRONG |
 | Trzy typy wyszukiwania | kazdy engine odpowiada inaczej na to samo pytanie |
 | Tool Registry (uproszczony) | kazdy engine ma nazwe, opis i funkcje `query()` |
 | CLI jako interfejs | prosty, bez frameworkow frontendowych |
