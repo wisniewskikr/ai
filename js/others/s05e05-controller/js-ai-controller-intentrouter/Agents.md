@@ -12,7 +12,7 @@ To właśnie robi Intent Router.
 
 | Typ | Pytanie przykładowe | Gdzie szukamy |
 |-----|---------------------|---------------|
-| **Podobienstwo** | "Kto jest podobny do Anny?" | Vector Search (szukamy podobnych wektorow) |
+| **Podobienstwo** | "Kto jest podobny do Anny?" | Similarity Engine (porownanie opisow tekstowych) |
 | **Relacja** | "Kto raportuje do Jana?" | Graf (chodzimy po polaczeniach) |
 | **Globalne** | "Jak wyglada struktura calej firmy?" | GraphRAG (czytamy streszczenie) |
 
@@ -29,8 +29,8 @@ Pytanie uzytkownika
    -----+------+----------+
    |           |          |
    v           v          v
-Vector       Graf      GraphRAG
-Search      (relacje)  (globalne)
+Similarity   Graf      GraphRAG
+Engine      (relacje)  (globalne)
 (podobne)              streszczenie
    |           |          |
    +-----+-----+----------+
@@ -45,15 +45,17 @@ Search      (relacje)  (globalne)
 
 | Warstwa | Technologia | Uwaga |
 |---------|-------------|-------|
-| Jezyk | TypeScript (Node.js) | |
+| Jezyk | TypeScript (Node.js) | strict mode |
 | LLM / routing | OpenRouter API | klasyfikacja intencji |
-| Vector Search | symulowany in-memory | tablica obiektow + cosine similarity |
+| Similarity Engine | symulowany in-memory | word overlap / keyword scoring na opisach tekstowych |
 | Graf | symulowany in-memory | adjacency list (`Map`) |
 | GraphRAG | symulowany in-memory | gotowe streszczenie jako string |
 | CLI | `readline` (wbudowany) | bez zewnetrznych zaleznosci |
 
 > Demo = prawdziwy routing przez LLM, symulowane bazy danych.
 > Celem jest pokazanie mechanizmu, nie infrastruktury.
+
+> **Uwaga do Similarity Engine:** Cosine similarity bez prawdziwych embeddingów to tak naprawdę porównanie słów kluczowych, nie wektorów. Silnik jest nazwany `similarityEngine` (nie `vectorEngine`), żeby nie wprowadzać w błąd. Chcesz prawdziwych embeddingów? Podłącz `text-embedding-3-small` przez OpenRouter — wystarczy zamienić funkcję scoringową.
 
 ---
 
@@ -70,7 +72,7 @@ Anna (CEO)
     └── Tomasz (Accountant)
 ```
 
-Kazdy pracownik ma opis tekstowy (do vector search) i polaczenia w grafie (do relacji).
+Kazdy pracownik ma opis tekstowy (do similarity search) i polaczenia w grafie (do relacji).
 
 ---
 
@@ -92,7 +94,7 @@ Select an option:
 
 - Opcje 1-6: pytania z gory zdefiniowane, pokazuja kazdy typ routingu
 - Opcja 7: uzytkownik wpisuje wlasne pytanie — LLM klasyfikuje i kieruje
-- Opcja 0: wyjscie
+- Opcja 0: wyjscie + `rl.close()` (graceful shutdown)
 
 Dla opcji 1-6 znamy z gory oczekiwany typ intencji — dlatego CLI pokazuje weryfikacje:
 
@@ -125,9 +127,78 @@ Dzieki temu uzytkownik widzi na zywo, jak dobrze (lub zle) LLM klasyfikuje inten
 ```
 1. Uzytkownik wpisuje pytanie
 2. LLM (OpenRouter) klasyfikuje: similarity | relation | global
-3. CLI pokazuje: "Detected intent: [TYP]"  (brak weryfikacji — brak oczekiwanego typu)
-4. Wywolanie odpowiedniej funkcji (vector / graph / summary)
-5. Wyswietlenie wyniku z etykieta zrodla
+3. Walidacja odpowiedzi LLM — jesli zwrocil nieznany typ, fallback na "similarity"
+4. CLI pokazuje: "Detected intent: [TYP]"  (brak weryfikacji — brak oczekiwanego typu)
+5. Wywolanie odpowiedniej funkcji (similarity / graph / summary)
+6. Wyswietlenie wyniku z etykieta zrodla
+```
+
+---
+
+## Prompt klasyfikacyjny (`classifyIntent.md`)
+
+To najwazniejszy plik w projekcie. Od niego zalezy jakosc routingu.
+
+```markdown
+You are an intent classifier. Your job is to read a question and return exactly one word.
+
+## Classes
+
+| Class      | When to use                                              |
+|------------|----------------------------------------------------------|
+| similarity | Question asks who is most like someone, or find by trait |
+| relation   | Question asks about hierarchy, reporting, or path        |
+| global     | Question asks about the whole company, structure, summary |
+
+## Examples
+
+Question: "Who is most similar to Anna?"
+Answer: similarity
+
+Question: "Who reports to Jan?"
+Answer: relation
+
+Question: "Who is on the path between Piotr and Ewa?"
+Answer: relation
+
+Question: "Describe the overall company structure"
+Answer: global
+
+Question: "What departments exist in the company?"
+Answer: global
+
+Question: "Find someone with leadership skills"
+Answer: similarity
+
+## Rules
+
+- Return ONLY one word: similarity | relation | global
+- No punctuation, no explanation, no extra words
+- If unsure, return: similarity
+
+## Question to classify
+
+{{question}}
+```
+
+---
+
+## Walidacja odpowiedzi LLM
+
+LLM moze zwrocic niespodziewany string. Zawsze waliduj:
+
+```typescript
+const VALID_INTENTS = ["similarity", "relation", "global"] as const;
+type Intent = typeof VALID_INTENTS[number];
+
+function parseIntent(raw: string): Intent {
+  const normalized = raw.trim().toLowerCase();
+  if (VALID_INTENTS.includes(normalized as Intent)) {
+    return normalized as Intent;
+  }
+  logger.warn(`Invalid intent received: "${raw}" — falling back to similarity`);
+  return "similarity";
+}
 ```
 
 ---
@@ -141,7 +212,7 @@ project/
 │   │   └── classifyIntent.md     # prompt dla LLM — klasyfikacja intencji
 │   ├── services/
 │   │   ├── router.ts             # klasyfikacja intencji przez OpenRouter
-│   │   ├── vectorEngine.ts       # symulowany vector search
+│   │   ├── similarityEngine.ts   # keyword-based similarity search
 │   │   ├── graphEngine.ts        # symulowany graf relacji
 │   │   └── graphragEngine.ts     # symulowane streszczenie globalne
 │   └── utils/
@@ -151,22 +222,24 @@ project/
 ├── logs/                         # logi aplikacji (auto-generowane)
 ├── index.ts                      # CLI, petla menu
 ├── config.json                   # timeouty, nazwa modelu, limity
+├── tsconfig.json                 # TypeScript strict mode
+├── package.json                  # zaleznosci i skrypty npm
 ├── .env                          # OPENROUTER_API_KEY
 ├── .env.example                  # szablon zmiennych
-└── Readme.md                     # dokumentacja po angielsku (patrz nizej)
+└── Readme.md                     # dokumentacja po angielsku
 ```
 
 ### Co gdzie trafia?
 
 | Plik | Odpowiedzialnosc |
 |------|-----------------|
-| `index.ts` | menu CLI, petla, weryfikacja CORRECT/WRONG |
-| `services/router.ts` | jedno zadanie: wyslij pytanie do LLM, zwroc typ intencji |
+| `index.ts` | menu CLI, petla, weryfikacja CORRECT/WRONG, graceful shutdown |
+| `services/router.ts` | jedno zadanie: wyslij pytanie do LLM, zwroc typ intencji + walidacja |
 | `services/*Engine.ts` | kazdy engine robi jedna rzecz: przyjmij pytanie, zwroc wynik |
-| `prompts/classifyIntent.md` | edytowalny prompt bez dotykania kodu |
+| `prompts/classifyIntent.md` | edytowalny prompt z few-shot examples, bez dotykania kodu |
 | `utils/logger.ts` | zapis do `logs/` w formacie `[YYYY-MM-DD HH:mm:ss] [LEVEL]` |
 | `utils/config.ts` | czyta `config.json` + `.env`, eksportuje gotowy obiekt |
-| `config.json` | nazwa modelu, timeout, liczba wynikow z vector search |
+| `config.json` | nazwa modelu, timeout, liczba wynikow, retry, log level |
 
 ---
 
@@ -179,6 +252,7 @@ project/
 | Trzy typy wyszukiwania | kazdy engine odpowiada inaczej na to samo pytanie |
 | Tool Registry (uproszczony) | kazdy engine ma nazwe, opis i funkcje `query()` |
 | CLI jako interfejs | prosty, bez frameworkow frontendowych |
+| Obsluga bledow LLM | walidacja + fallback gdy model zwroci nieoczekiwany wynik |
 
 ---
 
@@ -187,7 +261,7 @@ project/
 Zadanie routera to **prosta klasyfikacja 3-opcyjna** (similarity / relation / global).
 Nie potrzeba duzego modelu — potrzeba szybkiego i taniego.
 
-### Rekomendacja: `google/gemini-3.5-flash`
+### Rekomendacja: `google/gemini-flash-1.5`
 
 | Kryterium | Ocena |
 |-----------|-------|
@@ -212,14 +286,37 @@ Nie potrzeba duzego modelu — potrzeba szybkiego i taniego.
 
 ```json
 {
-  "model": "google/gemini-3.5-flash",
+  "model": "google/gemini-flash-1.5",
   "requestTimeoutMs": 10000,
-  "vectorTopK": 3
+  "maxRetries": 2,
+  "vectorTopK": 3,
+  "logLevel": "info"
 }
 ```
 
-> `model` — latwy do zmiany bez dotykania kodu.
-> `vectorTopK` — ile wynikow zwraca vector engine.
+| Pole | Co robi |
+|------|---------|
+| `model` | latwy do zmiany bez dotykania kodu |
+| `requestTimeoutMs` | ile ms czekamy na odpowiedz LLM |
+| `maxRetries` | ile razy ponawiac przy timeout (0 = bez retry) |
+| `vectorTopK` | ile wynikow zwraca similarity engine |
+| `logLevel` | `info` / `warn` / `error` |
+
+---
+
+## Skrypty npm (`package.json`)
+
+```json
+{
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node index.ts"
+  }
+}
+```
+
+Uruchomienie: `npm run dev` (development) lub `npm run build && npm start` (production).
 
 ---
 
@@ -232,7 +329,8 @@ Kazda akcja trafia do `logs/app.log`:
 [2026-06-13 14:32:02] [INFO]  Detected intent: relation (expected: relation) — CORRECT
 [2026-06-13 14:32:02] [INFO]  Graph engine result: Jan -> Piotr, Jan -> Maria
 [2026-06-13 14:32:05] [WARN]  Detected intent: similarity (expected: global) — WRONG
-[2026-06-13 14:32:10] [ERROR] OpenRouter request failed: timeout after 10000ms
+[2026-06-13 14:32:07] [WARN]  Invalid intent received: "vector" — falling back to similarity
+[2026-06-13 14:32:10] [ERROR] OpenRouter request failed: timeout after 10000ms, retrying (1/2)
 ```
 
 ---
@@ -247,13 +345,15 @@ Kazda akcja trafia do `logs/app.log`:
   },
   "devDependencies": {
     "typescript": "^5.x",
-    "@types/node": "^20.x"
+    "@types/node": "^20.x",
+    "ts-node": "^10.x"
   }
 }
 ```
 
 > `openai` obsługuje OpenRouter przez zmiane `baseURL`.
 > `dotenv` laduje `.env`.
+> `ts-node` pozwala uruchamiac TypeScript bezposrednio w trybie dev.
 > TypeScript w strict mode — bledy widoczne w kompilacji, nie w runtime.
 
 ---
@@ -290,7 +390,7 @@ Think of it as a librarian. You ask a question — the librarian decides which s
 
 | Question type | Example | Engine used |
 |---------------|---------|-------------|
-| Similarity    | "Who is most like Anna?" | Vector search |
+| Similarity    | "Who is most like Anna?" | Keyword similarity |
 | Relation      | "Who reports to Jan?"    | Graph traversal |
 | Global        | "Describe the whole company" | GraphRAG summary |
 
