@@ -1,12 +1,57 @@
 # S01E02 · Sterowanie modelami przez kontekst — streszczenie
 
+## 📑 Spis treści
+
+1. [Film](#1-film)
+2. [O co chodzi?](#2-o-co-chodzi)
+3. [Personalizacja harnessu](#3-personalizacja-harnessu)
+4. [Jak działa kontekst?](#4-jak-działa-kontekst)
+5. [Projektowanie i tworzenie skilli](#5-projektowanie-i-tworzenie-skilli)
+6. [Narzędzia od kuchni](#6-narzędzia-od-kuchni)
+7. [Subagenci i workerzy](#7-subagenci-i-workerzy)
+8. [Wnioski](#8-wnioski)
+
+---
+
 > 🎯 **Cel lekcji:** zrozumieć, jak działa kontekst, żeby agenci dawali lepsze wyniki, a my mniej się męczyli.
 >
 > 🎒 **Analogia:** agent to nowy kolega w pracy. Wie tyle, ile mu powiesz i ile zmieści w głowie. Za dużo naraz — zapomina.
 
 ---
 
-## 1. O co chodzi?
+## 1. Film
+
+### Dzień Świstaka
+
+🔁 **Agent AI jest jak bohater filmu „Dzień Świstaka”.** Przy każdym uruchomieniu jego pamięć jest czyszczona. Pamięta tylko to, czego nauczył się podczas trenowania. Wszystkie dodatkowe informacje musimy mu dostarczyć sami.
+
+### Co jest w kontekście?
+
+Agent dostaje w kontekście bardzo dużo: narzędzia, prompty systemowe itd. Wiadomość od użytkownika to zwykle tylko **jedna, niewielka część** całości.
+
+🧊 **Analogia:** góra lodowa — nasza wiadomość to tylko czubek nad wodą.
+
+### Ważne pliki
+
+| Plik | Po co |
+|---|---|
+| **HANDOFF.md** | Instrukcje dotyczące kodu, dostarczane agentom w każdym wątku |
+| **AGENTS.md** | Kieruje agenta we właściwą stronę: mówimy mu, czego chcemy, ale też **czego nie chcemy** |
+
+### Budowa skilla
+
+| Element | Co to |
+|---|---|
+| **Name** | Nazwa skilla |
+| **Description** | Mówi agentowi, **kiedy** użyć skilla |
+| **Metadata** | Dodatkowe informacje |
+| **Zawartość** | Właściwa treść skilla |
+
+💡 Nazwa „Description” jest myląca — powinna brzmieć **„Trigger”**. Na początku agent widzi tylko **Name** i **Description** i na ich podstawie decyduje, kiedy użyć skilla.
+
+---
+
+## 2. O co chodzi?
 
 Jakość odpowiedzi agenta zależy od kontekstu. Ale ważne jest też, **ile kontekstu musimy trzymać we własnej głowie**.
 
@@ -24,7 +69,7 @@ Jakość odpowiedzi agenta zależy od kontekstu. Ale ważne jest też, **ile kon
 
 ---
 
-## 2. Personalizacja harnessu
+## 3. Personalizacja harnessu
 
 **Harness** = narzędzie, w którym działa agent (np. Claude Code, OpenCode, Pi).
 
@@ -67,7 +112,7 @@ Do tego: **rozszerzenia** i **hooki** — własna logika podpięta pod niemal ka
 
 ---
 
-## 3. Jak działa kontekst?
+## 4. Jak działa kontekst?
 
 ❗ **Informacja w kontekście ≠ informacja użyta.** Agent może na początku słuchać instrukcji, a później o niej zapomnieć i wrócić do starych nawyków.
 
@@ -105,7 +150,7 @@ Minus: agent musi od nowa poznać projekt. Pomagają w tym **skille**.
 
 ---
 
-## 4. Projektowanie i tworzenie skilli
+## 5. Projektowanie i tworzenie skilli
 
 Skill = plik Markdown (+ opcjonalne skrypty) ładowany do kontekstu. Przykłady: [skills.sh](https://skills.sh), porady: [agentskills.io](https://agentskills.io/home).
 
@@ -153,7 +198,7 @@ Skill = plik Markdown (+ opcjonalne skrypty) ładowany do kontekstu. Przykłady:
 
 ---
 
-## 5. Narzędzia od kuchni
+## 6. Narzędzia od kuchni
 
 | Etap | Co się dzieje | Analogia |
 |---|---|---|
@@ -175,7 +220,7 @@ Skill = plik Markdown (+ opcjonalne skrypty) ładowany do kontekstu. Przykłady:
 
 ---
 
-## 6. Subagenci i workerzy
+## 7. Subagenci i workerzy
 
 Cel: krótkie rozmowy, **skupione na jednym zadaniu**.
 
@@ -208,7 +253,7 @@ Oba to pliki tekstowe (md/toml) z nazwą i opisem. Plik agenta ma dodatkowo narz
 
 ---
 
-## 7. Wnioski
+## 8. Wnioski
 
 - 🧠 Zarządzanie kontekstem to jedna z najważniejszych umiejętności.
 - 📈 AI coraz lepiej radzi sobie z tym sama — pozwól jej, wspieraj przy długich zadaniach.
