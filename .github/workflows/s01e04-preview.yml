@@ -1,0 +1,54 @@
+# Plan morning-digest § 3 and § 4 (docs-pl/mega/s01e04-rig, ADR 0003).
+# Builds /digest/2026-10-28 as one HTML file on CI and deploys it to GitHub Pages as an
+# artifact, so the preview is never committed. The marker comes from the repo secret
+# LANE_MARKER; run with with_marker=false to upload the same page without it.
+name: s01e04 digest preview
+
+on:
+  workflow_dispatch:
+    inputs:
+      with_marker:
+        description: Show the lane marker in the banner
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    defaults:
+      run:
+        working-directory: docs-pl/mega/s01e04-rig
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - name: Save the page
+        env:
+          LANE_MARKER: ${{ inputs.with_marker && secrets.LANE_MARKER || '' }}
+          PORT: 8787
+        run: |
+          npm start &
+          for i in $(seq 1 30); do curl -sf http://localhost:8787/health && break; sleep 1; done
+          mkdir -p "$RUNNER_TEMP/site"
+          curl -sf http://localhost:8787/digest/2026-10-28 -o "$RUNNER_TEMP/site/index.html"
+          grep -c 'no marker set' "$RUNNER_TEMP/site/index.html" || true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ runner.temp }}/site
+          retention-days: 1
+      - id: deploy
+        uses: actions/deploy-pages@v4
