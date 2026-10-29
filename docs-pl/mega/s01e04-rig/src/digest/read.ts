@@ -15,7 +15,7 @@ function isStatus(v: unknown): v is RunStatus {
 }
 
 // Parse one line at the edge; null means "bad line".
-function parseLine(text: string): RunLine | null {
+export function parseLine(text: string): RunLine | null {
   let raw: unknown;
   try {
     raw = JSON.parse(text);
