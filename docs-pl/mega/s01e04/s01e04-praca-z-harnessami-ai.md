@@ -2,17 +2,18 @@
 
 ## 📑 Spis treści
 
-1. [O co chodzi?](#1-o-co-chodzi)
-2. [Za dużo narzędzi — jak nie zwariować?](#2-za-dużo-narzędzi--jak-nie-zwariować)
-3. [6 zasad wyboru harnessu](#3-6-zasad-wyboru-harnessu)
-4. [Który harness wybrać?](#4-który-harness-wybrać)
-5. [Pi + Herdr — agenci, którzy zarządzają sami sobą](#5-pi--herdr--agenci-którzy-zarządzają-sami-sobą)
-6. [Czego jeszcze potrzebuje system wielu agentów?](#6-czego-jeszcze-potrzebuje-system-wielu-agentów)
-7. [Projekt Limen — Koordynator i Workerzy](#7-projekt-limen--koordynator-i-workerzy)
-8. [Ustawienia — model, wysiłek, koszt, prywatność](#8-ustawienia--model-wysiłek-koszt-prywatność)
-9. [Praca w zespole](#9-praca-w-zespole)
-10. [Automatyzacje w tle](#10-automatyzacje-w-tle)
-11. [Wnioski](#11-wnioski)
+1. [Film](#1-film)
+2. [O co chodzi?](#2-o-co-chodzi)
+3. [Za dużo narzędzi — jak nie zwariować?](#3-za-dużo-narzędzi--jak-nie-zwariować)
+4. [6 zasad wyboru harnessu](#4-6-zasad-wyboru-harnessu)
+5. [Który harness wybrać?](#5-który-harness-wybrać)
+6. [Pi + Herdr — agenci, którzy zarządzają sami sobą](#6-pi--herdr--agenci-którzy-zarządzają-sami-sobą)
+7. [Czego jeszcze potrzebuje system wielu agentów?](#7-czego-jeszcze-potrzebuje-system-wielu-agentów)
+8. [Projekt Limen — Koordynator i Workerzy](#8-projekt-limen--koordynator-i-workerzy)
+9. [Ustawienia — model, wysiłek, koszt, prywatność](#9-ustawienia--model-wysiłek-koszt-prywatność)
+10. [Praca w zespole](#10-praca-w-zespole)
+11. [Automatyzacje w tle](#11-automatyzacje-w-tle)
+12. [Wnioski](#12-wnioski)
 
 ---
 
@@ -22,7 +23,24 @@
 
 ---
 
-## 1. O co chodzi?
+## 1. Film
+
+Całość to trzy warstwy: **Interfejs + Harness + API**.
+
+| Temat | Po ludzku |
+|---|---|
+| **Harness** | pozwala LLM działać na Twoim systemie. Nie przywiązuj się do niego — zmiana powinna być łatwa. |
+| **Interfejs** | np. [T3 Code](https://github.com/pingdotgg/t3code). Widzisz zawsze **jeden** interfejs, a harness pod spodem łatwo podmienisz. |
+| **Ustawienia** | porządkujesz je w interfejsie, np. folder `Skills` z ogólnymi skillami i podfolder `Claude` ze skillami tylko dla Claude Code. |
+| **Workflowy** | zapisujesz je w interfejsie — **niezależnie** od harnessu. |
+| **Praca zespołowa** | przez jeden harness możesz wywołać zupełnie inny. |
+| **Przyszłość** | pewnie powstanie asystent **nad** warstwą harnessu — wtedy wymiana harnessu będzie banalna. |
+
+🔌 **Analogia:** interfejs to **pilot do telewizora**, a harness to **telewizor**. Gdy kupisz nowy telewizor, pilot i ulubione kanały zostają te same.
+
+---
+
+## 2. O co chodzi?
 
 Każdy pracuje z AI inaczej: jedni bez konfiguracji, inni z bardzo złożonym setupem. Warto czasem się zatrzymać i sprawdzić, co można zrobić lepiej.
 
@@ -39,7 +57,7 @@ Każdy pracuje z AI inaczej: jedni bez konfiguracji, inni z bardzo złożonym se
 
 ---
 
-## 2. Za dużo narzędzi — jak nie zwariować?
+## 3. Za dużo narzędzi — jak nie zwariować?
 
 Do wyboru jest mnóstwo warstw — i każda zmienia się co kilka tygodni:
 
@@ -57,7 +75,7 @@ Do wyboru jest mnóstwo warstw — i każda zmienia się co kilka tygodni:
 
 ---
 
-## 3. 6 zasad wyboru harnessu
+## 4. 6 zasad wyboru harnessu
 
 | # | Zasada | Po ludzku |
 |---|---|---|
@@ -74,7 +92,7 @@ Do wyboru jest mnóstwo warstw — i każda zmienia się co kilka tygodni:
 
 ---
 
-## 4. Który harness wybrać?
+## 5. Który harness wybrać?
 
 | Chcesz… | Wybierz | Przykłady |
 |---|---|---|
@@ -86,7 +104,7 @@ Do wyboru jest mnóstwo warstw — i każda zmienia się co kilka tygodni:
 
 ---
 
-## 5. Pi + Herdr — agenci, którzy zarządzają sami sobą
+## 6. Pi + Herdr — agenci, którzy zarządzają sami sobą
 
 W lekcji wybieramy **Pi**, bo pokazuje, jak wszystko działa „pod maską”.
 
@@ -137,7 +155,7 @@ Uruchom Herdr → w nim Pi → poproś o nowy tab z wiadomością dla agenta. Ag
 
 ---
 
-## 6. Czego jeszcze potrzebuje system wielu agentów?
+## 7. Czego jeszcze potrzebuje system wielu agentów?
 
 Samo uruchamianie workerów to za mało. Potrzebne są też:
 
@@ -159,7 +177,7 @@ Samo uruchamianie workerów to za mało. Potrzebne są też:
 
 ---
 
-## 7. Projekt Limen — Koordynator i Workerzy
+## 8. Projekt Limen — Koordynator i Workerzy
 
 Gotowy projekt, którego używa już kilka zespołów: [overment/limen](https://github.com/overment/limen).
 
@@ -214,7 +232,7 @@ Gotowy projekt, którego używa już kilka zespołów: [overment/limen](https://
 
 ---
 
-## 8. Ustawienia — model, wysiłek, koszt, prywatność
+## 9. Ustawienia — model, wysiłek, koszt, prywatność
 
 Gdy jeden agent zarządza resztą, wystarczy dać **jemu** rekomendacje, jakich modeli używać.
 
@@ -251,7 +269,7 @@ Gdy jeden agent zarządza resztą, wystarczy dać **jemu** rekomendacje, jakich 
 
 ---
 
-## 9. Praca w zespole
+## 10. Praca w zespole
 
 Nie ma jeszcze jednej dobrej odpowiedzi. Budujemy workflow, który **rośnie razem z nami**.
 
@@ -275,7 +293,7 @@ Nie ma jeszcze jednej dobrej odpowiedzi. Budujemy workflow, który **rośnie raz
 
 ---
 
-## 10. Automatyzacje w tle
+## 11. Automatyzacje w tle
 
 Agenci zintegrowani z GitHubem: Claude Code, Cursor, Devin, CodeRabbit. Wołasz ich w **komentarzach i PR-ach**, albo startują po zdarzeniu.
 
@@ -302,7 +320,7 @@ Agenci zintegrowani z GitHubem: Claude Code, Cursor, Devin, CodeRabbit. Wołasz 
 
 ---
 
-## 11. Wnioski
+## 12. Wnioski
 
 | ✅ Rób | ❌ Nie rób |
 |---|---|
