@@ -2,14 +2,15 @@
 
 ## 📑 Spis treści
 
-1. [O co chodzi?](#1-o-co-chodzi)
-2. [Pętla agenta](#2-pętla-agenta)
-3. [Agent to nie tylko pętla — obowiązki harnessu](#3-agent-to-nie-tylko-pętla--obowiązki-harnessu)
-4. [Co z tego wynika dla zwykłego użytkownika?](#4-co-z-tego-wynika-dla-zwykłego-użytkownika)
-5. [Osobowość i świadomość otoczenia](#5-osobowość-i-świadomość-otoczenia)
-6. [Kontekst i pamięć](#6-kontekst-i-pamięć)
-7. [Narzędzia](#7-narzędzia)
-8. [Wnioski](#8-wnioski)
+1. [Film](#1-film)
+2. [O co chodzi?](#2-o-co-chodzi)
+3. [Pętla agenta](#3-pętla-agenta)
+4. [Agent to nie tylko pętla — obowiązki harnessu](#4-agent-to-nie-tylko-pętla--obowiązki-harnessu)
+5. [Co z tego wynika dla zwykłego użytkownika?](#5-co-z-tego-wynika-dla-zwykłego-użytkownika)
+6. [Osobowość i świadomość otoczenia](#6-osobowość-i-świadomość-otoczenia)
+7. [Kontekst i pamięć](#7-kontekst-i-pamięć)
+8. [Narzędzia](#8-narzędzia)
+9. [Wnioski](#9-wnioski)
 
 ---
 
@@ -19,7 +20,24 @@
 
 ---
 
-## 1. O co chodzi?
+## 1. Film
+
+| Temat | Po ludzku |
+|---|---|
+| **Mastra Studio** | narzędzie do **podglądania**, co agent robi krok po kroku |
+| **Wybór modelu** | pierwsze pytanie developera: który model pasuje do zadania? Jaki jest **najtańszy**, który da radę? |
+| **Pętla agenta** | agent woła narzędzia, a one mogą prowadzić do kolejnych narzędzi itd. Można ustawić **maksymalną liczbę obrotów pętli** — to nie to samo co liczba narzędzi, bo w jednym obrocie może wywołać **kilka naraz**. |
+| **Okno kontekstu** | jest **ograniczone**. Mieści: informacje systemowe, historię rozmowy, narzędzia i ich odpowiedzi itd. |
+| **Przepełnienie kontekstu** | rozwiązanie: **kompresja** starszych informacji — zajmują mniej miejsca, ale dalej są użyteczne |
+| **Evals** | **testy dla agentów AI** — sprawdzają, czy wynik jest taki, jakiego oczekiwaliśmy |
+
+🎒 **Analogia:** okno kontekstu to **plecak**. Gdy robi się ciasno, nie wyrzucasz starych notatek — tylko je **streszczasz** na jednej kartce.
+
+📝 **Analogia:** evals to **sprawdzian w szkole** — zanim pochwalisz agenta, sprawdzasz, czy odpowiedzi są poprawne.
+
+---
+
+## 2. O co chodzi?
 
 To jedna z najważniejszych lekcji MEGA — wszystko, co zbudujemy dalej, stoi na tej wiedzy.
 
@@ -43,7 +61,7 @@ Do czego przyda się ta wiedza:
 
 ---
 
-## 2. Pętla agenta
+## 3. Pętla agenta
 
 Agent = **pętla**, która kręci się, dopóki model nie odpowie samym tekstem (bez narzędzi).
 
@@ -73,7 +91,7 @@ Claude Code czy Codex umieją się z wielu takich błędów [podnieść same](ht
 
 ---
 
-## 3. Agent to nie tylko pętla — obowiązki harnessu
+## 4. Agent to nie tylko pętla — obowiązki harnessu
 
 | Obowiązek | Po ludzku | Analogia |
 |---|---|---|
@@ -115,7 +133,7 @@ Na własnym komputerze agent hula po plikach. W zespole lub produkcji potrzebne 
 
 ---
 
-## 4. Co z tego wynika dla zwykłego użytkownika?
+## 5. Co z tego wynika dla zwykłego użytkownika?
 
 Nawet jeśli nie budujesz agenta:
 
@@ -128,7 +146,7 @@ W praktyce dochodzą jeszcze: **rutyny, harmonogramy, zdarzenia, webhooki**.
 
 ---
 
-## 5. Osobowość i świadomość otoczenia
+## 6. Osobowość i świadomość otoczenia
 
 Modele są coraz mądrzejsze. Claude Code [wyciął 80% system promptu](https://claude.dev/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models/) dla najnowszych modeli. Czy instrukcje są więc zbędne?
 
@@ -163,7 +181,7 @@ Cel: nie „działa”, tylko **dobrze** — czysto, ogólnie, bez zbędnych rze
 
 ---
 
-## 6. Kontekst i pamięć
+## 7. Kontekst i pamięć
 
 📔 **Analogia:** pamięć agenta to **pamiętnik** — trzeba coś zapisać, ułożyć, a potem umieć szybko znaleźć właściwą stronę.
 
@@ -216,7 +234,7 @@ Musi być **szybkie**, **kontekstowe** i **wydajne**.
 
 ---
 
-## 7. Narzędzia
+## 8. Narzędzia
 
 Agent musi **znać swoje możliwości**, **łączyć je** i robić zadanie w jak najmniej krokach — bez zaśmiecania kontekstu.
 
@@ -236,7 +254,7 @@ Agent musi **znać swoje możliwości**, **łączyć je** i robić zadanie w jak
 
 ---
 
-## 8. Wnioski
+## 9. Wnioski
 
 - Pod maską agenta dzieje się **dużo więcej**, niż widać.
 - Teraz wiesz, **czego się po nim spodziewać** i **dlaczego zawodzi** (np. „nie mam tej informacji”, choć powinien ją pamiętać).
