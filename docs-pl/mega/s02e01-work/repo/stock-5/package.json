@@ -1,0 +1,8 @@
+{
+  "name": "stock-5-reorder",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "verify": "node scripts/verify.mjs"
+  }
+}

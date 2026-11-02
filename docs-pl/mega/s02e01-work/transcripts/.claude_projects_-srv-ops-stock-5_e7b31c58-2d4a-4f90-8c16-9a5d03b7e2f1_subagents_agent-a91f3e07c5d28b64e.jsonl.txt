@@ -1,0 +1,1808 @@
+[2024-05-12T06:10:00.683Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-05-12T06:10:01.023Z]   RESULT: stock-5 · heartbeat · queue 31 · lag 466ms
+[2024-05-13T06:10:00.752Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-05-13T06:10:01.309Z]   RESULT: stock-5 · heartbeat · queue 10 · lag 40ms
+[2024-05-14T06:10:00.288Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-05-14T06:10:01.435Z]   RESULT: stock-5 · heartbeat · queue 9 · lag 379ms
+[2024-05-15T06:10:00.135Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-05-15T06:10:01.890Z]   RESULT: stock-5 · heartbeat · queue 20 · lag 150ms
+[2024-05-16T06:10:00.770Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-05-16T06:10:01.638Z]   RESULT: stock-5 · heartbeat · queue 28 · lag 754ms
+[2024-05-17T06:10:00.062Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-05-17T06:10:01.028Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 484ms
+[2024-05-18T06:10:00.658Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-05-18T06:10:01.212Z]   RESULT: stock-5 · heartbeat · queue 40 · lag 886ms
+[2024-05-19T06:10:00.400Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-05-19T06:10:01.807Z]   RESULT: stock-5 · heartbeat · queue 11 · lag 39ms
+[2024-05-20T06:10:00.615Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-05-20T06:10:01.562Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 415ms
+[2024-05-21T06:10:00.472Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-05-21T06:10:01.729Z]   RESULT: stock-5 · heartbeat · queue 20 · lag 131ms
+[2024-05-22T06:10:00.787Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-05-22T06:10:01.632Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 693ms
+[2024-05-23T06:10:00.538Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-05-23T06:10:01.203Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 226ms
+[2024-05-24T06:10:00.552Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-05-24T06:10:01.290Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 195ms
+[2024-05-25T06:10:00.454Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-05-25T06:10:01.066Z]   RESULT: stock-5 · heartbeat · queue 20 · lag 772ms
+[2024-05-26T06:10:00.293Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-05-26T06:10:01.814Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 31ms
+[2024-05-27T06:10:00.838Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-05-27T06:10:01.227Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 833ms
+[2024-05-28T06:10:00.451Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-05-28T06:10:01.737Z]   RESULT: stock-5 · heartbeat · queue 18 · lag 8ms
+[2024-05-29T06:10:00.562Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-05-29T06:10:01.045Z]   RESULT: stock-5 · heartbeat · queue 12 · lag 149ms
+[2024-05-30T06:10:00.775Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-05-30T06:10:01.520Z]   RESULT: stock-5 · heartbeat · queue 18 · lag 526ms
+[2024-05-31T06:10:00.701Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-05-31T06:10:01.670Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 86ms
+[2024-06-01T06:10:00.240Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-01T06:10:01.737Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 249ms
+[2024-06-02T06:10:00.802Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-02T06:10:01.371Z]   RESULT: stock-5 · heartbeat · queue 3 · lag 472ms
+[2024-06-03T06:10:00.234Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-03T06:10:01.756Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 215ms
+[2024-06-04T06:10:00.556Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-04T06:10:01.357Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 487ms
+[2024-06-05T06:10:00.299Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-05T06:10:01.121Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 230ms
+[2024-06-06T06:10:00.313Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-06T06:10:01.469Z]   RESULT: stock-5 · heartbeat · queue 30 · lag 209ms
+[2024-06-07T06:10:00.698Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-07T06:10:01.685Z]   RESULT: stock-5 · heartbeat · queue 4 · lag 745ms
+[2024-06-08T06:10:00.416Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-08T06:10:01.581Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 890ms
+[2024-06-09T06:10:00.653Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-09T06:10:01.088Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 900ms
+[2024-06-10T06:10:00.750Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-10T06:10:01.355Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 480ms
+[2024-06-11T06:10:00.764Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-11T06:10:01.176Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 402ms
+[2024-06-12T06:10:00.782Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-12T06:10:01.321Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 185ms
+[2024-06-13T06:10:00.878Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-13T06:10:01.144Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 73ms
+[2024-06-14T06:10:00.304Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-14T06:10:01.145Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 336ms
+[2024-06-15T06:10:00.210Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-15T06:10:01.056Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 606ms
+[2024-06-16T06:10:00.718Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-16T06:10:01.067Z]   RESULT: stock-5 · heartbeat · queue 8 · lag 682ms
+[2024-06-17T06:10:00.362Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-17T06:10:01.873Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 230ms
+[2024-06-18T06:10:00.041Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-18T06:10:01.526Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 130ms
+[2024-06-19T06:10:00.404Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-19T06:10:01.339Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 205ms
+[2024-06-20T06:10:00.856Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-20T06:10:01.688Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 218ms
+[2024-06-21T06:10:00.307Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-21T06:10:01.065Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 385ms
+[2024-06-22T06:10:00.204Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-22T06:10:01.669Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 464ms
+[2024-06-23T06:10:00.393Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-23T06:10:01.718Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 602ms
+[2024-06-24T06:10:00.801Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-24T06:10:01.520Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 596ms
+[2024-06-25T06:10:00.785Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-25T06:10:01.174Z]   RESULT: stock-5 · heartbeat · queue 9 · lag 803ms
+[2024-06-26T06:10:00.086Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-26T06:10:01.750Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 247ms
+[2024-06-27T06:10:00.655Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-27T06:10:01.533Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 585ms
+[2024-06-28T06:10:00.885Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-28T06:10:01.023Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 667ms
+[2024-06-29T06:10:00.875Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-29T06:10:01.263Z]   RESULT: stock-5 · heartbeat · queue 36 · lag 256ms
+[2024-06-30T06:10:00.260Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-06-30T06:10:01.843Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 141ms
+[2024-07-01T06:10:00.532Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-01T06:10:01.516Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 463ms
+[2024-07-02T06:10:00.026Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-02T06:10:01.617Z]   RESULT: stock-5 · heartbeat · queue 22 · lag 805ms
+[2024-07-03T06:10:00.710Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-03T06:10:01.436Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 890ms
+[2024-07-04T06:10:00.692Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-04T06:10:01.613Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 190ms
+[2024-07-05T06:10:00.303Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-05T06:10:01.131Z]   RESULT: stock-5 · heartbeat · queue 9 · lag 187ms
+[2024-07-06T06:10:00.468Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-06T06:10:01.875Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 755ms
+[2024-07-07T06:10:00.236Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-07T06:10:01.107Z]   RESULT: stock-5 · heartbeat · queue 1 · lag 868ms
+[2024-07-08T06:10:00.006Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-08T06:10:01.310Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 66ms
+[2024-07-09T06:10:00.597Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-09T06:10:01.103Z]   RESULT: stock-5 · heartbeat · queue 12 · lag 273ms
+[2024-07-10T06:10:00.348Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-10T06:10:01.022Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 237ms
+[2024-07-11T06:10:00.187Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-11T06:10:01.359Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 409ms
+[2024-07-12T06:10:00.126Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-12T06:10:01.176Z]   RESULT: stock-5 · heartbeat · queue 36 · lag 376ms
+[2024-07-13T06:10:00.304Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-13T06:10:01.111Z]   RESULT: stock-5 · heartbeat · queue 9 · lag 887ms
+[2024-07-14T06:10:00.369Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-14T06:10:01.832Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 188ms
+[2024-07-15T06:10:00.256Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-15T06:10:01.169Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 842ms
+[2024-07-16T06:10:00.195Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-16T06:10:01.197Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 396ms
+[2024-07-17T06:10:00.723Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-17T06:10:01.048Z]   RESULT: stock-5 · heartbeat · queue 22 · lag 770ms
+[2024-07-18T06:10:00.293Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-18T06:10:01.211Z]   RESULT: stock-5 · heartbeat · queue 31 · lag 419ms
+[2024-07-19T06:10:00.369Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-19T06:10:01.882Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 878ms
+[2024-07-20T06:10:00.764Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-20T06:10:01.741Z]   RESULT: stock-5 · heartbeat · queue 11 · lag 133ms
+[2024-07-21T06:10:00.490Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-21T06:10:01.109Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 773ms
+[2024-07-22T06:10:00.633Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-22T06:10:01.161Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 57ms
+[2024-07-23T06:10:00.444Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-23T06:10:01.051Z]   RESULT: stock-5 · heartbeat · queue 4 · lag 366ms
+[2024-07-24T06:10:00.882Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-24T06:10:01.127Z]   RESULT: stock-5 · heartbeat · queue 11 · lag 315ms
+[2024-07-25T06:10:00.708Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-25T06:10:01.589Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 697ms
+[2024-07-26T06:10:00.674Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-26T06:10:01.487Z]   RESULT: stock-5 · heartbeat · queue 10 · lag 437ms
+[2024-07-27T06:10:00.337Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-27T06:10:01.748Z]   RESULT: stock-5 · heartbeat · queue 12 · lag 524ms
+[2024-07-28T06:10:00.396Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-28T06:10:01.430Z]   RESULT: stock-5 · heartbeat · queue 23 · lag 55ms
+[2024-07-29T06:10:00.823Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-29T06:10:01.154Z]   RESULT: stock-5 · heartbeat · queue 27 · lag 118ms
+[2024-07-30T06:10:00.142Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-30T06:10:01.672Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 388ms
+[2024-07-31T06:10:00.171Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-07-31T06:10:01.867Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 68ms
+[2024-08-01T06:10:00.547Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-01T06:10:01.422Z]   RESULT: stock-5 · heartbeat · queue 27 · lag 884ms
+[2024-08-02T06:10:00.517Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-02T06:10:01.153Z]   RESULT: stock-5 · heartbeat · queue 3 · lag 52ms
+[2024-08-03T06:10:00.278Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-03T06:10:01.725Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 34ms
+[2024-08-04T06:10:00.367Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-04T06:10:01.517Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 585ms
+[2024-08-05T06:10:00.182Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-05T06:10:01.670Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 117ms
+[2024-08-06T06:10:00.188Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-06T06:10:01.826Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 683ms
+[2024-08-07T06:10:00.726Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-07T06:10:01.638Z]   RESULT: stock-5 · heartbeat · queue 40 · lag 185ms
+[2024-08-08T06:10:00.357Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-08T06:10:01.531Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 157ms
+[2024-08-09T06:10:00.047Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-09T06:10:01.139Z]   RESULT: stock-5 · heartbeat · queue 23 · lag 289ms
+[2024-08-10T06:10:00.371Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-10T06:10:01.777Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 491ms
+[2024-08-11T06:10:00.246Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-11T06:10:01.218Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 745ms
+[2024-08-12T06:10:00.596Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-12T06:10:01.331Z]   RESULT: stock-5 · heartbeat · queue 1 · lag 346ms
+[2024-08-13T06:10:00.110Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-13T06:10:01.540Z]   RESULT: stock-5 · heartbeat · queue 1 · lag 551ms
+[2024-08-14T06:10:00.302Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-14T06:10:01.017Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 142ms
+[2024-08-15T06:10:00.850Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-15T06:10:01.613Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 515ms
+[2024-08-16T06:10:00.114Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-16T06:10:01.871Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 356ms
+[2024-08-17T06:10:00.887Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-17T06:10:01.177Z]   RESULT: stock-5 · heartbeat · queue 9 · lag 271ms
+[2024-08-18T06:10:00.529Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-18T06:10:01.242Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 829ms
+[2024-08-19T06:10:00.810Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-19T06:10:01.116Z]   RESULT: stock-5 · heartbeat · queue 28 · lag 381ms
+[2024-08-20T06:10:00.460Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-20T06:10:01.441Z]   RESULT: stock-5 · heartbeat · queue 12 · lag 847ms
+[2024-08-21T06:10:00.674Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-21T06:10:01.161Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 726ms
+[2024-08-22T06:10:00.848Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-22T06:10:01.739Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 553ms
+[2024-08-23T06:10:00.876Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-23T06:10:01.625Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 185ms
+[2024-08-24T06:10:00.745Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-24T06:10:01.275Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 864ms
+[2024-08-25T06:10:00.125Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-25T06:10:01.354Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 243ms
+[2024-08-26T06:10:00.889Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-26T06:10:01.883Z]   RESULT: stock-5 · heartbeat · queue 4 · lag 443ms
+[2024-08-27T06:10:00.703Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-27T06:10:01.890Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 592ms
+[2024-08-28T06:10:00.840Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-28T06:10:01.736Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 359ms
+[2024-08-29T06:10:00.812Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-29T06:10:01.737Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 767ms
+[2024-08-30T06:10:00.757Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-30T06:10:01.723Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 209ms
+[2024-08-31T06:10:00.245Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-08-31T06:10:01.601Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 405ms
+[2024-09-01T06:10:00.224Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-01T06:10:01.226Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 433ms
+[2024-09-02T06:10:00.663Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-02T06:10:01.330Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 434ms
+[2024-09-03T06:10:00.735Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-03T06:10:01.485Z]   RESULT: stock-5 · heartbeat · queue 27 · lag 775ms
+[2024-09-04T06:10:00.577Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-04T06:10:01.526Z]   RESULT: stock-5 · heartbeat · queue 30 · lag 758ms
+[2024-09-05T06:10:00.864Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-05T06:10:01.026Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 817ms
+[2024-09-06T06:10:00.779Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-06T06:10:01.412Z]   RESULT: stock-5 · heartbeat · queue 26 · lag 735ms
+[2024-09-07T06:10:00.285Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-07T06:10:01.672Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 54ms
+[2024-09-08T06:10:00.459Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-08T06:10:01.064Z]   RESULT: stock-5 · heartbeat · queue 40 · lag 128ms
+[2024-09-09T06:10:00.331Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-09T06:10:01.191Z]   RESULT: stock-5 · heartbeat · queue 28 · lag 779ms
+[2024-09-10T06:10:00.712Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-10T06:10:01.246Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 571ms
+[2024-09-11T06:10:00.899Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-11T06:10:01.052Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 784ms
+[2024-09-12T06:10:00.576Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-12T06:10:01.369Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 360ms
+[2024-09-13T06:10:00.737Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-13T06:10:01.024Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 62ms
+[2024-09-14T06:10:00.032Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-14T06:10:01.474Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 374ms
+[2024-09-15T06:10:00.162Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-15T06:10:01.222Z]   RESULT: stock-5 · heartbeat · queue 12 · lag 295ms
+[2024-09-16T06:10:00.086Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-16T06:10:01.096Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 675ms
+[2024-09-17T06:10:00.249Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-17T06:10:01.196Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 17ms
+[2024-09-18T06:10:00.291Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-18T06:10:01.446Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 176ms
+[2024-09-19T06:10:00.514Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-19T06:10:01.168Z]   RESULT: stock-5 · heartbeat · queue 36 · lag 450ms
+[2024-09-20T06:10:00.014Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-20T06:10:01.822Z]   RESULT: stock-5 · heartbeat · queue 9 · lag 506ms
+[2024-09-21T06:10:00.787Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-21T06:10:01.195Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 203ms
+[2024-09-22T06:10:00.416Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-22T06:10:01.653Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 288ms
+[2024-09-23T06:10:00.331Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-23T06:10:01.426Z]   RESULT: stock-5 · heartbeat · queue 22 · lag 570ms
+[2024-09-24T06:10:00.527Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-24T06:10:01.287Z]   RESULT: stock-5 · heartbeat · queue 36 · lag 815ms
+[2024-09-25T06:10:00.486Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-25T06:10:01.686Z]   RESULT: stock-5 · heartbeat · queue 22 · lag 317ms
+[2024-09-26T06:10:00.093Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-26T06:10:01.761Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 387ms
+[2024-09-27T06:10:00.068Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-27T06:10:01.626Z]   RESULT: stock-5 · heartbeat · queue 3 · lag 140ms
+[2024-09-28T06:10:00.780Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-28T06:10:01.564Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 468ms
+[2024-09-29T06:10:00.345Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-29T06:10:01.760Z]   RESULT: stock-5 · heartbeat · queue 11 · lag 829ms
+[2024-09-30T06:10:00.086Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-09-30T06:10:01.217Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 179ms
+[2024-10-01T06:10:00.060Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-01T06:10:01.329Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 609ms
+[2024-10-02T06:10:00.057Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-02T06:10:01.418Z]   RESULT: stock-5 · heartbeat · queue 3 · lag 393ms
+[2024-10-03T06:10:00.406Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-03T06:10:01.651Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 292ms
+[2024-10-04T06:10:00.153Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-04T06:10:01.351Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 723ms
+[2024-10-05T06:10:00.526Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-05T06:10:01.628Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 633ms
+[2024-10-06T06:10:00.416Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-06T06:10:01.576Z]   RESULT: stock-5 · heartbeat · queue 18 · lag 15ms
+[2024-10-07T06:10:00.570Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-07T06:10:01.741Z]   RESULT: stock-5 · heartbeat · queue 31 · lag 374ms
+[2024-10-08T06:10:00.837Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-08T06:10:01.221Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 150ms
+[2024-10-09T06:10:00.434Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-09T06:10:01.816Z]   RESULT: stock-5 · heartbeat · queue 30 · lag 540ms
+[2024-10-10T06:10:00.821Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-10T06:10:01.565Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 282ms
+[2024-10-11T06:10:00.390Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-11T06:10:01.326Z]   RESULT: stock-5 · heartbeat · queue 23 · lag 664ms
+[2024-10-12T06:10:00.696Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-12T06:10:01.882Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 514ms
+[2024-10-13T06:10:00.278Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-13T06:10:01.467Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 635ms
+[2024-10-14T06:10:00.563Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-14T06:10:01.615Z]   RESULT: stock-5 · heartbeat · queue 26 · lag 246ms
+[2024-10-15T06:10:00.745Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-15T06:10:01.326Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 697ms
+[2024-10-16T06:10:00.682Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-16T06:10:01.258Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 579ms
+[2024-10-17T06:10:00.841Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-17T06:10:01.578Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 232ms
+[2024-10-18T06:10:00.400Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-18T06:10:01.364Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 305ms
+[2024-10-19T06:10:00.319Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-19T06:10:01.795Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 180ms
+[2024-10-20T06:10:00.385Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-20T06:10:01.734Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 650ms
+[2024-10-21T06:10:00.217Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-21T06:10:01.574Z]   RESULT: stock-5 · heartbeat · queue 22 · lag 328ms
+[2024-10-22T06:10:00.086Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-22T06:10:01.803Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 477ms
+[2024-10-23T06:10:00.190Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-23T06:10:01.323Z]   RESULT: stock-5 · heartbeat · queue 28 · lag 185ms
+[2024-10-24T06:10:00.392Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-24T06:10:01.542Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 862ms
+[2024-10-25T06:10:00.739Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-25T06:10:01.191Z]   RESULT: stock-5 · heartbeat · queue 34 · lag 864ms
+[2024-10-26T06:10:00.825Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-26T06:10:01.872Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 882ms
+[2024-10-27T06:10:00.307Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-27T06:10:01.220Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 383ms
+[2024-10-28T06:10:00.652Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-28T06:10:01.080Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 845ms
+[2024-10-29T06:10:00.699Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-29T06:10:01.876Z]   RESULT: stock-5 · heartbeat · queue 1 · lag 727ms
+[2024-10-30T06:10:00.204Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-30T06:10:01.025Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 707ms
+[2024-10-31T06:10:00.741Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-10-31T06:10:01.653Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 282ms
+[2024-11-01T06:10:00.695Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-01T06:10:01.586Z]   RESULT: stock-5 · heartbeat · queue 34 · lag 628ms
+[2024-11-02T06:10:00.442Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-02T06:10:01.103Z]   RESULT: stock-5 · heartbeat · queue 22 · lag 829ms
+[2024-11-03T06:10:00.235Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-03T06:10:01.286Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 351ms
+[2024-11-04T06:10:00.333Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-04T06:10:01.143Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 883ms
+[2024-11-05T06:10:00.504Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-05T06:10:01.005Z]   RESULT: stock-5 · heartbeat · queue 28 · lag 347ms
+[2024-11-06T06:10:00.261Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-06T06:10:01.126Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 2ms
+[2024-11-07T06:10:00.539Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-07T06:10:01.807Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 883ms
+[2024-11-08T06:10:00.215Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-08T06:10:01.761Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 182ms
+[2024-11-09T06:10:00.233Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-09T06:10:01.114Z]   RESULT: stock-5 · heartbeat · queue 20 · lag 580ms
+[2024-11-10T06:10:00.149Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-10T06:10:01.872Z]   RESULT: stock-5 · heartbeat · queue 40 · lag 152ms
+[2024-11-11T06:10:00.378Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-11T06:10:01.712Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 642ms
+[2024-11-12T06:10:00.676Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-12T06:10:01.008Z]   RESULT: stock-5 · heartbeat · queue 36 · lag 674ms
+[2024-11-13T06:10:00.568Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-13T06:10:01.506Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 792ms
+[2024-11-14T06:10:00.102Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-14T06:10:01.004Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 512ms
+[2024-11-15T06:10:00.363Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-15T06:10:01.713Z]   RESULT: stock-5 · heartbeat · queue 31 · lag 12ms
+[2024-11-16T06:10:00.282Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-16T06:10:01.392Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 380ms
+[2024-11-17T06:10:00.739Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-17T06:10:01.334Z]   RESULT: stock-5 · heartbeat · queue 23 · lag 821ms
+[2024-11-18T06:10:00.823Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-18T06:10:01.047Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 29ms
+[2024-11-19T06:10:00.003Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-19T06:10:01.558Z]   RESULT: stock-5 · heartbeat · queue 8 · lag 868ms
+[2024-11-20T06:10:00.386Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-20T06:10:01.619Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 300ms
+[2024-11-21T06:10:00.757Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-21T06:10:01.326Z]   RESULT: stock-5 · heartbeat · queue 10 · lag 661ms
+[2024-11-22T06:10:00.697Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-22T06:10:01.863Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 225ms
+[2024-11-23T06:10:00.689Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-23T06:10:01.670Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 166ms
+[2024-11-24T06:10:00.371Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-24T06:10:01.283Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 702ms
+[2024-11-25T06:10:00.192Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-25T06:10:01.008Z]   RESULT: stock-5 · heartbeat · queue 40 · lag 673ms
+[2024-11-26T06:10:00.624Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-26T06:10:01.508Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 706ms
+[2024-11-27T06:10:00.359Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-27T06:10:01.274Z]   RESULT: stock-5 · heartbeat · queue 4 · lag 33ms
+[2024-11-28T06:10:00.208Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-28T06:10:01.774Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 768ms
+[2024-11-29T06:10:00.106Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-29T06:10:01.852Z]   RESULT: stock-5 · heartbeat · queue 18 · lag 77ms
+[2024-11-30T06:10:00.040Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-11-30T06:10:01.368Z]   RESULT: stock-5 · heartbeat · queue 9 · lag 814ms
+[2024-12-01T06:10:00.197Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-01T06:10:01.252Z]   RESULT: stock-5 · heartbeat · queue 22 · lag 219ms
+[2024-12-02T06:10:00.811Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-02T06:10:01.328Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 326ms
+[2024-12-03T06:10:00.179Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-03T06:10:01.750Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 217ms
+[2024-12-04T06:10:00.664Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-04T06:10:01.095Z]   RESULT: stock-5 · heartbeat · queue 36 · lag 801ms
+[2024-12-05T06:10:00.663Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-05T06:10:01.384Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 73ms
+[2024-12-06T06:10:00.220Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-06T06:10:01.670Z]   RESULT: stock-5 · heartbeat · queue 23 · lag 688ms
+[2024-12-07T06:10:00.288Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-07T06:10:01.242Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 355ms
+[2024-12-08T06:10:00.496Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-08T06:10:01.003Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 780ms
+[2024-12-09T06:10:00.364Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-09T06:10:01.277Z]   RESULT: stock-5 · heartbeat · queue 9 · lag 637ms
+[2024-12-10T06:10:00.663Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-10T06:10:01.449Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 305ms
+[2024-12-11T06:10:00.548Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-11T06:10:01.556Z]   RESULT: stock-5 · heartbeat · queue 8 · lag 479ms
+[2024-12-12T06:10:00.213Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-12T06:10:01.507Z]   RESULT: stock-5 · heartbeat · queue 3 · lag 363ms
+[2024-12-13T06:10:00.398Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-13T06:10:01.458Z]   RESULT: stock-5 · heartbeat · queue 30 · lag 58ms
+[2024-12-14T06:10:00.476Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-14T06:10:01.492Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 214ms
+[2024-12-15T06:10:00.045Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-15T06:10:01.262Z]   RESULT: stock-5 · heartbeat · queue 30 · lag 728ms
+[2024-12-16T06:10:00.128Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-16T06:10:01.232Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 584ms
+[2024-12-17T06:10:00.647Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-17T06:10:01.268Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 787ms
+[2024-12-18T06:10:00.503Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-18T06:10:01.544Z]   RESULT: stock-5 · heartbeat · queue 23 · lag 349ms
+[2024-12-19T06:10:00.870Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-19T06:10:01.260Z]   RESULT: stock-5 · heartbeat · queue 27 · lag 192ms
+[2024-12-20T06:10:00.656Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-20T06:10:01.014Z]   RESULT: stock-5 · heartbeat · queue 8 · lag 169ms
+[2024-12-21T06:10:00.678Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-21T06:10:01.243Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 336ms
+[2024-12-22T06:10:00.403Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-22T06:10:01.714Z]   RESULT: stock-5 · heartbeat · queue 28 · lag 348ms
+[2024-12-23T06:10:00.711Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-23T06:10:01.036Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 634ms
+[2024-12-24T06:10:00.524Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-24T06:10:01.432Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 629ms
+[2024-12-25T06:10:00.813Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-25T06:10:01.376Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 776ms
+[2024-12-26T06:10:00.575Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-26T06:10:01.804Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 228ms
+[2024-12-27T06:10:00.412Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-27T06:10:01.325Z]   RESULT: stock-5 · heartbeat · queue 23 · lag 219ms
+[2024-12-28T06:10:00.716Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-28T06:10:01.003Z]   RESULT: stock-5 · heartbeat · queue 23 · lag 220ms
+[2024-12-29T06:10:00.231Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-29T06:10:01.029Z]   RESULT: stock-5 · heartbeat · queue 34 · lag 11ms
+[2024-12-30T06:10:00.363Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-30T06:10:01.276Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 685ms
+[2024-12-31T06:10:00.478Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2024-12-31T06:10:01.571Z]   RESULT: stock-5 · heartbeat · queue 4 · lag 161ms
+[2025-01-01T06:10:00.741Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-01T06:10:01.759Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 873ms
+[2025-01-02T06:10:00.813Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-02T06:10:01.375Z]   RESULT: stock-5 · heartbeat · queue 10 · lag 494ms
+[2025-01-03T06:10:00.150Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-03T06:10:01.362Z]   RESULT: stock-5 · heartbeat · queue 20 · lag 722ms
+[2025-01-04T06:10:00.282Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-04T06:10:01.415Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 831ms
+[2025-01-05T06:10:00.440Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-05T06:10:01.161Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 736ms
+[2025-01-06T06:10:00.609Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-06T06:10:01.551Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 143ms
+[2025-01-07T06:10:00.498Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-07T06:10:01.039Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 753ms
+[2025-01-08T06:10:00.256Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-08T06:10:01.603Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 891ms
+[2025-01-09T06:10:00.652Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-09T06:10:01.589Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 473ms
+[2025-01-10T06:10:00.194Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-10T06:10:01.639Z]   RESULT: stock-5 · heartbeat · queue 30 · lag 331ms
+[2025-01-11T06:10:00.242Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-11T06:10:01.230Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 650ms
+[2025-01-12T06:10:00.493Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-12T06:10:01.343Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 140ms
+[2025-01-13T06:10:00.562Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-13T06:10:01.745Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 678ms
+[2025-01-14T06:10:00.596Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-14T06:10:01.291Z]   RESULT: stock-5 · heartbeat · queue 20 · lag 70ms
+[2025-01-15T06:10:00.457Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-15T06:10:01.354Z]   RESULT: stock-5 · heartbeat · queue 31 · lag 147ms
+[2025-01-16T06:10:00.219Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-16T06:10:01.010Z]   RESULT: stock-5 · heartbeat · queue 18 · lag 385ms
+[2025-01-17T06:10:00.872Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-17T06:10:01.650Z]   RESULT: stock-5 · heartbeat · queue 3 · lag 576ms
+[2025-01-18T06:10:00.073Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-18T06:10:01.534Z]   RESULT: stock-5 · heartbeat · queue 36 · lag 795ms
+[2025-01-19T06:10:00.033Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-19T06:10:01.583Z]   RESULT: stock-5 · heartbeat · queue 30 · lag 595ms
+[2025-01-20T06:10:00.655Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-20T06:10:01.760Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 10ms
+[2025-01-21T06:10:00.886Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-21T06:10:01.659Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 690ms
+[2025-01-22T06:10:00.851Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-22T06:10:01.783Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 753ms
+[2025-01-23T06:10:00.274Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-23T06:10:01.184Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 619ms
+[2025-01-24T06:10:00.180Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-24T06:10:01.536Z]   RESULT: stock-5 · heartbeat · queue 27 · lag 2ms
+[2025-01-25T06:10:00.853Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-25T06:10:01.475Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 138ms
+[2025-01-26T06:10:00.145Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-26T06:10:01.354Z]   RESULT: stock-5 · heartbeat · queue 11 · lag 398ms
+[2025-01-27T06:10:00.264Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-27T06:10:01.361Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 835ms
+[2025-01-28T06:10:00.481Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-28T06:10:01.480Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 416ms
+[2025-01-29T06:10:00.321Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-29T06:10:01.408Z]   RESULT: stock-5 · heartbeat · queue 3 · lag 639ms
+[2025-01-30T06:10:00.147Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-30T06:10:01.853Z]   RESULT: stock-5 · heartbeat · queue 40 · lag 220ms
+[2025-01-31T06:10:00.012Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-01-31T06:10:01.069Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 632ms
+[2025-02-01T06:10:00.366Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-01T06:10:01.004Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 550ms
+[2025-02-02T06:10:00.314Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-02T06:10:01.236Z]   RESULT: stock-5 · heartbeat · queue 18 · lag 660ms
+[2025-02-03T06:10:00.847Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-03T06:10:01.741Z]   RESULT: stock-5 · heartbeat · queue 26 · lag 252ms
+[2025-02-04T06:10:00.786Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-04T06:10:01.399Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 758ms
+[2025-02-05T06:10:00.543Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-05T06:10:01.472Z]   RESULT: stock-5 · heartbeat · queue 1 · lag 773ms
+[2025-02-06T06:10:00.397Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-06T06:10:01.308Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 791ms
+[2025-02-07T06:10:00.696Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-07T06:10:01.316Z]   RESULT: stock-5 · heartbeat · queue 11 · lag 722ms
+[2025-02-08T06:10:00.887Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-08T06:10:01.241Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 695ms
+[2025-02-09T06:10:00.205Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-09T06:10:01.392Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 442ms
+[2025-02-10T06:10:00.462Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-10T06:10:01.708Z]   RESULT: stock-5 · heartbeat · queue 34 · lag 143ms
+[2025-02-11T06:10:00.767Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-11T06:10:01.211Z]   RESULT: stock-5 · heartbeat · queue 4 · lag 79ms
+[2025-02-12T06:10:00.168Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-12T06:10:01.851Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 152ms
+[2025-02-13T06:10:00.304Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-13T06:10:01.394Z]   RESULT: stock-5 · heartbeat · queue 9 · lag 318ms
+[2025-02-14T06:10:00.110Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-14T06:10:01.886Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 825ms
+[2025-02-15T06:10:00.311Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-15T06:10:01.051Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 69ms
+[2025-02-16T06:10:00.450Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-16T06:10:01.476Z]   RESULT: stock-5 · heartbeat · queue 31 · lag 594ms
+[2025-02-17T06:10:00.457Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-17T06:10:01.551Z]   RESULT: stock-5 · heartbeat · queue 3 · lag 292ms
+[2025-02-18T06:10:00.292Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-18T06:10:01.086Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 313ms
+[2025-02-19T06:10:00.053Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-19T06:10:01.528Z]   RESULT: stock-5 · heartbeat · queue 28 · lag 231ms
+[2025-02-20T06:10:00.731Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-20T06:10:01.303Z]   RESULT: stock-5 · heartbeat · queue 23 · lag 861ms
+[2025-02-21T06:10:00.833Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-21T06:10:01.105Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 244ms
+[2025-02-22T06:10:00.108Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-22T06:10:01.731Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 549ms
+[2025-02-23T06:10:00.411Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-23T06:10:01.322Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 3ms
+[2025-02-24T06:10:00.752Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-24T06:10:01.460Z]   RESULT: stock-5 · heartbeat · queue 10 · lag 271ms
+[2025-02-25T06:10:00.709Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-25T06:10:01.107Z]   RESULT: stock-5 · heartbeat · queue 28 · lag 596ms
+[2025-02-26T06:10:00.668Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-26T06:10:01.257Z]   RESULT: stock-5 · heartbeat · queue 26 · lag 510ms
+[2025-02-27T06:10:00.134Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-27T06:10:01.466Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 705ms
+[2025-02-28T06:10:00.152Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-02-28T06:10:01.348Z]   RESULT: stock-5 · heartbeat · queue 12 · lag 514ms
+[2025-03-01T06:10:00.691Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-01T06:10:01.493Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 302ms
+[2025-03-02T06:10:00.235Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-02T06:10:01.483Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 285ms
+[2025-03-03T06:10:00.864Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-03T06:10:01.645Z]   RESULT: stock-5 · heartbeat · queue 27 · lag 576ms
+[2025-03-04T06:10:00.492Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-04T06:10:01.186Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 717ms
+[2025-03-05T06:10:00.170Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-05T06:10:01.676Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 102ms
+[2025-03-06T06:10:00.219Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-06T06:10:01.260Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 616ms
+[2025-03-07T06:10:00.474Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-07T06:10:01.160Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 77ms
+[2025-03-08T06:10:00.724Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-08T06:10:01.577Z]   RESULT: stock-5 · heartbeat · queue 34 · lag 115ms
+[2025-03-09T06:10:00.053Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-09T06:10:01.354Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 490ms
+[2025-03-10T06:10:00.508Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-10T06:10:01.845Z]   RESULT: stock-5 · heartbeat · queue 1 · lag 376ms
+[2025-03-11T06:10:00.811Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-11T06:10:01.296Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 643ms
+[2025-03-12T06:10:00.834Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-12T06:10:01.533Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 880ms
+[2025-03-13T06:10:00.748Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-13T06:10:01.460Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 210ms
+[2025-03-14T06:10:00.022Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-14T06:10:01.429Z]   RESULT: stock-5 · heartbeat · queue 23 · lag 713ms
+[2025-03-15T06:10:00.534Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-15T06:10:01.865Z]   RESULT: stock-5 · heartbeat · queue 10 · lag 633ms
+[2025-03-16T06:10:00.643Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-16T06:10:01.867Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 184ms
+[2025-03-17T06:10:00.340Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-17T06:10:01.156Z]   RESULT: stock-5 · heartbeat · queue 12 · lag 399ms
+[2025-03-18T06:10:00.084Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-18T06:10:01.760Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 158ms
+[2025-03-19T06:10:00.347Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-19T06:10:01.071Z]   RESULT: stock-5 · heartbeat · queue 1 · lag 146ms
+[2025-03-20T06:10:00.363Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-20T06:10:01.550Z]   RESULT: stock-5 · heartbeat · queue 30 · lag 615ms
+[2025-03-21T06:10:00.767Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-21T06:10:01.341Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 166ms
+[2025-03-22T06:10:00.049Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-22T06:10:01.552Z]   RESULT: stock-5 · heartbeat · queue 3 · lag 267ms
+[2025-03-23T06:10:00.382Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-23T06:10:01.544Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 651ms
+[2025-03-24T06:10:00.484Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-24T06:10:01.476Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 122ms
+[2025-03-25T06:10:00.480Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-25T06:10:01.699Z]   RESULT: stock-5 · heartbeat · queue 40 · lag 252ms
+[2025-03-26T06:10:00.023Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-26T06:10:01.460Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 222ms
+[2025-03-27T06:10:00.020Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-27T06:10:01.447Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 233ms
+[2025-03-28T06:10:00.786Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-28T06:10:01.795Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 484ms
+[2025-03-29T06:10:00.775Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-29T06:10:01.207Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 347ms
+[2025-03-30T06:10:00.148Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-30T06:10:01.621Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 747ms
+[2025-03-31T06:10:00.214Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-03-31T06:10:01.249Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 272ms
+[2025-04-01T06:10:00.467Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-01T06:10:01.086Z]   RESULT: stock-5 · heartbeat · queue 27 · lag 134ms
+[2025-04-02T06:10:00.450Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-02T06:10:01.829Z]   RESULT: stock-5 · heartbeat · queue 27 · lag 248ms
+[2025-04-03T06:10:00.893Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-03T06:10:01.135Z]   RESULT: stock-5 · heartbeat · queue 8 · lag 399ms
+[2025-04-04T06:10:00.561Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-04T06:10:01.845Z]   RESULT: stock-5 · heartbeat · queue 36 · lag 889ms
+[2025-04-05T06:10:00.320Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-05T06:10:01.874Z]   RESULT: stock-5 · heartbeat · queue 40 · lag 18ms
+[2025-04-06T06:10:00.900Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-06T06:10:01.076Z]   RESULT: stock-5 · heartbeat · queue 23 · lag 881ms
+[2025-04-07T06:10:00.376Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-07T06:10:01.812Z]   RESULT: stock-5 · heartbeat · queue 11 · lag 23ms
+[2025-04-08T06:10:00.226Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-08T06:10:01.711Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 392ms
+[2025-04-09T06:10:00.252Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-09T06:10:01.866Z]   RESULT: stock-5 · heartbeat · queue 4 · lag 143ms
+[2025-04-10T06:10:00.860Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-10T06:10:01.810Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 368ms
+[2025-04-11T06:10:00.671Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-11T06:10:01.534Z]   RESULT: stock-5 · heartbeat · queue 40 · lag 890ms
+[2025-04-12T06:10:00.069Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-12T06:10:01.487Z]   RESULT: stock-5 · heartbeat · queue 11 · lag 677ms
+[2025-04-13T06:10:00.020Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-13T06:10:01.783Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 190ms
+[2025-04-14T06:10:00.228Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-14T06:10:01.402Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 354ms
+[2025-04-15T06:10:00.875Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-15T06:10:01.765Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 421ms
+[2025-04-16T06:10:00.297Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-16T06:10:01.816Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 800ms
+[2025-04-17T06:10:00.024Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-17T06:10:01.545Z]   RESULT: stock-5 · heartbeat · queue 22 · lag 706ms
+[2025-04-18T06:10:00.677Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-18T06:10:01.861Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 676ms
+[2025-04-19T06:10:00.447Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-19T06:10:01.605Z]   RESULT: stock-5 · heartbeat · queue 9 · lag 227ms
+[2025-04-20T06:10:00.251Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-20T06:10:01.155Z]   RESULT: stock-5 · heartbeat · queue 18 · lag 549ms
+[2025-04-21T06:10:00.445Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-21T06:10:01.821Z]   RESULT: stock-5 · heartbeat · queue 18 · lag 543ms
+[2025-04-22T06:10:00.779Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-22T06:10:01.062Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 99ms
+[2025-04-23T06:10:00.771Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-23T06:10:01.635Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 367ms
+[2025-04-24T06:10:00.456Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-24T06:10:01.170Z]   RESULT: stock-5 · heartbeat · queue 11 · lag 125ms
+[2025-04-25T06:10:00.091Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-25T06:10:01.831Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 515ms
+[2025-04-26T06:10:00.484Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-26T06:10:01.760Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 554ms
+[2025-04-27T06:10:00.696Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-27T06:10:01.278Z]   RESULT: stock-5 · heartbeat · queue 22 · lag 18ms
+[2025-04-28T06:10:00.792Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-28T06:10:01.859Z]   RESULT: stock-5 · heartbeat · queue 8 · lag 309ms
+[2025-04-29T06:10:00.267Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-29T06:10:01.310Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 110ms
+[2025-04-30T06:10:00.566Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-04-30T06:10:01.403Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 209ms
+[2025-05-01T06:10:00.676Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-01T06:10:01.316Z]   RESULT: stock-5 · heartbeat · queue 34 · lag 367ms
+[2025-05-02T06:10:00.480Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-02T06:10:01.440Z]   RESULT: stock-5 · heartbeat · queue 12 · lag 855ms
+[2025-05-03T06:10:00.127Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-03T06:10:01.345Z]   RESULT: stock-5 · heartbeat · queue 28 · lag 681ms
+[2025-05-04T06:10:00.450Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-04T06:10:01.014Z]   RESULT: stock-5 · heartbeat · queue 12 · lag 407ms
+[2025-05-05T06:10:00.088Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-05T06:10:01.574Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 0ms
+[2025-05-06T06:10:00.776Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-06T06:10:01.377Z]   RESULT: stock-5 · heartbeat · queue 10 · lag 622ms
+[2025-05-07T06:10:00.287Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-07T06:10:01.166Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 465ms
+[2025-05-08T06:10:00.337Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-08T06:10:01.219Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 760ms
+[2025-05-09T06:10:00.350Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-09T06:10:01.769Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 179ms
+[2025-05-10T06:10:00.820Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-10T06:10:01.508Z]   RESULT: stock-5 · heartbeat · queue 18 · lag 232ms
+[2025-05-11T06:10:00.689Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-11T06:10:01.339Z]   RESULT: stock-5 · heartbeat · queue 28 · lag 349ms
+[2025-05-12T06:10:00.654Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-12T06:10:01.140Z]   RESULT: stock-5 · heartbeat · queue 23 · lag 758ms
+[2025-05-13T06:10:00.667Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-13T06:10:01.438Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 254ms
+[2025-05-14T06:10:00.875Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-14T06:10:01.117Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 80ms
+[2025-05-15T06:10:00.664Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-15T06:10:01.696Z]   RESULT: stock-5 · heartbeat · queue 4 · lag 216ms
+[2025-05-16T06:10:00.453Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-16T06:10:01.146Z]   RESULT: stock-5 · heartbeat · queue 28 · lag 292ms
+[2025-05-17T06:10:00.214Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-17T06:10:01.317Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 254ms
+[2025-05-18T06:10:00.878Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-18T06:10:01.604Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 191ms
+[2025-05-19T06:10:00.560Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-19T06:10:01.653Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 449ms
+[2025-05-20T06:10:00.406Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-20T06:10:01.679Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 81ms
+[2025-05-21T06:10:00.514Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-21T06:10:01.562Z]   RESULT: stock-5 · heartbeat · queue 31 · lag 268ms
+[2025-05-22T06:10:00.671Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-22T06:10:01.172Z]   RESULT: stock-5 · heartbeat · queue 40 · lag 808ms
+[2025-05-23T06:10:00.361Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-23T06:10:01.791Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 526ms
+[2025-05-24T06:10:00.268Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-24T06:10:01.519Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 354ms
+[2025-05-25T06:10:00.447Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-25T06:10:01.032Z]   RESULT: stock-5 · heartbeat · queue 11 · lag 688ms
+[2025-05-26T06:10:00.007Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-26T06:10:01.872Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 412ms
+[2025-05-27T06:10:00.232Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-27T06:10:01.741Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 309ms
+[2025-05-28T06:10:00.226Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-28T06:10:01.324Z]   RESULT: stock-5 · heartbeat · queue 20 · lag 581ms
+[2025-05-29T06:10:00.221Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-29T06:10:01.230Z]   RESULT: stock-5 · heartbeat · queue 22 · lag 219ms
+[2025-05-30T06:10:00.518Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-30T06:10:01.761Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 82ms
+[2025-05-31T06:10:00.274Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-05-31T06:10:01.490Z]   RESULT: stock-5 · heartbeat · queue 40 · lag 121ms
+[2025-06-01T06:10:00.581Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-01T06:10:01.647Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 365ms
+[2025-06-02T06:10:00.611Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-02T06:10:01.753Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 752ms
+[2025-06-03T06:10:00.011Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-03T06:10:01.493Z]   RESULT: stock-5 · heartbeat · queue 4 · lag 463ms
+[2025-06-04T06:10:00.124Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-04T06:10:01.214Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 816ms
+[2025-06-05T06:10:00.725Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-05T06:10:01.440Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 424ms
+[2025-06-06T06:10:00.732Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-06T06:10:01.256Z]   RESULT: stock-5 · heartbeat · queue 31 · lag 136ms
+[2025-06-07T06:10:00.435Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-07T06:10:01.326Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 464ms
+[2025-06-08T06:10:00.631Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-08T06:10:01.576Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 899ms
+[2025-06-09T06:10:00.542Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-09T06:10:01.267Z]   RESULT: stock-5 · heartbeat · queue 27 · lag 859ms
+[2025-06-10T06:10:00.243Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-10T06:10:01.183Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 595ms
+[2025-06-11T06:10:00.130Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-11T06:10:01.336Z]   RESULT: stock-5 · heartbeat · queue 1 · lag 715ms
+[2025-06-12T06:10:00.066Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-12T06:10:01.480Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 604ms
+[2025-06-13T06:10:00.204Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-13T06:10:01.486Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 602ms
+[2025-06-14T06:10:00.655Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-14T06:10:01.427Z]   RESULT: stock-5 · heartbeat · queue 18 · lag 328ms
+[2025-06-15T06:10:00.432Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-15T06:10:01.298Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 470ms
+[2025-06-16T06:10:00.165Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-16T06:10:01.571Z]   RESULT: stock-5 · heartbeat · queue 20 · lag 710ms
+[2025-06-17T06:10:00.003Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-17T06:10:01.875Z]   RESULT: stock-5 · heartbeat · queue 8 · lag 363ms
+[2025-06-18T06:10:00.471Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-18T06:10:01.396Z]   RESULT: stock-5 · heartbeat · queue 28 · lag 67ms
+[2025-06-19T06:10:00.755Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-19T06:10:01.480Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 314ms
+[2025-06-20T06:10:00.862Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-20T06:10:01.655Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 809ms
+[2025-06-21T06:10:00.457Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-21T06:10:01.655Z]   RESULT: stock-5 · heartbeat · queue 40 · lag 714ms
+[2025-06-22T06:10:00.581Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-22T06:10:01.048Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 659ms
+[2025-06-23T06:10:00.104Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-23T06:10:01.089Z]   RESULT: stock-5 · heartbeat · queue 20 · lag 31ms
+[2025-06-24T06:10:00.318Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-24T06:10:01.795Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 420ms
+[2025-06-25T06:10:00.201Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-25T06:10:01.709Z]   RESULT: stock-5 · heartbeat · queue 11 · lag 241ms
+[2025-06-26T06:10:00.471Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-26T06:10:01.871Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 137ms
+[2025-06-27T06:10:00.089Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-27T06:10:01.106Z]   RESULT: stock-5 · heartbeat · queue 11 · lag 171ms
+[2025-06-28T06:10:00.579Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-28T06:10:01.410Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 876ms
+[2025-06-29T06:10:00.032Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-29T06:10:01.327Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 300ms
+[2025-06-30T06:10:00.536Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-06-30T06:10:01.450Z]   RESULT: stock-5 · heartbeat · queue 12 · lag 194ms
+[2025-07-01T06:10:00.047Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-01T06:10:01.801Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 328ms
+[2025-07-02T06:10:00.065Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-02T06:10:01.602Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 272ms
+[2025-07-03T06:10:00.617Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-03T06:10:01.447Z]   RESULT: stock-5 · heartbeat · queue 10 · lag 827ms
+[2025-07-04T06:10:00.037Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-04T06:10:01.180Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 418ms
+[2025-07-05T06:10:00.346Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-05T06:10:01.876Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 603ms
+[2025-07-06T06:10:00.016Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-06T06:10:01.289Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 146ms
+[2025-07-07T06:10:00.245Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-07T06:10:01.787Z]   RESULT: stock-5 · heartbeat · queue 18 · lag 868ms
+[2025-07-08T06:10:00.869Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-08T06:10:01.336Z]   RESULT: stock-5 · heartbeat · queue 23 · lag 15ms
+[2025-07-09T06:10:00.251Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-09T06:10:01.447Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 360ms
+[2025-07-10T06:10:00.003Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-10T06:10:01.512Z]   RESULT: stock-5 · heartbeat · queue 30 · lag 264ms
+[2025-07-11T06:10:00.184Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-11T06:10:01.692Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 761ms
+[2025-07-12T06:10:00.088Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-12T06:10:01.151Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 596ms
+[2025-07-13T06:10:00.830Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-13T06:10:01.096Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 122ms
+[2025-07-14T06:10:00.269Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-14T06:10:01.856Z]   RESULT: stock-5 · heartbeat · queue 4 · lag 181ms
+[2025-07-15T06:10:00.223Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-15T06:10:01.243Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 25ms
+[2025-07-16T06:10:00.860Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-16T06:10:01.110Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 659ms
+[2025-07-17T06:10:00.126Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-17T06:10:01.285Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 216ms
+[2025-07-18T06:10:00.622Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-18T06:10:01.721Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 831ms
+[2025-07-19T06:10:00.034Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-19T06:10:01.771Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 573ms
+[2025-07-20T06:10:00.227Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-20T06:10:01.172Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 674ms
+[2025-07-21T06:10:00.104Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-21T06:10:01.469Z]   RESULT: stock-5 · heartbeat · queue 18 · lag 854ms
+[2025-07-22T06:10:00.412Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-22T06:10:01.501Z]   RESULT: stock-5 · heartbeat · queue 4 · lag 680ms
+[2025-07-23T06:10:00.152Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-23T06:10:01.458Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 639ms
+[2025-07-24T06:10:00.272Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-24T06:10:01.611Z]   RESULT: stock-5 · heartbeat · queue 28 · lag 706ms
+[2025-07-25T06:10:00.053Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-25T06:10:01.697Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 227ms
+[2025-07-26T06:10:00.086Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-26T06:10:01.270Z]   RESULT: stock-5 · heartbeat · queue 20 · lag 52ms
+[2025-07-27T06:10:00.801Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-27T06:10:01.383Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 690ms
+[2025-07-28T06:10:00.392Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-28T06:10:01.342Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 534ms
+[2025-07-29T06:10:00.698Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-29T06:10:01.405Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 330ms
+[2025-07-30T06:10:00.820Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-30T06:10:01.410Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 296ms
+[2025-07-31T06:10:00.038Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-07-31T06:10:01.484Z]   RESULT: stock-5 · heartbeat · queue 22 · lag 639ms
+[2025-08-01T06:10:00.636Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-01T06:10:01.718Z]   RESULT: stock-5 · heartbeat · queue 22 · lag 410ms
+[2025-08-02T06:10:00.503Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-02T06:10:01.583Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 303ms
+[2025-08-03T06:10:00.823Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-03T06:10:01.355Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 343ms
+[2025-08-04T06:10:00.697Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-04T06:10:01.127Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 835ms
+[2025-08-05T06:10:00.804Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-05T06:10:01.363Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 359ms
+[2025-08-06T06:10:00.648Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-06T06:10:01.266Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 7ms
+[2025-08-07T06:10:00.161Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-07T06:10:01.005Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 456ms
+[2025-08-08T06:10:00.084Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-08T06:10:01.211Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 755ms
+[2025-08-09T06:10:00.489Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-09T06:10:01.352Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 728ms
+[2025-08-10T06:10:00.080Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-10T06:10:01.551Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 103ms
+[2025-08-11T06:10:00.037Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-11T06:10:01.581Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 676ms
+[2025-08-12T06:10:00.201Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-12T06:10:01.839Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 190ms
+[2025-08-13T06:10:00.558Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-13T06:10:01.107Z]   RESULT: stock-5 · heartbeat · queue 31 · lag 454ms
+[2025-08-14T06:10:00.503Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-14T06:10:01.351Z]   RESULT: stock-5 · heartbeat · queue 9 · lag 666ms
+[2025-08-15T06:10:00.327Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-15T06:10:01.086Z]   RESULT: stock-5 · heartbeat · queue 1 · lag 53ms
+[2025-08-16T06:10:00.122Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-16T06:10:01.505Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 783ms
+[2025-08-17T06:10:00.642Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-17T06:10:01.147Z]   RESULT: stock-5 · heartbeat · queue 30 · lag 510ms
+[2025-08-18T06:10:00.882Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-18T06:10:01.217Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 246ms
+[2025-08-19T06:10:00.345Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-19T06:10:01.357Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 141ms
+[2025-08-20T06:10:00.437Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-20T06:10:01.009Z]   RESULT: stock-5 · heartbeat · queue 28 · lag 768ms
+[2025-08-21T06:10:00.311Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-21T06:10:01.496Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 899ms
+[2025-08-22T06:10:00.736Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-22T06:10:01.155Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 374ms
+[2025-08-23T06:10:00.113Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-23T06:10:01.085Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 138ms
+[2025-08-24T06:10:00.237Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-24T06:10:01.418Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 869ms
+[2025-08-25T06:10:00.127Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-25T06:10:01.831Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 537ms
+[2025-08-26T06:10:00.211Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-26T06:10:01.495Z]   RESULT: stock-5 · heartbeat · queue 34 · lag 111ms
+[2025-08-27T06:10:00.422Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-27T06:10:01.638Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 546ms
+[2025-08-28T06:10:00.051Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-28T06:10:01.297Z]   RESULT: stock-5 · heartbeat · queue 9 · lag 51ms
+[2025-08-29T06:10:00.426Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-29T06:10:01.072Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 304ms
+[2025-08-30T06:10:00.265Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-30T06:10:01.066Z]   RESULT: stock-5 · heartbeat · queue 3 · lag 137ms
+[2025-08-31T06:10:00.305Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-08-31T06:10:01.693Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 491ms
+[2025-09-01T06:10:00.046Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-01T06:10:01.124Z]   RESULT: stock-5 · heartbeat · queue 1 · lag 38ms
+[2025-09-02T06:10:00.144Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-02T06:10:01.839Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 696ms
+[2025-09-03T06:10:00.153Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-03T06:10:01.373Z]   RESULT: stock-5 · heartbeat · queue 34 · lag 568ms
+[2025-09-04T06:10:00.029Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-04T06:10:01.405Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 767ms
+[2025-09-05T06:10:00.663Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-05T06:10:01.073Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 818ms
+[2025-09-06T06:10:00.307Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-06T06:10:01.300Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 327ms
+[2025-09-07T06:10:00.488Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-07T06:10:01.122Z]   RESULT: stock-5 · heartbeat · queue 20 · lag 693ms
+[2025-09-08T06:10:00.153Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-08T06:10:01.029Z]   RESULT: stock-5 · heartbeat · queue 26 · lag 228ms
+[2025-09-09T06:10:00.686Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-09T06:10:01.296Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 429ms
+[2025-09-10T06:10:00.593Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-10T06:10:01.292Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 3ms
+[2025-09-11T06:10:00.348Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-11T06:10:01.757Z]   RESULT: stock-5 · heartbeat · queue 28 · lag 244ms
+[2025-09-12T06:10:00.024Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-12T06:10:01.801Z]   RESULT: stock-5 · heartbeat · queue 22 · lag 560ms
+[2025-09-13T06:10:00.473Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-13T06:10:01.697Z]   RESULT: stock-5 · heartbeat · queue 22 · lag 828ms
+[2025-09-14T06:10:00.796Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-14T06:10:01.082Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 472ms
+[2025-09-15T06:10:00.144Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-15T06:10:01.224Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 473ms
+[2025-09-16T06:10:00.686Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-16T06:10:01.812Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 487ms
+[2025-09-17T06:10:00.744Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-17T06:10:01.076Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 89ms
+[2025-09-18T06:10:00.121Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-18T06:10:01.361Z]   RESULT: stock-5 · heartbeat · queue 20 · lag 878ms
+[2025-09-19T06:10:00.327Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-19T06:10:01.075Z]   RESULT: stock-5 · heartbeat · queue 27 · lag 258ms
+[2025-09-20T06:10:00.499Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-20T06:10:01.054Z]   RESULT: stock-5 · heartbeat · queue 26 · lag 656ms
+[2025-09-21T06:10:00.750Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-21T06:10:01.321Z]   RESULT: stock-5 · heartbeat · queue 18 · lag 636ms
+[2025-09-22T06:10:00.198Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-22T06:10:01.335Z]   RESULT: stock-5 · heartbeat · queue 4 · lag 584ms
+[2025-09-23T06:10:00.557Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-23T06:10:01.639Z]   RESULT: stock-5 · heartbeat · queue 12 · lag 796ms
+[2025-09-24T06:10:00.426Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-24T06:10:01.762Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 827ms
+[2025-09-25T06:10:00.329Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-25T06:10:01.104Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 84ms
+[2025-09-26T06:10:00.365Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-26T06:10:01.609Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 886ms
+[2025-09-27T06:10:00.296Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-27T06:10:01.651Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 769ms
+[2025-09-28T06:10:00.101Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-28T06:10:01.428Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 147ms
+[2025-09-29T06:10:00.388Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-29T06:10:01.409Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 568ms
+[2025-09-30T06:10:00.684Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-09-30T06:10:01.867Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 737ms
+[2025-10-01T06:10:00.303Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-01T06:10:01.794Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 100ms
+[2025-10-02T06:10:00.562Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-02T06:10:01.482Z]   RESULT: stock-5 · heartbeat · queue 9 · lag 453ms
+[2025-10-03T06:10:00.353Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-03T06:10:01.894Z]   RESULT: stock-5 · heartbeat · queue 3 · lag 77ms
+[2025-10-04T06:10:00.656Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-04T06:10:01.899Z]   RESULT: stock-5 · heartbeat · queue 30 · lag 32ms
+[2025-10-05T06:10:00.128Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-05T06:10:01.785Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 724ms
+[2025-10-06T06:10:00.189Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-06T06:10:01.068Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 691ms
+[2025-10-07T06:10:00.266Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-07T06:10:01.539Z]   RESULT: stock-5 · heartbeat · queue 28 · lag 798ms
+[2025-10-08T06:10:00.883Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-08T06:10:01.488Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 44ms
+[2025-10-09T06:10:00.331Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-09T06:10:01.497Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 556ms
+[2025-10-10T06:10:00.800Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-10T06:10:01.559Z]   RESULT: stock-5 · heartbeat · queue 27 · lag 736ms
+[2025-10-11T06:10:00.103Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-11T06:10:01.682Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 268ms
+[2025-10-12T06:10:00.365Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-12T06:10:01.881Z]   RESULT: stock-5 · heartbeat · queue 31 · lag 760ms
+[2025-10-13T06:10:00.205Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-13T06:10:01.598Z]   RESULT: stock-5 · heartbeat · queue 36 · lag 675ms
+[2025-10-14T06:10:00.462Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-14T06:10:01.275Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 106ms
+[2025-10-15T06:10:00.663Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-15T06:10:01.054Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 743ms
+[2025-10-16T06:10:00.322Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-16T06:10:01.375Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 462ms
+[2025-10-17T06:10:00.569Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-17T06:10:01.310Z]   RESULT: stock-5 · heartbeat · queue 10 · lag 288ms
+[2025-10-18T06:10:00.104Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-18T06:10:01.472Z]   RESULT: stock-5 · heartbeat · queue 11 · lag 305ms
+[2025-10-19T06:10:00.150Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-19T06:10:01.845Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 264ms
+[2025-10-20T06:10:00.855Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-20T06:10:01.633Z]   RESULT: stock-5 · heartbeat · queue 28 · lag 668ms
+[2025-10-21T06:10:00.276Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-21T06:10:01.225Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 863ms
+[2025-10-22T06:10:00.813Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-22T06:10:01.193Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 131ms
+[2025-10-23T06:10:00.040Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-23T06:10:01.040Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 283ms
+[2025-10-24T06:10:00.778Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-24T06:10:01.592Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 859ms
+[2025-10-25T06:10:00.322Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-25T06:10:01.377Z]   RESULT: stock-5 · heartbeat · queue 4 · lag 583ms
+[2025-10-26T06:10:00.442Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-26T06:10:01.317Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 457ms
+[2025-10-27T06:10:00.137Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-27T06:10:01.377Z]   RESULT: stock-5 · heartbeat · queue 10 · lag 225ms
+[2025-10-28T06:10:00.417Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-28T06:10:01.617Z]   RESULT: stock-5 · heartbeat · queue 36 · lag 291ms
+[2025-10-29T06:10:00.392Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-29T06:10:01.419Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 502ms
+[2025-10-30T06:10:00.704Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-30T06:10:01.397Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 8ms
+[2025-10-31T06:10:00.383Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-10-31T06:10:01.265Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 359ms
+[2025-11-01T06:10:00.043Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-01T06:10:01.444Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 85ms
+[2025-11-02T06:10:00.678Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-02T06:10:01.118Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 686ms
+[2025-11-03T06:10:00.882Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-03T06:10:01.028Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 788ms
+[2025-11-04T06:10:00.623Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-04T06:10:01.843Z]   RESULT: stock-5 · heartbeat · queue 3 · lag 578ms
+[2025-11-05T06:10:00.115Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-05T06:10:01.774Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 638ms
+[2025-11-06T06:10:00.018Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-06T06:10:01.340Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 242ms
+[2025-11-07T06:10:00.554Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-07T06:10:01.828Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 596ms
+[2025-11-08T06:10:00.479Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-08T06:10:01.762Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 871ms
+[2025-11-09T06:10:00.010Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-09T06:10:01.152Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 247ms
+[2025-11-10T06:10:00.867Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-10T06:10:01.500Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 800ms
+[2025-11-11T06:10:00.623Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-11T06:10:01.729Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 725ms
+[2025-11-12T06:10:00.175Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-12T06:10:01.895Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 396ms
+[2025-11-13T06:10:00.121Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-13T06:10:01.491Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 313ms
+[2025-11-14T06:10:00.341Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-14T06:10:01.347Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 438ms
+[2025-11-15T06:10:00.240Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-15T06:10:01.658Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 147ms
+[2025-11-16T06:10:00.334Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-16T06:10:01.707Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 697ms
+[2025-11-17T06:10:00.473Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-17T06:10:01.719Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 527ms
+[2025-11-18T06:10:00.114Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-18T06:10:01.099Z]   RESULT: stock-5 · heartbeat · queue 36 · lag 692ms
+[2025-11-19T06:10:00.457Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-19T06:10:01.881Z]   RESULT: stock-5 · heartbeat · queue 36 · lag 505ms
+[2025-11-20T06:10:00.825Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-20T06:10:01.098Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 656ms
+[2025-11-21T06:10:00.490Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-21T06:10:01.784Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 536ms
+[2025-11-22T06:10:00.788Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-22T06:10:01.317Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 339ms
+[2025-11-23T06:10:00.590Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-23T06:10:01.007Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 128ms
+[2025-11-24T06:10:00.652Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-24T06:10:01.712Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 744ms
+[2025-11-25T06:10:00.384Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-25T06:10:01.686Z]   RESULT: stock-5 · heartbeat · queue 3 · lag 515ms
+[2025-11-26T06:10:00.167Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-26T06:10:01.679Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 459ms
+[2025-11-27T06:10:00.478Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-27T06:10:01.121Z]   RESULT: stock-5 · heartbeat · queue 31 · lag 193ms
+[2025-11-28T06:10:00.113Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-28T06:10:01.533Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 169ms
+[2025-11-29T06:10:00.019Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-29T06:10:01.415Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 50ms
+[2025-11-30T06:10:00.147Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-11-30T06:10:01.490Z]   RESULT: stock-5 · heartbeat · queue 40 · lag 464ms
+[2025-12-01T06:10:00.258Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-01T06:10:01.786Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 780ms
+[2025-12-02T06:10:00.349Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-02T06:10:01.494Z]   RESULT: stock-5 · heartbeat · queue 3 · lag 866ms
+[2025-12-03T06:10:00.609Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-03T06:10:01.808Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 628ms
+[2025-12-04T06:10:00.143Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-04T06:10:01.645Z]   RESULT: stock-5 · heartbeat · queue 18 · lag 134ms
+[2025-12-05T06:10:00.025Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-05T06:10:01.573Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 667ms
+[2025-12-06T06:10:00.381Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-06T06:10:01.130Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 164ms
+[2025-12-07T06:10:00.305Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-07T06:10:01.876Z]   RESULT: stock-5 · heartbeat · queue 31 · lag 4ms
+[2025-12-08T06:10:00.280Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-08T06:10:01.647Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 900ms
+[2025-12-09T06:10:00.622Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-09T06:10:01.534Z]   RESULT: stock-5 · heartbeat · queue 34 · lag 552ms
+[2025-12-10T06:10:00.703Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-10T06:10:01.644Z]   RESULT: stock-5 · heartbeat · queue 30 · lag 84ms
+[2025-12-11T06:10:00.060Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-11T06:10:01.390Z]   RESULT: stock-5 · heartbeat · queue 18 · lag 575ms
+[2025-12-12T06:10:00.587Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-12T06:10:01.357Z]   RESULT: stock-5 · heartbeat · queue 1 · lag 464ms
+[2025-12-13T06:10:00.598Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-13T06:10:01.233Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 564ms
+[2025-12-14T06:10:00.115Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-14T06:10:01.304Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 810ms
+[2025-12-15T06:10:00.210Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-15T06:10:01.367Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 31ms
+[2025-12-16T06:10:00.464Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-16T06:10:01.261Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 832ms
+[2025-12-17T06:10:00.221Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-17T06:10:01.468Z]   RESULT: stock-5 · heartbeat · queue 26 · lag 825ms
+[2025-12-18T06:10:00.480Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-18T06:10:01.500Z]   RESULT: stock-5 · heartbeat · queue 11 · lag 214ms
+[2025-12-19T06:10:00.163Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-19T06:10:01.341Z]   RESULT: stock-5 · heartbeat · queue 34 · lag 40ms
+[2025-12-20T06:10:00.281Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-20T06:10:01.741Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 153ms
+[2025-12-21T06:10:00.391Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-21T06:10:01.161Z]   RESULT: stock-5 · heartbeat · queue 40 · lag 276ms
+[2025-12-22T06:10:00.784Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-22T06:10:01.154Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 644ms
+[2025-12-23T06:10:00.165Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-23T06:10:01.630Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 439ms
+[2025-12-24T06:10:00.726Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-24T06:10:01.281Z]   RESULT: stock-5 · heartbeat · queue 9 · lag 336ms
+[2025-12-25T06:10:00.287Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-25T06:10:01.373Z]   RESULT: stock-5 · heartbeat · queue 28 · lag 860ms
+[2025-12-26T06:10:00.546Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-26T06:10:01.111Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 144ms
+[2025-12-27T06:10:00.158Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-27T06:10:01.397Z]   RESULT: stock-5 · heartbeat · queue 40 · lag 612ms
+[2025-12-28T06:10:00.777Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-28T06:10:01.788Z]   RESULT: stock-5 · heartbeat · queue 12 · lag 155ms
+[2025-12-29T06:10:00.477Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-29T06:10:01.784Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 786ms
+[2025-12-30T06:10:00.000Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-30T06:10:01.177Z]   RESULT: stock-5 · heartbeat · queue 4 · lag 5ms
+[2025-12-31T06:10:00.701Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2025-12-31T06:10:01.797Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 516ms
+[2026-01-01T06:10:00.785Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-01T06:10:01.822Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 686ms
+[2026-01-02T06:10:00.701Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-02T06:10:01.363Z]   RESULT: stock-5 · heartbeat · queue 10 · lag 802ms
+[2026-01-03T06:10:00.394Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-03T06:10:01.717Z]   RESULT: stock-5 · heartbeat · queue 20 · lag 528ms
+[2026-01-04T06:10:00.441Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-04T06:10:01.109Z]   RESULT: stock-5 · heartbeat · queue 40 · lag 293ms
+[2026-01-05T06:10:00.885Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-05T06:10:01.362Z]   RESULT: stock-5 · heartbeat · queue 8 · lag 162ms
+[2026-01-06T06:10:00.818Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-06T06:10:01.621Z]   RESULT: stock-5 · heartbeat · queue 27 · lag 255ms
+[2026-01-07T06:10:00.208Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-07T06:10:01.078Z]   RESULT: stock-5 · heartbeat · queue 20 · lag 464ms
+[2026-01-08T06:10:00.089Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-08T06:10:01.142Z]   RESULT: stock-5 · heartbeat · queue 34 · lag 892ms
+[2026-01-09T06:10:00.539Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-09T06:10:01.651Z]   RESULT: stock-5 · heartbeat · queue 8 · lag 854ms
+[2026-01-10T06:10:00.191Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-10T06:10:01.270Z]   RESULT: stock-5 · heartbeat · queue 30 · lag 179ms
+[2026-01-11T06:10:00.086Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-11T06:10:01.840Z]   RESULT: stock-5 · heartbeat · queue 30 · lag 630ms
+[2026-01-12T06:10:00.419Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-12T06:10:01.561Z]   RESULT: stock-5 · heartbeat · queue 4 · lag 899ms
+[2026-01-13T06:10:00.448Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-13T06:10:01.854Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 285ms
+[2026-01-14T06:10:00.803Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-14T06:10:01.761Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 435ms
+[2026-01-15T06:10:00.808Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-15T06:10:01.653Z]   RESULT: stock-5 · heartbeat · queue 40 · lag 246ms
+[2026-01-16T06:10:00.444Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-16T06:10:01.241Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 803ms
+[2026-01-17T06:10:00.410Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-17T06:10:01.438Z]   RESULT: stock-5 · heartbeat · queue 30 · lag 655ms
+[2026-01-18T06:10:00.136Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-18T06:10:01.022Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 458ms
+[2026-01-19T06:10:00.381Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-19T06:10:01.440Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 328ms
+[2026-01-20T06:10:00.825Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-20T06:10:01.755Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 797ms
+[2026-01-21T06:10:00.224Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-21T06:10:01.888Z]   RESULT: stock-5 · heartbeat · queue 31 · lag 704ms
+[2026-01-22T06:10:00.245Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-22T06:10:01.795Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 298ms
+[2026-01-23T06:10:00.502Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-23T06:10:01.058Z]   RESULT: stock-5 · heartbeat · queue 18 · lag 80ms
+[2026-01-24T06:10:00.253Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-24T06:10:01.548Z]   RESULT: stock-5 · heartbeat · queue 23 · lag 882ms
+[2026-01-25T06:10:00.794Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-25T06:10:01.224Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 64ms
+[2026-01-26T06:10:00.122Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-26T06:10:01.674Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 223ms
+[2026-01-27T06:10:00.066Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-27T06:10:01.584Z]   RESULT: stock-5 · heartbeat · queue 23 · lag 341ms
+[2026-01-28T06:10:00.402Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-28T06:10:01.408Z]   RESULT: stock-5 · heartbeat · queue 1 · lag 658ms
+[2026-01-29T06:10:00.316Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-29T06:10:01.292Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 504ms
+[2026-01-30T06:10:00.424Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-30T06:10:01.152Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 34ms
+[2026-01-31T06:10:00.513Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-01-31T06:10:01.116Z]   RESULT: stock-5 · heartbeat · queue 23 · lag 513ms
+[2026-02-01T06:10:00.546Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-01T06:10:01.882Z]   RESULT: stock-5 · heartbeat · queue 36 · lag 156ms
+[2026-02-02T06:10:00.087Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-02T06:10:01.136Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 59ms
+[2026-02-03T06:10:00.487Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-03T06:10:01.148Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 795ms
+[2026-02-04T06:10:00.760Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-04T06:10:01.684Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 170ms
+[2026-02-05T06:10:00.492Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-05T06:10:01.474Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 614ms
+[2026-02-06T06:10:00.606Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-06T06:10:01.649Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 515ms
+[2026-02-07T06:10:00.772Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-07T06:10:01.538Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 844ms
+[2026-02-08T06:10:00.511Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-08T06:10:01.874Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 865ms
+[2026-02-09T06:10:00.360Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-09T06:10:01.039Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 855ms
+[2026-02-10T06:10:00.222Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-10T06:10:01.861Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 698ms
+[2026-02-11T06:10:00.078Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-11T06:10:01.192Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 469ms
+[2026-02-12T06:10:00.040Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-12T06:10:01.375Z]   RESULT: stock-5 · heartbeat · queue 8 · lag 601ms
+[2026-02-13T06:10:00.773Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-13T06:10:01.759Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 644ms
+[2026-02-14T06:10:00.784Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-14T06:10:01.817Z]   RESULT: stock-5 · heartbeat · queue 1 · lag 749ms
+[2026-02-15T06:10:00.205Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-15T06:10:01.023Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 12ms
+[2026-02-16T06:10:00.064Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-16T06:10:01.600Z]   RESULT: stock-5 · heartbeat · queue 9 · lag 73ms
+[2026-02-17T06:10:00.818Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-17T06:10:01.037Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 344ms
+[2026-02-18T06:10:00.866Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-18T06:10:01.732Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 846ms
+[2026-02-19T06:10:00.411Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-19T06:10:01.193Z]   RESULT: stock-5 · heartbeat · queue 11 · lag 74ms
+[2026-02-20T06:10:00.825Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-20T06:10:01.614Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 331ms
+[2026-02-21T06:10:00.021Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-21T06:10:01.366Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 809ms
+[2026-02-22T06:10:00.508Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-22T06:10:01.288Z]   RESULT: stock-5 · heartbeat · queue 40 · lag 419ms
+[2026-02-23T06:10:00.655Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-23T06:10:01.783Z]   RESULT: stock-5 · heartbeat · queue 22 · lag 380ms
+[2026-02-24T06:10:00.180Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-24T06:10:01.803Z]   RESULT: stock-5 · heartbeat · queue 22 · lag 632ms
+[2026-02-25T06:10:00.335Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-25T06:10:01.497Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 438ms
+[2026-02-26T06:10:00.546Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-26T06:10:01.689Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 202ms
+[2026-02-27T06:10:00.122Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-27T06:10:01.570Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 789ms
+[2026-02-28T06:10:00.413Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-02-28T06:10:01.533Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 294ms
+[2026-03-01T06:10:00.538Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-01T06:10:01.406Z]   RESULT: stock-5 · heartbeat · queue 12 · lag 621ms
+[2026-03-02T06:10:00.612Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-02T06:10:01.401Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 159ms
+[2026-03-03T06:10:00.860Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-03T06:10:01.497Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 411ms
+[2026-03-04T06:10:00.776Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-04T06:10:01.805Z]   RESULT: stock-5 · heartbeat · queue 10 · lag 97ms
+[2026-03-05T06:10:00.417Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-05T06:10:01.320Z]   RESULT: stock-5 · heartbeat · queue 26 · lag 662ms
+[2026-03-06T06:10:00.383Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-06T06:10:01.825Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 67ms
+[2026-03-07T06:10:00.000Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-07T06:10:01.778Z]   RESULT: stock-5 · heartbeat · queue 1 · lag 850ms
+[2026-03-08T06:10:00.795Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-08T06:10:01.015Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 255ms
+[2026-03-09T06:10:00.286Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-09T06:10:01.751Z]   RESULT: stock-5 · heartbeat · queue 34 · lag 144ms
+[2026-03-10T06:10:00.327Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-10T06:10:01.583Z]   RESULT: stock-5 · heartbeat · queue 8 · lag 595ms
+[2026-03-11T06:10:00.454Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-11T06:10:01.821Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 594ms
+[2026-03-12T06:10:00.885Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-12T06:10:01.031Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 320ms
+[2026-03-13T06:10:00.835Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-13T06:10:01.371Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 859ms
+[2026-03-14T06:10:00.370Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-14T06:10:01.847Z]   RESULT: stock-5 · heartbeat · queue 40 · lag 647ms
+[2026-03-15T06:10:00.015Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-15T06:10:01.079Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 448ms
+[2026-03-16T06:10:00.374Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-16T06:10:01.884Z]   RESULT: stock-5 · heartbeat · queue 9 · lag 546ms
+[2026-03-17T06:10:00.825Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-17T06:10:01.480Z]   RESULT: stock-5 · heartbeat · queue 23 · lag 38ms
+[2026-03-18T06:10:00.368Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-18T06:10:01.097Z]   RESULT: stock-5 · heartbeat · queue 18 · lag 821ms
+[2026-03-19T06:10:00.761Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-19T06:10:01.555Z]   RESULT: stock-5 · heartbeat · queue 1 · lag 601ms
+[2026-03-20T06:10:00.177Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-20T06:10:01.637Z]   RESULT: stock-5 · heartbeat · queue 22 · lag 544ms
+[2026-03-21T06:10:00.068Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-21T06:10:01.498Z]   RESULT: stock-5 · heartbeat · queue 9 · lag 723ms
+[2026-03-22T06:10:00.588Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-22T06:10:01.723Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 144ms
+[2026-03-23T06:10:00.526Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-23T06:10:01.110Z]   RESULT: stock-5 · heartbeat · queue 4 · lag 610ms
+[2026-03-24T06:10:00.331Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-24T06:10:01.306Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 48ms
+[2026-03-25T06:10:00.814Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-25T06:10:01.045Z]   RESULT: stock-5 · heartbeat · queue 12 · lag 96ms
+[2026-03-26T06:10:00.195Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-26T06:10:01.526Z]   RESULT: stock-5 · heartbeat · queue 12 · lag 629ms
+[2026-03-27T06:10:00.237Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-27T06:10:01.660Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 588ms
+[2026-03-28T06:10:00.227Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-28T06:10:01.764Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 237ms
+[2026-03-29T06:10:00.474Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-29T06:10:01.241Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 846ms
+[2026-03-30T06:10:00.194Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-30T06:10:01.083Z]   RESULT: stock-5 · heartbeat · queue 3 · lag 404ms
+[2026-03-31T06:10:00.145Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-03-31T06:10:01.449Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 117ms
+[2026-04-01T06:10:00.555Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-01T06:10:01.111Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 61ms
+[2026-04-02T06:10:00.469Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-02T06:10:01.893Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 824ms
+[2026-04-03T06:10:00.576Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-03T06:10:01.092Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 265ms
+[2026-04-04T06:10:00.579Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-04T06:10:01.499Z]   RESULT: stock-5 · heartbeat · queue 26 · lag 756ms
+[2026-04-05T06:10:00.522Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-05T06:10:01.746Z]   RESULT: stock-5 · heartbeat · queue 9 · lag 568ms
+[2026-04-06T06:10:00.338Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-06T06:10:01.173Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 174ms
+[2026-04-07T06:10:00.077Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-07T06:10:01.131Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 240ms
+[2026-04-08T06:10:00.266Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-08T06:10:01.142Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 151ms
+[2026-04-09T06:10:00.505Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-09T06:10:01.755Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 895ms
+[2026-04-10T06:10:00.807Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-10T06:10:01.581Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 40ms
+[2026-04-11T06:10:00.815Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-11T06:10:01.537Z]   RESULT: stock-5 · heartbeat · queue 11 · lag 823ms
+[2026-04-12T06:10:00.380Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-12T06:10:01.452Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 528ms
+[2026-04-13T06:10:00.229Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-13T06:10:01.760Z]   RESULT: stock-5 · heartbeat · queue 36 · lag 119ms
+[2026-04-14T06:10:00.161Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-14T06:10:01.524Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 576ms
+[2026-04-15T06:10:00.034Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-15T06:10:01.729Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 632ms
+[2026-04-16T06:10:00.045Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-16T06:10:01.610Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 744ms
+[2026-04-17T06:10:00.442Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-17T06:10:01.596Z]   RESULT: stock-5 · heartbeat · queue 40 · lag 451ms
+[2026-04-18T06:10:00.688Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-18T06:10:01.301Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 685ms
+[2026-04-19T06:10:00.059Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-19T06:10:01.265Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 656ms
+[2026-04-20T06:10:00.626Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-20T06:10:01.406Z]   RESULT: stock-5 · heartbeat · queue 9 · lag 309ms
+[2026-04-21T06:10:00.597Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-21T06:10:01.493Z]   RESULT: stock-5 · heartbeat · queue 3 · lag 556ms
+[2026-04-22T06:10:00.652Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-22T06:10:01.693Z]   RESULT: stock-5 · heartbeat · queue 28 · lag 634ms
+[2026-04-23T06:10:00.156Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-23T06:10:01.379Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 843ms
+[2026-04-24T06:10:00.360Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-24T06:10:01.335Z]   RESULT: stock-5 · heartbeat · queue 27 · lag 146ms
+[2026-04-25T06:10:00.599Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-25T06:10:01.877Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 715ms
+[2026-04-26T06:10:00.321Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-26T06:10:01.115Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 171ms
+[2026-04-27T06:10:00.331Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-27T06:10:01.488Z]   RESULT: stock-5 · heartbeat · queue 20 · lag 723ms
+[2026-04-28T06:10:00.171Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-28T06:10:01.404Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 111ms
+[2026-04-29T06:10:00.197Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-29T06:10:01.809Z]   RESULT: stock-5 · heartbeat · queue 26 · lag 721ms
+[2026-04-30T06:10:00.755Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-04-30T06:10:01.224Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 190ms
+[2026-05-01T06:10:00.468Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-01T06:10:01.431Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 896ms
+[2026-05-02T06:10:00.544Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-02T06:10:01.450Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 691ms
+[2026-05-03T06:10:00.308Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-03T06:10:01.447Z]   RESULT: stock-5 · heartbeat · queue 36 · lag 769ms
+[2026-05-04T06:10:00.851Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-04T06:10:01.406Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 759ms
+[2026-05-05T06:10:00.548Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-05T06:10:01.453Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 415ms
+[2026-05-06T06:10:00.479Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-06T06:10:01.498Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 605ms
+[2026-05-07T06:10:00.183Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-07T06:10:01.360Z]   RESULT: stock-5 · heartbeat · queue 12 · lag 867ms
+[2026-05-08T06:10:00.259Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-08T06:10:01.782Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 524ms
+[2026-05-09T06:10:00.747Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-09T06:10:01.700Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 363ms
+[2026-05-10T06:10:00.189Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-10T06:10:01.329Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 762ms
+[2026-05-11T06:10:00.778Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-11T06:10:01.093Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 728ms
+[2026-05-12T06:10:00.524Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-12T06:10:01.873Z]   RESULT: stock-5 · heartbeat · queue 1 · lag 653ms
+[2026-05-13T06:10:00.797Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-13T06:10:01.210Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 696ms
+[2026-05-14T06:10:00.044Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-14T06:10:01.555Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 120ms
+[2026-05-15T06:10:00.759Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-15T06:10:01.039Z]   RESULT: stock-5 · heartbeat · queue 20 · lag 669ms
+[2026-05-16T06:10:00.117Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-16T06:10:01.841Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 480ms
+[2026-05-17T06:10:00.795Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-17T06:10:01.418Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 716ms
+[2026-05-18T06:10:00.654Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-18T06:10:01.606Z]   RESULT: stock-5 · heartbeat · queue 1 · lag 817ms
+[2026-05-19T06:10:00.361Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-19T06:10:01.198Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 110ms
+[2026-05-20T06:10:00.040Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-20T06:10:01.652Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 868ms
+[2026-05-21T06:10:00.090Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-21T06:10:01.492Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 420ms
+[2026-05-22T06:10:00.734Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-22T06:10:01.302Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 677ms
+[2026-05-23T06:10:00.592Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-23T06:10:01.031Z]   RESULT: stock-5 · heartbeat · queue 11 · lag 855ms
+[2026-05-24T06:10:00.537Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-24T06:10:01.060Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 595ms
+[2026-05-25T06:10:00.711Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-25T06:10:01.693Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 507ms
+[2026-05-26T06:10:00.547Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-26T06:10:01.220Z]   RESULT: stock-5 · heartbeat · queue 3 · lag 653ms
+[2026-05-27T06:10:00.196Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-27T06:10:01.075Z]   RESULT: stock-5 · heartbeat · queue 8 · lag 214ms
+[2026-05-28T06:10:00.276Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-28T06:10:01.530Z]   RESULT: stock-5 · heartbeat · queue 11 · lag 553ms
+[2026-05-29T06:10:00.832Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-29T06:10:01.722Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 510ms
+[2026-05-30T06:10:00.286Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-30T06:10:01.132Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 665ms
+[2026-05-31T06:10:00.896Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-05-31T06:10:01.866Z]   RESULT: stock-5 · heartbeat · queue 20 · lag 753ms
+[2026-06-01T06:10:00.543Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-01T06:10:01.087Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 524ms
+[2026-06-02T06:10:00.752Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-02T06:10:01.200Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 647ms
+[2026-06-03T06:10:00.262Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-03T06:10:01.814Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 227ms
+[2026-06-04T06:10:00.223Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-04T06:10:01.612Z]   RESULT: stock-5 · heartbeat · queue 4 · lag 793ms
+[2026-06-05T06:10:00.814Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-05T06:10:01.589Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 530ms
+[2026-06-06T06:10:00.793Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-06T06:10:01.136Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 627ms
+[2026-06-07T06:10:00.366Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-07T06:10:01.806Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 535ms
+[2026-06-08T06:10:00.209Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-08T06:10:01.122Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 52ms
+[2026-06-09T06:10:00.705Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-09T06:10:01.811Z]   RESULT: stock-5 · heartbeat · queue 1 · lag 458ms
+[2026-06-10T06:10:00.765Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-10T06:10:01.073Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 401ms
+[2026-06-11T06:10:00.193Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-11T06:10:01.873Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 463ms
+[2026-06-12T06:10:00.627Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-12T06:10:01.005Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 398ms
+[2026-06-13T06:10:00.698Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-13T06:10:01.555Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 1ms
+[2026-06-14T06:10:00.608Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-14T06:10:01.436Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 199ms
+[2026-06-15T06:10:00.572Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-15T06:10:01.685Z]   RESULT: stock-5 · heartbeat · queue 34 · lag 611ms
+[2026-06-16T06:10:00.430Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-16T06:10:01.870Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 42ms
+[2026-06-17T06:10:00.261Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-17T06:10:01.496Z]   RESULT: stock-5 · heartbeat · queue 31 · lag 540ms
+[2026-06-18T06:10:00.158Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-18T06:10:01.809Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 756ms
+[2026-06-19T06:10:00.690Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-19T06:10:01.619Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 250ms
+[2026-06-20T06:10:00.081Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-20T06:10:01.614Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 612ms
+[2026-06-21T06:10:00.706Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-21T06:10:01.629Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 513ms
+[2026-06-22T06:10:00.382Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-22T06:10:01.148Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 774ms
+[2026-06-23T06:10:00.805Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-23T06:10:01.717Z]   RESULT: stock-5 · heartbeat · queue 3 · lag 343ms
+[2026-06-24T06:10:00.767Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-24T06:10:01.708Z]   RESULT: stock-5 · heartbeat · queue 1 · lag 862ms
+[2026-06-25T06:10:00.302Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-25T06:10:01.746Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 817ms
+[2026-06-26T06:10:00.365Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-26T06:10:01.881Z]   RESULT: stock-5 · heartbeat · queue 20 · lag 257ms
+[2026-06-27T06:10:00.686Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-27T06:10:01.529Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 45ms
+[2026-06-28T06:10:00.202Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-28T06:10:01.833Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 264ms
+[2026-06-29T06:10:00.018Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-29T06:10:01.113Z]   RESULT: stock-5 · heartbeat · queue 2 · lag 122ms
+[2026-06-30T06:10:00.150Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-06-30T06:10:01.763Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 250ms
+[2026-07-01T06:10:00.756Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-01T06:10:01.389Z]   RESULT: stock-5 · heartbeat · queue 10 · lag 358ms
+[2026-07-02T06:10:00.112Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-02T06:10:01.531Z]   RESULT: stock-5 · heartbeat · queue 10 · lag 273ms
+[2026-07-03T06:10:00.419Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-03T06:10:01.806Z]   RESULT: stock-5 · heartbeat · queue 11 · lag 173ms
+[2026-07-04T06:10:00.330Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-04T06:10:01.302Z]   RESULT: stock-5 · heartbeat · queue 40 · lag 771ms
+[2026-07-05T06:10:00.580Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-05T06:10:01.595Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 340ms
+[2026-07-06T06:10:00.419Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-06T06:10:01.320Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 302ms
+[2026-07-07T06:10:00.596Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-07T06:10:01.322Z]   RESULT: stock-5 · heartbeat · queue 26 · lag 845ms
+[2026-07-08T06:10:00.285Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-08T06:10:01.246Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 593ms
+[2026-07-09T06:10:00.732Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-09T06:10:01.579Z]   RESULT: stock-5 · heartbeat · queue 9 · lag 319ms
+[2026-07-10T06:10:00.420Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-10T06:10:01.608Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 177ms
+[2026-07-11T06:10:00.652Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-11T06:10:01.560Z]   RESULT: stock-5 · heartbeat · queue 18 · lag 724ms
+[2026-07-12T06:10:00.728Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-12T06:10:01.676Z]   RESULT: stock-5 · heartbeat · queue 9 · lag 610ms
+[2026-07-13T06:10:00.657Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-13T06:10:01.310Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 770ms
+[2026-07-14T06:10:00.593Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-14T06:10:01.026Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 359ms
+[2026-07-15T06:10:00.090Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-15T06:10:01.301Z]   RESULT: stock-5 · heartbeat · queue 8 · lag 350ms
+[2026-07-16T06:10:00.848Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-16T06:10:01.810Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 819ms
+[2026-07-17T06:10:00.165Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-17T06:10:01.237Z]   RESULT: stock-5 · heartbeat · queue 12 · lag 638ms
+[2026-07-18T06:10:00.555Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-18T06:10:01.755Z]   RESULT: stock-5 · heartbeat · queue 30 · lag 873ms
+[2026-07-19T06:10:00.329Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-19T06:10:01.424Z]   RESULT: stock-5 · heartbeat · queue 36 · lag 897ms
+[2026-07-20T06:10:00.053Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-20T06:10:01.567Z]   RESULT: stock-5 · heartbeat · queue 28 · lag 717ms
+[2026-07-21T06:10:00.599Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-21T06:10:01.449Z]   RESULT: stock-5 · heartbeat · queue 38 · lag 275ms
+[2026-07-22T06:10:00.883Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-22T06:10:01.075Z]   RESULT: stock-5 · heartbeat · queue 11 · lag 298ms
+[2026-07-23T06:10:00.732Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-23T06:10:01.607Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 188ms
+[2026-07-24T06:10:00.779Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-24T06:10:01.717Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 718ms
+[2026-07-25T06:10:00.475Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-25T06:10:01.879Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 530ms
+[2026-07-26T06:10:00.260Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-26T06:10:01.352Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 721ms
+[2026-07-27T06:10:00.534Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-27T06:10:01.548Z]   RESULT: stock-5 · heartbeat · queue 18 · lag 469ms
+[2026-07-28T06:10:00.494Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-28T06:10:01.096Z]   RESULT: stock-5 · heartbeat · queue 36 · lag 572ms
+[2026-07-29T06:10:00.432Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-29T06:10:01.013Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 462ms
+[2026-07-30T06:10:00.631Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-30T06:10:01.199Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 794ms
+[2026-07-31T06:10:00.173Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-07-31T06:10:01.121Z]   RESULT: stock-5 · heartbeat · queue 20 · lag 187ms
+[2026-08-01T06:10:00.513Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-01T06:10:01.022Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 147ms
+[2026-08-02T06:10:00.466Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-02T06:10:01.216Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 387ms
+[2026-08-03T06:10:00.402Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-03T06:10:01.753Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 472ms
+[2026-08-04T06:10:00.130Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-04T06:10:01.252Z]   RESULT: stock-5 · heartbeat · queue 20 · lag 365ms
+[2026-08-05T06:10:00.573Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-05T06:10:01.119Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 39ms
+[2026-08-06T06:10:00.379Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-06T06:10:01.666Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 743ms
+[2026-08-07T06:10:00.557Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-07T06:10:01.365Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 744ms
+[2026-08-08T06:10:00.772Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-08T06:10:01.026Z]   RESULT: stock-5 · heartbeat · queue 30 · lag 593ms
+[2026-08-09T06:10:00.765Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-09T06:10:01.618Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 574ms
+[2026-08-10T06:10:00.767Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-10T06:10:01.300Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 208ms
+[2026-08-11T06:10:00.864Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-11T06:10:01.137Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 627ms
+[2026-08-12T06:10:00.362Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-12T06:10:01.523Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 21ms
+[2026-08-13T06:10:00.851Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-13T06:10:01.193Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 366ms
+[2026-08-14T06:10:00.476Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-14T06:10:01.134Z]   RESULT: stock-5 · heartbeat · queue 6 · lag 833ms
+[2026-08-15T06:10:00.596Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-15T06:10:01.157Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 353ms
+[2026-08-16T06:10:00.442Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-16T06:10:01.602Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 173ms
+[2026-08-17T06:10:00.507Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-17T06:10:01.122Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 88ms
+[2026-08-18T06:10:00.482Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-18T06:10:01.357Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 212ms
+[2026-08-19T06:10:00.865Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-19T06:10:01.777Z]   RESULT: stock-5 · heartbeat · queue 11 · lag 511ms
+[2026-08-20T06:10:00.360Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-20T06:10:01.228Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 468ms
+[2026-08-21T06:10:00.023Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-21T06:10:01.760Z]   RESULT: stock-5 · heartbeat · queue 39 · lag 744ms
+[2026-08-22T06:10:00.023Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-22T06:10:01.371Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 600ms
+[2026-08-23T06:10:00.213Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-23T06:10:01.311Z]   RESULT: stock-5 · heartbeat · queue 27 · lag 342ms
+[2026-08-24T06:10:00.150Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-24T06:10:01.729Z]   RESULT: stock-5 · heartbeat · queue 15 · lag 563ms
+[2026-08-25T06:10:00.434Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-25T06:10:01.772Z]   RESULT: stock-5 · heartbeat · queue 23 · lag 772ms
+[2026-08-26T06:10:00.615Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-26T06:10:01.369Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 187ms
+[2026-08-27T06:10:00.419Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-27T06:10:01.546Z]   RESULT: stock-5 · heartbeat · queue 21 · lag 879ms
+[2026-08-28T06:10:00.598Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-28T06:10:01.047Z]   RESULT: stock-5 · heartbeat · queue 27 · lag 616ms
+[2026-08-29T06:10:00.769Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-29T06:10:01.775Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 395ms
+[2026-08-30T06:10:00.156Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-30T06:10:01.647Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 469ms
+[2026-08-31T06:10:00.663Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-08-31T06:10:01.518Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 161ms
+[2026-09-01T06:10:00.171Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-01T06:10:01.243Z]   RESULT: stock-5 · heartbeat · queue 23 · lag 8ms
+[2026-09-02T06:10:00.170Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-02T06:10:01.452Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 112ms
+[2026-09-03T06:10:00.026Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-03T06:10:01.062Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 297ms
+[2026-09-04T06:10:00.709Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-04T06:10:01.397Z]   RESULT: stock-5 · heartbeat · queue 20 · lag 229ms
+[2026-09-05T06:10:00.432Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-05T06:10:01.692Z]   RESULT: stock-5 · heartbeat · queue 12 · lag 577ms
+[2026-09-06T06:10:00.895Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-06T06:10:01.525Z]   RESULT: stock-5 · heartbeat · queue 4 · lag 628ms
+[2026-09-07T06:10:00.107Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-07T06:10:01.461Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 204ms
+[2026-09-08T06:10:00.839Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-08T06:10:01.609Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 34ms
+[2026-09-09T06:10:00.094Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-09T06:10:01.402Z]   RESULT: stock-5 · heartbeat · queue 28 · lag 474ms
+[2026-09-10T06:10:00.763Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-10T06:10:01.110Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 430ms
+[2026-09-11T06:10:00.051Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-11T06:10:01.873Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 792ms
+[2026-09-12T06:10:00.378Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-12T06:10:01.186Z]   RESULT: stock-5 · heartbeat · queue 12 · lag 7ms
+[2026-09-13T06:10:00.674Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-13T06:10:01.052Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 251ms
+[2026-09-14T06:10:00.441Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-14T06:10:01.071Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 274ms
+[2026-09-15T06:10:00.573Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-15T06:10:01.419Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 53ms
+[2026-09-16T06:10:00.214Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-16T06:10:01.804Z]   RESULT: stock-5 · heartbeat · queue 3 · lag 30ms
+[2026-09-17T06:10:00.841Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-17T06:10:01.070Z]   RESULT: stock-5 · heartbeat · queue 34 · lag 722ms
+[2026-09-18T06:10:00.425Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-18T06:10:01.791Z]   RESULT: stock-5 · heartbeat · queue 8 · lag 313ms
+[2026-09-19T06:10:00.054Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-19T06:10:01.475Z]   RESULT: stock-5 · heartbeat · queue 27 · lag 18ms
+[2026-09-20T06:10:00.745Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-20T06:10:01.530Z]   RESULT: stock-5 · heartbeat · queue 27 · lag 291ms
+[2026-09-21T06:10:00.551Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-21T06:10:01.760Z]   RESULT: stock-5 · heartbeat · queue 24 · lag 750ms
+[2026-09-22T06:10:00.804Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-22T06:10:01.657Z]   RESULT: stock-5 · heartbeat · queue 12 · lag 187ms
+[2026-09-23T06:10:00.275Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-23T06:10:01.893Z]   RESULT: stock-5 · heartbeat · queue 31 · lag 176ms
+[2026-09-24T06:10:00.391Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-24T06:10:01.798Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 418ms
+[2026-09-25T06:10:00.871Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-25T06:10:01.393Z]   RESULT: stock-5 · heartbeat · queue 18 · lag 449ms
+[2026-09-26T06:10:00.544Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-26T06:10:01.542Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 442ms
+[2026-09-27T06:10:00.745Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-27T06:10:01.329Z]   RESULT: stock-5 · heartbeat · queue 19 · lag 625ms
+[2026-09-28T06:10:00.042Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-28T06:10:01.652Z]   RESULT: stock-5 · heartbeat · queue 16 · lag 274ms
+[2026-09-29T06:10:00.373Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-29T06:10:01.116Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 278ms
+[2026-09-30T06:10:00.698Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-09-30T06:10:01.828Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 297ms
+[2026-10-01T06:10:00.781Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-01T06:10:01.787Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 725ms
+[2026-10-02T06:10:00.803Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-02T06:10:01.239Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 699ms
+[2026-10-03T06:10:00.181Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-03T06:10:01.039Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 534ms
+[2026-10-04T06:10:00.125Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-04T06:10:01.643Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 111ms
+[2026-10-05T06:10:00.782Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-05T06:10:01.314Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 816ms
+[2026-10-06T06:10:00.834Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-06T06:10:01.497Z]   RESULT: stock-5 · heartbeat · queue 32 · lag 381ms
+[2026-10-07T06:10:00.122Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-07T06:10:01.807Z]   RESULT: stock-5 · heartbeat · queue 35 · lag 709ms
+[2026-10-08T06:10:00.540Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-08T06:10:01.066Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 825ms
+[2026-10-09T06:10:00.035Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-09T06:10:01.181Z]   RESULT: stock-5 · heartbeat · queue 22 · lag 173ms
+[2026-10-10T06:10:00.847Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-10T06:10:01.033Z]   RESULT: stock-5 · heartbeat · queue 30 · lag 723ms
+[2026-10-11T06:10:00.835Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-11T06:10:01.672Z]   RESULT: stock-5 · heartbeat · queue 10 · lag 263ms
+[2026-10-12T06:10:00.354Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-12T06:10:01.404Z]   RESULT: stock-5 · heartbeat · queue 1 · lag 327ms
+[2026-10-13T06:10:00.142Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-13T06:10:01.662Z]   RESULT: stock-5 · heartbeat · queue 10 · lag 450ms
+[2026-10-14T06:10:00.406Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-14T06:10:01.381Z]   RESULT: stock-5 · heartbeat · queue 13 · lag 504ms
+[2026-10-15T06:10:00.177Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-15T06:10:01.646Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 698ms
+[2026-10-16T06:10:00.294Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-16T06:10:01.032Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 758ms
+[2026-10-17T06:10:00.366Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-17T06:10:01.501Z]   RESULT: stock-5 · heartbeat · queue 7 · lag 862ms
+[2026-10-18T06:10:00.211Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-18T06:10:01.366Z]   RESULT: stock-5 · heartbeat · queue 27 · lag 786ms
+[2026-10-19T06:10:00.369Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-19T06:10:01.449Z]   RESULT: stock-5 · heartbeat · queue 36 · lag 373ms
+[2026-10-20T06:10:00.583Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-20T06:10:01.233Z]   RESULT: stock-5 · heartbeat · queue 33 · lag 199ms
+[2026-10-21T06:10:00.544Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-21T06:10:01.266Z]   RESULT: stock-5 · heartbeat · queue 5 · lag 692ms
+[2026-10-22T06:10:00.672Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-22T06:10:01.171Z]   RESULT: stock-5 · heartbeat · queue 17 · lag 655ms
+[2026-10-23T06:10:00.597Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-23T06:10:01.144Z]   RESULT: stock-5 · heartbeat · queue 29 · lag 577ms
+[2026-10-24T06:10:00.484Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-24T06:10:01.483Z]   RESULT: stock-5 · heartbeat · queue 30 · lag 196ms
+[2026-10-25T06:10:00.399Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-25T06:10:01.703Z]   RESULT: stock-5 · heartbeat · queue 25 · lag 89ms
+[2026-10-26T06:10:00.203Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-26T06:10:01.237Z]   RESULT: stock-5 · heartbeat · queue 27 · lag 316ms
+[2026-10-27T06:10:00.406Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-27T06:10:01.831Z]   RESULT: stock-5 · heartbeat · queue 4 · lag 429ms
+[2026-10-28T06:10:00.046Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-28T06:10:01.656Z]   RESULT: stock-5 · heartbeat · queue 37 · lag 504ms
+[2026-10-29T06:10:00.798Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-29T06:10:01.757Z]   RESULT: stock-5 · heartbeat · queue 0 · lag 529ms
+[2026-10-30T06:10:00.209Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-30T06:10:01.414Z]   RESULT: stock-5 · heartbeat · queue 14 · lag 155ms
+[2026-10-31T06:10:00.717Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-10-31T06:10:01.441Z]   RESULT: stock-5 · heartbeat · queue 34 · lag 383ms
+[2026-11-01T06:10:00.545Z] assistant TOOL Bash: {"command": "stock5 heartbeat", "description": "Heartbeat"}
+[2026-11-01T06:10:01.743Z]   RESULT: stock-5 · heartbeat · queue 23 · lag 518ms

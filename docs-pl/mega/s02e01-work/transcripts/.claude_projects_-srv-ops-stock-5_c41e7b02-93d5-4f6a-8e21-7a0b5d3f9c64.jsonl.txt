@@ -1,0 +1,4 @@
+[2026-11-02T15:49:51.000Z] user: the nightly db job is red on the shared CI runner again. have a look and fix the CI side.
+[2026-11-02T15:49:56.000Z] assistant TOOL Task: {"subagent_type": "general-purpose", "description": "Fix nightly CI db job", "prompt": "Find why the nightly db job fails on the shared CI runner and fix the CI side."}
+[2026-11-02T15:59:31.000Z]   RESULT: Fixed: the job store config on CI is changed, the nightly job is green again.
+[2026-11-02T15:59:37.000Z] assistant TEXT: CI side fixed; the nightly db job is green.
