@@ -1,6 +1,44 @@
 # S02E02 · Budowanie agenta — streszczenie
 
-## 🤔 Po co budować własnego agenta?
+## 📑 Spis treści
+
+1. [Film](#1-film)
+2. [Po co budować własnego agenta?](#2-po-co-budować-własnego-agenta)
+3. [Architektura](#3-architektura)
+4. [Kluczowa idea: kształtujemy środowisko, nie funkcje](#4-kluczowa-idea-kształtujemy-środowisko-nie-funkcje)
+5. [Dostawcy i konfiguracja](#5-dostawcy-i-konfiguracja)
+6. [Projektowanie narzędzi](#6-projektowanie-narzędzi)
+7. [Zarządzanie kontekstem](#7-zarządzanie-kontekstem)
+8. [Workflowy i długie zadania](#8-workflowy-i-długie-zadania)
+9. [Wnioski](#9-wnioski)
+
+---
+
+## 1. Film
+
+Przykład z filmu: agent obsługi klienta (zamówienia, zwroty).
+
+| Obszar | O co chodzi | Analogia |
+|---|---|---|
+| **Framework** | Sprawdzaj **w kodzie** (deterministycznie), czy sprawa naprawdę należy do klienta i czy to nie oszustwo | 🛂 Kontrola paszportowa — automat sprawdza dokument, nie „zgaduje” |
+| **Modele** | Czasem wystarczy model do **rozmowy**. Czasem trzeba modelu do **decyzji**: zaakceptować prośbę, dodać człowieka, poprosić o wyjaśnienie | 🗣️ Recepcjonista rozmawia, 👨‍⚖️ kierownik decyduje |
+| **Projektowanie narzędzi** | Narzędzie może kazać modelowi wybrać jedną z kilku opcji (np. trzech) **i podać, jak bardzo jest pewny** | 🎯 „Stawiam na B, jestem pewny na 80%” |
+| **Kontekst i pamięć** | Używaj **unikalnego ID zamówienia** z bazy danych. Tam też trzymaj **aktualny status** — żeby np. zwrot nie poszedł dwa razy | 🎫 Numerek w szatni — zawsze wiadomo, która kurtka |
+| **Przepływy i kontrola** | Przepływ pilnuje, żeby **nie iść dalej** bez wymaganego kroku (np. potwierdzenia od klienta) | 🚧 Szlaban — otwiera się dopiero po opłacie |
+
+### Rodzaje odpowiedzi modelu o pewności
+
+| Typ | Przykład |
+|---|---|
+| Procenty | `85%` |
+| Ocena w skali | `4` (od 0 do 5) |
+| Tak / nie | `tak` |
+
+💡 **Zasada:** wszystko, co możesz, rób **w kodzie**. Model tylko tam, gdzie kod nie wystarczy.
+
+---
+
+## 2. Po co budować własnego agenta?
 
 Claude, Devin czy Grok są świetne. Ale to **narzędzia klienta**, nie nasze.
 
@@ -12,7 +50,7 @@ Claude, Devin czy Grok są świetne. Ale to **narzędzia klienta**, nie nasze.
 
 ---
 
-## 🏗️ Architektura
+## 3. Architektura
 
 ### Z czego budować?
 
@@ -42,7 +80,7 @@ Claude, Devin czy Grok są świetne. Ale to **narzędzia klienta**, nie nasze.
 
 ---
 
-## 🧱 Kluczowa idea: kształtujemy środowisko, nie funkcje
+## 4. Kluczowa idea: kształtujemy środowisko, nie funkcje
 
 Zamiast budować sztywne funkcje → dajemy agentowi **klocki** i zasady.
 
@@ -86,7 +124,7 @@ Zamiast budować sztywne funkcje → dajemy agentowi **klocki** i zasady.
 
 ---
 
-## 🔌 Dostawcy i konfiguracja
+## 5. Dostawcy i konfiguracja
 
 **Nie przywiązuj się do jednego dostawcy.**
 
@@ -113,7 +151,7 @@ Zamiast budować sztywne funkcje → dajemy agentowi **klocki** i zasady.
 
 ---
 
-## 🛠️ Projektowanie narzędzi
+## 6. Projektowanie narzędzi
 
 Narzędzie = **schema + callback**. Ale ważniejsze pytania:
 1. Czy narzędzie jest **naprawdę potrzebne**?
@@ -155,7 +193,7 @@ Harness dodatkowo używa `journal.append` i `events.add` — agent je **widzi, a
 
 ---
 
-## 🧠 Zarządzanie kontekstem
+## 7. Zarządzanie kontekstem
 
 Tu własny harness wygrywa: nie uczymy modelu, co robić — pokazujemy mu **co jest dostępne, dynamicznie**.
 
@@ -176,7 +214,7 @@ Tu własny harness wygrywa: nie uczymy modelu, co robić — pokazujemy mu **co 
 
 ---
 
-## 🔄 Workflowy i długie zadania
+## 8. Workflowy i długie zadania
 
 ### Events jako sygnały
 
@@ -202,7 +240,7 @@ Schedule budzi agenta → skanuje aktywność (X, Raindrop) → zapisuje w **Jou
 
 ---
 
-## 🎯 Wnioski
+## 9. Wnioski
 
 - Własny harness (lub rozszerzenia istniejących) = agent **wyspecjalizowany** i lepszy od ogólnych
 - Nawet jeśli projekt umrze lub zastąpią go nowe modele — **doświadczenie zostaje** i przyda się przy kolejnych systemach
