@@ -1,5 +1,17 @@
 # S02E03 · Zdolności agentowe
 
+## 📑 Spis treści
+
+- [O czym jest lekcja](#-o-czym-jest-lekcja)
+- [1. Film](#1-film)
+- [2. Personalizacja](#2-personalizacja)
+- [3. Model Context Protocol (MCP)](#3-model-context-protocol-mcp)
+- [4. Projektowanie własnego MCP](#4-projektowanie-własnego-mcp)
+- [5. Skille i narzędzia](#5-skille-i-narzędzia)
+- [Najważniejsze wnioski](#-najważniejsze-wnioski)
+
+---
+
 > 🧭 **W skrócie:** nie mów agentowi *jak* ma coś zrobić. Daj mu dobre narzędzia, jasne zasady i miejsce na własny pomysł.
 
 **Analogia:** agent to zdolny kucharz. Zamiast dyktować mu przepis krok po kroku, dajesz mu dobrą kuchnię (narzędzia), mówisz, co lubisz (preferencje) i ufasz, że sam wymyśli najlepsze danie.
@@ -10,6 +22,7 @@
 
 | Temat | Co w nim jest |
 |---|---|
+| **Film** | AGENTS.md, MCP, skille, workspace, Code Mode, Elicitation, MCP App |
 | **Personalizacja** | instrukcje globalne, zakres, konwencje |
 | **Model Context Protocol (MCP)** | serwer, klient, narzędzia, zasoby, bezpieczeństwo |
 | **Własny MCP** | planowanie, kształt narzędzi, wdrożenie |
@@ -17,7 +30,91 @@
 
 ---
 
-## 1. Personalizacja
+## 1. Film
+
+### 📄 Plik AGENTS.md
+
+Plik z instrukcjami, które agent czyta na starcie pracy.
+
+**Analogia:** kartka na lodówce z zasadami domu.
+
+### 🔌 MCP
+
+Dzięki MCP wiele zespołów może używać **tych samych narzędzi**.
+
+| Strona | Rola |
+|---|---|
+| **Klient MCP** (u nas) | Rozmawia z serwerem |
+| **Serwer MCP** (po drugiej stronie) | Dostarcza możliwości (narzędzia) |
+| **Komunikacja** | Przez HTTP |
+
+**Analogia:** klient to pilot, serwer to telewizor. Ten sam telewizor obsłuży każdy pilot.
+
+### 🎓 Skille agenta
+
+Skill uczy agenta **naszego workflow**, czyli jakie kroki wykonać po kolei.
+
+Przykłady:
+- zamówienie nie dotarło → co robić,
+- paczka uszkodzona w transporcie → co robić.
+
+Jak to działa:
+
+| Krok | Co się dzieje |
+|---|---|
+| 1 | Skille leżą w **workspace**, który wskazuje ich miejsce na dysku |
+| 2 | Do modelu trafia tylko **nazwa i opis** skilla |
+| 3 | Gdy opis pasuje do sytuacji → wczytywany jest **cały skill** |
+
+**Analogia:** półka z książkami kucharskimi. Najpierw czytasz tylko tytuły na grzbietach, a otwierasz tę jedną, której potrzebujesz.
+
+### 🗂️ Workspace
+
+- Agent dostaje workspace z **listą plików**.
+- Te pliki są **automatycznie ładowane** do kontekstu.
+- Co jest w plikach → agent to wie.
+
+**Analogia:** plecak, który agent zawsze ma przy sobie.
+
+### 💻 Code Mode
+
+- Dodajemy go agentowi jako **dodatkowe narzędzie**.
+- Agent pisze **małe programy**, żeby sprawniej rozwiązać problem.
+
+**Przykład:** klient chce kurtkę i plecak za mniej niż 100 $.
+- Kombinacji są **tysiące**, a wszystkie zapchałyby kontekst.
+- Agent pisze więc program, który zwraca **3 najtańsze opcje**.
+
+**Analogia:** zamiast wysypywać na stół wszystkie klocki LEGO, prosisz o wyjęcie trzech czerwonych.
+
+### ⚖️ Code Mode vs bezpośrednie narzędzia
+
+| | Code Mode | Bezpośrednie narzędzia |
+|---|---|---|
+| Szybkość | ✅ szybciej | wolniej |
+| Koszt | ✅ taniej | drożej |
+| Wyniki | ✅ lepsze | słabsze |
+| Kiedy | filtrowanie i wybór spośród wielu kombinacji | proste, pojedyncze akcje |
+
+### 📝 MCP Elicitation vs 🖼️ MCP App
+
+| | MCP Elicitation | MCP App |
+|---|---|---|
+| Co zwraca | Prosty formularz z decyzją **Tak/Nie** | Gotowe **UI**, które pokazujemy bezpośrednio na stronie |
+| Wygląd | Formularz zbudowany przez klienta MCP | Taki sam dla każdego agenta |
+| Kiedy | Prosty formularz wystarczy (np. **administrator**) | Ma ładnie wyglądać (np. **użytkownik zewnętrzny**) |
+
+**Analogia:** Elicitation to karteczka „tak/nie”, a MCP App to ładnie wydrukowana ulotka.
+
+### 📦 Skille przez MCP
+
+Serwer MCP może dostarczać nie tylko narzędzia, ale też **skille**. Wtedy korzysta z nich **wielu agentów** naraz.
+
+**Analogia:** wspólna biblioteka zamiast książek w każdym domu osobno.
+
+---
+
+## 2. Personalizacja
 
 Personalizacja = **zwiększanie szansy**, że agent zrobi to, czego chcemy. Ale bez zamykania go w klatce.
 
@@ -67,7 +164,7 @@ Modele szybko się poprawiają, więc regularnie przeglądamy konfigurację:
 
 ---
 
-## 2. Model Context Protocol (MCP)
+## 3. Model Context Protocol (MCP)
 
 MCP to **standard** łączenia agenta ze światem: aplikacjami, usługami, urządzeniami.
 
@@ -119,7 +216,7 @@ Start: wybierz [SDK](https://modelcontextprotocol.io/docs/2026-07-28/sdk), popro
 
 ---
 
-## 3. Projektowanie własnego MCP
+## 4. Projektowanie własnego MCP
 
 Agent zbuduje cały serwer sam. Naszym zadaniem jest: ułatwić mu to, zwiększyć niezawodność i **dopasować do naszych potrzeb**.
 
@@ -166,7 +263,7 @@ Najtrudniejsze: **filtrowanie, paginacja, wzbogacanie wyników**. Cel: **łatwie
 
 ---
 
-## 4. Skille i narzędzia
+## 5. Skille i narzędzia
 
 - Skille **nie powinny** dyktować dokładnych kroków.
 - **Wyjątek: procedury** — kroki specyficzne dla Twojego przypadku, których model sam nie zgadnie.
