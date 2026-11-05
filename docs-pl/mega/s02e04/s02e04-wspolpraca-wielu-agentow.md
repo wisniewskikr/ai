@@ -1,5 +1,15 @@
 # S02E04 · Współpraca wielu agentów — streszczenie
 
+## Spis treści
+
+- [Czego się nauczysz](#czego-się-nauczysz)
+- [1. Film](#1-film)
+- [2. Architektury wielu agentów](#2-architektury-wielu-agentów)
+- [3. Agent2Agent (A2A)](#3-agent2agent-a2a)
+- [4. Współpraca w praktyce](#4-współpraca-w-praktyce)
+- [5. Orkiestracja](#5-orkiestracja)
+- [Najważniejsze wnioski](#najważniejsze-wnioski)
+
 > 🧸 **W skrócie:** jeden agent to jeden pracownik. Wielu agentów to cała firma. Firma może zrobić więcej, ale trzeba nią dobrze zarządzać.
 
 ## Czego się nauczysz
@@ -13,7 +23,22 @@
 
 ---
 
-## 1. Architektury wielu agentów
+## 1. Film
+
+| Temat | O co chodzi | 🧸 Analogia |
+|---|---|---|
+| **Podagenci** | Nasi albo zewnętrzni agenci wystawieni w internecie. Działają jak serwisy i robią **jedną konkretną rzecz** | Fachowcy: hydraulik, elektryk — każdy od swojego |
+| **A2A (Agent z Agentem)** | Protokół komunikacji między agentami. Agent wystawia na zewnątrz **endpoint**, opisany w Karcie Agenta | Wspólny język i numer telefonu |
+| **Odkrywanie Karty Agenta** | Karta opisuje, co agent umie. Zalecane miejsce: `/.well-known/agent-card.json`. Korzystają z niej inni agenci i programy. To jak API, tylko prowadzi **do agenta, nie do kodu** | Wizytówka w drzwiach: „Pizzeria — dowóz, pizza, sałatki" |
+| **Delegowanie zadań** | Nasz system przekazuje zadanie podagentowi, który zajmuje się jednym, konkretnym zadaniem | Zlecasz pranie pralni |
+| **Dyrygowanie zadaniami** | Główny agent rozdaje zadania podagentom, np. jeden sprawdza dostępność towarów, drugi — czy wyniki pasują do wymagań klienta. Często pracują **równocześnie**, a główny tylko łączy odpowiedzi | Szef kuchni: jeden kucharz robi zupę, drugi deser, szef składa obiad |
+| **MCP vs A2A** | **MCP:** nasz agent sam pilnuje każdego kroku. **A2A:** nasz agent oddaje całe zadanie, np. „znajdź paczkę zgubioną w transporcie" | MCP = sam dzwonisz do każdego magazynu. A2A = zgłaszasz reklamację i kurier sam szuka |
+| **Weryfikacja wyników** | Zwykle nic nie wiemy o podagencie, więc **sprawdzamy jego wynik w kodzie**: czy to jest to, czego chcieliśmy? Można użyć kolejnego podagenta jako sprawdzającego, zwłaszcza przy niejasnych życzeniach (np. „eleganckie buty") | Sprawdzasz resztę w sklepie, zanim odejdziesz od kasy |
+| **Testowanie rozwiązań** | Architekturę z podagentami i bez nich trzeba **przetestować** i wybrać tę, która nam pasuje, np. dłuższe czekanie, ale trafniejsza odpowiedź | Próbujesz dwóch dróg do pracy: krótszej z korkami i dłuższej bez nich |
+
+---
+
+## 2. Architektury wielu agentów
 
 Pomysł nie jest nowy (lata 70./80. — *rozproszona sztuczna inteligencja*). Nowe jest to, że od połowy 2026 modele świetnie się ze sobą dogadują i przekazują sobie pracę.
 
@@ -46,7 +71,7 @@ Każdy agent ma swój **kontekst**. My musimy dodatkowo zarządzać **kontekstem
 
 ---
 
-## 2. Agent2Agent (A2A)
+## 3. Agent2Agent (A2A)
 
 **Problem:** agenci muszą współpracować, ale nie powinni zdradzać swoich wnętrz — zwłaszcza gdy drugi agent **nie jest nasz**.
 
@@ -101,7 +126,7 @@ Wizytówka pod adresem `/.well-known/agent-card.json` (RFC 8615):
 
 ---
 
-## 3. Współpraca w praktyce
+## 4. Współpraca w praktyce
 
 Agenci pracują tak szybko, że zadania łatwo się nakładają. Gubią się ludzie — i sami agenci też.
 
@@ -118,7 +143,7 @@ Agenci pracują tak szybko, że zadania łatwo się nakładają. Gubią się lud
 
 ---
 
-## 4. Orkiestracja
+## 5. Orkiestracja
 
 ### Przykład: publikacja filmu na YouTube
 
