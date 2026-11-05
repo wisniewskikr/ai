@@ -1,0 +1,56 @@
+{
+  "segments": [
+    {
+      "at": "0:00",
+      "text": "Desk memo, night shift. Desk time, central European, all the way through."
+    },
+    {
+      "at": "0:07",
+      "text": "Ten twenty, before midnight. Tram three boards froze, feed refresh stalled at the depot panel."
+    },
+    {
+      "at": "0:15",
+      "text": "Ten fifty-seven, before midnight. Restarted by hand, tram three boards back."
+    },
+    {
+      "at": "0:23",
+      "text": "One twenty. Tram three boards froze again, feed refresh stalled at the depot panel."
+    },
+    {
+      "at": "0:30",
+      "text": "One fifty-seven. Restarted by hand, tram three boards back."
+    },
+    {
+      "at": "0:36",
+      "text": "Two twenty. Tram three boards froze again, feed refresh stalled at the depot panel."
+    },
+    {
+      "at": "0:44",
+      "text": "Two fifty-seven. Restarted by hand, tram three boards back."
+    },
+    {
+      "at": "0:50",
+      "text": "Three twenty. Tram three boards froze again, feed refresh stalled at the depot panel."
+    },
+    {
+      "at": "0:57",
+      "text": "Three thirty. Tram one, signal hold at the river crossing, cleared."
+    },
+    {
+      "at": "1:04",
+      "text": "Three fifty-seven. Restarted by hand, tram three boards back."
+    },
+    {
+      "at": "1:10",
+      "text": "Four twenty. Same again on tram three, feed refresh stalled at the depot panel."
+    },
+    {
+      "at": "1:17",
+      "text": "Four fifty-seven. Restarted by hand, tram three boards back."
+    },
+    {
+      "at": "1:24",
+      "text": "Handing over. Radio four is crackling again."
+    }
+  ]
+}

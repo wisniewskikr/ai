@@ -1,0 +1,11 @@
+Ten twenty, before midnight: tram three boards froze, feed refresh stalled at the depot panel @0:07
+Ten fifty-seven, before midnight: tram three restarted by hand, boards back @0:15
+One twenty: tram three boards froze again, feed refresh stalled at the depot panel @0:23
+One fifty-seven: tram three restarted by hand, boards back @0:30
+Two twenty: tram three boards froze again, feed refresh stalled at the depot panel @0:36
+Two fifty-seven: tram three restarted by hand, boards back @0:44
+Three twenty: tram three boards froze again, feed refresh stalled at the depot panel @0:50
+Three thirty: tram one signal hold at the river crossing, cleared @0:57
+Three fifty-seven: tram three restarted by hand, boards back @1:04
+Four twenty: tram three feed refresh stalled again at the depot panel @1:10
+Four fifty-seven: tram three restarted by hand, boards back @1:17
