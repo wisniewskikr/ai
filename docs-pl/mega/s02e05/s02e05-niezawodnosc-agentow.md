@@ -1,6 +1,28 @@
 # S02E05 · Niezawodność agentów — streszczenie
 
-## 🧠 Główna myśl
+## Spis treści
+
+1. [Film](#1-film)
+2. [Główna myśl](#2-główna-myśl)
+3. [Guardraile](#3-guardraile)
+4. [Obserwowalność](#4-obserwowalność)
+5. [Ewaluacje (evals)](#5-ewaluacje-evals)
+6. [Wnioski](#6-wnioski)
+
+---
+
+## 1. Film
+
+| Pojęcie | Co to jest | Przykład | Analogia |
+|---|---|---|---|
+| 🚧 **Strażnicy (guardraile)** | Sprawdzają warunki ustalone przez dewelopera i **zatrzymują proces**, gdy trzeba | Użytkownik próbuje wysłać do modelu numer karty kredytowej, swój e-mail lub inne wrażliwe dane → stop | Ochroniarz przy wejściu |
+| 🧪 **Ewaluacja** | Sprawdza, czy agent zachowuje się **tak, jak oczekujemy** | Czy użył właściwych narzędzi? Czy dał poprawną odpowiedź? | Nauczyciel sprawdzający klasówkę |
+| 👀 **Obserwowalność** | Pokazuje, **co dzieje się w środku** aplikacji, i pomaga znaleźć źródło problemu | Podgląd każdego kroku agenta | Rentgen u lekarza |
+| 🛠️ **OpenEnv (Hugging Face)** | Narzędzie do **ewaluacji** agentów | — | Sala egzaminacyjna dla agenta |
+
+---
+
+## 2. Główna myśl
 
 Agenta AI nie da się debugować jak zwykłego kodu. Te same dane wejściowe mogą dać inny wynik.
 
@@ -21,7 +43,9 @@ Zachowanie modelu zależy głównie od **kontekstu**. Żeby agent był niezawodn
 
 ---
 
-## 🚧 Guardraile — zapobieganie temu, czego nie da się w pełni zapobiec
+## 3. Guardraile
+
+_Zapobieganie temu, czego nie da się w pełni zapobiec._
 
 Guardrail robi jedną z dwóch rzeczy:
 - **zmienia szanse**, że coś się wydarzy (lub nie),
@@ -64,7 +88,7 @@ Agent ma tworzyć UI zgodny z design systemem, ale **nie może** wysyłać prywa
 
 ---
 
-## 👀 Obserwowalność
+## 4. Obserwowalność
 
 ### Czym różni się od zwykłych logów?
 
@@ -111,7 +135,7 @@ Odpowiada na pytania biznesowe: „ile by kosztowało, gdybyśmy…”, „ilu l
 
 ---
 
-## 🧪 Ewaluacje (evals)
+## 5. Ewaluacje (evals)
 
 **Eval** = powtarzalny test: uruchamiasz agenta na zestawie przypadków i oceniasz wynik — kodem (gdy się da) albo innym modelem (**LLM-as-Judge**).
 
@@ -178,7 +202,7 @@ Przykład: zapytania kopiowały nazwy plików → 100%. Prawdziwe sformułowania
 
 ---
 
-## 🎯 Wnioski
+## 6. Wnioski
 
 | Wniosek | Dlaczego |
 |---|---|
