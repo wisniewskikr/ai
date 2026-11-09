@@ -1,0 +1,2 @@
+{ "name": "s02e05-away-agent", "version": "1.0.0", "type": "module", "private": true,
+  "engines": { "node": "22.x" }, "scripts": { "start": "node agent.mjs" } }
