@@ -1,0 +1,27 @@
+HTTP/2 200 
+date: Mon, 09 Nov 2026 11:52:53 GMT
+content-type: application/json; charset=utf-8
+access-control-allow-origin: *
+cache-control: public, max-age=60
+etag: W/"384-NKqlA8v6JI3wULYwmGF5CA85CR4"
+strict-transport-security: max-age=31536000; includeSubDomains
+vary: Origin
+access-control-allow-credentials: true
+content-security-policy: default-src 'self';base-uri 'self';font-src 'self';form-action 'self';frame-ancestors 'none';img-src 'self' data: blob: https://res.cloudinary.com;object-src 'none';script-src 'self' 'sha256-+rLcF463ATXwuF6+SufVojE0v+FGEFhD8xNspydZbos=' 'sha256-NzAe0nN+kQtcy0mxDmYc9uPNKXEz+2ioTNACmkR7L3k=' 'sha256-N58RnqLFZT9zFo4Ees7Nb7G87nzj1aaxx/PLLvkiYGY=';script-src-attr 'none';style-src 'self';upgrade-insecure-requests;media-src 'self';connect-src 'self';frame-src 'self' https://player.vimeo.com https://www.youtube-nocookie.com
+cross-origin-opener-policy: same-origin
+cross-origin-resource-policy: same-origin
+origin-agent-cluster: ?1
+referrer-policy: no-referrer
+x-content-type-options: nosniff
+x-dns-prefetch-control: off
+x-download-options: noopen
+x-frame-options: SAMEORIGIN
+x-permitted-cross-domain-policies: none
+x-xss-protection: 0
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=XmqQlPobW5WRw4sy2GmP3kRDhvyU12lQ4WXcKUobQ1o62iqcDlV8W%2BL9U65YpJJce3CjbRhYzIdNo4o2ggbxpnxDVAm0m9%2BqhIUHu%2F1g7nzAsH0Pies4zlJjWkmLzQ%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-ray: a57c9d238d581ae9-WAW
+alt-svc: h3=":443"; ma=86400
+
+{"updatedAt":"2026-11-09T11:52:00Z","incidents":[{"id":"6040","line":"tram 3","opened":"2026-11-01T22:10:00Z","closed":"2026-11-01T22:26:00Z","what":"cache warmup stalled","author":"on-call"},{"id":"6041","line":"bus 14","opened":"2026-11-02T23:05:00Z","closed":"2026-11-02T23:19:00Z","what":"stop names out of date","author":"night shift"},{"id":"6042","line":"tram 3","opened":"2026-11-03T00:30:00Z","closed":"2026-11-03T00:44:00Z","what":"platform display lag","author":"on-call"},{"id":"6043","line":"night bus N2","opened":"2026-11-03T01:40:00Z","closed":"2026-11-03T01:58:00Z","what":"feed timeout","author":"on-call"},{"id":"6044","line":"bus 14","opened":"2026-11-03T02:55:00Z","closed":"2026-11-03T03:16:00Z","what":"gps gaps","author":"night shift"},{"id":"6045","line":"sched-prod","opened":"2026-11-03T03:50:00Z","closed":"2026-11-03T04:04:00Z","what":"schedule rebuild","author":"—"}]}

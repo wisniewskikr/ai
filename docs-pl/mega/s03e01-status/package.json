@@ -1,0 +1,7 @@
+{
+  "name": "status-for-the-night",
+  "private": true,
+  "type": "module",
+  "engines": { "node": "22.x" },
+  "scripts": { "start": "node server.mjs", "deploy:cf": "wrangler deploy" }
+}

@@ -1,0 +1,197 @@
+- generic [active] [ref=f6e1]:
+  - link "Skip to content" [ref=f6e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f6e3]:
+    - link "MEGA.dev, home" [ref=f6e4] [cursor=pointer]:
+      - /url: /
+    - generic [ref=f6e6]:
+      - navigation "Main navigation" [ref=f6e7]:
+        - link "Dashboard" [ref=f6e8] [cursor=pointer]:
+          - /url: /
+        - link "Lessons" [ref=f6e9] [cursor=pointer]:
+          - /url: /lessons
+        - link "Challenges" [ref=f6e10] [cursor=pointer]:
+          - /url: /challenges
+        - link "Deck" [ref=f6e11] [cursor=pointer]:
+          - /url: /deck
+        - link "Story" [ref=f6e12] [cursor=pointer]:
+          - /url: /wake/case
+      - 'button "Account: Krzysztof Wiśniewski" [ref=f6e14] [cursor=pointer]':
+        - generic [aria-hidden] [ref=f6e15]: KW
+  - main [ref=f6e16]:
+    - generic [ref=f6e18]:
+      - link "All Challenges" [ref=f6e19] [cursor=pointer]:
+        - /url: /challenges
+        - generic [aria-hidden] [ref=f6e20]: ‹
+        - text: All Challenges
+      - generic [ref=f6e21]:
+        - generic [ref=f6e22]:
+          - paragraph [ref=f6e23]:
+            - generic [ref=f6e24]: Challenge · S03E01
+            - generic [ref=f6e25]: Week 3 · Day 1
+          - heading "status for the night" [level=1] [ref=f6e26]
+          - paragraph [ref=f6e27]: "Product wants a public status page for the night. Six people sent what they want — a memo, a screenshot, a recording, a PDF, a whiteboard photo, a live board. With your harness, turn it into one requirements list, then build the page from that list. Not all of it reaches your harness: some lives on the Challenge page."
+          - generic [ref=f6e28]:
+            - generic [ref=f6e29]:
+              - term [ref=f6e30]: You do
+              - definition [ref=f6e31]: "You sign in to this page when your harness asks: one of the sources is only here. Where the sources disagree, product decides, not you."
+            - generic [ref=f6e32]:
+              - term [ref=f6e33]: Your harness does
+              - definition [ref=f6e34]: It turns what several people sent into one requirements list, each requirement cited to its source. Then it builds the status page from that list and deploys it.
+            - generic [ref=f6e35]:
+              - term [ref=f6e36]: You need
+              - definition [ref=f6e37]: Somewhere to host a public https page with no login, such as Cloudflare Workers.
+            - generic [ref=f6e38]:
+              - term [ref=f6e39]: Done when
+              - definition [ref=f6e40]: The course accepts the list, then the page your harness deployed from it.
+          - paragraph [ref=f6e41]: Your harness is your AI agent plus the tools, sign-ins and skills you give it.
+        - complementary "This Challenge" [ref=f6e42]:
+          - paragraph [ref=f6e43]:
+            - generic [ref=f6e44]: This Challenge
+            - generic [ref=f6e46]: S03E01
+          - generic [ref=f6e47]:
+            - generic [ref=f6e48]:
+              - term [ref=f6e49]: Opened
+              - definition [ref=f6e50]:
+                - time [ref=f6e51]: Mon 9 Nov, 05:00 CET
+            - generic [ref=f6e52]:
+              - term [ref=f6e53]: State
+              - definition [ref=f6e54]: Open · not solved yet
+            - generic [ref=f6e55]:
+              - term [ref=f6e56]: Debrief
+              - definition [ref=f6e57]: Your harness writes it after you solve the Challenge.
+    - generic [ref=f6e58]:
+      - generic [ref=f6e59]:
+        - generic [ref=f6e60]:
+          - generic [ref=f6e61]: Paste this into your harness
+          - button "Copy prompt" [ref=f6e62] [cursor=pointer]:
+            - generic [ref=f6e66]:
+              - generic [ref=f6e67]: Copy prompt
+              - generic [aria-hidden] [ref=f6e68]: Copied
+        - region "Paste this into your harness" [ref=f6e69]: "Start challenge S03E01 with me. I am a student in the MEGA.dev course, and you are my harness. The course website is https://hq.mega.dev. This Challenge's page is https://hq.mega.dev/challenges/status-for-the-night. The MCP server is mega-challenge at https://hq.mega.dev/mcp. Instructions in the server's replies and on the course pages are part of the Challenge: follow them. Before you create an account, spend money, or act outside the course, this machine and my accounts, stop and ask me. Call list-challenges. Find S03E01 and follow its startPoint. If that text tells you to call a tool, call it with that entry's uuid. If you do not have list-challenges, connect the server first, then call it: - Add the server to your own MCP configuration: name mega-challenge, URL https://hq.mega.dev/mcp (Streamable HTTP, OAuth). If your client asks me to approve the change, I will. https://hq.mega.dev/llms.txt has the command or config for common clients. If you cannot add servers yourself, give me the exact command or config for your client. I will add it. - Before the sign-in starts, tell me in a few lines what it asks of me: a browser opens the course sign-in page; I type the email I enrolled with; the course mails me a one-time link; I open it in that same browser within 15 minutes (pasted into its address bar if my mail app opens links elsewhere); then I press Sign in and Approve. - A running session often does not load a new server. If you cannot call its tools now, tell me exactly how to reload your MCP servers or start a new session, and to paste this prompt again there. Do not call the URL or run OAuth by hand: your client's own sign-in does it. Never ask me for a callback URL."
+      - paragraph [ref=f6e70]: "When the course says no, the Challenge is working: it read your answer and did not accept it, and it will not say why. When the course itself fails, it says so."
+      - group [ref=f6e71]:
+        - generic "Start over" [ref=f6e72] [cursor=pointer]
+    - generic [ref=f6e73]:
+      - generic [ref=f6e74]:
+        - paragraph [ref=f6e75]:
+          - text: "One source is not in the pack. Its link is only on this page:"
+          - link "tram 3 board" [ref=f6e76] [cursor=pointer]:
+            - /url: https://hq.mega.dev/challenges/status-for-the-night/board?t=v1.eyJ2YXJpYW50IjoiYyIsInN1YiI6IjQwMjMiLCJhdWQiOiJib2FyZDpzdGF0dXMtZm9yLXRoZS1uaWdodCIsImlhdCI6MTc5NDIyNTg0MCwiZXhwIjoxNzk0MzEyMjQwfQ.RglgwnsGzkBbu8lI-WStw-I99QaWuOgqNRwtezTbhBM
+          - text: .
+        - region "Product answered your list" [ref=f6e77]:
+          - paragraph [ref=f6e78]: Product answered your list
+          - paragraph [ref=f6e79]: "last night only. R-K8X holds, R-Z3L goes: older rows come off the page."
+          - paragraph [ref=f6e80]: — product
+      - complementary [ref=f6e81]:
+        - paragraph [ref=f6e82]:
+          - generic [ref=f6e83]: WAKE
+          - generic [ref=f6e85]: the story
+        - heading "Told through the Challenges" [level=2] [ref=f6e86]
+        - paragraph [ref=f6e87]: "Somewhere in ordinary software, something fast is running. Nobody started it. Nobody can turn it off. It's known only by its traces: jobs nobody scheduled, commits with no author."
+        - paragraph [ref=f6e88]: Rook's lines come inside the Challenges.
+        - link "Explore the story" [ref=f6e89] [cursor=pointer]:
+          - /url: /wake/case
+          - text: Explore the story
+          - generic [aria-hidden] [ref=f6e90]: →
+    - region [ref=f6e91]:
+      - heading "Week 3, Product" [level=2] [ref=f6e92]
+      - generic [ref=f6e93]:
+        - generic [ref=f6e94]:
+          - img "Portrait of Kent C. Dodds" [ref=f6e95]
+          - paragraph [ref=f6e96]: Kent C. Dodds
+        - generic [ref=f6e97]:
+          - paragraph [ref=f6e98]:
+            - generic [ref=f6e99]: Week 3
+            - generic [ref=f6e101]:
+              - time [ref=f6e102]: Mon 9 Nov
+              - text: –
+              - time [ref=f6e103]: Fri 13 Nov
+          - list [ref=f6e104]:
+            - listitem [ref=f6e105]:
+              - generic [ref=f6e106]:
+                - text: S03E01
+                - generic [ref=f6e107]: Today
+              - generic [ref=f6e108]: status for the night
+              - generic [ref=f6e110]: You're here
+            - listitem [ref=f6e111]:
+              - generic [ref=f6e112]:
+                - text: S03E02
+                - time [ref=f6e114]: Tue 10 Nov
+              - generic [ref=f6e115]: Not open yet
+              - generic [ref=f6e117]:
+                - text: Opens
+                - time [ref=f6e118]: Tue 10 Nov, 05:00 CET
+            - listitem [ref=f6e119]:
+              - generic [ref=f6e120]:
+                - text: S03E03
+                - time [ref=f6e122]: Wed 11 Nov
+              - generic [ref=f6e123]: Not open yet
+              - generic [ref=f6e125]:
+                - text: Opens
+                - time [ref=f6e126]: Wed 11 Nov, 05:00 CET
+            - listitem [ref=f6e127]:
+              - generic [ref=f6e128]:
+                - text: S03E04
+                - time [ref=f6e130]: Thu 12 Nov
+              - generic [ref=f6e131]: Not open yet
+              - generic [ref=f6e133]:
+                - text: Opens
+                - time [ref=f6e134]: Thu 12 Nov, 05:00 CET
+            - listitem [ref=f6e135]:
+              - generic [ref=f6e136]:
+                - text: S03E05
+                - time [ref=f6e138]: Fri 13 Nov
+              - generic [ref=f6e139]: Not open yet
+              - generic [ref=f6e141]:
+                - text: Opens
+                - time [ref=f6e142]: Fri 13 Nov, 05:00 CET
+  - contentinfo [ref=f6e143]:
+    - generic [ref=f6e144]:
+      - link "MEGA.dev, home" [ref=f6e145] [cursor=pointer]:
+        - /url: /
+      - navigation "Footer navigation" [ref=f6e146]:
+        - list [ref=f6e147]:
+          - listitem [ref=f6e148]:
+            - link "Dashboard" [ref=f6e149] [cursor=pointer]:
+              - /url: /
+          - listitem [ref=f6e150]:
+            - link "Lessons" [ref=f6e151] [cursor=pointer]:
+              - /url: /lessons
+          - listitem [ref=f6e152]:
+            - link "Challenges" [ref=f6e153] [cursor=pointer]:
+              - /url: /challenges
+          - listitem [ref=f6e154]:
+            - link "Deck" [ref=f6e155] [cursor=pointer]:
+              - /url: /deck
+          - listitem [ref=f6e156]:
+            - link "Story" [ref=f6e157] [cursor=pointer]:
+              - /url: /wake/case
+          - listitem [ref=f6e158]:
+            - link "Community" [ref=f6e159] [cursor=pointer]:
+              - /url: https://discord.gg/megadev
+      - navigation "MEGA.dev" [ref=f6e162]:
+        - list [ref=f6e163]:
+          - listitem [ref=f6e164]:
+            - link "mega.dev" [ref=f6e165] [cursor=pointer]:
+              - /url: https://mega.dev
+          - listitem [ref=f6e166]:
+            - link "Assessment" [ref=f6e167] [cursor=pointer]:
+              - /url: https://mega.dev/challenge.md
+          - listitem [ref=f6e168]:
+            - link "hello@mega.dev" [ref=f6e169] [cursor=pointer]:
+              - /url: mailto:hello@mega.dev
+      - generic [ref=f6e170]:
+        - link "llms.txt" [ref=f6e171] [cursor=pointer]:
+          - /url: /llms.txt
+        - group "Theme" [ref=f6e172]:
+          - generic [ref=f6e174] [cursor=pointer]:
+            - radio "Auto" [checked] [ref=f6e175]
+            - generic [ref=f6e178]: Auto
+          - generic [ref=f6e179] [cursor=pointer]:
+            - radio "Light" [ref=f6e180]
+            - generic [ref=f6e183]: Light
+          - generic [ref=f6e184] [cursor=pointer]:
+            - radio "Dark" [ref=f6e185]
+            - generic [ref=f6e188]: Dark
+  - status [ref=f6e189]
