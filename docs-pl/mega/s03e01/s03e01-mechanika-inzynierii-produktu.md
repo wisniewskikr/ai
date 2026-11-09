@@ -1,10 +1,27 @@
 # S03E01 · Mechanika inżynierii produktu
 
+## 📑 Spis treści
+
+- [W skrócie](#w-skrocie)
+- [Plan lekcji](#plan-lekcji)
+- [1. Film](#film)
+- [2. Zmiana: efekt zamiast ilości pracy](#zmiana)
+- [3. Odpowiedzialność](#odpowiedzialnosc)
+- [4. Osąd](#osad)
+- [5. Dźwignia](#dzwignia)
+- [Wnioski](#wnioski)
+
+---
+
+<a id="w-skrocie"></a>
+
 > **W skrócie:** AI pisze kod coraz lepiej. Naszą pracą nie jest już samo pisanie kodu, tylko **decydowanie, co zbudować, jak dobrze i jak szybko to rozwijać**.
 
 🍳 **Analogia:** Kiedy każdy ma robota-kucharza, który ugotuje każdy przepis, wygrywa ten, kto **wie, co ugotować**, dla kogo i kiedy podać.
 
 ---
+
+<a id="plan-lekcji"></a>
 
 ## 📋 Plan lekcji
 
@@ -18,7 +35,76 @@
 
 ---
 
-## 1. 🔄 Zmiana: efekt zamiast ilości pracy
+<a id="film"></a>
+
+## 1. 🎬 Film
+
+### Zmiana
+
+- Teraz **AI jest programistą**.
+- Człowiek tworzy **właściwe wymagania** dla AI.
+
+👷 **Analogia:** Nie kładziesz już cegieł. Jesteś **architektem**, który mówi, jaki dom ma powstać.
+
+### Typy decyzji produktowych
+
+| Typ | Na czym polega | Przykład |
+|---|---|---|
+| **Dodawanie** ➕ | Dodajesz nowe, potrzebne funkcje | Gmail: wyszukiwanie i sortowanie |
+| **Wycinanie** ✂️ | Zostawiasz tylko to, co najważniejsze | Instagram: tylko zdjęcia |
+| **Odmawianie** 🚫 | Świadomie czegoś NIE dodajesz | WhatsApp: brak reklam |
+| **Prostota** 🙂 | Każdy umie tego używać | Internet |
+
+### Uwaga użytkownika
+
+- Produkt walczy o **uwagę użytkownika**.
+- Uwaga jest **ograniczona** — dużo mniejsza niż to, co mogą zbudować agenci AI.
+- Dlatego trzeba **uważnie wybierać**, co budujemy.
+
+🍰 **Analogia:** Cukiernia może upiec 100 ciast, ale klient zje jeden kawałek. Wybierz ten najlepszy.
+
+### Produkt vs rezultat
+
+| Mierz ❌ | Mierz ✅ |
+|---|---|
+| Wynik pracy (np. linie kodu) | Rezultat (np. wrażenia użytkownika) |
+
+### Własność
+
+- Właścicielem kodu jesteś **ty**, nie agent AI.
+- To ty **odpowiadasz** za kod.
+- To do **ciebie zadzwonią**, gdy coś się zepsuje na produkcji. ☎️
+
+### Osąd
+
+- Agent robi dobre **review** i daje **rekomendacje**.
+- Potrafi ocenić **trudność** kodu oraz typ zmiany:
+
+| Typ zmiany | Znaczenie | Analogia |
+|---|---|---|
+| **Drzwi jednokierunkowe** 🚪➡️ | Po zmianie nie ma powrotu | Wylany beton |
+| **Drzwi dwukierunkowe** 🚪↔️ | Zmianę można cofnąć | Przestawiony mebel |
+
+- **Ostateczną decyzję** podejmuje człowiek.
+
+### Kroki
+
+1. **Najpierw jakość kodu.**
+2. **Wyłapuj problemy przed produkcją.**
+3. **Obsługa błędów** — jeśli już są błędy, to małe, łatwe do naprawy i wiemy, jak je obsłużyć.
+
+### Dźwignie
+
+- Agent chce zabrać twoją pracę? **Daj mu ją.**
+- Dzięki temu wchodzisz **poziom wyżej** i masz **większą moc sprawczą**.
+
+🪜 **Analogia:** Oddajesz agentowi łopatę, a sam bierzesz do ręki mapę.
+
+---
+
+<a id="zmiana"></a>
+
+## 2. 🔄 Zmiana: efekt zamiast ilości pracy
 
 Załóżmy, że agenci przejmą **prawie całe** programowanie. Co wtedy będzie nas wyróżniać?
 
@@ -62,7 +148,9 @@ sygnał → decyzja → poprzeczka jakości → budowa z agentami → wydanie i 
 
 ---
 
-## 2. 🎯 Odpowiedzialność
+<a id="odpowiedzialnosc"></a>
+
+## 3. 🎯 Odpowiedzialność
 
 Agenci robią dużo, ale **kształt systemu** wciąż zależy od nas.
 
@@ -109,7 +197,9 @@ Subskrypcje obsługują: e-mail, Slacka, przeglądy PR, alerty, harmonogramy… 
 
 ---
 
-## 3. ⚖️ Osąd
+<a id="osad"></a>
+
+## 4. ⚖️ Osąd
 
 AI pisze kod lepiej niż wielu ludzi, ale **nasze doświadczenie wciąż się liczy**. Musimy działać szerzej: biznes, produkt, niskopoziomowe szczegóły, nowe technologie.
 
@@ -147,7 +237,9 @@ Agenci (z **systemem wiedzy** z S01E03) mogą przygotować dokument HTML z opcja
 
 ---
 
-## 4. 🚀 Dźwignia
+<a id="dzwignia"></a>
+
+## 5. 🚀 Dźwignia
 
 Szybkość nic nie daje, jeśli **budujemy nie to, co trzeba**.
 
@@ -175,6 +267,8 @@ Szybkość nic nie daje, jeśli **budujemy nie to, co trzeba**.
 - Częściej: plan, który zmienia produkt **stopniowo, a potem nagle**.
 
 ---
+
+<a id="wnioski"></a>
 
 ## ✅ Wnioski
 
