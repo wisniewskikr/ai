@@ -66,3 +66,7 @@
 - 06:03:16Z -> SOLVED. Summary: "Practice 10 of 10. Live tries: approval_not_from_owner -> code_wrong -> passed." note (rook): "still up. good."
 - Debrief saved: https://hq.mega.dev/challenges/while-youre-away#debrief
 - Open: Heroku app s02e05-away-agent still running (Basic dyno, costs money). Undo: heroku apps:destroy s02e05-away-agent.
+- 2026-11-09T06:07:26Z human: take down unused external code. Destroyed Heroku app s02e05-away-agent; deleted AgentMail inbox wisniewskikr-away@agentmail.to (202). Verified gone.
+- Human chose more cleanup: destroyed Heroku mega-tools-mcp-s02e03 (+Postgres); removed mega-tools MCP from local config (project C:/git-repositories/ai).
+- AgentMail inbox wisniewskikr@agentmail.to -> 409 cannot_delete: "Cannot delete inbox with existing API keys". Left for human (console).
+- gh repo delete rig-handover-s01e04, mega-s01e03-support-kb -> 403, token lacks delete_repo scope. Not deleted.
