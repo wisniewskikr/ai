@@ -1,0 +1,10 @@
+const path=require('path');const {chromium}=require(path.join(__dirname,'repo','node_modules','playwright'));
+(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:1280,height:800}});
+p.on('pageerror',e=>console.log('PAGEERROR',e.message));
+await p.goto('http://localhost:3000/');await p.locator('[data-testid=incident-row]').first().waitFor();
+console.log('row ack buttons:',await p.locator('[data-testid=incident-row] [data-testid=ack]').count());
+const rows=p.locator('[data-testid=incident-row]');const id2=await rows.nth(2).getAttribute('data-id');
+await rows.nth(2).click();console.log('panel visible:',await p.locator('[data-testid=incident-panel]:visible').count(),'names',id2,':',(await p.locator('[data-testid=incident-panel]').innerText()).includes(id2));
+const id4=await rows.nth(4).getAttribute('data-id');await rows.nth(4).click();
+console.log('switched to',id4,':',(await p.locator('[data-testid=incident-panel]').innerText()).includes(id4),'| panel-ack text:',await p.locator('[data-testid=panel-ack]').innerText());
+await p.screenshot({path:path.join(__dirname,'panel.png')});await b.close();})();

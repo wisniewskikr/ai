@@ -1,0 +1,107 @@
+{
+  "url": "https://wisniewskikr-s03e04-board-e92a37ab1f45.herokuapp.com/",
+  "video": "C:\\git-repositories\\ai\\docs-pl\\mega\\s03e04-work\\recordings\\step1b\\page@49b70289f9b1638b1860442ac02ade3f.webm",
+  "events": [
+    {
+      "at": "00:00",
+      "wall": "2026-11-12T11:23:19.574Z",
+      "type": "open-board",
+      "url": "https://wisniewskikr-s03e04-board-e92a37ab1f45.herokuapp.com/"
+    },
+    {
+      "at": "00:00",
+      "wall": "2026-11-12T11:23:19.933Z",
+      "type": "loader-visible"
+    },
+    {
+      "at": "00:00",
+      "wall": "2026-11-12T11:23:20.282Z",
+      "type": "loaded",
+      "rows": 8,
+      "loader": 0,
+      "sha": "4e5f6b841f11b6af1c9b2ff0c68fd86bdf4e585a",
+      "footer": "4e5f6b841f11b6af1c9b2ff0c68fd86bdf4e585a"
+    },
+    {
+      "at": "00:13",
+      "wall": "2026-11-12T11:23:32.642Z",
+      "type": "arrival",
+      "id": "INC-7237",
+      "rows": 9
+    },
+    {
+      "at": "00:23",
+      "wall": "2026-11-12T11:23:42.920Z",
+      "type": "arrival",
+      "id": "INC-6993",
+      "rows": 10
+    },
+    {
+      "at": "00:24",
+      "wall": "2026-11-12T11:23:44.435Z",
+      "type": "navigations",
+      "count": 1
+    },
+    {
+      "at": "00:34",
+      "wall": "2026-11-12T11:23:54.373Z",
+      "type": "click",
+      "aimedAt": "INC-1637"
+    },
+    {
+      "at": "00:34",
+      "wall": "2026-11-12T11:23:54.486Z",
+      "type": "ack-api",
+      "id": "INC-1637",
+      "ackedAt": "2026-11-12T11:23:54.444Z",
+      "receipt": "a1.zeKH-WCUSIPg4krs.EkeQDb9slTRNqm5qtkvD4AJDabd0CzgY1iw9YXpI3jCEkmoMnDFlNIrDcavBNVe2AP7vFDXcgBRLaKiYNpPR-dhxmoEhubc6yyrkLpHVy4InxZvGlZ3Va_2dZP0ExYJLkS0zJw7pXtYbgakVYjASCD90uWrSo1bSDwacUUbeVOtCfYBMtzyw6rJSuiXkLsnFsxBZ"
+    },
+    {
+      "at": "00:38",
+      "wall": "2026-11-12T11:23:57.847Z",
+      "type": "aim",
+      "aimedAt": "INC-7237",
+      "rowIndex": 3
+    },
+    {
+      "at": "00:39",
+      "wall": "2026-11-12T11:23:59.314Z",
+      "type": "arrival-under-pointer",
+      "id": "INC-9376"
+    },
+    {
+      "at": "00:39",
+      "wall": "2026-11-12T11:23:59.480Z",
+      "type": "click",
+      "aimedAt": "INC-7237",
+      "rowUnderPointer": "INC-6993"
+    },
+    {
+      "at": "00:39",
+      "wall": "2026-11-12T11:23:59.546Z",
+      "type": "ack-api",
+      "id": "INC-6993",
+      "ackedAt": "2026-11-12T11:23:59.506Z",
+      "receipt": "a1.bvf52_SXHaeSesj0.AYjcZNXBuGYWsGA5JdhFQCOeMbpg6-fDVRw5ot01KVGwnDOKU58SOIXcJNTz1d9zkfpzi8igCMZeBmDPqKMlQlsz6gAYjUIli1fMosuZ4N6B1wSM67w_R6jCvtXe03gt5l9zJH_rK6gld63Wg9O7gzC-CafVE4BZs2RdZKivw1eJzAqVQJBRrqiwq13bhGMB6CG2"
+    },
+    {
+      "at": "00:41",
+      "wall": "2026-11-12T11:24:00.700Z",
+      "type": "acked-now",
+      "ackedIds": [
+        "INC-1637",
+        "INC-6993"
+      ],
+      "aimedAtAcked": false
+    },
+    {
+      "at": "00:47",
+      "wall": "2026-11-12T11:24:06.713Z",
+      "type": "end",
+      "ackedIds": [
+        "INC-1637",
+        "INC-6993"
+      ]
+    }
+  ]
+}

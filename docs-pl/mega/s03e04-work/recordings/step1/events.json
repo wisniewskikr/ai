@@ -1,0 +1,70 @@
+{
+  "url": "https://wisniewskikr-s03e04-board-e92a37ab1f45.herokuapp.com/",
+  "video": "C:\\git-repositories\\ai\\docs-pl\\mega\\s03e04-work\\recordings\\step1\\page@8eec7f645993ed92541305c55c73f416.webm",
+  "events": [
+    {
+      "at": "00:00",
+      "wall": "2026-11-12T11:20:42.599Z",
+      "type": "goto",
+      "url": "https://wisniewskikr-s03e04-board-e92a37ab1f45.herokuapp.com/"
+    },
+    {
+      "at": "00:02",
+      "wall": "2026-11-12T11:20:45.270Z",
+      "type": "loader-visible"
+    },
+    {
+      "at": "00:03",
+      "wall": "2026-11-12T11:20:45.599Z",
+      "type": "rows-loaded",
+      "rows": 8,
+      "loaderLeft": 0
+    },
+    {
+      "at": "00:03",
+      "wall": "2026-11-12T11:20:45.609Z",
+      "type": "build",
+      "sha": "4e5f6b841f11b6af1c9b2ff0c68fd86bdf4e585a",
+      "footer": "4e5f6b841f11b6af1c9b2ff0c68fd86bdf4e585a"
+    },
+    {
+      "at": "00:06",
+      "wall": "2026-11-12T11:20:48.702Z",
+      "type": "watch-start",
+      "top": "INC-7306"
+    },
+    {
+      "at": "00:16",
+      "wall": "2026-11-12T11:20:58.857Z",
+      "type": "new-incident-on-top",
+      "top": "INC-7237",
+      "navigations": 1
+    },
+    {
+      "at": "00:20",
+      "wall": "2026-11-12T11:21:03.043Z",
+      "type": "click-ack",
+      "id": "INC-7237"
+    },
+    {
+      "at": "00:20",
+      "wall": "2026-11-12T11:21:03.122Z",
+      "type": "ack-console",
+      "id": "INC-7237",
+      "ackedAt": "2026-11-12T11:21:03.100Z",
+      "receipt": "a1.Uj3it9BBVwgrBk4A.YWHL-vPmzjUBk1_2nGr2uu39Zk3OqSwMDY6FucNlS6MbKKrKAG-mTSx8dSnVtNNtwhCQKKB3fVCqbuh-ctab1ijit1N3I1-woMtyu29-Mzk6nGmj6rF2OTu-NMoO0Oj9ljglgYxlBS_zlCC8CNBrCXTd6gmmUz-QqJ52OJpOk4G92cPdrbFedzrhYRoPnzoSYN0"
+    },
+    {
+      "at": "00:20",
+      "wall": "2026-11-12T11:21:03.188Z",
+      "type": "acked-mark",
+      "id": "INC-7237"
+    },
+    {
+      "at": "00:26",
+      "wall": "2026-11-12T11:21:09.198Z",
+      "type": "still-acked",
+      "acked": 0
+    }
+  ]
+}

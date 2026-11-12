@@ -1,0 +1,15 @@
+# S03E04 log
+- 2026-11-12 list-challenges -> S03E04 "show me when" unsolved
+- 2026-11-12 start-challenge -> session v1.eyJ...(masked), expires 2026-11-19; starter zip, api, report format (sections: What you checked / When / Where / Options for product + evidence block), flows open-board|ack-incident|watch-board
+- 2026-11-12 downloaded starter (200, 7712 B); probed GET /incidents (full list each call, newest first, cursor rotates)
+- 2026-11-12 local smoke test: loader shown then removed, 8 rows, local times OK (de/en-NZ/en-GB/en-US), meta+footer sha OK
+- 2026-11-12 commits a647a61 (starter), 4e5f6b8 (SCHED-4511..4514); pushed to github.com/wisniewskikr/s03e04 main
+- blocked: video needs Playwright chromium-1248 + ffmpeg-1013 (not cached); Heroku app not created yet
+- 2026-11-12 recording step1b: race at 00:39 aimed INC-7237 acked INC-6993; video released at github releases step1-4e5f6b8; report-step1.md written
+- claim step1 #1 rejected: "Which row did you mean, and which got the ack? Name them in the evidence block as expected and got (incident ids)." -> added expected/got
+- claim step1 #2 progress: accepted; productReceipt saved (v1.eyJ...masked); product answers at 2026-11-12T11:30:03Z via resume-challenge
+- resume-challenge: product decision "New incidents stay live at the top. Ack leaves the row: a row opens its incident panel, and Ack lives there." hooks incident-panel, panel-ack; replay replay-f08ed2e7.mjs; nonce saved
+- prove run https://github.com/wisniewskikr/s03e04/actions/runs/43210136868 success, build fdf34fb, unmet [], attempts 3/3 intended==acked
+- step2 video released step2-fdf34fb
+- claim step2 -> solved 2026-11-12T11:37:04Z; debrief saved (https://hq.mega.dev/challenges/show-me-when#debrief); artifact 'prove' added to deck
+- 2026-11-12T12:18:25Z heroku app wisniewskikr-s03e04-board destroyed on user request

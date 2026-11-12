@@ -1,0 +1,91 @@
+{
+  "url": "https://wisniewskikr-s03e04-board-e92a37ab1f45.herokuapp.com/",
+  "video": "C:\\git-repositories\\ai\\docs-pl\\mega\\s03e04-work\\recordings\\step2\\page@47a1d05e98aaae6e01ca60392edcc65b.webm",
+  "events": [
+    {
+      "at": "00:00",
+      "wall": "2026-11-12T11:35:09.656Z",
+      "type": "open-board",
+      "url": "https://wisniewskikr-s03e04-board-e92a37ab1f45.herokuapp.com/"
+    },
+    {
+      "at": "00:00",
+      "wall": "2026-11-12T11:35:10.033Z",
+      "type": "loader-visible"
+    },
+    {
+      "at": "00:01",
+      "wall": "2026-11-12T11:35:10.912Z",
+      "type": "loaded",
+      "rows": 8,
+      "rowAckButtons": 0,
+      "sha": "fdf34fbeac9bcd903acfd8c9cab77398e4e09154",
+      "footer": "fdf34fbeac9bcd903acfd8c9cab77398e4e09154"
+    },
+    {
+      "at": "00:13",
+      "wall": "2026-11-12T11:35:22.800Z",
+      "type": "arrival",
+      "id": "INC-7237"
+    },
+    {
+      "at": "00:15",
+      "wall": "2026-11-12T11:35:25.205Z",
+      "type": "aim",
+      "want": "INC-2766"
+    },
+    {
+      "at": "00:23",
+      "wall": "2026-11-12T11:35:33.078Z",
+      "type": "arrival-mid-aim",
+      "id": "INC-6993"
+    },
+    {
+      "at": "00:23",
+      "wall": "2026-11-12T11:35:33.589Z",
+      "type": "panel-opened",
+      "want": "INC-2766",
+      "panelNames": "INC-7306",
+      "acksSoFar": 0
+    },
+    {
+      "at": "00:28",
+      "wall": "2026-11-12T11:35:37.783Z",
+      "type": "panel-opened",
+      "want": "INC-2766",
+      "panelNames": "INC-2766"
+    },
+    {
+      "at": "00:30",
+      "wall": "2026-11-12T11:35:39.950Z",
+      "type": "click-panel-ack",
+      "want": "INC-2766",
+      "label": "Ack INC-2766"
+    },
+    {
+      "at": "00:30",
+      "wall": "2026-11-12T11:35:40.016Z",
+      "type": "ack-api",
+      "id": "INC-2766",
+      "ackedAt": "2026-11-12T11:35:39.995Z",
+      "receipt": "a1.8W36sCRclKu5dIpZ.jo5uyOPwiUTR_4_FmdKOyMUen-IHl7XMPf1VW74Uw8SWtJUAe-fjFcCIwE82p1cJsWLxaZJKTPOoI4uWdPjFhlfV8nwUaD3xmrT6rZffWj1Pq78-W_WpY0zrPOAim96OYY5yH40SOIwen0a5oCmixFFq8uLLB-_YbzUoXZmcUX1pPFHiw_ermxxrgn-6cifMJudD"
+    },
+    {
+      "at": "00:30",
+      "wall": "2026-11-12T11:35:40.063Z",
+      "type": "acked-now",
+      "want": "INC-2766",
+      "ackedIds": [
+        "INC-2766"
+      ]
+    },
+    {
+      "at": "00:36",
+      "wall": "2026-11-12T11:35:46.072Z",
+      "type": "end",
+      "ackedIds": [
+        "INC-2766"
+      ]
+    }
+  ]
+}
