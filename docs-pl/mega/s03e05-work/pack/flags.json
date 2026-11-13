@@ -1,0 +1,17 @@
+{
+  "updated_at": "2026-10-15T14:02:11Z",
+  "flags": {
+    "smart_suggestions_v2": {
+      "rollout_percent": 50,
+      "unit": "site",
+      "default": "off",
+      "owner": "product"
+    },
+    "status_page_v3": {
+      "rollout_percent": 100,
+      "unit": "all",
+      "default": "on",
+      "owner": "product"
+    }
+  }
+}

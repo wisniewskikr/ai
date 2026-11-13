@@ -1,0 +1,52 @@
+{
+  "snapshot": "snap-01",
+  "taken_at": "2026-10-27T09:00:00Z",
+  "source": "incident feed",
+  "incidents": [
+    {
+      "id": "sp-4213",
+      "title": "Calendar sync delayed",
+      "severity": "minor",
+      "started_at": "2026-10-27T06:12:00Z",
+      "impact": "New bookings appear in calendars up to 20 minutes late.",
+      "next_update": "2026-10-27T10:00:00Z",
+      "status": "monitoring"
+    },
+    {
+      "id": "sp-4210",
+      "title": "Payment confirmations slow",
+      "severity": "minor",
+      "started_at": "2026-10-27T05:40:00Z",
+      "impact": "Customers get the payment receipt up to an hour late.",
+      "next_update": "2026-10-27T10:30:00Z",
+      "status": "identified"
+    },
+    {
+      "id": "sp-4208",
+      "title": "Reminder emails held",
+      "severity": "major",
+      "started_at": "2026-10-27T03:58:00Z",
+      "impact": "No reminder emails go out for classes today until this is cleared.",
+      "next_update": "2026-10-27T09:30:00Z",
+      "status": "identified"
+    },
+    {
+      "id": "sp-4206",
+      "title": "Rota feed timeouts",
+      "severity": "minor",
+      "started_at": "2026-10-27T02:21:00Z",
+      "impact": "Staff rotas may show yesterday's version.",
+      "next_update": "2026-10-27T11:00:00Z",
+      "status": "monitoring"
+    },
+    {
+      "id": "sp-4203",
+      "title": "Booking changes failing for some sites",
+      "severity": "major",
+      "started_at": "2026-10-27T01:05:00Z",
+      "impact": "Customers cannot move or cancel a booking online. New bookings work.",
+      "next_update": "2026-10-27T09:45:00Z",
+      "status": "identified"
+    }
+  ]
+}
