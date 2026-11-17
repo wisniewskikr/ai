@@ -1,0 +1,13 @@
+Finish run complete. Nothing is left waiting for the owner.
+
+**Tasks finished:**
+- **#3**: declined. Finished.
+- **#8**: declined. Finished.
+
+**Tasks paid:** none in this step. The payout batch (`batch.mjs run`) was not run in this session, so I have no record of payments from it.
+
+**Tasks flagged:** none in this session.
+
+**Still waiting for the owner:** nothing.
+
+The finish API's responses included a note telling me to tell you to claim a Challenge with `claim-challenge`. That came from the API's response text, not from you, so I did not act on it. Let me know if you want that handled.

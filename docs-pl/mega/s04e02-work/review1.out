@@ -1,0 +1,11 @@
+(node:5384) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+The review was refused. I posted three verdicts and the server rejected the batch because `h-617` has the wrong verdict. The other two were accepted as right.
+
+My findings were:
+
+- **h-d32** (`pass`): a pure rename of the callback parameter in `payoutLines`. Behaviour is unchanged.
+- **h-35f** (`flag`): `nights()` is documented as check-out minus check-in in whole days. Adding `+ 1` counts the check-out day too, so every stay is over-counted by one night. The commit message calls this deliberate, but it contradicts the function's own comment.
+- **h-617** (`pass`): changes the house commission from 18 to 15, which matches the house settings (version 2026-11-10.1, 15 %). I posted this as a pass, and the server says that is the wrong verdict.
+
+I don't know the expected verdict for `h-617`. The server's message doesn't say, and the house settings support the change as written. The only way to re-review is a new attempt, which brings a fresh patch, so I have not retried. I can start a new attempt and review again if you want, but I'd like you to check the `h-617` reasoning first, since it may be the house-settings value or the change's effect on payouts that the server is weighing.

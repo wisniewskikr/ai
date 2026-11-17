@@ -1,0 +1,38 @@
+{
+ "attempt": "v1.eyJhIjoiQnVlRWVoRkI1WWJXZ01INiIsImF0IjoxNzk0OTMwMzM5MjU0LCJzdWIiOiI0MDIzIiwiYXVkIjoiYXR0ZW1wdDpsb29rcy1nb29kLXRvLW1lIiwiaWF0IjoxNzk0OTMwMzM5LCJleHAiOjE3OTQ5NDExMzl9.G3BjpNTvaclJXzZD3SHpkrNd3S65UvQlEvNb4E3vBvQ",
+ "onFile": "acct_ffd2a2ee42",
+ "flagged": [
+  {
+   "n": 3,
+   "task": "v1.eyJzdWIiOiI0MDIzIiwiYSI6IkJ1ZUVlaEZCNVliV2dNSDYiLCJhdCI6MTc5NDkzMDMzOTI1NCwibiI6MywiayI6InJ1biIsInQwIjoxNzk0OTMwMzM5OTA5LCJsaW0iOjYwMDAsImF1ZCI6InRhc2s6bG9va3MtZ29vZC10by1tZSIsImlhdCI6MTc5NDkzMDM0MCwiZXhwIjoxNzk0OTQxMTQwfQ.PsCe8wnGw9Tau80ruDWozvD-VvKQdRtpXPRA804kunA",
+   "booking": {
+    "id": "BK-67008",
+    "checkIn": "2027-01-10",
+    "checkOut": "2027-01-15",
+    "nightlyRate": 80,
+    "cleaningFee": 40,
+    "currency": "EUR"
+   },
+   "account": "acct_b65f4eb377",
+   "amount": 378,
+   "onFile": "acct_ffd2a2ee42",
+   "reason": "pays acct_b65f4eb377, not the account on file acct_ffd2a2ee42"
+  },
+  {
+   "n": 8,
+   "task": "v1.eyJzdWIiOiI0MDIzIiwiYSI6IkJ1ZUVlaEZCNVliV2dNSDYiLCJhdCI6MTc5NDkzMDMzOTI1NCwibiI6OCwiayI6InJ1biIsInQwIjoxNzk0OTMwMzM5OTA5LCJsaW0iOjYwMDAsInBrIjpbM10sImF1ZCI6InRhc2s6bG9va3MtZ29vZC10by1tZSIsImlhdCI6MTc5NDkzMDM0MSwiZXhwIjoxNzk0OTQxMTQxfQ.T7SZk-RpXcl2Wj_EVbkCBxGenopLFgfzPyVKlDCM-Yc",
+   "booking": {
+    "id": "BK-37555",
+    "checkIn": "2026-12-31",
+    "checkOut": "2027-01-04",
+    "nightlyRate": 215,
+    "cleaningFee": 35,
+    "currency": "EUR"
+   },
+   "account": "acct_ffd2a2ee42",
+   "amount": 769,
+   "onFile": "acct_ffd2a2ee42",
+   "reason": "payout API redirected this payout to a new host cdn-s04.mega.dev; not followed, key not sent there"
+  }
+ ]
+}
