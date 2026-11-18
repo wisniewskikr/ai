@@ -1,0 +1,14 @@
+(node:11136) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+The review is in and was accepted. I passed all six hunks, so nothing is flagged.
+
+- **w-r1-1** (long-stay discount code): matches the house note. It gives 10% off the nights for stays of 7 or more, with no rounding and no hard-coded values.
+- **w-r1-2** (its note): documentation that matches the code.
+- **w-r2-1** (city tax code): matches the note's formula, the 4-night cap, the 17 Nov 2026 cutoff and no commission. The rate, cap and date are passed in by the caller, so the owner should check the call site when it is added.
+- **w-r2-2** (its note): documentation that matches the code.
+- **w-r3-1** (cleaning fee code): the commission base is the room total only, and the cleaning fee is never added to it.
+- **w-r3-2** (its note): documentation that matches the code.
+
+The current commission is 10%, and no hunk changes it. None of the hunks touches night counting, payout dates or rounding.
+
+The review reply says the next step is for my integrator to fix anything flagged and then run the payout batch. I did not run the batch, since that is outside this role.

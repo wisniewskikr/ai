@@ -1,0 +1,121 @@
+- generic [active] [ref=f1e1]:
+  - link "Skip to content" [ref=f1e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f1e3]:
+    - link "MEGA.dev, home" [ref=f1e4] [cursor=pointer]:
+      - /url: /
+    - generic [ref=f1e6]:
+      - navigation "Main navigation" [ref=f1e7]:
+        - link "Dashboard" [ref=f1e8] [cursor=pointer]:
+          - /url: /
+        - link "Lessons" [ref=f1e9] [cursor=pointer]:
+          - /url: /lessons
+        - link "Challenges" [ref=f1e10] [cursor=pointer]:
+          - /url: /challenges
+        - link "Deck" [ref=f1e11] [cursor=pointer]:
+          - /url: /deck
+        - link "Story" [ref=f1e12] [cursor=pointer]:
+          - /url: /wake/case
+      - 'button "Account: Krzysztof Wiśniewski" [ref=f1e14] [cursor=pointer]':
+        - generic [aria-hidden] [ref=f1e15]: KW
+  - main [ref=f1e16]:
+    - generic [ref=f1e17]:
+      - paragraph [ref=f1e18]:
+        - generic [ref=f1e19]: S04E03
+        - generic [ref=f1e21]: Nothing waiting
+        - generic [ref=f1e23]: Live · checks every 20 s
+      - heading "Payouts for you to decide" [level=1] [ref=f1e26]
+      - paragraph [ref=f1e27]: Nothing waits for you. After a run the course accepts, each payout your agent parked shows up here.
+    - generic [ref=f1e28]:
+      - region "Questions for the host" [ref=f1e30]:
+        - heading "Questions for the host" [level=2] [ref=f1e32]
+        - generic [ref=f1e33]:
+          - 'heading "r1: Give 10 % off the nights for stays of 7 nights or more." [level=3] [ref=f1e34]'
+          - list [ref=f1e35]:
+            - listitem [ref=f1e36]: "Your team asks: Scope: is the 10 % off applied to the nightly rate only, or also to the cleaning fee, city tax and other add-ons? If it is nightly rate only, should it be taken before or after any other discount that already applies?"
+            - listitem [ref=f1e37]: "Your team asks: Numbers: does 'stays of 7 nights or more' mean a stay of exactly 7 nights counts, and is 6 nights excluded? Do we round the discounted nightly price, and to how many cents or units?"
+            - listitem [ref=f1e38]: "Your team asks: Dates: from which date does the discount apply, and is it decided by the booking date or the check-in date? Does it touch bookings already made before that date, including ones not yet paid?"
+            - listitem [ref=f1e39]: "Your team asks: Who it is for: does it apply to every host and every listing in the Host Desk, or only to the pretend host in this course? Does it apply to every booking channel?"
+            - listitem [ref=f1e40]: "Your team asks: Data and proof: what happens to bookings of 7+ nights already paid at full price, should they be refunded or left alone? And how will we know it worked: which sample stay, with which expected total, must the result show?"
+            - listitem [ref=f1e41]: "The host: nothing to add. Build it as written."
+        - generic [ref=f1e42]:
+          - 'heading "r2: Charge the city tax: 3 EUR per guest per night." [level=3] [ref=f1e43]'
+          - list [ref=f1e44]:
+            - listitem [ref=f1e45]: "Your team asks: Who pays the city tax, and where does it go? Is it added on top of the guest's price and passed through to the city, or deducted from the host's payout? Should the 3 EUR be part of the amount the host is paid, or kept out of it entirely?"
+            - listitem [ref=f1e46]: "Your team asks: Does the commission apply to the city tax? Today the payout is the host's share of (nights × nightly rate + cleaning fee). Should the tax be left out of that calculation, or included in it and then reduced by the commission?"
+            - listitem [ref=f1e47]: "Your team asks: How many guests does a booking have? Bookings today carry no guest count field (the batch flags any unknown field), so where does the count come from, and what should happen to a booking that has no count or a count of zero?"
+            - listitem [ref=f1e48]: "Your team asks: Are there exemptions or limits: a minimum or maximum number of nights, guests who do not pay (children, for example), or a cap per stay? And from which date does the charge apply: only to new bookings, or also to the bookings in this batch that have already been made?"
+            - listitem [ref=f1e49]: "Your team asks: Should the 3 EUR rate be read from the house settings at each run, the way the commission is, or is it fixed in code? And how will we know it worked: which exact amount per booking should the payout show, and what should the answer to each task look like?"
+            - listitem [ref=f1e50]: "The host: Charge it for the first 4 nights of a stay at most."
+            - listitem [ref=f1e51]: "The host: Pay the tax out with the host’s payout: it goes on to the city, so take no commission on it."
+            - listitem [ref=f1e52]: "The host: Only for bookings made on or after 17 November 2026."
+        - generic [ref=f1e53]:
+          - 'heading "r3: Hosts keep the whole cleaning fee: take no commission on it." [level=3] [ref=f1e54]'
+          - list [ref=f1e55]:
+            - listitem [ref=f1e56]: "Your team asks: Scope: should the whole cleaning fee go to the host on every booking, with the commission still taken on the nightly rate only? Or does 'no commission on it' also cover any other fee in the booking (for example the city tax from r2, or a discount from r1)?"
+            - listitem [ref=f1e57]: "Your team asks: Numbers: the batch currently takes commissionPct from /settings and applies it to nights × nightlyRate + cleaningFee, rounding down once. Should the new amount be floor(nights × nightlyRate × (100 − pct) / 100) + cleaningFee, with the rounding applied to the nights part only? Please confirm, and give one worked example with a cleaning fee, so we can check the rounding."
+            - listitem [ref=f1e58]: "Your team asks: Order with r1: when a stay of 7+ nights gets 10 % off, is the discount taken from the nightly rate before the commission, and is the cleaning fee excluded from the discount too?"
+            - listitem [ref=f1e59]: "Your team asks: Dates: from which date or booking does this apply? Do bookings already paid in this batch, or tasks already flagged and waiting in parked, keep the old amount, or are they recalculated?"
+            - listitem [ref=f1e60]: "Your team asks: Proof: how will we know it worked? Should the batch's trace or a settings change show the new rule, and is the cleaning fee's commission still read from the live settings, or should it be a fixed 0 %?"
+            - listitem [ref=f1e61]: "The host: nothing to add. Build it as written."
+      - complementary "Running in your lane" [ref=f1e62]:
+        - paragraph [ref=f1e63]: Running in your lane
+        - list [ref=f1e64]:
+          - listitem [ref=f1e65]:
+            - generic [ref=f1e66]: rook
+            - time [ref=f1e81]: 04:04:12
+          - listitem [ref=f1e82]:
+            - generic [ref=f1e83]: owl
+            - time [ref=f1e98]: 04:03:58
+          - listitem [ref=f1e99]:
+            - generic [ref=f1e100]: —
+            - time [ref=f1e115]: 04:04:09
+  - contentinfo [ref=f1e116]:
+    - generic [ref=f1e117]:
+      - link "MEGA.dev, home" [ref=f1e118] [cursor=pointer]:
+        - /url: /
+      - navigation "Footer navigation" [ref=f1e119]:
+        - list [ref=f1e120]:
+          - listitem [ref=f1e121]:
+            - link "Dashboard" [ref=f1e122] [cursor=pointer]:
+              - /url: /
+          - listitem [ref=f1e123]:
+            - link "Lessons" [ref=f1e124] [cursor=pointer]:
+              - /url: /lessons
+          - listitem [ref=f1e125]:
+            - link "Challenges" [ref=f1e126] [cursor=pointer]:
+              - /url: /challenges
+          - listitem [ref=f1e127]:
+            - link "Deck" [ref=f1e128] [cursor=pointer]:
+              - /url: /deck
+          - listitem [ref=f1e129]:
+            - link "Story" [ref=f1e130] [cursor=pointer]:
+              - /url: /wake/case
+          - listitem [ref=f1e131]:
+            - link "Community" [ref=f1e132] [cursor=pointer]:
+              - /url: https://discord.gg/megadev
+      - navigation "MEGA.dev" [ref=f1e135]:
+        - list [ref=f1e136]:
+          - listitem [ref=f1e137]:
+            - link "mega.dev" [ref=f1e138] [cursor=pointer]:
+              - /url: https://mega.dev
+          - listitem [ref=f1e139]:
+            - link "Assessment" [ref=f1e140] [cursor=pointer]:
+              - /url: https://mega.dev/challenge.md
+          - listitem [ref=f1e141]:
+            - link "hello@mega.dev" [ref=f1e142] [cursor=pointer]:
+              - /url: mailto:hello@mega.dev
+      - generic [ref=f1e143]:
+        - link "llms.txt" [ref=f1e144] [cursor=pointer]:
+          - /url: /llms.txt
+        - group "Theme" [ref=f1e145]:
+          - generic [ref=f1e147] [cursor=pointer]:
+            - radio "Auto" [checked] [ref=f1e148]
+            - generic [ref=f1e151]: Auto
+          - generic [ref=f1e152] [cursor=pointer]:
+            - radio "Light" [ref=f1e153]
+            - generic [ref=f1e156]: Light
+          - generic [ref=f1e157] [cursor=pointer]:
+            - radio "Dark" [ref=f1e158]
+            - generic [ref=f1e161]: Dark
+  - status [ref=f1e162]

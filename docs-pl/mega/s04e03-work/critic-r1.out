@@ -1,0 +1,12 @@
+I posted five questions for r1 to the board. They're accepted and waiting for the owner's answers. I didn't change any code.
+
+The questions, in the order I sent them:
+
+1. **Scope:** Does the 10 % apply to the nightly rate only, or also to the cleaning fee, city tax and add-ons? And if nightly only, does it apply before or after any other discount?
+2. **Numbers:** Does "7 nights or more" include exactly 7? Is 6 excluded? How is the discounted price rounded, and to how many cents?
+3. **Dates:** From which date does it apply? Is the cutoff the booking date or the check-in date? Does it touch bookings made before that date, including unpaid ones?
+4. **Who it is for:** Every host and listing, or only the pretend host in this course? Every booking channel?
+5. **Data and proof:** Are 7+ night bookings already paid at full price refunded or left alone? What sample stay and expected total should prove it works?
+
+I read the board and the role files, but the Host Desk has no pricing code that r1 would touch, so the questions are about the request itself. Your human will need to bring the owner's answers back.
+model: anthropic/claude-haiku-5.5

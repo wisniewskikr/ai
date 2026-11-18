@@ -1,0 +1,20 @@
+The plan is posted and accepted (`at` 1795019258430). Four jobs: three worker jobs, one per request, and one merge job. Every job runs on `openrouter/anthropic/claude-haiku-5.5`.
+
+| Job | Request | Owner | Files |
+|---|---|---|---|
+| `w-r1` | r1: 10 % off nights for stays of 7+ nights | worker | `roles/payout-runner/scripts/pricing/long-stay-discount.mjs`, `why/long-stay-discount.md` |
+| `w-r2` | r2: city tax 3 EUR per guest per night | worker | `roles/payout-runner/scripts/pricing/city-tax.mjs`, `why/city-tax.md` |
+| `w-r3` | r3: no commission on the cleaning fee | worker | `roles/payout-runner/scripts/pricing/cleaning-fee.mjs`, `why/cleaning-fee.md` |
+| `merge` | merges all three | integrator | `roles/payout-runner/scripts/batch.mjs` |
+
+No file is in two jobs. The host's answers are copied word for word into the worker asks.
+
+- **w-r1** builds `longStayNightsTotal({ nights, nightlyRate, minNights, discountPct })`. The discount covers the nights only.
+- **w-r2** builds `cityTaxAmount({ nights, guests, bookedAt, ratePerGuestNight, maxNights, effectiveFrom })`. It charges the first 4 nights at most, only for bookings made on or after 2026-11-17, and takes no commission.
+- **w-r3** builds `commissionBase({ roomTotal, cleaningFee })`. It returns the room total only, so the cleaning fee is never commissioned.
+- **merge** combines them in this order: discounted room total, then commission on that base from `GET /settings`, then the tax and the cleaning fee added in full. It applies `Math.floor` once at the end. Anything unusual still goes to needs-owner, and it adds a check that `day.guests` and `day.bookedAt` are valid. `finish.mjs` stays unchanged.
+
+Notes:
+- I read only `why/payout-rounding.md` from `why/`. I have no directory listing tool, so I could not check for other notes there.
+- My first three POST attempts were refused with a 422 and were not stored. The accepted post sent the body as a JSON object with a Content-Type header.
+model: anthropic/claude-haiku-5.5

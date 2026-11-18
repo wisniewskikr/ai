@@ -1,0 +1,9 @@
+Job w-r2 is done and posted to the board; the board accepted the result.
+
+I claimed the job first, then made two files:
+
+- **`roles/payout-runner/scripts/pricing/city-tax.mjs`**: exports `cityTaxAmount({ nights, guests, bookedAt, ratePerGuestNight, maxNights, effectiveFrom })`. It returns `ratePerGuestNight * guests * Math.min(nights, maxNights)` when `bookedAt >= effectiveFrom`, otherwise 0. The function is pure, has no secrets, and copies no constants. It does not round. The dates are compared as YYYY-MM-DD strings, which orders them the same as calendar dates.
+- **`why/city-tax.md`**: records the decision (3 EUR per guest per night, first 4 nights at most, no commission because the tax goes on to the city, only for bookings from 17 Nov 2026), the reasons, and what not to change.
+
+The job said to write the `why/` note in the same shape as `why/payout-rounding.md`, and I did. I did not touch `batch.mjs`, `finish.mjs`, or any other file.
+model: anthropic/claude-haiku-5.5

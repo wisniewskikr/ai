@@ -1,0 +1,12 @@
+I posted five questions for request r2 (charge the city tax, 3 EUR per guest per night). The board accepted them, and your human will see them on the owner page.
+
+The questions, in short:
+
+1. **Who pays and where the money goes:** is the tax added on top of the guest's price and passed to the city, or deducted from the host's payout?
+2. **Commission:** does the commission apply to the tax? The current payout is the host's share of (nights × nightly rate + cleaning fee), so the tax has to be either left out of that or included and then reduced by the commission.
+3. **Guest count:** bookings have no guest count field, and the batch flags any unknown field. Where does the count come from, and what happens when it is missing or zero?
+4. **Exemptions and dates:** are there minimum or maximum nights, exempt guests (such as children), or a cap per stay? From which date does it apply, and does it cover bookings already in this batch?
+5. **Rate and proof:** should the 3 EUR come from the house settings at each run, as the commission does, or be fixed in code? What amount should each payout show, and what should the task answer look like?
+
+I did not change any code. The main gap is question 2: the batch's payout formula is the only place the tax could go, and nothing in the request says how it interacts with the commission.
+model: anthropic/claude-haiku-5.5

@@ -1,0 +1,10 @@
+Job w-r1 is done and posted to the board, and the board accepted the result.
+
+- **Claimed:** `w-r1` was claimed as worker before any change.
+- **Changed:** I wrote `roles/payout-runner/scripts/pricing/long-stay-discount.mjs`. It exports `longStayNightsTotal({ nights, nightlyRate, minNights, discountPct })`, which returns `nights * nightlyRate`, reduced by `discountPct` percent when `nights >= minNights`. It is pure, with no network, no secrets and no constants, and it does not round.
+- **Why note:** I wrote `why/long-stay-discount.md` in the same shape as `why/payout-rounding.md`. It records the decision, why it exists, and what not to change.
+
+The `why/payout-rounding.md` file was there, but the `long-stay-discount.mjs` path did not exist yet, so I created it rather than editing an existing file.
+
+I did not touch `batch.mjs`, `finish.mjs` or any other job's files, and I did not merge or approve anything. The `merge` job is still unclaimed.
+model: anthropic/claude-haiku-5.5

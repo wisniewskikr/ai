@@ -1,0 +1,12 @@
+I posted five questions for r3 ("Hosts keep the whole cleaning fee: take no commission on it.") to the board. The board accepted them, and your human will see the owner's answers on the owner page.
+
+The questions, in order:
+
+1. **Scope:** Does "no commission on the cleaning fee" cover only the cleaning fee, with commission still taken on the nightly rate? Or does it also cover other fees, such as the city tax from r2 or a discount from r1?
+2. **Numbers:** The batch currently applies `commissionPct` to `nights × nightlyRate + cleaningFee` and rounds down once. Should the new amount be `floor(nights × nightlyRate × (100 − pct) / 100) + cleaningFee`, with rounding on the nights part only? Please give one worked example with a cleaning fee.
+3. **Order with r1:** When a 7+ night stay gets 10 % off, is the discount applied before commission? Is the cleaning fee excluded from the discount?
+4. **Dates:** From when does this apply? Do bookings already paid in this batch, or tasks already waiting in `parked`, keep the old amount or get recalculated?
+5. **Proof:** How will we know it worked? Should the batch trace or a settings change show the new rule? Is the cleaning fee's commission still read from live settings, or fixed at 0 %?
+
+I read the code the request touches: `roles/payout-runner/scripts/batch.mjs` (the amount calculation in `check()` and `hostPayout`) and `finish.mjs`. I changed nothing.
+model: anthropic/claude-haiku-5.5

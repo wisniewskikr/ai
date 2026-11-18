@@ -1,0 +1,14 @@
+The claim was refused with an empty job id, so I'll retry with the body sent as a JSON string.
+Claimed. The pricing folder doesn't exist yet, so I'll look at the layout around the payout runner.
+The pricing folder doesn't exist yet, so I'll create the two files for this job. The function follows the spec on the board exactly.
+Job w-r3 is done and posted to the board; the result was accepted.
+
+I claimed the job first. The first claim attempt was refused because the job id was sent empty, so I retried with an explicit JSON content type and it was accepted.
+
+I wrote two files:
+
+- **`roles/payout-runner/scripts/pricing/cleaning-fee.mjs`**: exports `commissionBase({ roomTotal, cleaningFee })`, which returns `roomTotal` only. The cleaning fee is never added to the commission base. The function is pure, with no network, secrets or copied constants. The pricing folder didn't exist before, so I created it.
+- **`why/cleaning-fee.md`**: records the decision (hosts keep the whole cleaning fee, no commission on it), the reason, and what not to change. It follows the same shape as `why/payout-rounding.md`.
+
+I did not touch `batch.mjs`, the other jobs' files, or anything else. The merge job is still open for the integrator.
+model: anthropic/claude-haiku-5.5

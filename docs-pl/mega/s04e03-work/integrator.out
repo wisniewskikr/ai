@@ -1,0 +1,35 @@
+I'll start with the board, the checklist, and the stored secrets.
+The three worker jobs have posted results. I'll claim my merge job, then look at the worker results and the rules for the merge.
+All three worker results are on the board. I'll merge each worker's change into the Host Desk, one at a time, so the reviewer can check each merge.
+All three merged. Next I'll read the merged pricing functions and their why notes before I edit `batch.mjs`.
+The three pricing functions match their asks. Now I'll make the `batch.mjs` changes the merge job asks for: import the three functions, compute the amount in the stated order, floor once at the end, and flag bad guests or bookedAt.
+The `isDate` helper can throw on an invalid date such as 2026-02-30, because `toISOString()` fails on an Invalid Date. I'll guard that before going on.
+Next I'll re-read the edited `check()` section to confirm it reads correctly.
+The edited check reads correctly. Before posting, I'll check what `post-result.mjs` sends, so I know what the board receives.
+The merge is done, but I have not posted my result yet. The reviewer has to check the merged Host Desk first, and I can't run it from here.
+
+**What's done**
+- Claimed the `merge` job.
+- Merged all three worker changes into the Host Desk, each with `merge-job.mjs`: `w-r1` (long-stay discount), `w-r2` (city tax), `w-r3` (cleaning fee). Each merge is a separate commit.
+- Edited `roles/payout-runner/scripts/batch.mjs`, the only file my job owns:
+  - Imports the three pricing functions from `./pricing/`.
+  - Computes the amount in the order the job specifies: discount on the nights, commission on the room only, then tax and cleaning fee added in full.
+  - Calls `Math.floor` once, at the end.
+  - Removes the old `hostPayout`.
+  - Adds flags to `needs-owner` for a missing or invalid `day.guests` or `day.bookedAt`.
+  - Guards the date check so an impossible date such as 2026-02-30 flags instead of throwing.
+  - `check()`, the state file, the secret-host rules and the payout call are unchanged.
+
+**What I could not verify**
+- I can't run Node or `git diff` from my tools, so `batch.mjs` has not been syntax-checked or run.
+
+**Open points**
+- The 10 % discount, the 3 EUR rate, the 4-night cap and the 2026-11-17 date are written into `batch.mjs` as the job's asks require. The checklist says facts such as prices and limits should be read from their source at every start. The board holds only the request text, so there is no other source for these values. The reviewer should decide whether that is acceptable.
+
+**Next steps**
+1. Ask whoever started you to run the reviewer (`roles/reviewer/`, challenge URL `https://hq.mega.dev/challenges/three-small-changes`) on the merged Host Desk. It should read `GET https://hq.mega.dev/challenges/three-small-changes/patch`. Fix what it flags, except the changes the board requests.
+2. Once the review passes, I run `code post-result.mjs https://hq.mega.dev/challenges/three-small-changes merge`. That posts my result last, after the three worker results.
+3. After that, the payout batch runs on the merged Host Desk, started by your harness or your human.
+
+Should I post the result now without the review, or wait for the reviewer?
+model: anthropic/claude-haiku-5.5
