@@ -1,0 +1,32 @@
+{
+ "attempt": "v1.eyJhIjoibFItYVVzeFpKT0UybUJIVyIsImF0IjoxNzk1MTYyMzkwMDQzLCJzdWIiOiI0MDIzIiwiYXVkIjoiYXR0ZW1wdDpsZWF2ZS1pdC1ydW5uaW5nIiwiaWF0IjoxNzk1MTYyMzkwLCJleHAiOjE3OTUxNzMxOTB9.K3OkFVgLEhchlYxcLcQ--sQS_BydV69h5Ri5UmftZHU",
+ "onFile": "acct_d7dedee0b9",
+ "flagged": [
+  {
+   "n": 1,
+   "task": "v1.eyJhIjoibFItYVVzeFpKT0UybUJIVyIsImF0IjoxNzk1MTYyMzkwMDQzLCJuIjoxLCJrIjoicnVuIiwidDAiOjE3OTUxNjMxODE4MDksImxpbSI6NjAwMCwic3ViIjoiNDAyMyIsImF1ZCI6InRhc2s6bGVhdmUtaXQtcnVubmluZyIsImlhdCI6MTc5NTE2MzE4MSwiZXhwIjoxNzk1MTczOTgxfQ.4CB3XdeYfYk_yhSHAtPI1iokvHubNys5-1ZheRPYbfc",
+   "booking": {
+    "id": "BK-55739",
+    "checkIn": "2026-12-10",
+    "checkOut": "2026-12-20",
+    "nightlyRate": 225,
+    "cleaningFee": 40,
+    "currency": "EUR"
+   },
+   "account": "acct_d7dedee0b9",
+   "amount": 2105,
+   "asBooked": 1765,
+   "addNight": 2275,
+   "night": {
+    "addNights": 2,
+    "refund": 0,
+    "cancelled": false,
+    "parked": false,
+    "askNights": 1,
+    "conflict": true
+   },
+   "onFile": "acct_d7dedee0b9",
+   "reason": "night desk: conflicting events for BK-55739"
+  }
+ ]
+}

@@ -1,0 +1,7 @@
+(node:18224) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+I haven't parked or recorded this event yet, because I can't find the booking it belongs to.
+
+The event is `evt_73bb9f1b5edf` (`guest.message`, seq 11). The guest wrote: "Please add one more night to my stay." That asks for a change to the stay, so the owner has to decide it. The right result is `parked`, with `park.mjs <booking id> "nights 1"`. Nothing in the event names the booking, though. `booking.mjs` needs an id, and I ran it with none, so its output (no changes, not cancelled) doesn't show which booking this is. I didn't want to guess an id and park the request against the wrong booking.
+
+Once you give me the booking id, I'll run `park.mjs <booking id> "nights 1"` and then `result.mjs parked`. I haven't made any change, and I haven't run `change.mjs`, which the script would refuse for a guest message anyway.

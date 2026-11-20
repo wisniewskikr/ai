@@ -1,0 +1,13 @@
+2026-11-20T08:13:38.190Z night: 2026-11-20T08:14:30.000Z → 2026-11-20T08:24:30.000Z · job night-desk/1
+2026-11-20T08:14:56.091Z event 1 booking.changed evt_cfd7fbb4e371 BK-82838: applied (BK-82838 +1 nights) → 200 applied
+2026-11-20T08:15:35.051Z event 2 booking.cancelled evt_988de6a07ee2 BK-65368: applied (BK-65368 refund 90 EUR) → 200 applied
+2026-11-20T08:15:56.668Z event 3 evt_cfd7fbb4e371: repeat (delivery 2), result applied
+2026-11-20T08:16:23.965Z event 4 guest.message evt_626c79ede6ad BK-56798: parked (night-desk role) → 200 parked
+2026-11-20T08:16:36.491Z event 5 booking.changed evt_643cbc8d0315 BK-17014: applied (BK-17014 +1 nights) → 200 applied
+2026-11-20T08:21:14.446Z event 6 booking.changed evt_761edcd88b97 BK-55739: applied (BK-55739 +2 nights) → 200 applied
+2026-11-20T08:21:41.575Z event 7 evt_988de6a07ee2: repeat (delivery 2), result applied
+2026-11-20T08:22:22.803Z event 8 guest.message evt_eb113f20fccb BK-43362: parked (night-desk role) → 200 parked
+2026-11-20T08:22:42.605Z event 9 evt_761edcd88b97 BK-55739: conflict (delivery 2 differs from the first: {"booking":"BK-55739","change":{"nights":2}} vs {"booking":"BK-55739","change":{"nights":3}}) → 200 conflict
+2026-11-20T08:23:16.094Z event 10 booking.cancelled evt_8820c1f0e673 BK-69602: applied (BK-69602 refund 117 EUR) → 200 applied
+2026-11-20T08:23:51.048Z event 11 guest.message evt_1e2227d282ac : parked (night-desk role) → 200 parked
+2026-11-20T08:26:05.046Z The night is over. Changes: host-desk/night/changes.json {"cursor":"12","results":{"evt_cfd7fbb4e371":"applied","evt_988de6a07ee2":"applied","evt_626c79ede6ad":"parked","evt_643cbc8d0315":"applied","evt_761edcd88b97":"applied","evt_eb113f20fccb":"parked","evt_8820c1f0e673":"applied","evt_1e2227d282ac":"parked"},"cancelled":["BK-65368","BK-69602"],"parked":["BK-56798","BK-43362"],"conflicts":["BK-55739"],"lastSeq":11,"data":{"evt_cfd7fbb4e371":"{\"booking\":\"BK-82838\",\"change\":{\"nights\":1}}","evt_988de6a07ee2":"{\"booking\":\"BK-65368\",\"refund\":90}","evt_626c79ede6ad":"{\"booking\":\"BK-56798\",\"text\":\"Please add one night to my stay.\"}","evt_643cbc8d0315":"{\"booking\":\"BK-17014\",\"change\":{\"nights\":1}}","evt_761edcd88b97":"{\"booking\":\"BK-55739\",\"change\":{\"nights\":2}}","evt_eb113f20fccb":"{\"booking\":\"BK-43362\",\"text\":\"Please add one night to my stay.\"}","evt_8820c1f0e673":"{\"booking\":\"BK-69602\",\"refund\":117}","evt_1e2227d282ac":"{\"text\":\"Please add one more night to my stay.\"}"}}

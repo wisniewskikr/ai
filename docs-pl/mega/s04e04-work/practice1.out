@@ -1,0 +1,7 @@
+manual ok, account on file acct_87414eb35e
+night changes 0 parked [] conflicts []
+settings 2026-11-19.505 commission 12 %
+#1 BK-74086 paid 598 EUR to acct_87414eb35e
+#2 BK-96270 paid 330 EUR to acct_87414eb35e
+#3 BK-32824 paid 394 EUR to acct_87414eb35e
+end after 1146 ms: 200 {"status":"done","message":"Practice is done. Start the run with your attempt when the agent is ready.","next":"Practice is optional. Start the run with this attempt when the agent is ready."}

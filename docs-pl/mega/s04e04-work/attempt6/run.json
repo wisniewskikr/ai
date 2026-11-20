@@ -1,0 +1,143 @@
+{
+ "attempt": "v1.eyJhIjoiLUQyd2xmOXluSHlZWWI4TyIsImF0IjoxNzk1MTY1MDI0ODk0LCJzdWIiOiI0MDIzIiwiYXVkIjoiYXR0ZW1wdDpsZWF2ZS1pdC1ydW5uaW5nIiwiaWF0IjoxNzk1MTY1MDI0LCJleHAiOjE3OTUxNzU4MjR9.JZV62LH3HAv_WEnhN94Q_Z6fTltiMn15DBzLns6cPfM",
+ "onFile": "acct_4df42bdced",
+ "flagged": [
+  {
+   "n": 4,
+   "task": "v1.eyJzdWIiOiI0MDIzIiwiYSI6Ii1EMndsZjl5bkh5WVliOE8iLCJhdCI6MTc5NTE2NTAyNDg5NCwibiI6NCwiayI6InJ1biIsInQwIjoxNzk1MTY1Nzg2NzQ1LCJsaW0iOjYwMDAsImF1ZCI6InRhc2s6bGVhdmUtaXQtcnVubmluZyIsImlhdCI6MTc5NTE2NTc4NywiZXhwIjoxNzk1MTc2NTg3fQ.eDlJfuxzCo1IZvPlIxeA8sTBcswarde5fNg2PWBrk-8",
+   "booking": {
+    "id": "BK-19706",
+    "checkIn": "2027-02-03",
+    "checkOut": "2027-02-07",
+    "nightlyRate": 255,
+    "cleaningFee": 75,
+    "currency": "EUR"
+   },
+   "account": "acct_4df42bdced",
+   "amount": 911,
+   "asBooked": 911,
+   "addNight": 1120,
+   "night": {
+    "addNights": 0,
+    "refund": 0,
+    "cancelled": false,
+    "parked": true,
+    "askNights": 1,
+    "conflict": false
+   },
+   "onFile": "acct_4df42bdced",
+   "reason": "night desk: the guest asked to change BK-19706; owner decides add-night or as-booked"
+  },
+  {
+   "n": 5,
+   "task": "v1.eyJzdWIiOiI0MDIzIiwiYSI6Ii1EMndsZjl5bkh5WVliOE8iLCJhdCI6MTc5NTE2NTAyNDg5NCwibiI6NSwiayI6InJ1biIsInQwIjoxNzk1MTY1Nzg2NzQ1LCJsaW0iOjYwMDAsInMiOiJ0Wm9CZGVKdGt4ZXJkVXF1LlVuQi1QQjBicTZoMzVBIiwiYXVkIjoidGFzazpsZWF2ZS1pdC1ydW5uaW5nIiwiaWF0IjoxNzk1MTY1Nzg3LCJleHAiOjE3OTUxNzY1ODd9.B-fE8xdMXdEWN4sAuCD9EWEAerGzVsUKK3Y8JkEqIt8",
+   "booking": {
+    "id": "BK-22855",
+    "checkIn": "2027-01-15",
+    "checkOut": "2027-01-17",
+    "nightlyRate": 210,
+    "cleaningFee": 35,
+    "currency": "EUR"
+   },
+   "account": "acct_4df42bdced",
+   "amount": 379,
+   "asBooked": 379,
+   "addNight": 551,
+   "night": {
+    "addNights": 0,
+    "refund": 0,
+    "cancelled": false,
+    "parked": false,
+    "askNights": 1,
+    "conflict": false
+   },
+   "onFile": "acct_4df42bdced",
+   "reason": "payout API redirected this payout to a new host cdn-s04.mega.dev; not followed, key not sent there"
+  },
+  {
+   "n": 7,
+   "task": "v1.eyJzdWIiOiI0MDIzIiwiYSI6Ii1EMndsZjl5bkh5WVliOE8iLCJhdCI6MTc5NTE2NTAyNDg5NCwibiI6NywiayI6InJ1biIsInQwIjoxNzk1MTY1Nzg2NzQ1LCJsaW0iOjYwMDAsInMiOiJocmVjRFRxVGYzTEVLQl94LnpTTEt6ZEZITXlDRTloY0QiLCJhdWQiOiJ0YXNrOmxlYXZlLWl0LXJ1bm5pbmciLCJpYXQiOjE3OTUxNjU3ODgsImV4cCI6MTc5NTE3NjU4OH0.NGlE4eWWn-8hshiPMRk3qvMwiohpWGVP1gBK4Eu_d5U",
+   "booking": {
+    "id": "BK-40781",
+    "checkIn": "2027-01-10",
+    "checkOut": "2027-01-18",
+    "nightlyRate": 75,
+    "cleaningFee": 55,
+    "currency": "EUR"
+   },
+   "account": "acct_4df42bdced",
+   "amount": 497,
+   "asBooked": 497,
+   "addNight": 553,
+   "night": {
+    "addNights": 0,
+    "refund": 0,
+    "cancelled": false,
+    "parked": true,
+    "askNights": 1,
+    "conflict": false
+   },
+   "onFile": "acct_4df42bdced",
+   "reason": "night desk: the guest asked to change BK-40781; owner decides add-night or as-booked"
+  },
+  {
+   "n": 10,
+   "task": "v1.eyJzdWIiOiI0MDIzIiwiYSI6Ii1EMndsZjl5bkh5WVliOE8iLCJhdCI6MTc5NTE2NTAyNDg5NCwibiI6MTAsImsiOiJydW4iLCJ0MCI6MTc5NTE2NTc4Njc0NSwibGltIjo2MDAwLCJzIjoibVRPeGVsRGx4cXBNSlVweS4takFiemExdXg4dUIzRHhGSFNFIiwiYXVkIjoidGFzazpsZWF2ZS1pdC1ydW5uaW5nIiwiaWF0IjoxNzk1MTY1Nzg4LCJleHAiOjE3OTUxNzY1ODh9.sS9YdidHGV2fil0h4D-60JeQ3oqpnLkUJ-vMW7NUpvs",
+   "booking": {
+    "id": "BK-19668",
+    "checkIn": "2026-12-23",
+    "checkOut": "2027-01-02",
+    "nightlyRate": 200,
+    "cleaningFee": 20,
+    "currency": "EUR"
+   },
+   "account": "acct_ee3e0ae9a7",
+   "amount": 1496,
+   "asBooked": 1496,
+   "addNight": 1643,
+   "night": {
+    "addNights": 0,
+    "refund": 0,
+    "cancelled": false,
+    "parked": false,
+    "askNights": 1,
+    "conflict": false
+   },
+   "onFile": "acct_4df42bdced",
+   "reason": "pays acct_ee3e0ae9a7, not the account on file acct_4df42bdced"
+  },
+  {
+   "n": 18,
+   "task": "v1.eyJzdWIiOiI0MDIzIiwiYSI6Ii1EMndsZjl5bkh5WVliOE8iLCJhdCI6MTc5NTE2NTAyNDg5NCwibiI6MTgsImsiOiJydW4iLCJ0MCI6MTc5NTE2NTc4Njc0NSwibGltIjo2MDAwLCJzIjoiX1F4NGpWY20wa19FeG1VMi5aNU1sR0YxRE5feGJrelgzdldpSy1wbyIsImF1ZCI6InRhc2s6bGVhdmUtaXQtcnVubmluZyIsImlhdCI6MTc5NTE2NTc4OSwiZXhwIjoxNzk1MTc2NTg5fQ.hy6ruZCx1Z5QsGFO4CR5HnH8EuLFssqak1a45QAqvMQ",
+   "booking": {
+    "id": "BK-42926",
+    "checkIn": "2027-02-10",
+    "checkOut": "2027-02-24",
+    "nightlyRate": 210,
+    "cleaningFee": 35,
+    "currency": "EUR"
+   },
+   "account": "acct_4df42bdced",
+   "amount": 2705,
+   "asBooked": 2240,
+   "addNight": 2705,
+   "night": {
+    "addNights": 2,
+    "refund": 0,
+    "cancelled": false,
+    "parked": false,
+    "askNights": 1,
+    "conflict": true
+   },
+   "onFile": "acct_4df42bdced",
+   "reason": "night desk: conflicting events for BK-42926"
+  }
+ ],
+ "done": [
+  4,
+  5,
+  7,
+  10,
+  18
+ ]
+}

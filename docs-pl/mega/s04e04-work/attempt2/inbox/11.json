@@ -1,0 +1,10 @@
+{
+  "id": "evt_d27a1433dc72",
+  "seq": 11,
+  "type": "guest.message",
+  "at": 1795076585000,
+  "delivery": 1,
+  "data": {
+    "text": "Please add one more night to my stay."
+  }
+}

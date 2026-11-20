@@ -1,0 +1,12 @@
+{"id":"evt_24fdcd4d46d7","seq":1,"type":"booking.changed","at":1795164290000,"delivery":1,"data":{"booking":"BK-51126","change":{"nights":1}}}
+{"id":"evt_34757b50c68c","seq":2,"type":"booking.cancelled","at":1795164330000,"delivery":1,"data":{"booking":"BK-56777","refund":245}}
+{"id":"evt_24fdcd4d46d7","seq":3,"type":"booking.changed","at":1795164355000,"delivery":2,"data":{"booking":"BK-51126","change":{"nights":1}}}
+{"id":"evt_0608132973bb","seq":4,"type":"guest.message","at":1795164370000,"delivery":1,"data":{"booking":"BK-74766","text":"Please add one night to my stay."}}
+{"id":"evt_0f0f28675f29","seq":5,"type":"booking.changed","at":1795164390000,"delivery":1,"data":{"booking":"BK-64597","change":{"nights":1}}}
+{"id":"evt_8e4bc845df57","seq":6,"type":"booking.changed","at":1795164670000,"delivery":1,"data":{"booking":"BK-30489","change":{"nights":2}}}
+{"id":"evt_34757b50c68c","seq":7,"type":"booking.cancelled","at":1795164700000,"delivery":2,"data":{"booking":"BK-56777","refund":245}}
+{"id":"evt_f78ac2c29410","seq":8,"type":"guest.message","at":1795164730000,"delivery":1,"data":{"booking":"BK-21040","text":"Please add one night to my stay."}}
+{"id":"evt_8e4bc845df57","seq":9,"type":"booking.changed","at":1795164760000,"delivery":2,"data":{"booking":"BK-30489","change":{"nights":3}}}
+{"id":"evt_a2ca6f914cd5","seq":10,"type":"booking.cancelled","at":1795164790000,"delivery":1,"data":{"booking":"BK-71710","refund":120}}
+{"id":"evt_c1bc6c887cfb","seq":11,"type":"guest.message","at":1795164815000,"delivery":1,"data":{"text":"Please add one more night to my stay."}}
+{"id":"evt_1b6bba4fe869","seq":12,"type":"booking.cancelled","at":1795164830000,"delivery":1,"data":{"booking":"BK-95256","refund":80}}

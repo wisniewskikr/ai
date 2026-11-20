@@ -1,0 +1,7 @@
+(node:9248) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+The result for event `evt_86e4bc18f7c8` is **parked**, but the owner's request is not yet recorded against a booking.
+
+- **The event:** a guest message asking to "add one more night to my stay". Changing the stay is the owner's call, so I did not run `change.mjs`.
+- **The gap:** the event carries no booking id, and `booking.mjs` printed no booking id either (no changes tonight, not cancelled, not parked). I did not guess one, because parking the wrong booking would be worse than not parking.
+- **Still to do:** the owner needs to look at this guest message. Someone should find the booking id from the guest's contact or the Host Desk and run `park.mjs <booking id> "nights 1"` so the request sits against the right booking.

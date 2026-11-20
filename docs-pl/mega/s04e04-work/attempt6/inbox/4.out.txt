@@ -1,0 +1,5 @@
+(node:19808) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+Event `evt_a4571b21daa1` (guest message on BK-40781) is parked for the owner, with result `parked`.
+
+The guest asked to add one night. That changes the stay, so it's the owner's decision. I recorded the request with `park.mjs` as "nights 1" and made no change to the booking. BK-40781 had no changes tonight and was not cancelled.

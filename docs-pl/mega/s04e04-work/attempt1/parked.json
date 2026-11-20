@@ -1,0 +1,16 @@
+[
+  {
+    "booking": "BK-52245",
+    "ask": "nights 1",
+    "nights": 1,
+    "event": "evt_44eb5e77189f",
+    "at": "2026-11-19T08:00:17.419Z"
+  },
+  {
+    "booking": "BK-75044",
+    "ask": "nights 1",
+    "nights": 1,
+    "event": "evt_06a261bb5707",
+    "at": "2026-11-19T08:06:20.217Z"
+  }
+]

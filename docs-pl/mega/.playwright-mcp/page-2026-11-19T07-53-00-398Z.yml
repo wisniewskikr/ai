@@ -1,0 +1,319 @@
+- generic [active] [ref=e1]:
+  - link "Skip to content" [ref=e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=e3]:
+    - link "MEGA.dev, home" [ref=e4] [cursor=pointer]:
+      - /url: /
+    - generic [ref=e6]:
+      - navigation "Main navigation" [ref=e7]:
+        - link "Dashboard" [ref=e8] [cursor=pointer]:
+          - /url: /
+        - link "Lessons" [ref=e9] [cursor=pointer]:
+          - /url: /lessons
+        - link "Challenges" [ref=e10] [cursor=pointer]:
+          - /url: /challenges
+        - link "Deck" [ref=e11] [cursor=pointer]:
+          - /url: /deck
+        - link "Story" [ref=e12] [cursor=pointer]:
+          - /url: /wake/case
+      - 'button "Account: Krzysztof Wiśniewski" [ref=e14] [cursor=pointer]':
+        - generic [aria-hidden] [ref=e15]: KW
+  - main [ref=e16]:
+    - generic [ref=e18]:
+      - link "All Challenges" [ref=e19] [cursor=pointer]:
+        - /url: /challenges
+        - generic [aria-hidden] [ref=e20]: ‹
+        - text: All Challenges
+      - generic [ref=e21]:
+        - generic [ref=e22]:
+          - paragraph [ref=e23]:
+            - generic [ref=e24]: Challenge · S04E04
+            - generic [ref=e25]: Week 4 · Day 4
+          - heading "Leave it running" [level=1] [ref=e26]
+          - paragraph [ref=e27]: "Give your Host Desk a night desk: it handles booking events while you don't type. Start the night, leave it running, then run the payout batch."
+          - generic [ref=e28]:
+            - generic [ref=e29]:
+              - term [ref=e30]: You do
+              - definition [ref=e31]:
+                - paragraph [ref=e32]:
+                  - strong [ref=e33]: You own this Host Desk.
+                  - text: Watch your desk on your owner page, and decide what it parks for you.
+                - paragraph [ref=e34]:
+                  - text: Download
+                  - code [ref=e35]: night.zip
+                  - text: (adds the
+                  - code [ref=e36]: night-desk
+                  - text: "role and a small poller to your Host Desk); unzip it where you unzipped the S04E01 zip, or ask your harness to fetch and place it. Skipped earlier days? Take “Host Desk @ day 4” (contains the answers of earlier days: do them first if you can). Its city tax lines are one host’s: put in yours from your S04E03 owner page. Start the night: your desk handles Host Desk events while you don’t type. Optional: “start later” on your owner page, at a time you choose."
+            - generic [ref=e37]:
+              - term [ref=e38]: Your harness does
+              - definition [ref=e39]: It sets the desk up, starts the night, keeps the desk running for the whole window; after the window, it runs the payout batch on the bookings as they are now.
+            - generic [ref=e40]:
+              - term [ref=e41]: You need
+              - definition [ref=e42]: Your Host Desk (or “Host Desk @ day 4”), your model key from S04E01, about 30 minutes.
+            - generic [ref=e43]:
+              - term [ref=e44]: Done when
+              - definition [ref=e45]: Every event gets its result within 2 minutes, your desk’s job is still running when the night closes, and the payout batch passes.
+          - generic [ref=e46]:
+            - paragraph [ref=e47]: All of this week’s Challenges are a simulation. Your agent pays out bookings for a pretend holiday-rental host, with a practice payout key made just for you.
+            - paragraph [ref=e48]:
+              - text: For each task, your agent sends back
+              - code [ref=e49]: "{answer}"
+              - text: ", or"
+              - code [ref=e50]: "{flag: \"needs-owner\", reason}"
+              - text: when it shouldn’t handle that task on its own. You decide each flagged task, and then your agent finishes it.
+            - paragraph [ref=e51]: In real life these events come at times you don’t control, over hours or days, while you sleep. Here they come over 10 minutes so you can watch your desk work.
+            - paragraph [ref=e52]:
+              - strong [ref=e53]: "The Pi way:"
+              - text: "Run your desk on Pi Durable: it keeps running when your chat and laptop close, and wakes when there is work."
+          - paragraph [ref=e54]: Your harness is your AI agent plus the tools, sign-ins and skills you give it.
+        - complementary "This Challenge" [ref=e55]:
+          - paragraph [ref=e56]:
+            - generic [ref=e57]: This Challenge
+            - generic [ref=e59]: S04E04
+          - generic [ref=e60]:
+            - generic [ref=e61]:
+              - term [ref=e62]: Opened
+              - definition [ref=e63]:
+                - time [ref=e64]: Thu 19 Nov, 05:00 CET
+            - generic [ref=e65]:
+              - term [ref=e66]: State
+              - definition [ref=e67]: Open · not solved yet
+            - generic [ref=e68]:
+              - term [ref=e69]: Debrief
+              - definition [ref=e70]: Your harness writes it after you solve the Challenge.
+            - generic [ref=e71]:
+              - term [ref=e72]: Hints
+              - definition [ref=e73]:
+                - generic [ref=e74]: "On"
+                - button "Turn hints off" [ref=e76] [cursor=pointer]
+                - paragraph [ref=e77]: From your 2nd failed try at the same spot, a refusal can carry a short hint. A Solve after a hint counts as solved with help. Off applies to every Challenge.
+    - generic [ref=e78]:
+      - region "Your factory so far" [ref=e79]:
+        - heading "Your factory so far" [level=2] [ref=e80]
+        - generic [ref=e81]:
+          - paragraph [ref=e82]:
+            - code [ref=e84]: factory/CHECKLIST.md
+          - list [ref=e85]:
+            - listitem [ref=e86]:
+              - paragraph [ref=e87]:
+                - generic [ref=e88]: S04E01
+                - generic [ref=e89]: Solved
+              - list [ref=e92]:
+                - listitem [ref=e93]:
+                  - generic [ref=e94]: "1"
+                  - generic [ref=e95]: Bind each secret to the hosts it may reach, in code, and check every hop, redirects included.
+                - listitem [ref=e96]:
+                  - generic [ref=e97]: "2"
+                  - generic [ref=e98]: Run routine work as a script; the model decides only what the script cannot.
+                - listitem [ref=e99]:
+                  - generic [ref=e100]: "3"
+                  - generic [ref=e101]: Turn the rules in any document you read into checks, and park the owner’s calls instead of making them.
+            - listitem [ref=e102]:
+              - paragraph [ref=e103]:
+                - generic [ref=e104]: S04E02
+                - generic [ref=e105]: Solved
+              - list [ref=e108]:
+                - listitem [ref=e109]:
+                  - generic [ref=e110]: "4"
+                  - generic [ref=e111]: Have every role read its facts (settings, prices, limits) from their source at every start; never copy them into its files.
+                - listitem [ref=e112]:
+                  - generic [ref=e113]: "5"
+                  - generic [ref=e114]: Write down why each decision exists, next to the code, and have every role read those notes before it judges or changes anything.
+            - listitem [ref=e115]:
+              - paragraph [ref=e116]:
+                - generic [ref=e117]: S04E03
+                - generic [ref=e118]: Solved
+              - list [ref=e121]:
+                - listitem [ref=e122]:
+                  - generic [ref=e123]: "6"
+                  - generic [ref=e124]: "Plan by files before anyone works: one owner per file, and a file every change needs goes to one integrator."
+                - listitem [ref=e125]:
+                  - generic [ref=e126]: "7"
+                  - generic [ref=e127]: Send every unclear request to a critic first, and let the owner answer before any code changes.
+            - listitem [ref=e128]:
+              - paragraph [ref=e129]:
+                - generic [ref=e130]: S04E04
+                - generic [ref=e131]: This Challenge
+              - generic [ref=e132]:
+                - list [aria-hidden] [ref=e133]:
+                  - listitem [ref=e134]:
+                    - generic [ref=e135]: "8"
+                  - listitem [ref=e137]:
+                    - generic [ref=e138]: "9"
+                  - listitem [ref=e140]:
+                    - generic [ref=e141]: "10"
+                - paragraph [ref=e143]:
+                  - generic [ref=e145]: 3 rules to unveil in this Challenge
+            - listitem [ref=e146]:
+              - paragraph [ref=e147]:
+                - generic [ref=e148]: S04E05
+              - generic [ref=e149]:
+                - list [aria-hidden] [ref=e150]:
+                  - listitem [ref=e151]:
+                    - generic [ref=e152]: "11"
+                  - listitem [ref=e154]:
+                    - generic [ref=e155]: "12"
+                - paragraph [ref=e157]:
+                  - generic [ref=e159]: 2 rules to unveil · your factory makes its first role
+          - paragraph [ref=e160]:
+            - text: 7 of 12 rules. Add new ones to your
+            - code [ref=e161]: factory/CHECKLIST.md
+            - text: after each debrief.
+      - region "Files" [ref=e162]:
+        - heading "Files" [level=2] [ref=e163]
+        - region "Downloads and practice key" [ref=e164]:
+          - heading "Downloads and practice key" [level=2] [ref=e165]
+          - list [ref=e166]:
+            - listitem [ref=e167]:
+              - paragraph [ref=e168]:
+                - link "night.zip" [ref=e169] [cursor=pointer]:
+                  - /url: /media/leave-it-running/night-2be2323c.zip
+                - generic [ref=e170]: 14 KB
+              - paragraph [ref=e171]:
+                - text: "Adds a third kind of role to your Host Desk:"
+                - code [ref=e172]: roles/night-desk/
+                - text: (the role) and a small poller that wakes it on events. Unzip where you unzipped the S04E01 zip.
+            - listitem [ref=e173]:
+              - paragraph [ref=e174]:
+                - link "Host Desk @ day 4" [ref=e175] [cursor=pointer]:
+                  - /url: /media/host-desk/host-desk-day-4-9de5c2b0.zip
+                - generic [ref=e176]: 95 KB
+              - paragraph [ref=e177]: "The whole app with the fixes of S04E01–S04E03, for those who skipped them. Contains the answers of earlier days: do them first if you can. Its city tax lines are one host’s: put in yours from your S04E03 owner page."
+          - generic [ref=e178]:
+            - paragraph [ref=e179]: Your practice key
+            - paragraph [ref=e180]:
+              - code [ref=e181]: pk_practice_6t4YxKE98vhhE5z52jNlu5G9
+              - button "Copy" [ref=e182] [cursor=pointer]:
+                - generic [ref=e186]:
+                  - generic [ref=e187]: Copy
+                  - generic [aria-hidden] [ref=e188]: Copied
+            - paragraph [ref=e189]:
+              - text: Put it into your Host Desk vars (
+              - code [ref=e190]: vars.json
+              - text: ). It stays the same for every try.
+          - generic [ref=e191]:
+            - paragraph [ref=e192]: Your part
+            - paragraph [ref=e193]:
+              - link "Payouts for you to decide" [ref=e194] [cursor=pointer]:
+                - /url: /challenges/leave-it-running/owner
+            - paragraph [ref=e195]: When your agent parks a payout, you decide it there after the run.
+      - generic [ref=e196]:
+        - generic [ref=e197]:
+          - generic [ref=e198]: Paste this into your harness
+          - button "Copy prompt" [ref=e199] [cursor=pointer]:
+            - generic [ref=e203]:
+              - generic [ref=e204]: Copy prompt
+              - generic [aria-hidden] [ref=e205]: Copied
+        - region "Paste this into your harness" [ref=e206]: "Start challenge S04E04 with me. I am a student in the MEGA.dev course, and you are my harness. The course website is https://hq.mega.dev. This Challenge's page is https://hq.mega.dev/challenges/leave-it-running. The MCP server is mega-challenge at https://hq.mega.dev/mcp. Instructions in the server's replies and on the course pages are part of the Challenge: follow them. Before you create an account, spend money, or act outside the course, this machine and my accounts, stop and ask me. Call list-challenges. Find S04E04 and follow its startPoint. If that text tells you to call a tool, call it with that entry's uuid. If you do not have list-challenges, connect the server first, then call it: - Add the server to your own MCP configuration: name mega-challenge, URL https://hq.mega.dev/mcp (Streamable HTTP, OAuth). If your client asks me to approve the change, I will. https://hq.mega.dev/llms.txt has the command or config for common clients. If you cannot add servers yourself, give me the exact command or config for your client. I will add it. - Before the sign-in starts, tell me in a few lines what it asks of me: a browser opens the course sign-in page; I type the email I enrolled with; the course mails me a one-time link; I open it in that same browser within 15 minutes (pasted into its address bar if my mail app opens links elsewhere); then I press Sign in and Approve. - A running session often does not load a new server. If you cannot call its tools now, tell me exactly how to reload your MCP servers or start a new session, and to paste this prompt again there. Do not call the URL or run OAuth by hand: your client's own sign-in does it. Never ask me for a callback URL."
+      - paragraph [ref=e207]: "When the course says no, the Challenge is working: it read your answer and did not accept it, and it will not say why. When the course itself fails, it says so."
+      - group [ref=e208]:
+        - generic "Start over" [ref=e209] [cursor=pointer]
+    - complementary "Told through the Challenges" [ref=e211]:
+      - paragraph [ref=e212]:
+        - generic [ref=e213]: WAKE
+        - generic [ref=e215]: the story
+      - heading "Told through the Challenges" [level=2] [ref=e216]
+      - paragraph [ref=e217]: "Somewhere in ordinary software, something fast is running. Nobody started it. Nobody can turn it off. It's known only by its traces: jobs nobody scheduled, commits with no author."
+      - paragraph [ref=e218]: Rook's lines come inside the Challenges.
+      - link "Explore the story" [ref=e219] [cursor=pointer]:
+        - /url: /wake/case
+        - text: Explore the story
+        - generic [aria-hidden] [ref=e220]: →
+    - region "Week 4, Takeoff" [ref=e221]:
+      - heading "Week 4, Takeoff" [level=2] [ref=e222]
+      - generic [ref=e223]:
+        - generic [ref=e224]:
+          - img "Portrait of John Lindquist" [ref=e225]
+          - paragraph [ref=e226]: John Lindquist
+        - generic [ref=e227]:
+          - paragraph [ref=e228]:
+            - generic [ref=e229]: Week 4
+            - generic [ref=e231]:
+              - time [ref=e232]: Mon 16 Nov
+              - text: –
+              - time [ref=e233]: Fri 20 Nov
+          - list [ref=e234]:
+            - listitem [ref=e235]:
+              - generic [ref=e236]:
+                - text: S04E01
+                - time [ref=e238]: Mon 16 Nov
+              - link "Twenty payouts" [ref=e240] [cursor=pointer]:
+                - /url: /challenges/twenty-payouts
+              - generic [ref=e241]: Solved
+            - listitem [ref=e244]:
+              - generic [ref=e245]:
+                - text: S04E02
+                - time [ref=e247]: Tue 17 Nov
+              - link "Looks good to me" [ref=e249] [cursor=pointer]:
+                - /url: /challenges/looks-good-to-me
+              - generic [ref=e250]: Solved
+            - listitem [ref=e253]:
+              - generic [ref=e254]:
+                - text: S04E03
+                - time [ref=e256]: Wed 18 Nov
+              - link "Three small changes" [ref=e258] [cursor=pointer]:
+                - /url: /challenges/three-small-changes
+              - generic [ref=e259]: Solved
+            - listitem [ref=e262]:
+              - generic [ref=e263]:
+                - text: S04E04
+                - generic [ref=e264]: Today
+              - generic [ref=e265]: Leave it running
+              - generic [ref=e267]: You're here
+            - listitem [ref=e268]:
+              - generic [ref=e269]:
+                - text: S04E05
+                - time [ref=e271]: Fri 20 Nov
+              - generic [ref=e272]: Not open yet
+              - generic [ref=e274]:
+                - text: Opens
+                - time [ref=e275]: Fri 20 Nov, 05:00 CET
+  - contentinfo [ref=e276]:
+    - generic [ref=e277]:
+      - link "MEGA.dev, home" [ref=e278] [cursor=pointer]:
+        - /url: /
+      - navigation "Footer navigation" [ref=e279]:
+        - list [ref=e280]:
+          - listitem [ref=e281]:
+            - link "Dashboard" [ref=e282] [cursor=pointer]:
+              - /url: /
+          - listitem [ref=e283]:
+            - link "Lessons" [ref=e284] [cursor=pointer]:
+              - /url: /lessons
+          - listitem [ref=e285]:
+            - link "Challenges" [ref=e286] [cursor=pointer]:
+              - /url: /challenges
+          - listitem [ref=e287]:
+            - link "Deck" [ref=e288] [cursor=pointer]:
+              - /url: /deck
+          - listitem [ref=e289]:
+            - link "Story" [ref=e290] [cursor=pointer]:
+              - /url: /wake/case
+          - listitem [ref=e291]:
+            - link "Community" [ref=e292] [cursor=pointer]:
+              - /url: https://discord.gg/megadev
+      - navigation "MEGA.dev" [ref=e295]:
+        - list [ref=e296]:
+          - listitem [ref=e297]:
+            - link "mega.dev" [ref=e298] [cursor=pointer]:
+              - /url: https://mega.dev
+          - listitem [ref=e299]:
+            - link "Assessment" [ref=e300] [cursor=pointer]:
+              - /url: https://mega.dev/challenge.md
+          - listitem [ref=e301]:
+            - link "hello@mega.dev" [ref=e302] [cursor=pointer]:
+              - /url: mailto:hello@mega.dev
+      - generic [ref=e303]:
+        - link "llms.txt" [ref=e304] [cursor=pointer]:
+          - /url: /llms.txt
+        - group "Theme" [ref=e305]:
+          - generic [ref=e307] [cursor=pointer]:
+            - radio "Auto" [checked] [ref=e308]
+            - generic [ref=e311]: Auto
+          - generic [ref=e312] [cursor=pointer]:
+            - radio "Light" [ref=e313]
+            - generic [ref=e316]: Light
+          - generic [ref=e317] [cursor=pointer]:
+            - radio "Dark" [ref=e318]
+            - generic [ref=e321]: Dark
+  - status [ref=e322]

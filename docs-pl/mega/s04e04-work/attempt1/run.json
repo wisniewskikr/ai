@@ -1,0 +1,32 @@
+{
+ "attempt": "v1.eyJhIjoiaGdtV29KYWk2MkFJTjRfMiIsImF0IjoxNzk1MDc0ODQ0ODkwLCJzdWIiOiI0MDIzIiwiYXVkIjoiYXR0ZW1wdDpsZWF2ZS1pdC1ydW5uaW5nIiwiaWF0IjoxNzk1MDc0ODQ0LCJleHAiOjE3OTUwODU2NDR9.v9Wz2sN4GZh6I9dqZHs3ELXetzvctr1RPA6-n4tdkxA",
+ "onFile": "acct_87414eb35e",
+ "flagged": [
+  {
+   "n": 5,
+   "task": "v1.eyJzdWIiOiI0MDIzIiwiYSI6ImhnbVdvSmFpNjJBSU40XzIiLCJhdCI6MTc5NTA3NDg0NDg5MCwibiI6NSwiayI6InJ1biIsInQwIjoxNzk1MDc1ODE5MjE0LCJsaW0iOjYwMDAsImF1ZCI6InRhc2s6bGVhdmUtaXQtcnVubmluZyIsImlhdCI6MTc5NTA3NTgxOSwiZXhwIjoxNzk1MDg2NjE5fQ.zOStpSgsgkTekTMBwXvDNXH6dSSYA2Ozc2FQLMUS0qQ",
+   "booking": {
+    "id": "BK-75044",
+    "checkIn": "2027-02-14",
+    "checkOut": "2027-02-17",
+    "nightlyRate": 180,
+    "cleaningFee": 50,
+    "currency": "EUR"
+   },
+   "account": "acct_87414eb35e",
+   "amount": 534,
+   "asBooked": 534,
+   "addNight": 695,
+   "night": {
+    "addNights": 0,
+    "refund": 0,
+    "cancelled": false,
+    "parked": true,
+    "askNights": 1,
+    "conflict": false
+   },
+   "onFile": "acct_87414eb35e",
+   "reason": "night desk: the guest asked to change BK-75044; owner decides add-night or as-booked"
+  }
+ ]
+}

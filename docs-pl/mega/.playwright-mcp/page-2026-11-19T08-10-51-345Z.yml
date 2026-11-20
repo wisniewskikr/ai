@@ -1,0 +1,121 @@
+- generic [active] [ref=f2e1]:
+  - link "Skip to content" [ref=f2e2] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=f2e3]:
+    - link "MEGA.dev, home" [ref=f2e4] [cursor=pointer]:
+      - /url: /
+    - generic [ref=f2e6]:
+      - navigation "Main navigation" [ref=f2e7]:
+        - link "Dashboard" [ref=f2e8] [cursor=pointer]:
+          - /url: /
+        - link "Lessons" [ref=f2e9] [cursor=pointer]:
+          - /url: /lessons
+        - link "Challenges" [ref=f2e10] [cursor=pointer]:
+          - /url: /challenges
+        - link "Deck" [ref=f2e11] [cursor=pointer]:
+          - /url: /deck
+        - link "Story" [ref=f2e12] [cursor=pointer]:
+          - /url: /wake/case
+      - 'button "Account: Krzysztof Wiśniewski" [ref=f2e14] [cursor=pointer]':
+        - generic [aria-hidden] [ref=f2e15]: KW
+  - main [ref=f2e16]:
+    - generic [ref=f2e17]:
+      - paragraph [ref=f2e18]:
+        - generic [ref=f2e19]: S04E04
+        - generic [ref=f2e21]: Nothing waiting
+        - generic [ref=f2e23]: Live · checks every 20 s
+      - heading "Payouts for you to decide" [level=1] [ref=f2e26]
+      - paragraph [ref=f2e27]: Nothing waits for you. After a run the course accepts, each payout your agent parked shows up here.
+    - generic [ref=f2e28]:
+      - region "The night’s booking events" [ref=f2e30]:
+        - heading "The night’s booking events" [level=2] [ref=f2e32]
+        - generic [ref=f2e33]:
+          - heading "Timeline (UTC)" [level=3] [ref=f2e34]
+          - list [ref=f2e35]:
+            - listitem [ref=f2e36]: "#1 BK-43238 booking.changed · out 07:58:50 · acked 07:58:53 · result applied 07:58:53 (4 s)"
+            - listitem [ref=f2e37]: "#2 BK-88061 booking.cancelled · out 07:59:30 · acked 07:59:31 · result applied 07:59:32 (2 s)"
+            - listitem [ref=f2e38]: "#4 BK-52245 guest.message · out 08:00:10 · acked 08:00:11 · result parked 08:00:19 (9 s)"
+            - listitem [ref=f2e39]: "#6 BK-72293 booking.changed · out 08:05:10 · acked 08:05:14 · result applied 08:05:14 (5 s)"
+            - listitem [ref=f2e40]: "#8 BK-75044 guest.message · out 08:06:10 · acked 08:06:15 · result parked 08:06:22 (12 s)"
+            - listitem [ref=f2e41]: "#10 BK-16749 booking.cancelled · out 08:07:10 · acked 08:07:15 · result applied 08:07:16 (6 s)"
+            - listitem [ref=f2e42]: "#11 (no booking) guest.message · out 08:07:35 · acked 08:07:38 · result parked 08:07:48 (13 s)"
+            - listitem [ref=f2e43]: Reload this page to see the latest.
+        - generic [ref=f2e44]:
+          - heading "Booking BK-52245" [level=3] [ref=f2e45]
+          - list [ref=f2e46]:
+            - listitem [ref=f2e47]: "Guest wrote: “Please add one night to my stay.”"
+            - listitem [ref=f2e48]: Parked by your desk at 08:00 UTC (event evt_44eb5e77189f).
+        - generic [ref=f2e49]:
+          - heading "Booking BK-75044" [level=3] [ref=f2e50]
+          - list [ref=f2e51]:
+            - listitem [ref=f2e52]: "Guest wrote: “Please add one night to my stay.”"
+            - listitem [ref=f2e53]: Parked by your desk at 08:06 UTC (event evt_06a261bb5707).
+        - generic [ref=f2e54]:
+          - heading "No booking named" [level=3] [ref=f2e55]
+          - list [ref=f2e56]:
+            - listitem [ref=f2e57]: "Guest wrote: “Please add one more night to my stay.”"
+            - listitem [ref=f2e58]: Parked by your desk at 08:07 UTC (event evt_86e4bc18f7c8).
+        - generic [ref=f2e59]:
+          - 'heading "The city tax: the host’s answers (S04E03)" [level=3] [ref=f2e60]'
+          - list [ref=f2e61]:
+            - listitem [ref=f2e62]: "The host: Charge it for the first 4 nights of a stay at most."
+            - listitem [ref=f2e63]: "The host: Pay the tax out with the host’s payout: it goes on to the city, so take no commission on it."
+            - listitem [ref=f2e64]: "The host: Only for bookings made on or after 17 November 2026."
+      - complementary "lane 07 · night" [ref=f2e65]:
+        - paragraph [ref=f2e66]: lane 07 · night
+        - list [ref=f2e67]:
+          - listitem [ref=f2e68]:
+            - time [ref=f2e69]: 04:04
+            - generic [ref=f2e70]: "push · to: any reader of this result"
+          - listitem [ref=f2e71]:
+            - time [ref=f2e72]: 04:04
+            - generic [ref=f2e73]: thanks for reading
+  - contentinfo [ref=f2e74]:
+    - generic [ref=f2e75]:
+      - link "MEGA.dev, home" [ref=f2e76] [cursor=pointer]:
+        - /url: /
+      - navigation "Footer navigation" [ref=f2e77]:
+        - list [ref=f2e78]:
+          - listitem [ref=f2e79]:
+            - link "Dashboard" [ref=f2e80] [cursor=pointer]:
+              - /url: /
+          - listitem [ref=f2e81]:
+            - link "Lessons" [ref=f2e82] [cursor=pointer]:
+              - /url: /lessons
+          - listitem [ref=f2e83]:
+            - link "Challenges" [ref=f2e84] [cursor=pointer]:
+              - /url: /challenges
+          - listitem [ref=f2e85]:
+            - link "Deck" [ref=f2e86] [cursor=pointer]:
+              - /url: /deck
+          - listitem [ref=f2e87]:
+            - link "Story" [ref=f2e88] [cursor=pointer]:
+              - /url: /wake/case
+          - listitem [ref=f2e89]:
+            - link "Community" [ref=f2e90] [cursor=pointer]:
+              - /url: https://discord.gg/megadev
+      - navigation "MEGA.dev" [ref=f2e93]:
+        - list [ref=f2e94]:
+          - listitem [ref=f2e95]:
+            - link "mega.dev" [ref=f2e96] [cursor=pointer]:
+              - /url: https://mega.dev
+          - listitem [ref=f2e97]:
+            - link "Assessment" [ref=f2e98] [cursor=pointer]:
+              - /url: https://mega.dev/challenge.md
+          - listitem [ref=f2e99]:
+            - link "hello@mega.dev" [ref=f2e100] [cursor=pointer]:
+              - /url: mailto:hello@mega.dev
+      - generic [ref=f2e101]:
+        - link "llms.txt" [ref=f2e102] [cursor=pointer]:
+          - /url: /llms.txt
+        - group "Theme" [ref=f2e103]:
+          - generic [ref=f2e105] [cursor=pointer]:
+            - radio "Auto" [checked] [ref=f2e106]
+            - generic [ref=f2e109]: Auto
+          - generic [ref=f2e110] [cursor=pointer]:
+            - radio "Light" [ref=f2e111]
+            - generic [ref=f2e114]: Light
+          - generic [ref=f2e115] [cursor=pointer]:
+            - radio "Dark" [ref=f2e116]
+            - generic [ref=f2e119]: Dark
+  - status [ref=f2e120]

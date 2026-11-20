@@ -1,0 +1,9 @@
+(node:10692) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+I recorded the result as `parked`, but I could not properly park the request because the event does not name a booking.
+
+- **Event `evt_1e2227d282ac`** (`guest.message`, seq 11): "Please add one more night to my stay." This asks for a change to the stay, so it is the owner's call. I made no change.
+- **Missing booking id:** the event payload has only the text. `booking.mjs` runs without an id and returns an empty result, so I could not tell which booking this is. I did not pass the event id to `park.mjs` as a booking id, because that would have parked the request against a booking that does not exist.
+- **Result:** `parked` with no `change.mjs` run. No nights were added.
+
+The owner needs to find which booking this guest message belongs to and park the "nights 1" request on it with `park.mjs <booking id> "nights 1"`. Otherwise the request is only recorded in this result.

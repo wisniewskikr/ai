@@ -1,0 +1,13 @@
+{
+  "id": "evt_ccafc9166500",
+  "seq": 6,
+  "type": "booking.changed",
+  "at": 1795075510000,
+  "delivery": 1,
+  "data": {
+    "booking": "BK-72293",
+    "change": {
+      "nights": 2
+    }
+  }
+}

@@ -1,0 +1,12 @@
+2026-11-19T07:57:31.064Z night: 2026-11-19T07:58:30.000Z → 2026-11-19T08:08:30.000Z · job night-desk/1
+2026-11-19T07:58:53.677Z event 1 booking.changed evt_8973536144c2 BK-43238: applied (BK-43238 +1 nights) → 200 applied
+2026-11-19T07:59:32.236Z event 2 booking.cancelled evt_c1c319128c08 BK-88061: applied (BK-88061 refund 70 EUR) → 200 applied
+2026-11-19T07:59:59.302Z event 3 evt_8973536144c2: repeat (delivery 2), result applied
+2026-11-19T08:00:19.352Z event 4 guest.message evt_44eb5e77189f BK-52245: parked (night-desk role) → 200 parked
+2026-11-19T08:05:14.454Z event 6 booking.changed evt_ccafc9166500 BK-72293: applied (BK-72293 +2 nights) → 200 applied
+2026-11-19T08:05:41.329Z event 7 evt_c1c319128c08: repeat (delivery 2), result applied
+2026-11-19T08:06:21.871Z event 8 guest.message evt_06a261bb5707 BK-75044: parked (night-desk role) → 200 parked
+2026-11-19T08:06:41.462Z event 9 evt_ccafc9166500: repeat (delivery 2), result applied
+2026-11-19T08:07:15.826Z event 10 booking.cancelled evt_49dad1a7976d BK-16749: applied (BK-16749 refund 180 EUR) → 200 applied
+2026-11-19T08:07:48.042Z event 11 guest.message evt_86e4bc18f7c8 : parked (night-desk role) → 200 parked
+2026-11-19T08:10:03.367Z The night is over. Changes: host-desk/night/changes.json {"cursor":"12","results":{"evt_8973536144c2":"applied","evt_c1c319128c08":"applied","evt_44eb5e77189f":"parked","evt_ccafc9166500":"applied","evt_06a261bb5707":"parked","evt_49dad1a7976d":"applied","evt_86e4bc18f7c8":"parked"},"cancelled":["BK-88061","BK-16749"],"parked":["BK-52245","BK-75044"],"conflicts":[]}

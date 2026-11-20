@@ -1,0 +1,33 @@
+{
+ "cursor": "12",
+ "results": {
+  "evt_dc3df0cc1815": "applied",
+  "evt_77580642c02b": "applied",
+  "evt_11200527af80": "parked",
+  "evt_e03c0ce88507": "applied",
+  "evt_257d1e356c17": "parked",
+  "evt_5ca0d7cf11b0": "applied",
+  "evt_d27a1433dc72": "parked"
+ },
+ "cancelled": [
+  "BK-75019",
+  "BK-60703"
+ ],
+ "parked": [
+  "BK-95168",
+  "BK-58711"
+ ],
+ "conflicts": [
+  "BK-74066"
+ ],
+ "lastSeq": 11,
+ "data": {
+  "evt_dc3df0cc1815": "{\"booking\":\"BK-21540\",\"change\":{\"nights\":1}}",
+  "evt_77580642c02b": "{\"booking\":\"BK-75019\",\"refund\":90}",
+  "evt_11200527af80": "{\"booking\":\"BK-95168\",\"text\":\"Please add one night to my stay.\"}",
+  "evt_e03c0ce88507": "{\"booking\":\"BK-74066\",\"change\":{\"nights\":2}}",
+  "evt_257d1e356c17": "{\"booking\":\"BK-58711\",\"text\":\"Please add one night to my stay.\"}",
+  "evt_5ca0d7cf11b0": "{\"booking\":\"BK-60703\",\"refund\":150}",
+  "evt_d27a1433dc72": "{\"text\":\"Please add one more night to my stay.\"}"
+ }
+}

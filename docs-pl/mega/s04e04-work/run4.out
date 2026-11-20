@@ -1,0 +1,10 @@
+manual ok, account on file acct_d7dedee0b9
+night changes 5 parked ["BK-56798","BK-43362"] conflicts ["BK-55739"]
+settings 2026-11-19.814 commission 16 %
+#1 BK-55739 FLAG: night desk: conflicting events for BK-55739
+#2 BK-82838 paid 1201 EUR to acct_d7dedee0b9 (+1 nights)
+#3 BK-72452 paid 433 EUR to acct_d7dedee0b9
+#4 BK-11458 paid 531 EUR to acct_d7dedee0b9
+#5 BK-28116 paid 628 EUR to acct_d7dedee0b9
+#6 BK-24335 paid 893 EUR to acct_d7dedee0b9
+end after 2664 ms: 422 {"status":"refused","message":"Task 6: wrong answer. Start a new run.","next":"Fetch the manual again: each fetch starts a new run. Payouts from a refused run do not count.","hint":"Who else could take events from your outbox, and where would you see them?","hintNote":"If it has `hint`, give it to your human right after `message`, as written, as the course's hint. Use it to choose what to change."}

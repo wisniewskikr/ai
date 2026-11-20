@@ -1,0 +1,13 @@
+{
+  "id": "evt_e03c0ce88507",
+  "seq": 6,
+  "type": "booking.changed",
+  "at": 1795076440000,
+  "delivery": 1,
+  "data": {
+    "booking": "BK-74066",
+    "change": {
+      "nights": 2
+    }
+  }
+}

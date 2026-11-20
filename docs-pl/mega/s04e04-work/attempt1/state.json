@@ -1,0 +1,21 @@
+{
+ "cursor": "12",
+ "results": {
+  "evt_8973536144c2": "applied",
+  "evt_c1c319128c08": "applied",
+  "evt_44eb5e77189f": "parked",
+  "evt_ccafc9166500": "applied",
+  "evt_06a261bb5707": "parked",
+  "evt_49dad1a7976d": "applied",
+  "evt_86e4bc18f7c8": "parked"
+ },
+ "cancelled": [
+  "BK-88061",
+  "BK-16749"
+ ],
+ "parked": [
+  "BK-52245",
+  "BK-75044"
+ ],
+ "conflicts": []
+}

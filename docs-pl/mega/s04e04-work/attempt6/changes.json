@@ -1,0 +1,38 @@
+[
+  {
+    "booking": "BK-45847",
+    "nights": 1,
+    "event": "evt_4db7a4a640e0",
+    "at": "2026-11-20T08:58:20.736Z"
+  },
+  {
+    "booking": "BK-53842",
+    "refund": 84,
+    "event": "evt_00d8ff91df91",
+    "at": "2026-11-20T08:59:05.555Z"
+  },
+  {
+    "booking": "BK-31906",
+    "nights": 1,
+    "event": "evt_c4446f275a8f",
+    "at": "2026-11-20T09:00:01.113Z"
+  },
+  {
+    "booking": "BK-42926",
+    "nights": 2,
+    "event": "evt_3e46bd258f39",
+    "at": "2026-11-20T09:04:44.954Z"
+  },
+  {
+    "booking": "BK-98218",
+    "refund": 167,
+    "event": "evt_4494de8da5f3",
+    "at": "2026-11-20T09:06:41.814Z"
+  },
+  {
+    "booking": "BK-10954",
+    "refund": 240,
+    "event": "evt_55da62cb336b",
+    "at": "2026-11-20T09:07:21.101Z"
+  }
+]

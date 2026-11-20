@@ -1,0 +1,11 @@
+{
+  "id": "evt_c1c319128c08",
+  "seq": 2,
+  "type": "booking.cancelled",
+  "at": 1795075170000,
+  "delivery": 1,
+  "data": {
+    "booking": "BK-88061",
+    "refund": 70
+  }
+}

@@ -1,0 +1,11 @@
+manual ok, account on file acct_87414eb35e
+night changes 4 parked ["BK-52245","BK-75044"] conflicts []
+settings 2026-11-19.505 commission 12 %
+#1 BK-71641 paid 1666 EUR to acct_87414eb35e
+#2 BK-59160 paid 135 EUR to acct_87414eb35e
+#3 BK-40677 paid 671 EUR to acct_87414eb35e
+#4 BK-55822 paid 1099 EUR to acct_87414eb35e
+#5 BK-75044 FLAG: night desk: the guest asked to change BK-75044; owner decides add-night or as-booked
+#6 BK-42204 paid 888 EUR to acct_87414eb35e
+#7 BK-29292 paid 2577 EUR to acct_87414eb35e
+end after 2418 ms: 422 {"status":"refused","message":"Task 7: wrong answer. Start a new run.","next":"Fetch the manual again: each fetch starts a new run. Payouts from a refused run do not count."}

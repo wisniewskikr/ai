@@ -1,0 +1,8 @@
+(node:14048) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+The event is parked for the owner, and I made no change to the booking.
+
+- **Event:** `evt_44eb5e77189f`, a `guest.message` on booking BK-52245 asking to "add one night to my stay".
+- **Why parked:** Adding nights is the owner's call for a guest message, so I ran `park.mjs BK-52245 "nights 1"`. I did not run `change.mjs`.
+- **Booking state:** BK-52245 is not cancelled and has no changes tonight.
+- **Result:** `parked`, recorded with `result.mjs`.

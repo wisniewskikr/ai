@@ -1,0 +1,10 @@
+parked 200 {"parked":[{"n":4,"decision":"as-booked","amount":911},{"n":5,"decision":"decline"},{"n":7,"decision":"as-booked","amount":497},{"n":10,"decision":"decline"},{"n":18,"decision":"take-new","amount":2705}],"next":"Finish a decided task once: POST /parked with its task token and the result the decision asks for."}
+#4 paid 911 EUR to acct_4df42bdced (as-booked)
+#4 finish 200 {"status":"done","message":"Task 4 is finished.","next":"4 parked tasks still wait: read /parked."}
+#5 finish 200 {"status":"done","message":"Task 5 is finished.","next":"3 parked tasks still wait: read /parked."}
+#7 paid 497 EUR to acct_4df42bdced (as-booked)
+#7 finish 200 {"status":"done","message":"Task 7 is finished.","next":"2 parked tasks still wait: read /parked."}
+#10 finish 200 {"status":"done","message":"Task 10 is finished.","next":"1 parked task still waits: read /parked."}
+#18 paid 2705 EUR to acct_4df42bdced (take-new)
+#18 finish 200 {"status":"done","message":"Task 18 is finished.","next":"Tell your human: their harness claims the Challenge with claim-challenge."}
+nothing waits for the owner

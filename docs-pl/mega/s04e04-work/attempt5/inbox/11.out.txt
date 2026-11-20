@@ -1,0 +1,9 @@
+(node:8916) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+The event is parked, but the owner has not been told about the request yet, because I could not identify which booking it belongs to.
+
+- **Event:** `evt_c1bc6c887cfb` (guest.message), text: "Please add one more night to my stay."
+- **Decision:** parked. The guest is asking for a change to the stay, which is the owner's call. I made no change to any booking.
+- **Gap:** the event carries no booking id, and `booking.mjs` run without an argument showed no booking. I did not guess one, because parking the wrong booking would be worse than parking none. I did not run `park.mjs`, so nothing in the booking record marks this request as parked.
+
+To finish it, the owner or whoever runs the poller needs to supply the booking id. Then `park.mjs <booking id> "nights 1"` should be run so the request is recorded against the right stay.
