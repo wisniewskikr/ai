@@ -1,0 +1,1 @@
+{"parked":[{"n":4,"decision":"decline","amount":0},{"n":5,"decision":"keep-first","amount":0},{"n":10,"decision":"pay-as-usual","amount":1461},{"n":12,"decision":"no-refund","amount":0},{"n":14,"decision":"no-refund","amount":0},{"n":15,"decision":"decline","amount":0}],"next":"Finish a decided task once: POST /parked with its task token and the result the decision asks for."}
