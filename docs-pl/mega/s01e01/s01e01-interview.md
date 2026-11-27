@@ -29,15 +29,7 @@
 
 **Cel wykładu:** zrozumieć, jak LLM faktycznie generuje tekst, żeby świadomie wykorzystywać mocne strony modeli, omijać ich słabości i skutecznie budować agentów AI.
 
-| Część | Sekcje | O czym |
-|---|---|---|
-| **Model** | 1–5 | Czym jest LLM, co dostaje (wejście), co oddaje (wyjście), czego nie potrafi i jak sobie z tym radzić |
-| **Harness** | 6 | Program wokół modelu, który robi wszystko poza generowaniem tokenów |
-| **Narzędzia** | 7–16 | Jak model kontaktuje się ze światem: **strategie** (8–12) – jak pokazać narzędzia modelowi, **źródła** (13–16) – skąd harness je bierze |
-| **Agent** | 17 | LLM + narzędzia w pętli |
-| **Podsumowanie** | 18–19 | Wnioski i pytania kontrolne |
-
-> Najpierw **silnik** (model), potem **samochód** (harness), na końcu **kierowca w trasie** (agent z narzędziami).
+> Najpierw **silnik** (model, sekcje 1–5), potem **samochód** (harness, sekcja 6), na końcu **kierowca w trasie** (agent z narzędziami, sekcje 7–17).
 
 ---
 
