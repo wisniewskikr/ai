@@ -35,7 +35,7 @@
 
 ## 1. Model
 
-**Model (LLM) to sieć z wagami, na serwerach dostawcy. Czyli to program, który czyta tekst i dopisuje do niego dalszy ciąg, zgadując, co powinno być dalej.**
+**Model (LLM) to sieć z wagami – zwykle na serwerach dostawcy, albo lokalnie (np. llama.cpp). Czyli to program, który czyta tekst i dopisuje do niego dalszy ciąg, zgadując, co powinno być dalej.**
 
 Z LLM powiązane są elementy:
 
@@ -53,6 +53,7 @@ Z LLM powiązane są elementy:
 | Anthropic | Generowanie tekstu, rozumienie obrazów (Claude, Claude Code) |
 | Google DeepMind | Multimodalność, w tym wideo (Gemini) |
 | xAI | Cel: pełna multimodalność (Grok) |
+| Open-source | Modele do uruchomienia u siebie: Qwen (Alibaba), DeepSeek, Llama (Meta), Mistral, gpt-oss (OpenAI) |
 | OpenRouter | Dostęp do modeli wszystkich labów i open-source |
 
 ---
@@ -77,22 +78,23 @@ Pośrednia:    Ty ──JSON (role + ustawienia)──► serwer API ──ChatM
 
 ### Elementy wejścia LLM
 
-**Request = wiadomości z rolami + ustawienia. Serwer API zamienia go na kontekst – tekst, który widzi model.**
+**Elementy wejścia LLM to wiadomości z rolami + część ustawień.**
 
 | Element | Zawartość |
 |---|---|
 | Wiadomości | Tablica wiadomości z rolami do „dokończenia” odpowiedzią AI |
-| Ustawienia | Model, poziom reasoning, dostępne narzędzia, pola specyficzne dla platformy |
+| Część ustawień | Dostępne narzędzia, poziom reasoning – zamienione na tekst (pełna lista w podsekcji „Ustawienia”) |
 
 ### Kontekst
 
-**Kontekst to cały tekst, który model widzi w jednym requeście: wiadomości z rolami (system prompt, historia rozmowy, wyniki narzędzi) + ustawienia zamienione na tekst (np. definicje narzędzi) – jego „pamięć robocza”.**
+**Kontekst to cały tekst, który model widzi w jednym requeście: wiadomości z rolami (system prompt, historia rozmowy, wyniki narzędzi) + ustawienia zamienione na tekst (np. definicje narzędzi) – jego „pamięć robocza”. Kontekst tworzysz Ty sam (komunikacja bezpośrednia) albo serwer API (komunikacja pośrednia).**
 
 Kontekst jest ograniczony, a większość z niego nie pochodzi od użytkownika.
 
 - **System prompt** – treść wiadomości z rolą `system`; steruje zachowaniem modelu.
 - Proste „say hi” w Claude Code ≈ **21 000 tokenów**: system prompt harnessu, opisy narzędzi, `CLAUDE.md`, dane typu `git status`.
-- **Context window** – limit tokenów naraz: ok. **250k–1M**.
+- **Multimodalność** – obraz (czy dźwięk) też zamienia się na tokeny w kontekście i zajmuje miejsce jak tekst.
+- **Context window** – limit tokenów naraz: zwykle **128k–1M**.
 - **Auto-compaction** – harness kompresuje lub przycina historię; model traci z oczu część danych (np. pierwotne polecenie) i jakość **po cichu** spada.
 - **Context understanding** – jakość rozumowania spada przy długim kontekście; reguła: poniżej **30–40%** limitu.
 
@@ -125,6 +127,13 @@ Kontekst jest ograniczony, a większość z niego nie pochodzi od użytkownika.
 | `developer` | OpenAI (nowsze modele), Harmony | Następca `system` przy niektórych modelach |
 
 - Zestaw ról zależy od **formatu treningowego** – model rozumie tylko role, które widział w treningu.
+- **API różnią się rolami:**
+
+| API | Różnica |
+|---|---|
+| Anthropic | `system` to osobne pole requestu, nie wiadomość; wynik narzędzia idzie w roli `user` jako blok `tool_result` |
+| Gemini | Zamiast `assistant` jest rola `model` |
+| Qwen | W JSON-ie rola `tool`; szablon zamienia ją w ChatML na `user` + `<tool_response>` (stąd `user` w przykładach poniżej) |
 
 ### ChatML
 
@@ -132,7 +141,7 @@ Kontekst jest ograniczony, a większość z niego nie pochodzi od użytkownika.
 
 - **Formaty treningowe:** **ChatML**, **Harmony** (open-source od OpenAI). Serwer API zamienia JSON z requestu na taki tekst.
 - **Tokeny specjalne** (`<|im_start|>`, `<|im_end|>`) – oddzielają wiadomości; rola to zwykły tekst zaraz po `<|im_start|>`.
-- `<|im_end|>` wpisany przez użytkownika to **6 zwykłych tokenów** – użytkownik nie zamknie sam swojej tury.
+- `<|im_end|>` wpisany przez użytkownika to **kilka zwykłych tokenów** (liczba zależy od tokenizera) – użytkownik nie zamknie sam swojej tury, o ile serwer nie przepuści tego tekstu jako tokenu specjalnego.
 
 **Przykład** (format ChatML – to, co faktycznie widzi model):
 
@@ -155,6 +164,8 @@ Write a JavaScript function that checks if a number is even.<|im_end|>
 - **Token** – fragment tekstu (słowo, część słowa, znak); sieć widzi tylko jego ID liczbowe.
 - **Tokenizer** – słownik zamieniający tekst na ID (encode) i z powrotem (decode); każdy model ma swój, a tekst nieangielski lub emoji = więcej tokenów.
 - **Token stopu** – model sam sygnalizuje koniec generowania.
+- **Temperature** – jak „odważnie” losować: `0` = prawie zawsze najbardziej prawdopodobny token, wyżej = więcej różnorodności (i błędów).
+- **Top_p** – losuj tylko spośród tokenów, które razem mają np. 90% prawdopodobieństwa; reszta odpada.
 - **Niedeterminizm** – ten sam prompt ≠ ta sama odpowiedź; nawet `temperature: 0` nie gwarantuje powtarzalności.
 
 > Wybranego tokenu **nie da się cofnąć** – błąd się kumuluje. Pracujemy na zwiększaniu szansy, a nie na pewności.
@@ -167,9 +178,14 @@ Write a JavaScript function that checks if a number is even.<|im_end|>
 - Pozwala **wyciągać dane** z dokumentów i używać LLM **w logice aplikacji**.
 - Cały **function calling** (sekcja 9) stoi na tym samym mechanizmie: model ma wygenerować JSON pasujący do schematu.
 
-> Schemat kontroluje kształt odpowiedzi, a nie jej prawdziwość.
+| Sposób | Jak działa | Gwarancja kształtu |
+|---|---|---|
+| **Prośba w prompcie** (JSON mode „na słowo”) | Schemat to zwykły tekst w kontekście (przykład poniżej) | Brak – model może się pomylić |
+| **Constrained decoding** (structured outputs w API) | Silnik przy każdym tokenie dopuszcza tylko tokeny zgodne ze schematem | Tak – JSON zawsze pasuje do schematu |
 
-**Przykład** (format Qwen, ChatML – schemat i odpowiedź to zwykły tekst):
+> Schemat kontroluje kształt odpowiedzi, a nie jej prawdziwość – jak foremka do ciastek: pilnuje kształtu, nie smaku.
+
+**Przykład** (format Qwen, ChatML – schemat i odpowiedź to zwykły tekst, czyli prośba w prompcie):
 
 ```
 <|im_start|>system
@@ -199,6 +215,7 @@ Kyoto liczy ok. 1,4 mln mieszkańców.<|im_end|>
 | **Prompt injection** – wykona polecenie ukryte w danych | Dla modelu instrukcja i dane to ten sam tekst w kontekście | Uprawnienia, sandbox, zaufane źródła |
 | **Słabość tokenizacji** – myli się przy liczeniu liter i w arytmetyce (np. ile „r” w „strawberry”) | Widzi ID tokenów, nie pojedyncze litery czy cyfry (sekcja 3) | Narzędzie (kod) |
 | **Przytakiwanie** (*sycophancy*) – zgadza się z użytkownikiem, nawet gdy ten nie ma racji | Trening na ocenach ludzi, którzy wolą zgodę | Neutralne pytania, prośba o krytykę |
+| **Koszt i czas** – każdy request kosztuje i trwa, a z długością rozmowy rośnie | Płacisz za tokeny wejścia i wyjścia; cała historia leci w każdym requeście (np. „say hi” ≈ 21k tokenów) | Prompt caching, krótki kontekst, mniejszy model (sekcja 5) |
 
 ---
 
@@ -219,6 +236,7 @@ Kyoto liczy ok. 1,4 mln mieszkańców.<|im_end|>
 | **Dobór modelu** – większy do trudnych zadań, mniejszy taniej i szybciej | Zacznij od mocnego modelu, potem sprawdź, czy słabszy też da radę | Premise order, trudne zadania |
 | **Bezpieczeństwo** – załóż, że model wykona ukryte polecenie | Uprawnienia, sandbox, zaufane źródła; człowiek zatwierdza ryzykowne akcje (usuwanie, wysyłka, płatności) | Prompt injection |
 | **Neutralne pytania** – nie podpowiadaj odpowiedzi | Pytaj bez sugestii („Oceń to rozwiązanie”, a nie „Dobre, prawda?”); poproś wprost o krytykę | Przytakiwanie |
+| **Prompt caching** – nie licz drugi raz tego samego początku | Dostawca zapamiętuje przetworzony, niezmienny początek kontekstu (system prompt, narzędzia, stara historia); kolejny request z tym samym początkiem jest tańszy i szybszy → nie zmieniaj początku kontekstu bez potrzeby | Koszt i czas |
 
 ---
 
@@ -243,16 +261,16 @@ Kyoto liczy ok. 1,4 mln mieszkańców.<|im_end|>
 
 **Harness to nie serwer – to klient, który rozmawia z dwoma rodzajami serwerów.**
 
-| | Serwer API dostawcy | Harness | Serwer MCP (sekcja 16) |
+| | Harness | Serwer API dostawcy | Serwer MCP (sekcja 16) |
 |---|---|---|---|
-| Gdzie działa | U dostawcy (OpenAI, Anthropic) | Zwykle na Twoim komputerze | Lokalnie albo zdalnie, jako osobny program |
-| Co robi | Zamienia JSON z requestu na ChatML, uruchamia model, oddaje tokeny | Składa kontekst, wysyła requesty, wykonuje tool calle, prowadzi pętlę | Wystawia narzędzia (`tools/list`, `tools/call`) |
-| Kto go pisze | Dostawca modelu | Np. Anthropic (Claude Code), OpenAI (Codex) | Autor serwera (np. GitHub, Playwright) |
+| Gdzie działa | Zwykle na Twoim komputerze | U dostawcy (OpenAI, Anthropic) | Lokalnie albo zdalnie, jako osobny program |
+| Co robi | Składa kontekst, wysyła requesty, wykonuje tool calle, prowadzi pętlę | Zamienia JSON z requestu na format treningowy (np. ChatML), uruchamia model, oddaje tokeny | Wystawia narzędzia (`tools/list`, `tools/call`) |
+| Kto go pisze | Np. Anthropic (Claude Code), OpenAI (Codex) | Dostawca modelu | Autor serwera (np. GitHub, Playwright) |
 
 ```
-HARNESS ──request (JSON)──► SERWER API ──ChatML──► MODEL
-   │
-   └──tools/call──► SERWER MCP ──► świat (GitHub, przeglądarka…)
+User ↔ Harness ↔ Serwer API ↔ Model
+          │
+          └──↔ Serwer MCP ↔ świat (GitHub, przeglądarka…)
 ```
 
 - Model nie widzi żadnego serwera – widzi tylko tekst w kontekście.
@@ -274,7 +292,7 @@ HARNESS ──request (JSON)──► SERWER API ──ChatML──► MODEL
 
 ```
 MODEL
-  │  tool call (JSON)                  ← jedyny „kanał wyjścia” modelu
+  │  tool call (JSON)                  ← jedyny „kanał działania” modelu (poza tym model tylko odpowiada tekstem)
   ▼
 HARNESS
   │  strategia: function calling / dispatcher / tool search / code mode
@@ -295,7 +313,7 @@ Co model widzi w każdym podejściu (dla jednego narzędzia):
 |---|---|---|---|---|
 | Schematy w `<tools>` | Wszystkie narzędzia | 1 (`call_tool`) | 1 (`tool_search`) + już pobrane | 2 (`find`, `execute`) |
 | Nazwa | ✅ | ✅ | ✅ | 🔍 po `find` |
-| Opis narzędzia | ✅ | ❌ | 🔍 po wyszukaniu | ❌ |
+| Opis narzędzia | ✅ | ❌ | 🔍 po wyszukaniu | ❌ (zwykle; zależy, co zwraca `find`) |
 | Nazwy argumentów | ✅ | ✅ | 🔍 po wyszukaniu | 🔍 po `find` |
 | Typy argumentów | ✅ | ❌ | 🔍 po wyszukaniu | 🔍 po `find` |
 | Opisy argumentów | ✅ | ❌ | 🔍 po wyszukaniu | ❌ |
@@ -331,14 +349,16 @@ api.getUser(id: string): {name, email}
 **Model w ustrukturyzowanej formie prosi o narzędzie – harness je wykonuje (function calling).**
 
 1. Użytkownik zadaje pytanie, które wymaga narzędzia (np. „Jakie pliki są w projekcie?”).
-2. Model dostaje w system prompcie listę dostępnych narzędzi (nazwa, opis, schemat argumentów).
-3. Harness wysyła request: system prompt z narzędziami + historia.
-4. Model pisze tool call i się zatrzymuje (stop sequence `</tool_call>` – jak token stopu, sekcja 3).
-5. Harness wykonuje narzędzie i dopisuje wynik do historii.
-6. Nowy request → kolejny tool call albo odpowiedź.
+2. Harness wysyła request: historia + lista dostępnych narzędzi (nazwa, opis, schemat argumentów).
+3. Serwer API wpisuje narzędzia do system promptu (`<tools>`) – model je widzi.
+4. Model pisze `<tool_call>…</tool_call>` i kończy turę tokenem stopu (`<|im_end|>`, sekcja 3).
+5. Serwer API wyłapuje tool call z tekstu i oddaje go harnessowi jako JSON (pole `tool_calls`).
+6. Harness wykonuje narzędzie i dopisuje wynik do historii.
+7. Nowy request → kolejny tool call albo odpowiedź.
 
 - **Tool call** = prośba do harnessu; model sam niczego nie wykonuje.
 - **Tool response** = dla modelu zwykły tekst w historii.
+- **Parallel tool calls** – model może w jednej turze poprosić o kilka narzędzi naraz (np. 3× `read_file`); harness wykonuje wszystkie i oddaje wszystkie wyniki.
 
 **Przykład: lista narzędzi, pytanie, tool call i tool response** (format Qwen, ChatML):
 
@@ -367,6 +387,7 @@ package.json
 | Ograniczenie | Rozwiązanie |
 |---|---|
 | Wszystkie schematy narzędzi zajmują kontekst | **Tool search** (sekcja 11) – model widzi tylko wzmianki o narzędziach, pełną definicję pobiera na żądanie; albo **dispatcher** (sekcja 10), albo **code mode** (sekcja 12) |
+| Przy wielu narzędziach model częściej wybiera złe narzędzie | Mniej narzędzi naraz (tool search, tool RAG, grupy narzędzi – sekcja 8), jasne nazwy i opisy |
 
 ---
 
@@ -472,9 +493,12 @@ Twój e-mail to jan@example.com.<|im_end|>
 | W kontekście | Wszystkie schematy | Tylko `find` i `execute` |
 | Koszt kontekstu | Wysoki (≈ 2 300 z 3 000 tokenów przy 30 narzędziach) | Niski |
 | Wdrożenie | Proste | Wymaga sandboxa (np. Daytona, Cloudflare); lokalnie proste |
+| Wyniki pośrednie | Każdy wynik trafia do kontekstu | Zostają w sandboxie – do kontekstu trafia tylko to, co kod zwróci |
+| Ryzyko | Mniejsze – schemat pilnuje argumentów | Model może napisać błędny kod; kod wykonuje się w sandboxie, więc sandbox musi być szczelny |
 
 - W `<tools>` są tylko 2 schematy, a nie 30. Resztę model poznaje przez `find`.
 - `execute` dostaje **kod jako tekst**. Funkcje `api.*` istnieją tylko w sandboxie harnessu.
+- **Największa zaleta:** w jednym `execute` model łączy wiele wywołań, pętle i filtrowanie (np. pobierz 1000 zamówień → zwróć tylko sumę). Jak kucharz, który przynosi gotowe danie, a nie każdy składnik osobno.
 
 **Przykład: lista narzędzi, pytanie, `find`, `execute` i odpowiedź** (format Qwen, ChatML):
 
@@ -519,7 +543,7 @@ Twój e-mail to jan@example.com.<|im_end|>
 |---|---|---|---|
 | Kto pisze kod narzędzia | Ty, w kodzie harnessu | Autor programu (`git`, `gh`, `curl`) | Autor serwera MCP |
 | Gdzie działa | W procesie harnessu | W terminalu (przez `bash`) | W osobnym programie (lokalnie lub zdalnie) |
-| Schematy w `<tools>` | Każde narzędzie osobno | 1 (`bash`) | Wszystkie narzędzia serwera |
+| Schematy w `<tools>` | Każde narzędzie osobno | 1 (`bash`) | Wszystkie narzędzia serwera (przy function calling) |
 | Skąd model zna narzędzie | Ze schematu | Z wag (trening) albo z `--help` | Ze schematu podanego przez serwer |
 | Kontrola | Pełna | Średnia – `bash` może wszystko | Mała – kod jest cudzy |
 | Gdzie najlepiej | Logika aplikacji | Lokalnie | Produkcja, wiele harnessów |
@@ -631,7 +655,7 @@ Twój e-mail to jan@example.com.<|im_end|>
 
 **MCP (Model Context Protocol) to standard, w którym osobny program (serwer) wystawia narzędzia, a harness (klient) je pobiera i pokazuje modelowi.**
 
-1. Harness łączy się z serwerem MCP – lokalnie (`stdio`) albo zdalnie (HTTP).
+1. Harness łączy się z serwerem MCP – lokalnie (`stdio`) albo zdalnie (*Streamable HTTP*).
 2. Pyta o listę narzędzi (`tools/list`) i dostaje nazwy, opisy, schematy.
 3. Wkłada schematy do `<tools>` (często z prefiksem serwera, np. `mcp__github__get_me`).
 4. Model pisze tool call → harness wysyła `tools/call` do serwera.
@@ -645,6 +669,13 @@ Twój e-mail to jan@example.com.<|im_end|>
 | Ryzyko | Mniejsze – kod jest Twój | Kod serwera jest cudzy – trzeba mu ufać; jego opisy trafiają do kontekstu (prompt injection) |
 
 - **Model nie wie o MCP** – widzi zwykłe narzędzia w `<tools>`.
+- Serwer MCP wystawia nie tylko narzędzia:
+
+| Element | Co to jest | Kto decyduje o użyciu |
+|---|---|---|
+| **Tools** | Akcje do wykonania (`tools/list`, `tools/call`) | Model (tool call) |
+| **Resources** | Dane do przeczytania, np. pliki, rekordy (`resources/list`, `resources/read`) | Harness lub użytkownik |
+| **Prompts** | Gotowe szablony poleceń (`prompts/list`, `prompts/get`) | Użytkownik (np. jako slash command) |
 - Logowanie (np. OAuth) i uprawnienia są po stronie serwera → dobre na **produkcję**.
 - Przykłady: Playwright MCP (przeglądarka), GitHub MCP.
 
@@ -679,11 +710,29 @@ Twój e-mail to jan@example.com.<|im_end|>
 **Agent = LLM + narzędzia w pętli.**
 
 - Tool call → pętla trwa; odpowiedź tekstem → pętla się kończy.
-- Harness to dosłownie pętla `while` z limitem kroków (np. 40); za niski limit zatrzyma agenta przed odpowiedzią.
+- **Serce harnessu** to pętla `while` z limitem kroków (np. 40); za niski limit zatrzyma agenta przed odpowiedzią.
 - Narzędzia mogą pochodzić z dowolnego źródła (sekcje 13–16): **CLI lokalnie, MCP na produkcji**.
 - Minimalny agent jest prosty, **trwałe agenty do długich zadań** – dużo bardziej złożone.
 - **Self-management** – agent sam zarządza swoimi ustawieniami (np. Pi, OpenCode 2).
 - **Ambient, durable agents** – zdalne agenty działające wg harmonogramu i zdarzeń; wymagają bezpiecznych narzędzi (sandbox, dedykowane konta).
+
+**Przykład: minimalna pętla agenta** (pseudokod):
+
+```js
+const messages = [{ role: "user", content: "Jakie pliki są w projekcie?" }];
+
+for (let step = 0; step < 40; step++) {                     // limit kroków
+  const reply = await llm({ messages, tools });             // request do serwera API
+  messages.push(reply);                                      // odpowiedź do historii
+
+  if (!reply.tool_calls) return reply.content;              // tekst → koniec pętli
+
+  for (const call of reply.tool_calls) {                    // tool call → wykonaj
+    const result = await runTool(call.name, call.arguments);
+    messages.push({ role: "tool", tool_call_id: call.id, content: result });
+  }
+}
+```
 
 ---
 
@@ -714,13 +763,15 @@ Twój e-mail to jan@example.com.<|im_end|>
 | 1. Model | Czym jest LLM? | Siecią z wagami, która dopisuje dalszy ciąg tekstu, zgadując kolejne tokeny |
 | 2. Model - Wejście | Jakie są role w rozmowie? | `system`, `user`, `assistant`, często `tool`; zestaw zależy od formatu treningowego |
 | 2. Model - Wejście | Czym jest ChatML? | Formatem, który tokenami specjalnymi zamienia rozmowę w tekst do dokończenia |
-| 2. Model - Wejście | Czy API pamięta rozmowę? | Nie – każdy request wysyła całą historię |
 | 2. Model - Wejście | Skąd ≈ 21k tokenów przy „say hi”? | System prompt, opisy narzędzi, `CLAUDE.md`, `git status` itd. |
 | 2. Model - Wejście | Dlaczego nie warto zapełniać 1M tokenów? | Jakość rozumowania spada; najlepiej poniżej 30–40% okna |
 | 3. Model - Wyjście | Jak LLM generuje tekst? | Token po tokenie, aż wybierze token stopu; wybranego tokenu nie cofnie |
 | 3. Model - Wyjście | Czym jest tokenizer? | Słownikiem zamieniającym tekst na ID tokenów i z powrotem |
 | 3. Model - Wyjście | Czy `temperature: 0` gwarantuje powtarzalność? | Nie – wpływ mają też m.in. sprzęt i infrastruktura |
 | 3. Model - Wyjście | Co gwarantuje structured output? | Tylko kształt odpowiedzi, nie prawdziwość |
+| 3. Model - Wyjście | Czym jest constrained decoding? | Silnik dopuszcza tylko tokeny zgodne ze schematem, więc JSON zawsze ma właściwy kształt |
+| 3. Model - Wyjście | Co robi `temperature`? | Steruje losowaniem: niżej – przewidywalniej, wyżej – bardziej różnorodnie |
+| 4. Model - Ograniczenia | Czy API pamięta rozmowę? | Nie – każdy request wysyła całą historię |
 | 4. Model - Ograniczenia | Skąd dziś biorą się halucynacje? | Głównie z brakującego lub błędnego kontekstu |
 | 4. Model - Ograniczenia | Dlaczego model nie zna daty? | Knowledge cutoff; aktualne dane tylko przez narzędzia |
 | 4. Model - Ograniczenia | Czym jest prompt injection? | Model wykonuje polecenie ukryte w danych, bo instrukcja i dane to dla niego ten sam tekst |
@@ -731,6 +782,7 @@ Twój e-mail to jan@example.com.<|im_end|>
 | 5. Model - Rozwiązania ograniczeń | Jak sprawdzić wynik modelu? | Structured outputs, testy, kilka przebiegów, drugi model jako sędzia |
 | 5. Model - Rozwiązania ograniczeń | Jak dać agentowi pamięć? | Harness zapisuje ważne informacje poza modelem i wkłada je do kontekstu, gdy są potrzebne |
 | 5. Model - Rozwiązania ograniczeń | Po co subagenty? | Osobne konteksty na części zadania poprawiają jakość dużych zadań |
+| 5. Model - Rozwiązania ograniczeń | Czym jest prompt caching? | Dostawca zapamiętuje niezmienny początek kontekstu, więc kolejne requesty są tańsze i szybsze |
 | 6. Harness | Czym różni się model od harnessa? | Model tylko generuje tokeny (silnik); harness robi resztę (samochód) |
 | 7. Narzędzia | Po co modelowi narzędzia? | To jedyny kontakt ze światem – model prosi tool callem, harness wykonuje |
 | 8. Strategie narzędzi | Czym różnią się strategie narzędzi? | Tym, ile model wie z góry: function calling – pełne schematy, dispatcher – same sygnatury, tool search – same nazwy, schemat pobiera na żądanie, code mode – nic, doczytuje przez `find` |
@@ -738,10 +790,12 @@ Twój e-mail to jan@example.com.<|im_end|>
 | 10. Strategie narzędzi - Dispatcher | Czym jest dispatcher? | Jedno narzędzie `call_tool(name, args)` – model podaje nazwę, harness wywołuje właściwe narzędzie |
 | 11. Strategie narzędzi - Tool search | Czym jest tool search? | Model widzi nazwy narzędzi i pełny schemat pobiera przez `tool_search` dopiero, gdy go potrzebuje |
 | 12. Strategie narzędzi - Code mode | Czym jest code mode? | Model dostaje `find` i `execute` i pisze kod zamiast wołać wiele narzędzi |
+| 12. Strategie narzędzi - Code mode | Jaka jest największa zaleta code mode? | Wiele wywołań w jednym kodzie; wyniki pośrednie zostają w sandboxie, a nie w kontekście |
 | 13. Źródła narzędzi | Czym różnią się źródła narzędzi? | Tym, kto pisze i gdzie działa kod: własne – w harnessie, CLI – gotowe programy przez `bash`, MCP – osobny serwer |
 | 14. Źródła narzędzi - Własne narzędzia | Jak dodać własne narzędzie? | Napisać funkcję i schemat; harness wkłada schemat do `<tools>` i woła funkcję po nazwie |
 | 15. Źródła narzędzi - CLI | Dlaczego CLI jest tanie w kontekście? | Wystarczy 1 schemat (`bash`); popularne CLI model zna z wag |
 | 16. Źródła narzędzi - Serwery MCP | Czym jest serwer MCP? | Osobnym programem, który wystawia narzędzia (`tools/list`, `tools/call`) dla wielu harnessów |
 | 16. Źródła narzędzi - Serwery MCP | CLI czy MCP? | CLI lokalnie, MCP na produkcji |
+| 16. Źródła narzędzi - Serwery MCP | Co poza narzędziami wystawia serwer MCP? | Resources (dane do przeczytania) i prompts (szablony poleceń) |
 | 17. Agent | Czym jest agent? | LLM w pętli: tool call kontynuuje, odpowiedź tekstowa kończy |
 | 17. Agent | Czym są ambient, durable agents? | Zdalne agenty działające wg harmonogramu i zdarzeń, z bezpiecznymi narzędziami |
