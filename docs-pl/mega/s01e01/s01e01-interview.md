@@ -31,6 +31,17 @@
 
 > Najpierw **silnik** (model, sekcje 1–5), potem **samochód** (harness, sekcja 6), na końcu **kierowca w trasie** (agent z narzędziami, sekcje 7–17).
 
+**Jak łączą się sekcje:**
+
+- **1. Model → 2–3. Model - Wejście, Wyjście** – model tylko dopisuje tekst, więc trzeba wiedzieć, co dokładnie dostaje i co oddaje.
+- **3. Model - Wyjście → 4. Model - Ograniczenia** – model zgaduje token po tokenie i nie sprawdza faktów, stąd jego słabości.
+- **4. Model - Ograniczenia → 5. Model - Rozwiązania ograniczeń** – ograniczeń nie da się usunąć, więc szukamy sposobów, żeby je obejść.
+- **5. Model - Rozwiązania ograniczeń → 6. Harness** – większość rozwiązań (historia, memory, sprawdzanie wyniku, narzędzia) musi wykonać ktoś poza modelem, czyli harness.
+- **6. Harness → 7. Narzędzia** – harness wykonuje tool calle, a narzędzia rozwiązują najważniejsze ograniczenie: brak dostępu do świata.
+- **7. Narzędzia → 8–12. Strategie narzędzi** – schematy narzędzi zajmują kontekst, więc pytamy, jak pokazać narzędzia modelowi.
+- **8–12. Strategie narzędzi → 13–16. Źródła narzędzi** – wiemy już, jak pokazać narzędzia, więc pytamy, skąd harness je bierze.
+- **13–16. Źródła narzędzi → 17. Agent** – gdy model ma narzędzia, a harness wywołuje je w pętli, powstaje agent.
+
 ---
 
 ## 1. Model
