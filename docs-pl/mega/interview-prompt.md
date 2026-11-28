@@ -80,7 +80,9 @@ Struktura dokumentu (w tej kolejności):
    * numerowane, z krótkimi nazwami (1–3 słowa)
    * ułożone zgodnie z zasadą "Logika dokumentu": od ogólnego obrazu do szczegółów, każda sekcja wynika z poprzedniej
    * duży temat dzielimy na sekcję przeglądową "## N. <Temat>" i sekcje szczegółowe "## N+1. <Temat> - <Wariant>" (np. "## 8. Strategie narzędzi", "## 9. Strategie narzędzi - Function calling")
-   * sekcja przeglądowa zawiera tabelę porównawczą wszystkich wariantów z odwołaniami "(sekcja N)"
+   * gdy warianty jednego tematu dzielą się na grupy, nazwę grupy dodajemy w nawiasie: "## N+1. <Temat> (<Grupa>) - <Wariant>" (np. "## 5. Personalizacja (Wiedza) - AGENTS.md", "## 7. Personalizacja (Działanie) - Narzędzia")
+   * sekcja przeglądowa zawiera tabelę porównawczą wszystkich wariantów z odwołaniami "(sekcja N)". Tabela wymienia też powiązane elementy opisane w sekcjach bez jej prefiksu (np. narzędzia i subagenty w tabeli personalizacji)
+   * temat i grupę nadajemy według roli w historii, a nie według cech technicznych (np. skill i subagent to podobne pliki, ale skill daje wiedzę, a subagent działa, więc trafiają do różnych grup). Sekcja przeglądowa krótko podaje kryterium podziału na grupy
    * w sekcji można użyć podsekcji "### <Nazwa>", każda z własną pogrubioną tezą
 5. "## N. Wnioski": tabela | Sekcja | Wniosek |, gdzie wniosek to jedno zdanie z pogrubionymi kluczowymi słowami; kolumna "Sekcja" ma postać "N. Nazwa", zakres "8–12. Nazwa" albo "Całość"
 6. "## N. Pytania": tabela | Sekcja | Pytanie | Krótka odpowiedź |, czyli typowe pytania z interview, z odpowiedziami w jednym zdaniu; po kilka pytań do każdej sekcji merytorycznej, w kolejności sekcji
@@ -111,6 +113,7 @@ Na koniec sprawdźmy:
 * czy każda sekcja ma powód, żeby być w dokumencie, i czy żadna sekcja nie korzysta z pojęcia wyjaśnionego dopiero w późniejszej sekcji
 * czy analogia w "Opisie" pasuje do faktycznej kolejności sekcji
 * czy lista "Jak łączą się sekcje" obejmuje wszystkie sekcje merytoryczne i czy każde przejście ma prawdziwy powód (pytanie albo problem), a nie tylko "następny temat"
+* czy podział na grupy jest widoczny w nagłówkach "(<Grupa>)" i czy sekcja przeglądowa wymienia wszystkie warianty i podaje kryterium podziału
 * czy odnośniki w spisie treści pasują do nagłówków
 * czy każde odwołanie "(sekcja N)" wskazuje właściwą sekcję
 * czy każda sekcja merytoryczna ma wiersz we wnioskach i co najmniej jedno pytanie

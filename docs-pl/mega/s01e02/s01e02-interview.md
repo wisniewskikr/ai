@@ -7,10 +7,10 @@
 - [2. Kontekst - Ograniczenia](#2-kontekst---ograniczenia)
 - [3. Kontekst - Rozwiązania ograniczeń](#3-kontekst---rozwiązania-ograniczeń)
 - [4. Personalizacja harnessu](#4-personalizacja-harnessu)
-- [5. Personalizacja - AGENTS.md](#5-personalizacja---agentsmd)
-- [6. Personalizacja - Skills](#6-personalizacja---skills)
-- [7. Narzędzia](#7-narzędzia)
-- [8. Subagenty](#8-subagenty)
+- [5. Personalizacja (Wiedza) - AGENTS.md](#5-personalizacja-wiedza---agentsmd)
+- [6. Personalizacja (Wiedza) - Skills](#6-personalizacja-wiedza---skills)
+- [7. Personalizacja (Działanie) - Narzędzia](#7-personalizacja-działanie---narzędzia)
+- [8. Personalizacja (Działanie) - Subagenty](#8-personalizacja-działanie---subagenty)
 - [9. Samodoskonalenie](#9-samodoskonalenie)
 - [10. Wnioski](#10-wnioski)
 - [11. Pytania](#11-pytania)
@@ -28,11 +28,11 @@
 - **1. Kontekst → 2. Kontekst - Ograniczenia** – model wie tylko to, co ma w kontekście, ale nawet to, co tam jest, nie zawsze zostanie użyte.
 - **2. Kontekst - Ograniczenia → 3. Kontekst - Rozwiązania ograniczeń** – większość przyczyn jest poza naszą kontrolą, więc szukamy tego, na co mamy wpływ.
 - **3. Kontekst - Rozwiązania ograniczeń → 4. Personalizacja harnessu** – krótkie wątki zmuszają agenta do odkrywania kontekstu od nowa, więc harness musi go dostarczać automatycznie na starcie.
-- **4. Personalizacja harnessu → 5–6. AGENTS.md, Skills** – z wielu elementów personalizacji dwa najmocniej sterują zachowaniem: plik ładowany zawsze i instrukcje ładowane na żądanie.
-- **5. AGENTS.md → 6. Skills** – wszystko w AGENTS.md zajmuje kontekst w każdym wątku, więc rzadziej potrzebną wiedzę przenosimy do skilli.
-- **6. Skills → 7. Narzędzia** – skill tylko mówi, jak działać; żeby agent sam zdobył brakujący kontekst i coś zrobił, potrzebuje narzędzi.
-- **7. Narzędzia → 8. Subagenty** – każdy wynik narzędzia zapycha kontekst głównego wątku, więc część pracy oddajemy do osobnych kontekstów.
-- **8. Subagenty → 9. Samodoskonalenie** – mamy już wszystkie mechanizmy sterowania, więc zostaje pytanie, jak je z czasem poprawiać, nie komplikując systemu.
+- **4. Personalizacja harnessu → 5–6. Personalizacja (Wiedza)** – z wielu elementów personalizacji najpierw te, które dają agentowi wiedzę: plik ładowany zawsze i instrukcje ładowane na żądanie.
+- **5. Personalizacja (Wiedza) - AGENTS.md → 6. Personalizacja (Wiedza) - Skills** – wszystko w AGENTS.md zajmuje kontekst w każdym wątku, więc rzadziej potrzebną wiedzę przenosimy do skilli.
+- **6. Personalizacja (Wiedza) - Skills → 7. Personalizacja (Działanie) - Narzędzia** – przejście od wiedzy do działania: skill tylko mówi, jak działać; żeby agent sam zdobył brakujący kontekst i coś zrobił, potrzebuje narzędzi.
+- **7. Personalizacja (Działanie) - Narzędzia → 8. Personalizacja (Działanie) - Subagenty** – każdy wynik narzędzia zapycha kontekst głównego wątku, więc część pracy oddajemy do osobnych kontekstów.
+- **8. Personalizacja (Działanie) - Subagenty → 9. Samodoskonalenie** – mamy już wszystkie mechanizmy sterowania, więc zostaje pytanie, jak je z czasem poprawiać, nie komplikując systemu.
 
 ---
 
@@ -165,7 +165,12 @@ Agent: cat handoff.md → implementuje krok 2                            ≈ 500
 | **Konfiguracja** | Ustawienia harnessu dostępne dla agenta wraz z dokumentacją | Gdy agent jej potrzebuje – można „porozmawiać z agentem o nim samym” |
 | **Baza wiedzy** | Pliki o produkcie i procesach, niezwiązane z jednym harnessem | Na żądanie (agent czyta pliki); może też być stroną dla ludzi |
 | **CLI / MCP** (sekcja 7) | Rozszerzenia możliwości agenta o świat zewnętrzny | Jako narzędzia |
+| **Subagenty** (sekcja 8) | Pliki z instrukcją i ustawieniami (model, narzędzia, uprawnienia) | Nazwa i opis zawsze; uruchamiane jak narzędzie |
 | **Rozszerzenia, hooki** | Własna logika podpięta pod niemal każdy moment interakcji | Zależnie od hooka |
+
+- **Wiedza vs działanie** – elementy dzielimy według roli, a nie budowy:
+  - **Wiedza** (sekcje 5–6) – AGENTS.md i skills mówią agentowi, co wiedzieć i jak działać.
+  - **Działanie** (sekcje 7–8) – narzędzia i subagenty pozwalają mu coś zrobić: zdobyć kontekst albo oddać pracę do osobnego wątku.
 
 - **Self-configuration** – nie każdy harness umie skonfigurować sam siebie; warto wybrać taki, który umie (np. Pi, OpenCode, Claude Code).
 - Rozszerzenia może zbudować sam agent – ale trzeba wiedzieć, **kiedy w ogóle potrzeba czegoś ponad domyślną konfigurację**.
@@ -174,7 +179,7 @@ Agent: cat handoff.md → implementuje krok 2                            ≈ 500
 
 ---
 
-## 5. Personalizacja - AGENTS.md
+## 5. Personalizacja (Wiedza) - AGENTS.md
 
 **AGENTS.md służy do wiedzy, której nie da się łatwo zdobyć, i do sterowania zachowaniem – a nie do opisywania tego, co agent sam znajdzie jedną komendą.**
 
@@ -218,7 +223,7 @@ Minimalny interfejs webowy dla agentów kodujących.
 
 ---
 
-## 6. Personalizacja - Skills
+## 6. Personalizacja (Wiedza) - Skills
 
 **Skill to instrukcja, którą model wczytuje sam, gdy uzna ją za potrzebną – w kontekście jest tylko jego nazwa i opis.**
 
@@ -272,16 +277,17 @@ Theo is not watching. Own the work until the PR is ready to merge.
 
 ---
 
-## 7. Narzędzia
+## 7. Personalizacja (Działanie) - Narzędzia
 
 **Narzędzia pozwalają agentowi samemu zdobyć brakujący kontekst – a wszystko, co zwrócą, staje się częścią kontekstu i wpływa na zachowanie modelu.**
+
+- **Native vs custom** – harness ma kilka narzędzi wbudowanych; własne dodajemy przez **MCP** albo lokalne **CLI**.
 
 1. **Discovery** – agent poznaje dostępne narzędzia.
 2. **Request** – model wybiera narzędzie i generuje payload (także kilka narzędzi naraz, równolegle).
 3. Harness wykonuje narzędzie.
 4. **Response** – wynik wraca do kontekstu; model decyduje, co dalej.
 
-- **Native vs custom** – harness ma kilka narzędzi wbudowanych; resztę dodają **MCP** albo lokalne **CLI**.
 - **Programmatic tool use** – agenci coraz częściej piszą kod, który korzysta z narzędzi lub wprost z API.
 
 | | Wszystkie schematy z góry | Narzędzie do wyszukiwania narzędzi |
@@ -332,7 +338,7 @@ Hint: cart code lives in src/cart/. Use `ls src/cart` to list files.
 
 ---
 
-## 8. Subagenty
+## 8. Personalizacja (Działanie) - Subagenty
 
 **Subagent to z punktu widzenia modelu po prostu narzędzie – wywołuje się go, a jego odpowiedź trafia do kontekstu. Służy głównie do zarządzania kontekstem.**
 
@@ -416,11 +422,11 @@ Review the diff and list bugs only. Do not edit files.
 | 2. Kontekst - Ograniczenia | **Informacja w kontekście ≠ informacja użyta** – prompt to nie kompilator. |
 | 3. Kontekst - Rozwiązania ograniczeń | **Krótkie wątki** + wiedza zapisana w **kodzie i plikach** (handoff) zamiast długiej historii. |
 | 4. Personalizacja harnessu | **Pliki tekstowe** to podstawa personalizacji – agent może je czytać i **sam zmieniać**. |
-| 5. Personalizacja - AGENTS.md | W AGENTS.md tylko to, czego **nie da się zdobyć jedną komendą**, plus **wartości** i **słownik pojęć**. |
-| 6. Personalizacja - Skills | **Opis skilla to trigger**, a **krótki** skill z zasadami działa lepiej niż długi z regułami. |
-| 7. Narzędzia | **Wynik narzędzia to kontekst** – dodawaj **podpowiedzi** i oddawaj **błędy** modelowi. |
-| 8. Subagenty | **Subagent to narzędzie** do zarządzania kontekstem: skill – **ten sam wątek**, subagent – **osobny**. |
-| 8. Subagenty | **Fork** daje subagentowi całą wiedzę wątku, ale i jego bałagan; **fresh** daje czysty kontekst, ale tylko tyle, ile zawiera **zlecenie**. |
+| 5. Personalizacja (Wiedza) - AGENTS.md | W AGENTS.md tylko to, czego **nie da się zdobyć jedną komendą**, plus **wartości** i **słownik pojęć**. |
+| 6. Personalizacja (Wiedza) - Skills | **Opis skilla to trigger**, a **krótki** skill z zasadami działa lepiej niż długi z regułami. |
+| 7. Personalizacja (Działanie) - Narzędzia | **Wynik narzędzia to kontekst** – dodawaj **podpowiedzi** i oddawaj **błędy** modelowi. |
+| 8. Personalizacja (Działanie) - Subagenty | **Subagent to narzędzie** do zarządzania kontekstem: skill – **ten sam wątek**, subagent – **osobny**. |
+| 8. Personalizacja (Działanie) - Subagenty | **Fork** daje subagentowi całą wiedzę wątku, ale i jego bałagan; **fresh** daje czysty kontekst, ale tylko tyle, ile zawiera **zlecenie**. |
 | 9. Samodoskonalenie | Pytaj agenta **„dlaczego?”**, poprawiaj źródło i **trzymaj system prosty**. |
 | Całość | Nie da się wymusić zachowania modelu – można **zwiększać szansę**, dając mu **właściwy kontekst we właściwym momencie**. |
 
@@ -441,25 +447,26 @@ Review the diff and list bugs only. Do not edit files.
 | 3. Kontekst - Rozwiązania ograniczeń | Dlaczego krótkie wątki? | Mniej tekstu to lepsza uwaga, mniej kompresji i daleko od limitu okna |
 | 3. Kontekst - Rozwiązania ograniczeń | Czym jest handoff? | Plik ze stanem pracy, który nowy wątek czyta zamiast odkrywać kontekst od nowa (≈ 5 000 → 500 tokenów) |
 | 4. Personalizacja harnessu | Co można personalizować w harnessie? | AGENTS.md, skills, memory, konfigurację, bazę wiedzy, CLI/MCP, rozszerzenia i hooki |
+| 4. Personalizacja harnessu | Czym różnią się skills od subagentów w personalizacji? | Oba konfigurujemy plikami, ale skill daje wiedzę w tym samym wątku, a subagent działa w osobnym |
 | 4. Personalizacja harnessu | Co znaczy, że harness jest self-configurable? | Agent ma dostęp do ustawień i dokumentacji harnessu, więc może sam go konfigurować |
-| 5. Personalizacja - AGENTS.md | Co powinno być w AGENTS.md? | Wiedza trudna do zdobycia, wartości projektu, sposób myślenia, słownik pojęć |
-| 5. Personalizacja - AGENTS.md | Czego nie wkładać do AGENTS.md? | Ścieżek do plików i wszystkiego, co agent zdobędzie jedną komendą |
-| 5. Personalizacja - AGENTS.md | Po co słownik pojęć? | Daje wspólną gramatykę – model nie nazywa jednej rzeczy na różne sposoby w różnych wątkach |
-| 6. Personalizacja - Skills | Czym jest skill? | Folder z `SKILL.md` i skryptami; model widzi nazwę i opis, treść wczytuje na żądanie |
-| 6. Personalizacja - Skills | Do czego służy opis skilla? | Mówi modelowi, kiedy użyć skilla – to trigger, a nie opis działania |
-| 6. Personalizacja - Skills | Dlaczego skills powinny być krótkie? | Długie instrukcje są ignorowane, odbierają elastyczność i trudno je utrzymać |
-| 6. Personalizacja - Skills | Czym jest router skill? | Krótki skill, który wskazuje inne skille zamiast zawierać wszystko |
-| 6. Personalizacja - Skills | Czym są semantic anchors? | Słowa z bogatymi skojarzeniami (np. „Noir”), które zastępują długi opis |
-| 6. Personalizacja - Skills | Czy LLM dobrze pisze skills? | Dobrze formułuje, ale słabo kompresuje i upraszcza – wersję od agenta trzeba oczyścić |
-| 7. Narzędzia | Jak agent poznaje narzędzia? | Przez schematy podane z góry albo przez narzędzie do wyszukiwania w katalogu |
-| 7. Narzędzia | Czy schemat narzędzia chroni przed błędem? | Pilnuje kształtu, ale wartości model generuje sam i może je zmyślić |
-| 7. Narzędzia | Jak obsłużyć błąd narzędzia? | Oddać szczegóły błędu modelowi zamiast wyjątku, żeby agent mógł się naprawić |
-| 7. Narzędzia | Po co hinty w odpowiedzi narzędzia? | To model decyduje, co dalej – podpowiedź kieruje go do właściwego kroku |
-| 8. Subagenty | Czym jest subagent dla modelu? | Narzędziem – wywołuje go, a odpowiedź trafia do kontekstu |
-| 8. Subagenty | Czym różni się worker od subagenta? | Działa w osobnym procesie, powiadamia o końcu i może go uruchomić harmonogram lub webhook |
-| 8. Subagenty | Skill czy subagent? | Skill w tym samym wątku, gdy potrzebny jest bieżący kontekst; subagent w osobnym, gdy zadanie da się wydzielić |
-| 8. Subagenty | Czym różni się plik skilla od pliku subagenta? | Oba to pliki tekstowe z nazwą, opisem i instrukcją; plik subagenta zawiera też ustawienia (narzędzia, uprawnienia, model) |
-| 8. Subagenty | Fork czy fresh? | Fork kopiuje bieżący wątek; fresh startuje z samym zleceniem i czystym kontekstem |
-| 8. Subagenty | Jakie ryzyko niosą fork i fresh? | Fork – duży, zaśmiecony kontekst i słabsza uwaga; fresh – brakujący kontekst, jeśli zlecenie pominie coś ważnego |
+| 5. Personalizacja (Wiedza) - AGENTS.md | Co powinno być w AGENTS.md? | Wiedza trudna do zdobycia, wartości projektu, sposób myślenia, słownik pojęć |
+| 5. Personalizacja (Wiedza) - AGENTS.md | Czego nie wkładać do AGENTS.md? | Ścieżek do plików i wszystkiego, co agent zdobędzie jedną komendą |
+| 5. Personalizacja (Wiedza) - AGENTS.md | Po co słownik pojęć? | Daje wspólną gramatykę – model nie nazywa jednej rzeczy na różne sposoby w różnych wątkach |
+| 6. Personalizacja (Wiedza) - Skills | Czym jest skill? | Folder z `SKILL.md` i skryptami; model widzi nazwę i opis, treść wczytuje na żądanie |
+| 6. Personalizacja (Wiedza) - Skills | Do czego służy opis skilla? | Mówi modelowi, kiedy użyć skilla – to trigger, a nie opis działania |
+| 6. Personalizacja (Wiedza) - Skills | Dlaczego skills powinny być krótkie? | Długie instrukcje są ignorowane, odbierają elastyczność i trudno je utrzymać |
+| 6. Personalizacja (Wiedza) - Skills | Czym jest router skill? | Krótki skill, który wskazuje inne skille zamiast zawierać wszystko |
+| 6. Personalizacja (Wiedza) - Skills | Czym są semantic anchors? | Słowa z bogatymi skojarzeniami (np. „Noir”), które zastępują długi opis |
+| 6. Personalizacja (Wiedza) - Skills | Czy LLM dobrze pisze skills? | Dobrze formułuje, ale słabo kompresuje i upraszcza – wersję od agenta trzeba oczyścić |
+| 7. Personalizacja (Działanie) - Narzędzia | Jak agent poznaje narzędzia? | Przez schematy podane z góry albo przez narzędzie do wyszukiwania w katalogu |
+| 7. Personalizacja (Działanie) - Narzędzia | Czy schemat narzędzia chroni przed błędem? | Pilnuje kształtu, ale wartości model generuje sam i może je zmyślić |
+| 7. Personalizacja (Działanie) - Narzędzia | Jak obsłużyć błąd narzędzia? | Oddać szczegóły błędu modelowi zamiast wyjątku, żeby agent mógł się naprawić |
+| 7. Personalizacja (Działanie) - Narzędzia | Po co hinty w odpowiedzi narzędzia? | To model decyduje, co dalej – podpowiedź kieruje go do właściwego kroku |
+| 8. Personalizacja (Działanie) - Subagenty | Czym jest subagent dla modelu? | Narzędziem – wywołuje go, a odpowiedź trafia do kontekstu |
+| 8. Personalizacja (Działanie) - Subagenty | Czym różni się worker od subagenta? | Działa w osobnym procesie, powiadamia o końcu i może go uruchomić harmonogram lub webhook |
+| 8. Personalizacja (Działanie) - Subagenty | Skill czy subagent? | Skill w tym samym wątku, gdy potrzebny jest bieżący kontekst; subagent w osobnym, gdy zadanie da się wydzielić |
+| 8. Personalizacja (Działanie) - Subagenty | Czym różni się plik skilla od pliku subagenta? | Oba to pliki tekstowe z nazwą, opisem i instrukcją; plik subagenta zawiera też ustawienia (narzędzia, uprawnienia, model) |
+| 8. Personalizacja (Działanie) - Subagenty | Fork czy fresh? | Fork kopiuje bieżący wątek; fresh startuje z samym zleceniem i czystym kontekstem |
+| 8. Personalizacja (Działanie) - Subagenty | Jakie ryzyko niosą fork i fresh? | Fork – duży, zaśmiecony kontekst i słabsza uwaga; fresh – brakujący kontekst, jeśli zlecenie pominie coś ważnego |
 | 9. Samodoskonalenie | Jak poprawiać pracę z agentem? | Pytać, dlaczego coś zrobił, poprawiać AGENTS.md lub skills i okresowo przeglądać historię |
 | 9. Samodoskonalenie | Jaka jest rola człowieka w self-improving system? | Pilnować, żeby system był jak najprostszy |
